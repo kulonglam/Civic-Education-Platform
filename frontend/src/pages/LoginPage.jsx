@@ -6,6 +6,7 @@ import { tenantStore } from '../lib/api';
 import { authService } from '../lib/services';
 import { extractError } from '../lib/api';
 import { Alert, PasswordInput } from '../components/ui';
+import { PlatformLogo } from '../components/PlatformLogo';
 import { BookOpen, AcademicCap, ShieldCheck } from '../components/Icons';
 
 const API_ORIGIN = (import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api').replace(/\/api\/?$/, '');
@@ -85,9 +86,7 @@ function LoginPage() {
         {/* Brand header */}
         <div className="bg-gradient-to-br from-brand-700 to-brand-900 px-8 py-8 text-white">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 text-lg font-bold">
-              C
-            </div>
+            <PlatformLogo className="h-12 w-12 rounded-lg bg-white/10 p-1" />
             <div>
               <p className="font-bold">{t('app.name')}</p>
               <p className="text-xs text-brand-200">{t('app.tagline')}</p>

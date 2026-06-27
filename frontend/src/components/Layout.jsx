@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DEFAULT_PRIMARY_COLOR, normalizePrimaryColor } from '../lib/theme';
 import { Toaster } from 'react-hot-toast';
 import { useQuery } from '@tanstack/react-query';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -17,6 +16,7 @@ import { PushNotificationPrompt } from './PushNotificationPrompt';
 import { ArrowUp, Moon, Sun } from './Icons';
 import { notificationService } from '../lib/services';
 import { queryKeys } from '../lib/queryKeys';
+import { PlatformLogo } from './PlatformLogo';
 
 function navLinkClass({ isActive }) {
   return `rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
@@ -224,8 +224,6 @@ export function Layout() {
       ]
     : [];
 
-  const brandColor = normalizePrimaryColor(organization?.primary_color) || DEFAULT_PRIMARY_COLOR;
-
   return (
     <div className="flex min-h-screen flex-col">
       {/* Skip to content – accessibility */}
@@ -255,12 +253,7 @@ export function Layout() {
                 className="h-9 w-9 shrink-0 rounded-lg object-cover"
               />
             ) : (
-              <span
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-lg font-bold text-white"
-                style={{ backgroundColor: brandColor }}
-              >
-                {organization?.name?.charAt(0).toUpperCase() ?? 'C'}
-              </span>
+              <PlatformLogo className="h-9 w-9" alt={organization?.name ?? t('app.name')} />
             )}
             <span className="truncate text-base font-bold text-gray-900 dark:text-slate-100 lg:text-lg">
               {organization?.name ?? t('app.name')}

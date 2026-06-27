@@ -4,7 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { authService } from '../lib/services';
 import { extractError } from '../lib/api';
 import { Alert, PasswordInput, PasswordStrengthBar } from '../components/ui';
-
+import { PlatformLogo } from '../components/PlatformLogo';
 
 export function RegisterPage() {
   const { t } = useTranslation();
@@ -78,8 +78,13 @@ export function RegisterPage() {
       <div className="mx-auto max-w-md">
         <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md dark:border-slate-700 dark:bg-slate-800">
           <div className="bg-gradient-to-br from-brand-700 to-brand-900 px-8 py-6 text-white">
-            <p className="font-bold">{t('app.name')}</p>
-            <p className="text-xs text-brand-200">{t('app.tagline')}</p>
+            <div className="flex items-center gap-3">
+              <PlatformLogo className="h-10 w-10 rounded-lg bg-white/10 p-1" />
+              <div>
+                <p className="font-bold">{t('app.name')}</p>
+                <p className="text-xs text-brand-200">{t('app.tagline')}</p>
+              </div>
+            </div>
           </div>
           <div className="px-8 py-6">
             <Alert kind="success">{t('auth.registerSuccess')}</Alert>
@@ -101,7 +106,7 @@ export function RegisterPage() {
         {/* Brand header */}
         <div className="bg-gradient-to-br from-brand-700 to-brand-900 px-8 py-6 text-white">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 text-lg font-bold">C</div>
+            <PlatformLogo className="h-12 w-12 rounded-lg bg-white/10 p-1" />
             <div>
               <p className="font-bold">{t('app.name')}</p>
               <p className="text-xs text-brand-200">{t('app.tagline')}</p>

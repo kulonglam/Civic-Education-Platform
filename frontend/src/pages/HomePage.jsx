@@ -8,6 +8,7 @@ import {
   CloudArrowDown,
   ShieldCheck,
 } from '../components/Icons';
+import { PlatformLogo } from '../components/PlatformLogo';
 
 function HomePage() {
   const { t } = useTranslation();
@@ -65,6 +66,7 @@ function HomePage() {
           }}
         />
         <div className="relative">
+          <PlatformLogo className="mx-auto mb-6 h-24 w-24 sm:h-28 sm:w-28" />
           {user && (
             <p className="mb-3 text-sm font-medium text-brand-200">
               {t('home.welcomeBack', { name: user.first_name })}

@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
       react(),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['favicon.svg', 'icon-192.png', 'icon-512.png'],
+        includeAssets: ['civic-education-logo.png', 'icon-192.png', 'icon-512.png'],
         manifest: {
           name: 'Civic Education Platform',
           short_name: 'CivicEd',
