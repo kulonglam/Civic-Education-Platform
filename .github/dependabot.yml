@@ -1,0 +1,40 @@
+version: 2
+updates:
+  # Python backend
+  - package-ecosystem: pip
+    directory: /backend
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
+    groups:
+      django-ecosystem:
+        patterns:
+          - "django*"
+          - "drf-*"
+          - "djangorestframework*"
+      security-deps:
+        patterns:
+          - "cryptography"
+          - "bcrypt"
+          - "PyJWT"
+
+  # Node frontend
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
+    groups:
+      react-ecosystem:
+        patterns:
+          - "react"
+          - "react-*"
+          - "@tanstack/*"
+
+  # GitHub Actions
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

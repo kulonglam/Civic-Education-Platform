@@ -1,0 +1,108 @@
+version: '3.9'
+
+# ── Civic Education Platform – local dev stack ─────────────────────────────
+# Starts: PostgreSQL, Redis, Django (Daphne/ASGI), Celery worker, and the
+# Vite dev server.  The frontend proxies /api/ to the Django service.
+#
+# Usage:
+#   cp backend/.env.example backend/.env     # fill in secrets
+#   cp frontend/.env.example frontend/.env   # adjust API URL if needed
+#   docker compose up --build
+#
+# The app will be available at http://localhost:5173 (Vite) or
+# http://localhost:8000 (Django directly).
+
+x-backend-env: &backend-env
+  env_file: ./backend/.env
+  environment:
+    - DJANGO_SETTINGS_MODULE=config.settings.development
+    - DATABASE_URL=postgres://postgres:postgres@db:5432/civic_education
+    - REDIS_URL=redis://redis:6379/0
+    - CELERY_BROKER_URL=redis://redis:6379/0
+    - CELERY_TASK_ALWAYS_EAGER=False
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: civic_education
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    <<: *backend-env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py seed_data --force-reseeding 2>/dev/null || true &&
+             daphne -b 0.0.0.0 -p 8000 config.asgi:application"
+
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    <<: *backend-env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: celery -A config.celery worker -l info -Q default,celery --concurrency 2
+
+  celery-beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    <<: *backend-env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: celery -A config.celery beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
