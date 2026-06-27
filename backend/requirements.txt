@@ -30,7 +30,7 @@ factory-boy==3.3.3
 locust==2.32.4
 # --- integrations ---
 stripe==12.5.0
-sentry-sdk==2.25.1
+sentry-sdk==2.63.0
 anthropic==0.49.0
 africastalking==1.2.7
 pywebpush==2.0.1
