@@ -18,8 +18,9 @@ Base URL: `/api/`
 | Users | `/users/` | Profile, avatar, suspend/unsuspend, platform role (admin only) |
 | Organization | `/organization/` | Current org, members, invites, leave |
 | Billing | `/billing/` | Plans, Stripe checkout/portal/webhook |
-| Articles | `/articles/` | CRUD; public list when published |
+| Articles | `/articles/` | CRUD; public list when published; optional `audio_media` / `video_media` |
 | Categories | `/categories/` | Org-scoped taxonomy |
+| Media | `/media/` | Audio/video library; uploads + external URLs; public when published |
 | Quizzes | `/quizzes/` | CRUD, attempts, results, certificates |
 | Forum | `/topics/`, `/comments/` | Topics, comments, moderation |
 | Notifications | `/notifications/` | In-app list, read, org broadcast, web push subscribe, **push stats/cleanup (platform admin)** |

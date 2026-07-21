@@ -21,6 +21,11 @@ describe('HomePage', () => {
 
     expect(screen.getByRole('heading', { level: 1, name: /learn\. engage\. build democracy/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: /how it works/i })).toBeInTheDocument();
+    expect(screen.getByText(/explore topics/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /peacebuilding/i })).toHaveAttribute(
+      'href',
+      '/articles?category=peacebuilding',
+    );
     expect(screen.getAllByRole('link', { name: /get started/i })[0]).toHaveAttribute('href', '/register');
     expect(screen.getByRole('link', { name: /set up your organization/i })).toHaveAttribute(
       'href',

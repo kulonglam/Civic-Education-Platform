@@ -2,7 +2,7 @@ import { openDB } from 'idb';
 import { tenantStore } from '../api';
 
 const DB_NAME = 'cep-offline';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 let dbPromise;
 
@@ -28,6 +28,9 @@ async function getDb() {
             autoIncrement: true,
           });
           writeQueue.createIndex('type', 'type', { unique: false });
+        }
+        if (oldVersion < 3) {
+          db.createObjectStore('media', { keyPath: 'key' });
         }
       },
     });

@@ -65,6 +65,21 @@ describe('localizedContent', () => {
     ]);
   });
 
+  it('uses stored Arabic true/false labels when provided', () => {
+    const opts = localizedQuestionOptions(
+      {
+        question_type: 'true_false',
+        options: ['True', 'False'],
+        options_ar: ['نعم', 'لا'],
+      },
+      'ar',
+    );
+    expect(opts).toEqual([
+      { value: 'True', label: 'نعم' },
+      { value: 'False', label: 'لا' },
+    ]);
+  });
+
   it('keeps true/false answer values in English', () => {
     const opts = trueFalseOptions('ar');
     expect(opts.map((o) => o.value)).toEqual(['True', 'False']);

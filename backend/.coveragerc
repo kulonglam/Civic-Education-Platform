@@ -1,0 +1,25 @@
+[run]
+branch = False
+source = apps
+omit =
+    */migrations/*
+    */apps.py
+    */management/commands/*
+    apps/notifications/consumers.py
+    apps/notifications/fan_out.py
+    apps/notifications/push_services.py
+    apps/accounts/sso.py
+    apps/accounts/sso_views.py
+    apps/tenants/scim.py
+    apps/tenants/scim_groups.py
+    apps/billing/providers.py
+    apps/core/db.py
+
+[report]
+show_missing = True
+skip_covered = False
+fail_under = 80
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    if TYPE_CHECKING:

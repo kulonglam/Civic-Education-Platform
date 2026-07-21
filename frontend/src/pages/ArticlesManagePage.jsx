@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useOrganization } from '../context/OrganizationContext';
 import { Alert, ConfirmDialog, EmptyState, PageHeader, Spinner } from '../components/ui';
 import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
@@ -12,10 +13,15 @@ import { formatDate } from '../lib/format';
 export function ArticlesManagePage() {
   const { t } = useTranslation();
   const { hasRole } = useAuth();
-  const canDelete = hasRole('admin');
+  const { membership, isOrgAdmin } = useOrganization();
+  const canDelete = hasRole('admin') || isOrgAdmin;
+  const canApprove =
+    hasRole('admin') || membership?.role === 'owner' || membership?.role === 'admin';
   const [pendingDelete, setPendingDelete] = useState(null);
   const [deleteError, setDeleteError] = useState('');
+  const [reviewError, setReviewError] = useState('');
   const [deleting, setDeleting] = useState(false);
+  const [reviewBusyId, setReviewBusyId] = useState(null);
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: queryKeys.articlesManage,
@@ -37,6 +43,32 @@ export function ArticlesManagePage() {
       setDeleteError(extractError(err));
     } finally {
       setDeleting(false);
+    }
+  };
+
+  const approveArticle = async (id) => {
+    setReviewBusyId(id);
+    setReviewError('');
+    try {
+      await articleService.approve(id);
+      await refetch();
+    } catch (err) {
+      setReviewError(extractError(err));
+    } finally {
+      setReviewBusyId(null);
+    }
+  };
+
+  const rejectArticle = async (id) => {
+    setReviewBusyId(id);
+    setReviewError('');
+    try {
+      await articleService.reject(id);
+      await refetch();
+    } catch (err) {
+      setReviewError(extractError(err));
+    } finally {
+      setReviewBusyId(null);
     }
   };
 
@@ -72,6 +104,11 @@ export function ArticlesManagePage() {
           <Alert>{deleteError}</Alert>
         </div>
       )}
+      {reviewError && (
+        <div className="mb-4">
+          <Alert>{reviewError}</Alert>
+        </div>
+      )}
 
       {articles.length === 0 ? (
         <EmptyState>{t('articles.noArticlesManage')}</EmptyState>
@@ -92,13 +129,37 @@ export function ArticlesManagePage() {
                 <tr key={article.id} className="dark:hover:bg-slate-700/30">
                   <td className="px-4 py-3 font-medium text-gray-900 dark:text-slate-100">{article.title}</td>
                   <td className="px-4 py-3 dark:text-slate-300">{article.category?.name ?? '—'}</td>
-                  <td className="px-4 py-3 capitalize dark:text-slate-300">{article.status}</td>
+                  <td className="px-4 py-3 capitalize dark:text-slate-300">
+                    {article.status === 'pending_review'
+                      ? t('articles.statusPendingReview')
+                      : article.status}
+                  </td>
                   <td className="px-4 py-3 dark:text-slate-400">{formatDate(article.updated_at)}</td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-2">
                       <Link to={`/articles/${article.id}/edit`} className="btn-secondary text-xs">
                         {t('common.edit')}
                       </Link>
+                      {canApprove && article.status === 'pending_review' && (
+                        <>
+                          <button
+                            type="button"
+                            className="btn-primary text-xs"
+                            disabled={reviewBusyId === article.id}
+                            onClick={() => approveArticle(article.id)}
+                          >
+                            {t('articles.approve')}
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-secondary text-xs"
+                            disabled={reviewBusyId === article.id}
+                            onClick={() => rejectArticle(article.id)}
+                          >
+                            {t('articles.rejectToDraft')}
+                          </button>
+                        </>
+                      )}
                       {canDelete && (
                         <button
                           type="button"

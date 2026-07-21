@@ -19,11 +19,7 @@ import { queryKeys } from '../lib/queryKeys';
 import { PlatformLogo } from './PlatformLogo';
 
 function navLinkClass({ isActive }) {
-  return `rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-    isActive
-      ? 'bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300'
-      : 'text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-800'
-  }`;
+  return `nav-link ${isActive ? 'nav-link-active' : 'nav-link-idle'}`;
 }
 
 function NavDropdown({ label, avatar, badge, items, align = 'left' }) {
@@ -51,21 +47,21 @@ function NavDropdown({ label, avatar, badge, items, align = 'left' }) {
         type="button"
         className={`relative flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
           open
-            ? 'bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300'
-            : 'text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-800'
+            ? 'bg-brand-50 text-brand-800 dark:bg-brand-900/40 dark:text-brand-300'
+            : 'text-ink-700 hover:bg-ink-100/70 dark:text-slate-300 dark:hover:bg-slate-800'
         }`}
         aria-expanded={open}
         aria-haspopup="menu"
         onClick={() => setOpen((v) => !v)}
       >
         {avatar && (
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-700 text-xs font-bold text-white">
             {avatar}
           </span>
         )}
         {label}
         {badge > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
             {badge > 9 ? '9+' : badge}
           </span>
         )}
@@ -77,13 +73,13 @@ function NavDropdown({ label, avatar, badge, items, align = 'left' }) {
       {open && (
         <div
           role="menu"
-          className={`absolute top-full z-30 mt-1 min-w-[11rem] rounded-xl border border-gray-200 bg-white py-1 shadow-lg dark:border-slate-700 dark:bg-slate-800 ${
+          className={`absolute top-full z-30 mt-1.5 min-w-[12rem] rounded-xl border border-ink-100 bg-white/95 py-1 shadow-lift backdrop-blur-sm dark:border-slate-700 dark:bg-slate-800 ${
             align === 'right' ? 'right-0' : 'left-0'
           }`}
         >
           {items.map((item, idx) => {
             if (item.divider) {
-              return <hr key={`d-${idx}`} className="my-1 border-gray-100 dark:border-slate-700" />;
+              return <hr key={`d-${idx}`} className="my-1 border-ink-100 dark:border-slate-700" />;
             }
             if (item.onClick) {
               return (
@@ -91,7 +87,7 @@ function NavDropdown({ label, avatar, badge, items, align = 'left' }) {
                   key={item.label}
                   type="button"
                   role="menuitem"
-                  className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-700"
+                  className="block w-full px-4 py-2 text-left text-sm text-ink-800 hover:bg-ink-50 dark:text-slate-300 dark:hover:bg-slate-700"
                   onClick={() => { setOpen(false); item.onClick(); }}
                 >
                   {item.label}
@@ -106,8 +102,8 @@ function NavDropdown({ label, avatar, badge, items, align = 'left' }) {
                 className={({ isActive }) =>
                   `flex items-center justify-between px-4 py-2 text-sm ${
                     isActive
-                      ? 'bg-brand-50 font-medium text-brand-700 dark:bg-brand-900/30 dark:text-brand-300'
-                      : 'text-gray-700 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-700'
+                      ? 'bg-brand-50 font-semibold text-brand-800 dark:bg-brand-900/30 dark:text-brand-300'
+                      : 'text-ink-800 hover:bg-ink-50 dark:text-slate-300 dark:hover:bg-slate-700'
                   }`
                 }
                 onClick={() => setOpen(false)}
@@ -132,7 +128,7 @@ function MobileSection({ title, children }) {
   return (
     <div className="pt-2">
       {title && (
-        <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-slate-500">
+        <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-ink-700/45 dark:text-slate-500">
           {title}
         </p>
       )}
@@ -144,7 +140,7 @@ function MobileSection({ title, children }) {
 export function Layout() {
   const { t } = useTranslation();
   const { user, logout, hasRole, isPlatformAdmin } = useAuth();
-  const { organization, isOrgAdmin } = useOrganization();
+  const { organization, isOrgAdmin, isOrgContentManager, isOrgModerator } = useOrganization();
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -190,17 +186,19 @@ export function Layout() {
 
   const learnLinks = [
     { to: '/articles', label: t('nav.articles') },
+    { to: '/media', label: t('nav.media') },
     { to: '/quizzes', label: t('nav.quizzes'), auth: true },
     { to: '/forum', label: t('nav.forum') },
     { to: '/tutor', label: t('nav.tutor'), auth: true },
   ].filter((link) => !link.auth || user);
 
   const manageItems = [];
-  if (hasRole('admin', 'editor')) {
+  if (hasRole('admin', 'editor') || isOrgContentManager) {
     manageItems.push({ to: '/articles/manage', label: t('nav.manageArticles') });
+    manageItems.push({ to: '/media/manage', label: t('nav.manageMedia') });
     manageItems.push({ to: '/quizzes/manage', label: t('nav.manageQuizzes') });
   }
-  if (hasRole('admin', 'moderator')) {
+  if (hasRole('admin', 'moderator') || isOrgModerator) {
     manageItems.push({
       to: '/admin',
       label: isPlatformAdmin() ? t('nav.platformAdmin') : t('nav.moderation'),
@@ -224,14 +222,20 @@ export function Layout() {
       ]
     : [];
 
+  const isHome = location.pathname === '/';
+  const isAuthSurface =
+    /^\/(login|register|forgot-password|reset-password|sso\/callback)/.test(location.pathname) ||
+    location.pathname.startsWith('/invite') ||
+    location.pathname.startsWith('/verify-email');
+
   return (
     <div className="flex min-h-screen flex-col">
       {/* Skip to content – accessibility */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-brand-600 focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white focus:shadow-lg"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-xl focus:bg-brand-700 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
       >
-        Skip to content
+        {t('a11y.skipToContent')}
       </a>
 
       {/* Route loading bar */}
@@ -243,42 +247,51 @@ export function Layout() {
       <PushNotificationPrompt />
       <QuotaBanner />
 
-      <header className="sticky top-0 z-20 border-b border-gray-200 bg-white/90 backdrop-blur dark:border-slate-800 dark:bg-slate-900/90">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
-          <Link to="/" className="flex min-w-0 shrink items-center gap-2">
+      <header className="glass-nav" role="banner">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3.5">
+          <Link to="/" className="flex min-w-0 shrink items-center gap-2.5" aria-label={t('app.name')}>
             {organization?.logo_url ? (
               <img
                 src={organization.logo_url}
                 alt={organization.name}
-                className="h-9 w-9 shrink-0 rounded-lg object-cover"
+                className="h-9 w-9 shrink-0 rounded-xl object-cover ring-1 ring-ink-100 dark:ring-slate-700"
               />
             ) : (
               <PlatformLogo className="h-9 w-9" alt={organization?.name ?? t('app.name')} />
             )}
-            <span className="truncate text-base font-bold text-gray-900 dark:text-slate-100 lg:text-lg">
-              {organization?.name ?? t('app.name')}
+            <span className="min-w-0">
+              <span className="block truncate font-display text-base font-semibold text-ink-900 dark:text-slate-100 lg:text-lg">
+                {organization?.name ?? t('app.name')}
+              </span>
+              {organization?.name && !isAuthSurface && (
+                <span className="hidden truncate text-[11px] font-medium uppercase tracking-wide text-ink-700/45 dark:text-slate-500 sm:block">
+                  {t('app.tagline')}
+                </span>
+              )}
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-0.5 lg:flex">
-            {learnLinks.map((link) => (
-              <NavLink key={link.to} to={link.to} className={navLinkClass}>
-                {link.label}
-              </NavLink>
-            ))}
-            <NavDropdown label={t('nav.manage')} items={manageItems} />
-            <NavDropdown label={t('nav.organization')} items={orgItems} />
-          </nav>
+          {!isAuthSurface && (
+            <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
+              {learnLinks.map((link) => (
+                <NavLink key={link.to} to={link.to} className={navLinkClass}>
+                  {link.label}
+                </NavLink>
+              ))}
+              <NavDropdown label={t('nav.manage')} items={manageItems} />
+              <NavDropdown label={t('nav.organization')} items={orgItems} />
+            </nav>
+          )}
 
           <div className="flex shrink-0 items-center gap-2">
-            {user && <OrgSwitcher />}
+            {user && !isAuthSurface && <OrgSwitcher />}
             <LanguageSwitcher />
 
             {/* Dark mode toggle */}
             <button
               type="button"
               aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-              className="rounded-lg border border-gray-300 p-2 text-gray-600 hover:bg-gray-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
+              className="rounded-xl border border-ink-200 p-2 text-ink-700 hover:bg-ink-100/70 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
               onClick={() => setDark((d) => !d)}
             >
               {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -303,9 +316,10 @@ export function Layout() {
               </div>
             )}
 
+            {!isAuthSurface && (
             <button
               type="button"
-              className="rounded-lg border border-gray-300 p-2 dark:border-slate-600 dark:text-slate-300 lg:hidden"
+              className="rounded-xl border border-ink-200 p-2 text-ink-700 dark:border-slate-600 dark:text-slate-300 lg:hidden"
               onClick={() => setMenuOpen((v) => !v)}
               aria-label="Menu"
               aria-expanded={menuOpen}
@@ -318,12 +332,13 @@ export function Layout() {
                 )}
               </svg>
             </button>
+            )}
           </div>
         </div>
 
-        {menuOpen && (
-          <div className="border-t border-gray-200 bg-white px-4 py-3 dark:border-slate-800 dark:bg-slate-900 lg:hidden">
-            <div className="flex flex-col gap-1">
+        {menuOpen && !isAuthSurface && (
+          <div className="border-t border-ink-100/80 bg-white/95 px-4 py-4 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95 lg:hidden">
+            <div className="flex flex-col gap-2">
               <MobileSection title={t('nav.learn')}>
                 {learnLinks.map((link) => (
                   <NavLink key={link.to} to={link.to} className={navLinkClass}>
@@ -355,13 +370,13 @@ export function Layout() {
               {user && (
                 <MobileSection title={t('nav.myAccount')}>
                   {accountItems.map((item, idx) => {
-                    if (item.divider) return <hr key={`d-${idx}`} className="my-1 border-gray-100 dark:border-slate-700" />;
+                    if (item.divider) return <hr key={`d-${idx}`} className="my-1 border-ink-100 dark:border-slate-700" />;
                     if (item.onClick) {
                       return (
                         <button
                           key={item.label}
                           type="button"
-                          className="rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                          className="rounded-xl px-3 py-2 text-left text-sm font-medium text-ink-700 hover:bg-ink-100/70 dark:text-slate-300 dark:hover:bg-slate-800"
                           onClick={() => { setMenuOpen(false); item.onClick(); }}
                         >
                           {item.label}
@@ -373,7 +388,7 @@ export function Layout() {
                         <span className="flex items-center justify-between">
                           {item.label}
                           {item.badge > 0 && (
-                            <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                            <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white">
                               {item.badge > 99 ? '99+' : item.badge}
                             </span>
                           )}
@@ -385,7 +400,7 @@ export function Layout() {
               )}
 
               {!user && (
-                <div className="mt-3 flex gap-2 border-t border-gray-100 pt-3 dark:border-slate-700">
+                <div className="mt-3 flex gap-2 border-t border-ink-100 pt-3 dark:border-slate-700">
                   <Link to="/login" className="btn-secondary w-full">
                     {t('nav.login')}
                   </Link>
@@ -399,33 +414,71 @@ export function Layout() {
         )}
       </header>
 
-      <main id="main-content" className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
-        <div key={location.pathname} className="page-enter">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className={
+          isHome || isAuthSurface
+            ? 'w-full flex-1 outline-none'
+            : 'mx-auto w-full max-w-6xl flex-1 px-4 py-9 outline-none sm:py-11'
+        }
+      >
+        <div
+          className="sr-only"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {location.pathname}
+        </div>
+        <div key={location.pathname} className={isHome || isAuthSurface ? undefined : 'page-enter'}>
           <Outlet />
         </div>
       </main>
 
-      <footer className="border-t border-gray-200 bg-white py-8 dark:border-slate-800 dark:bg-slate-900">
+      {!isAuthSurface && (
+      <footer
+        className="border-t border-ink-100/80 bg-white/60 py-11 backdrop-blur-sm dark:border-slate-800 dark:bg-ink-950/70"
+        role="contentinfo"
+      >
         <div className="mx-auto max-w-6xl px-4">
-          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-            <p className="text-sm text-gray-500 dark:text-slate-400">
-              © {new Date().getFullYear()} {t('app.name')}. {t('app.tagline')}.
-            </p>
-            <nav className="flex gap-5 text-sm text-gray-400 dark:text-slate-500">
-              <Link to="/privacy" className="transition-colors hover:text-gray-600 dark:hover:text-slate-300">{t('footer.privacy')}</Link>
-              <Link to="/terms" className="transition-colors hover:text-gray-600 dark:hover:text-slate-300">{t('footer.terms')}</Link>
-              <a href="mailto:support@civiced.org" className="transition-colors hover:text-gray-600 dark:hover:text-slate-300">{t('footer.contact')}</a>
+          <div className="flex flex-col items-center gap-5 sm:flex-row sm:justify-between">
+            <div>
+              <p className="font-display text-sm font-semibold text-ink-900 dark:text-slate-100">
+                {t('app.name')}
+              </p>
+              <p className="mt-1 text-sm text-ink-700/60 dark:text-slate-500">
+                © {new Date().getFullYear()}. {t('app.tagline')}.
+              </p>
+            </div>
+            <nav
+              className="flex gap-6 text-sm font-medium text-ink-700/70 dark:text-slate-400"
+              aria-label={t('a11y.footerNav')}
+            >
+              <Link to="/privacy" className="transition-colors hover:text-brand-700 dark:hover:text-brand-300">
+                {t('footer.privacy')}
+              </Link>
+              <Link to="/terms" className="transition-colors hover:text-brand-700 dark:hover:text-brand-300">
+                {t('footer.terms')}
+              </Link>
+              <a
+                href="mailto:support@civiced.org"
+                className="transition-colors hover:text-brand-700 dark:hover:text-brand-300"
+              >
+                {t('footer.contact')}
+              </a>
             </nav>
           </div>
         </div>
       </footer>
+      )}
 
       {/* Back to top */}
       {showTop && (
         <button
           type="button"
           aria-label="Back to top"
-          className="fixed bottom-6 right-6 z-40 flex h-10 w-10 items-center justify-center rounded-full bg-brand-600 text-white shadow-lg transition-all hover:bg-brand-700 hover:shadow-xl"
+          className="fixed bottom-6 right-6 z-40 flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-700 text-white shadow-lift transition-all hover:bg-brand-800"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
           <ArrowUp className="h-5 w-5" />
@@ -436,9 +489,14 @@ export function Layout() {
         position="top-right"
         toastOptions={{
           duration: 3500,
-          style: { fontSize: '0.875rem', maxWidth: '360px' },
+          style: {
+            fontSize: '0.875rem',
+            maxWidth: '360px',
+            borderRadius: '12px',
+            fontFamily: 'Figtree, system-ui, sans-serif',
+          },
           success: { iconTheme: { primary: '#047857', secondary: '#fff' } },
-          error:   { iconTheme: { primary: '#dc2626', secondary: '#fff' } },
+          error: { iconTheme: { primary: '#dc2626', secondary: '#fff' } },
         }}
       />
     </div>

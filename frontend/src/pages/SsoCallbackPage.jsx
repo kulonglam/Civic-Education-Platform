@@ -1,18 +1,23 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { tokenStore, tenantStore } from '../lib/api';
 import { Alert, Spinner } from '../components/ui';
 
+function readHashParams() {
+  const hash = window.location.hash.replace(/^#/, '');
+  return new URLSearchParams(hash);
+}
+
 export function SsoCallbackPage() {
   const { t } = useTranslation();
-  const [params] = useSearchParams();
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
   const [error, setError] = useState('');
 
   useEffect(() => {
+    const params = readHashParams();
     const ssoError = params.get('error');
     if (ssoError) {
       setError(ssoError);
@@ -35,7 +40,7 @@ export function SsoCallbackPage() {
     refreshUser()
       .then(() => navigate('/', { replace: true }))
       .catch(() => setError(t('auth.ssoFailed')));
-  }, [navigate, params, refreshUser, t]);
+  }, [navigate, refreshUser, t]);
 
   if (error) {
     return (
@@ -54,7 +59,7 @@ export function SsoCallbackPage() {
     <div className="mx-auto max-w-md">
       <div className="card text-center">
         <Spinner />
-        <p className="mt-4 text-sm text-gray-600">{t('auth.ssoCompleting')}</p>
+        <p className="mt-4 text-sm text-ink-700/70 dark:text-slate-400">{t('auth.ssoCompleting')}</p>
       </div>
     </div>
   );

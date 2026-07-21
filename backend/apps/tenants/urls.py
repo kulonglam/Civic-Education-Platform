@@ -1,5 +1,25 @@
 from django.urls import path
 
+from .enterprise_views import (
+    BulkMemberImportView,
+    DepartmentDetailView,
+    DepartmentListCreateView,
+    OrganizationSsoConfigView,
+    PlatformOrganizationDetailView,
+    PlatformOrganizationListView,
+    PlatformUsageSummaryView,
+)
+from .grade_a_views import (
+    AuditIntegrityVerifyView,
+    ComplianceEvidencePackView,
+    PlatformSupportCaseListView,
+    PlatformSupportCaseUpdateView,
+    ScimTokenListCreateView,
+    ScimTokenRevokeView,
+    SloMetricsView,
+    SupportCaseDetailView,
+    SupportCaseListCreateView,
+)
 from .views import (
     AcceptInviteView,
     CurrentOrganizationView,
@@ -20,10 +40,30 @@ urlpatterns = [
     path('by-slug/<slug:slug>/', OrganizationBySlugView.as_view(), name='organization-by-slug'),
     path('members/', MembershipListView.as_view(), name='organization-members'),
     path('members/invite/', MemberInviteView.as_view(), name='organization-member-invite'),
+    path('members/bulk-import/', BulkMemberImportView.as_view(), name='organization-members-bulk'),
     path('members/<uuid:membership_id>/', MemberDetailView.as_view(), name='organization-member-detail'),
+    path('departments/', DepartmentListCreateView.as_view(), name='organization-departments'),
+    path('departments/<uuid:pk>/', DepartmentDetailView.as_view(), name='organization-department-detail'),
+    path('sso/', OrganizationSsoConfigView.as_view(), name='organization-sso'),
+    path('scim/tokens/', ScimTokenListCreateView.as_view(), name='organization-scim-tokens'),
+    path('scim/tokens/<uuid:token_id>/', ScimTokenRevokeView.as_view(), name='organization-scim-token-revoke'),
+    path('compliance/pack/', ComplianceEvidencePackView.as_view(), name='organization-compliance-pack'),
+    path('compliance/verify/', AuditIntegrityVerifyView.as_view(), name='organization-audit-verify'),
+    path('support/cases/', SupportCaseListCreateView.as_view(), name='organization-support-cases'),
+    path('support/cases/<uuid:case_id>/', SupportCaseDetailView.as_view(), name='organization-support-case'),
     path('invites/', OrganizationInviteListView.as_view(), name='organization-invites'),
     path('invites/<uuid:invite_id>/', OrganizationInviteRevokeView.as_view(), name='organization-invite-revoke'),
     path('invites/accept/<str:token>/', AcceptInviteView.as_view(), name='organization-invite-accept'),
     path('invites/preview/<str:token>/', InvitePreviewView.as_view(), name='organization-invite-preview'),
     path('leave/', LeaveOrganizationView.as_view(), name='organization-leave'),
+    path('platform/orgs/', PlatformOrganizationListView.as_view(), name='platform-orgs'),
+    path('platform/orgs/<uuid:org_id>/', PlatformOrganizationDetailView.as_view(), name='platform-org-detail'),
+    path('platform/usage/', PlatformUsageSummaryView.as_view(), name='platform-usage'),
+    path('platform/support/cases/', PlatformSupportCaseListView.as_view(), name='platform-support-cases'),
+    path(
+        'platform/support/cases/<uuid:case_id>/',
+        PlatformSupportCaseUpdateView.as_view(),
+        name='platform-support-case',
+    ),
+    path('platform/slo/', SloMetricsView.as_view(), name='platform-slo'),
 ]

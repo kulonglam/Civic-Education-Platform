@@ -30,6 +30,11 @@ SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+X_FRAME_OPTIONS = 'DENY'
+# JWT cookies must be Secure in production (overrides base default).
+JWT_COOKIE_SECURE = True  # noqa: F405
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST', default='')
@@ -62,3 +67,9 @@ if BILLING_PROVIDER == 'dummy':  # noqa: F405
     raise ImproperlyConfigured('BILLING_PROVIDER must be "stripe" in production.')
 if not CELERY_BROKER_URL:  # noqa: F405
     raise ImproperlyConfigured('CELERY_BROKER_URL is required in production.')
+if not EMAIL_HOST:
+    raise ImproperlyConfigured('EMAIL_HOST is required in production for verification and password reset.')
+if config('REQUIRE_SENTRY', default=True, cast=bool) and not SENTRY_DSN:  # noqa: F405
+    raise ImproperlyConfigured(
+        'SENTRY_DSN is required in production (set REQUIRE_SENTRY=False only for constrained staging).'
+    )

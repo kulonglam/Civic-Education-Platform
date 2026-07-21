@@ -8,7 +8,7 @@ from apps.accounts.models import Role
 from apps.billing.models import Plan, Subscription
 from apps.core.storage import upload_file
 from apps.forum.models import DiscussionComment, DiscussionTopic
-from apps.learning.models import Article, Category
+from apps.learning.models import Article, Category, MediaAsset
 from apps.quizzes.models import Question, Quiz
 from apps.tenants.services import create_organization_with_owner
 
@@ -25,7 +25,28 @@ CATEGORIES = [
 
 REAL_CONSTITUTION_FILE = 'transitional-constitution.pdf'
 SAMPLE_CONSTITUTION_FILE = 'transitional-constitution-sample.pdf'
+CONSTITUTION_TEXT_FILE = 'transitional-constitution.txt'
 SEED_ASSETS_DIR = Path(__file__).resolve().parent / 'seed_assets'
+
+CONSTITUTION_INTRO = (
+    'This controlled document contains the Transitional Constitution of the Republic of '
+    'South Sudan, 2011. Citizens can download the PDF attachment, and the AI tutor uses '
+    'this text when answering questions about constitutional rights and institutions.\n\n'
+)
+CONSTITUTION_INTRO_AR = (
+    'تتضمن هذه الوثيقة الخاضعة للرقابة الدستور الانتقالي لجمهورية جنوب السودان لعام 2011. '
+    'يمكن للمواطنين تنزيل مرفق PDF، ويستخدم مدرّس الذكاء الاصطناعي هذا النص عند الإجابة '
+    'عن أسئلة الحقوق والمؤسسات الدستورية.\n\n'
+)
+
+
+def load_constitution_text() -> str | None:
+    path = SEED_ASSETS_DIR / CONSTITUTION_TEXT_FILE
+    if not path.is_file():
+        return None
+    text = path.read_text(encoding='utf-8').strip()
+    return text or None
+
 
 DEMO_ARTICLES = [
     {
@@ -36,18 +57,22 @@ DEMO_ARTICLES = [
             'The Transitional Constitution defines the structure of government, '
             'fundamental rights, and the roadmap toward a permanent constitution. '
             'Citizens should know how laws are made and how institutions check one another. '
-            'Download the sample PDF attachment for the full document text.'
+            'Download the PDF attachment for the full document text.'
         ),
         'content_ar': (
             'يحدد الدستور الانتقالي هيكل الحكومة والحقوق الأساسية '
             'والطريق نحو دستور دائم. يجب أن يعرف المواطنون كيف تُصنع القوانين '
             'وكيف تراقب المؤسسات بعضها بعضاً. '
-            'حمّل مرفق PDF النموذجي للاطلاع على نص الوثيقة كاملاً.'
+            'حمّل مرفق PDF للاطلاع على نص الوثيقة كاملاً.'
         ),
         'tags': ['constitution', 'rights'],
         'attachment_asset': SAMPLE_CONSTITUTION_FILE,
         'attachment_name': 'Transitional Constitution (Sample).pdf',
-        'attachment_name_official': 'Transitional Constitution.pdf',
+        'attachment_name_official': 'Transitional Constitution of South Sudan, 2011.pdf',
+        'is_controlled_document': True,
+        'document_label': 'Transitional Constitution of the Republic of South Sudan, 2011',
+        'attachment_version': '2011',
+        'load_constitution_text': True,
     },
     {
         'category_slug': 'governance',
@@ -103,7 +128,7 @@ DEMO_QUIZ = {
             'question_text_ar': 'المشاركة السلمية في الانتخابات واجب مدني.',
             'question_type': Question.TRUE_FALSE,
             'options': ['True', 'False'],
-            'options_ar': [],
+            'options_ar': ['صحيح', 'خطأ'],
             'correct_answer': 'True',
             'points': 1,
             'order': 1,
@@ -122,9 +147,36 @@ DEMO_FORUM = {
     ),
 }
 
+DEMO_MEDIA = [
+    {
+        'title': 'Civic basics: why constitutions matter (audio)',
+        'title_ar': 'أساسيات المواطنة: لماذا تهم الدساتير (صوت)',
+        'description': 'A short spoken introduction to constitutional rights for civic learners.',
+        'description_ar': 'مقدمة صوتية قصيرة عن الحقوق الدستورية للمتعلمين المدنيين.',
+        'media_type': MediaAsset.TYPE_AUDIO,
+        'source': MediaAsset.SOURCE_EXTERNAL,
+        'external_url': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        'category_slug': 'constitution',
+        'attach_to_article_title': 'Understanding the Transitional Constitution',
+        'attach_as': 'audio',
+    },
+    {
+        'title': 'Participatory democracy explained (video)',
+        'title_ar': 'شرح الديمقراطية التشاركية (فيديو)',
+        'description': 'Watch a public-domain explainer on how citizens engage in democratic processes.',
+        'description_ar': 'شاهد شرحاً عاماً حول كيفية مشاركة المواطنين في العمليات الديمقراطية.',
+        'media_type': MediaAsset.TYPE_VIDEO,
+        'source': MediaAsset.SOURCE_EXTERNAL,
+        'external_url': 'https://www.youtube.com/watch?v=0PAy1zBtT9w',
+        'category_slug': 'governance',
+        'attach_to_article_title': 'How Local Government Works',
+        'attach_as': 'video',
+    },
+]
+
 PUBLIC_ORG_SLUG = 'platform-demo'
 PUBLIC_ORG_NAME = 'Civic Education Platform'
-PUBLIC_ORG_TAGLINE = 'Building informed citizens of South Sudan'
+PUBLIC_ORG_TAGLINE = 'Building informed citizens'
 
 PLANS = [
     {
@@ -295,17 +347,27 @@ class Command(BaseCommand):
             self.stdout.write(f'Category: {name}')
 
         now = timezone.now()
+        constitution_body = load_constitution_text()
         for entry in DEMO_ARTICLES:
             category = categories_by_slug[entry['category_slug']]
+            content = entry['content']
+            content_ar = entry['content_ar']
+            if entry.get('load_constitution_text') and constitution_body:
+                content = CONSTITUTION_INTRO + constitution_body
+                content_ar = CONSTITUTION_INTRO_AR + constitution_body
+
             article_defaults = {
                 'title_ar': entry['title_ar'],
-                'content': entry['content'],
-                'content_ar': entry['content_ar'],
+                'content': content,
+                'content_ar': content_ar,
                 'category': category,
                 'author': admin,
                 'tags': entry['tags'],
                 'status': 'published',
                 'published_at': now,
+                'is_controlled_document': entry.get('is_controlled_document', False),
+                'document_label': entry.get('document_label', ''),
+                'attachment_version': entry.get('attachment_version', ''),
             }
             article, article_created = Article.objects.get_or_create(
                 organization=org,
@@ -314,12 +376,44 @@ class Command(BaseCommand):
             )
             if article_created:
                 self.stdout.write(f'Article: {entry["title"]}')
+            elif entry.get('load_constitution_text') and constitution_body and (
+                len(article.content) < 5000 or not article.content.startswith(CONSTITUTION_INTRO[:40])
+            ):
+                # Upgrade/replace demo blurb with full constitution text for tutor RAG.
+                for field, value in article_defaults.items():
+                    if field in ('author', 'published_at'):
+                        continue
+                    setattr(article, field, value)
+                article.save()
+                self.stdout.write(self.style.SUCCESS(f'Article updated with full constitution text: {article.title}'))
+            elif entry.get('load_constitution_text') and constitution_body and not article.is_controlled_document:
+                article.is_controlled_document = True
+                article.document_label = entry.get('document_label', article.document_label)
+                article.attachment_version = entry.get('attachment_version', article.attachment_version)
+                article.save(
+                    update_fields=['is_controlled_document', 'document_label', 'attachment_version']
+                )
 
             asset_filename = entry.get('attachment_asset')
             if asset_filename:
                 resolved_file, resolved_name = resolve_constitution_attachment(entry)
                 if resolved_file:
                     self._seed_article_attachment(org, article, resolved_file, resolved_name)
+
+            if entry.get('load_constitution_text'):
+                if constitution_body:
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f'Constitution text ready for AI tutor ({len(constitution_body):,} chars).'
+                        )
+                    )
+                else:
+                    self.stdout.write(
+                        self.style.WARNING(
+                            f'Place full text at seed_assets/{CONSTITUTION_TEXT_FILE} '
+                            'so the AI tutor can cite the constitution.'
+                        )
+                    )
 
         quiz, quiz_created = Quiz.objects.get_or_create(
             organization=org,
@@ -360,5 +454,38 @@ class Command(BaseCommand):
                 is_approved=True,
             )
             self.stdout.write('Forum comment: seeded')
+
+        for entry in DEMO_MEDIA:
+            category = categories_by_slug[entry['category_slug']]
+            media, media_created = MediaAsset.objects.get_or_create(
+                organization=org,
+                title=entry['title'],
+                defaults={
+                    'title_ar': entry['title_ar'],
+                    'description': entry['description'],
+                    'description_ar': entry['description_ar'],
+                    'media_type': entry['media_type'],
+                    'source': entry['source'],
+                    'external_url': entry['external_url'],
+                    'category': category,
+                    'status': 'published',
+                    'published_at': now,
+                    'author': admin,
+                },
+            )
+            if media_created:
+                self.stdout.write(f'Media: {entry["title"]}')
+
+            article_title = entry.get('attach_to_article_title')
+            attach_as = entry.get('attach_as')
+            if article_title and attach_as:
+                article = Article.objects.filter(organization=org, title=article_title).first()
+                if article:
+                    if attach_as == 'audio' and article.audio_media_id != media.id:
+                        article.audio_media = media
+                        article.save(update_fields=['audio_media', 'updated_at'])
+                    elif attach_as == 'video' and article.video_media_id != media.id:
+                        article.video_media = media
+                        article.save(update_fields=['video_media', 'updated_at'])
 
         self.stdout.write(self.style.SUCCESS('Seed complete.'))

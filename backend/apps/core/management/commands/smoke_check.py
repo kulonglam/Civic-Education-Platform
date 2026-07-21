@@ -6,6 +6,8 @@ import urllib.request
 
 from django.core.management.base import BaseCommand
 
+from apps.core.safe_http import assert_http_url, safe_urlopen
+
 
 class Command(BaseCommand):
     help = 'Smoke-test a running API (health, readiness, billing plans, demo articles)'
@@ -23,7 +25,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        base = options['base_url'].rstrip('/')
+        base = assert_http_url(options['base_url'].rstrip('/'), allow_http=True)
         tenant = options['tenant_slug']
         failures = []
 
@@ -65,7 +67,7 @@ class Command(BaseCommand):
 
 def _request(method, url, headers):
     req = urllib.request.Request(url, method=method, headers=headers)
-    with urllib.request.urlopen(req, timeout=15) as response:
+    with safe_urlopen(req, timeout=15, allow_http=True) as response:
         raw = response.read().decode('utf-8')
         return json.loads(raw) if raw else {}
 

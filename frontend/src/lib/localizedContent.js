@@ -24,6 +24,14 @@ export function localizedCategory(category, lang = i18n.language) {
 export function localizedQuestionOptions(question, lang = i18n.language) {
   if (!question) return [];
   if (question.question_type === 'true_false') {
+    const options = question.options ?? [];
+    const optionsAr = question.options_ar ?? [];
+    if (contentLanguage(lang) === 'ar' && optionsAr.length === options.length && options.length > 0) {
+      return options.map((opt, index) => ({
+        value: opt,
+        label: optionsAr[index] ?? opt,
+      }));
+    }
     return trueFalseOptions(lang);
   }
   const options = question.options ?? [];

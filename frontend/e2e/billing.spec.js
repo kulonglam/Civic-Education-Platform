@@ -1,97 +1,22 @@
 import { test, expect } from '@playwright/test';
-
-const API = 'http://127.0.0.1:8000/api';
+import { apiGlob, mockSession } from './helpers';
 
 test.describe('Billing page', () => {
   test.beforeEach(async ({ page }) => {
-    await page.addInitScript(() => {
-      localStorage.setItem('cep_access', 'fake-token');
-      localStorage.setItem('cep_refresh', 'fake-refresh');
-      localStorage.setItem('cep_org_slug', 'platform-demo');
-    });
-
-    await page.route(`${API}/users/profile/`, async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          id: '1',
-          email: 'admin@test.com',
-          first_name: 'Admin',
-          last_name: 'User',
-          role: { id: 1, name: 'admin' },
-          is_active: true,
-          email_verified: true,
-          created_at: '2026-01-01',
-          profile: { bio: '', avatar_url: '', preferred_language: 'en' },
-        }),
-      });
-    });
-
-    await page.route(`${API}/organization/current/`, async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          id: 'org-1',
-          name: 'Platform Demo',
-          slug: 'platform-demo',
-          tagline: '',
-          logo_url: '',
-          primary_color: '#059669',
-          is_active: true,
-          created_at: '2026-01-01',
-        }),
-      });
-    });
-
-    await page.route(`${API}/organization/members/**`, async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          count: 1,
-          results: [
-            {
-              id: 'm1',
-              user: '1',
-              user_email: 'admin@test.com',
-              user_name: 'Admin User',
-              role: 'owner',
-              created_at: '2026-01-01',
-            },
-          ],
-        }),
-      });
-    });
-
-    await page.route(`${API}/organization/mine/`, async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify([
-          {
-            id: 'm1',
-            role: 'owner',
-            organization: {
-              id: 'org-1',
-              name: 'Platform Demo',
-              slug: 'platform-demo',
-              tagline: '',
-              logo_url: '',
-              primary_color: '#059669',
-              is_active: true,
-              created_at: '2026-01-01',
-            },
-            created_at: '2026-01-01',
-          },
-        ]),
-      });
-    });
+    await mockSession(
+      page,
+      {
+        email: 'admin@test.com',
+        first_name: 'Admin',
+        last_name: 'User',
+        role: { id: 1, name: 'admin' },
+      },
+      { memberRole: 'owner' }
+    );
   });
 
   test('displays subscription and plan options', async ({ page }) => {
-    await page.route(`${API}/billing/plans/**`, async (route) => {
+    await page.route(apiGlob('billing/plans/**'), async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -127,7 +52,7 @@ test.describe('Billing page', () => {
       });
     });
 
-    await page.route(`${API}/billing/subscription/**`, async (route) => {
+    await page.route(apiGlob('billing/subscription/**'), async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',

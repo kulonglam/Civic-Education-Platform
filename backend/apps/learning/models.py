@@ -13,6 +13,10 @@ class Category(TenantModel):
     description = models.TextField(blank=True)
     name_ar = models.CharField(max_length=100, blank=True)
     description_ar = models.TextField(blank=True)
+    is_locked = models.BooleanField(
+        default=False,
+        help_text='Official curriculum category — cannot be deleted; slug/name locked for non-owners.',
+    )
 
     class Meta:
         db_table = 'categories'
@@ -24,9 +28,75 @@ class Category(TenantModel):
         return self.name
 
 
+class MediaAsset(TenantModel):
+    TYPE_AUDIO = 'audio'
+    TYPE_VIDEO = 'video'
+    TYPE_CHOICES = [
+        (TYPE_AUDIO, 'Audio'),
+        (TYPE_VIDEO, 'Video'),
+    ]
+
+    SOURCE_UPLOAD = 'upload'
+    SOURCE_EXTERNAL = 'external'
+    SOURCE_CHOICES = [
+        (SOURCE_UPLOAD, 'Upload'),
+        (SOURCE_EXTERNAL, 'External URL'),
+    ]
+
+    STATUS_CHOICES = [
+        ('draft', 'Draft'),
+        ('published', 'Published'),
+        ('archived', 'Archived'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    title = models.CharField(max_length=255)
+    title_ar = models.CharField(max_length=255, blank=True)
+    description = models.TextField(blank=True)
+    description_ar = models.TextField(blank=True)
+    media_type = models.CharField(max_length=10, choices=TYPE_CHOICES, db_index=True)
+    source = models.CharField(max_length=10, choices=SOURCE_CHOICES, default=SOURCE_EXTERNAL)
+    file_url = models.CharField(max_length=2048, blank=True, default='')
+    external_url = models.URLField(blank=True, default='')
+    mime_type = models.CharField(max_length=100, blank=True, default='')
+    duration_seconds = models.PositiveIntegerField(null=True, blank=True)
+    thumbnail_url = models.URLField(blank=True, default='')
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='media_assets',
+    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft', db_index=True)
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='media_assets',
+    )
+    published_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'media_assets'
+        ordering = ['-published_at', '-created_at']
+
+    def __str__(self):
+        return f'{self.title} ({self.media_type})'
+
+    @property
+    def playback_url(self) -> str:
+        if self.source == self.SOURCE_UPLOAD:
+            return (self.file_url or '').strip()
+        return (self.external_url or self.file_url or '').strip()
+
+
 class Article(TenantModel):
     STATUS_CHOICES = [
         ('draft', 'Draft'),
+        ('pending_review', 'Pending review'),
         ('published', 'Published'),
         ('archived', 'Archived'),
     ]
@@ -47,7 +117,40 @@ class Article(TenantModel):
     featured_image_url = models.URLField(blank=True)
     attachment_url = models.CharField(max_length=2048, blank=True, default='')
     attachment_name = models.CharField(max_length=255, blank=True, default='')
+    attachment_version = models.CharField(max_length=50, blank=True, default='')
+    document_label = models.CharField(
+        max_length=150,
+        blank=True,
+        default='',
+        help_text='Institutional label for controlled documents (e.g. Transitional Constitution).',
+    )
+    is_controlled_document = models.BooleanField(
+        default=False,
+        help_text='Controlled institutional PDF — version/label required; deletion restricted.',
+    )
+    audio_media = models.ForeignKey(
+        MediaAsset,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='articles_as_audio',
+    )
+    video_media = models.ForeignKey(
+        MediaAsset,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='articles_as_video',
+    )
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft', db_index=True)
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='reviewed_articles',
+    )
+    reviewed_at = models.DateTimeField(null=True, blank=True)
     published_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -6,6 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.audit.services import log_activity
 from apps.billing.services import check_quota
 from apps.core.serializers import MessageSerializer
 from apps.core.tasks import send_email_task
@@ -22,7 +23,12 @@ from .serializers import (
     OrganizationSerializer,
     UserOrganizationMembershipSerializer,
 )
-from .services import accept_organization_invite, create_organization_invite, get_valid_invite
+from .services import (
+    accept_organization_invite,
+    create_organization_invite,
+    get_valid_invite,
+    resolve_department,
+)
 
 User = get_user_model()
 
@@ -58,6 +64,13 @@ class CurrentOrganizationView(APIView):
         serializer = OrganizationSerializer(organization, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        log_activity(
+            request.user,
+            'org_settings_changed',
+            {'fields': list(serializer.validated_data.keys())},
+            organization=organization,
+            request=request,
+        )
         return Response(serializer.data)
 
 
@@ -92,6 +105,10 @@ class MemberInviteView(APIView):
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data['email'].lower()
         role = serializer.validated_data['role']
+        department = resolve_department(
+            organization,
+            department_id=serializer.validated_data.get('department_id'),
+        )
         if role == Membership.OWNER:
             return Response(
                 {'detail': 'Use role transfer to assign ownership.'},
@@ -112,11 +129,23 @@ class MemberInviteView(APIView):
                 return Response({'detail': 'User is already a member.'}, status=status.HTTP_400_BAD_REQUEST)
 
             check_quota(organization, 'members')
-            membership = Membership.objects.create(organization=organization, user=user, role=role)
+            membership = Membership.objects.create(
+                organization=organization,
+                user=user,
+                role=role,
+                department=department,
+            )
             send_email_task.delay(
                 f'You were added to {organization.name}',
                 f'You now have access to "{organization.name}" on the Civic Education Platform.',
                 [email],
+            )
+            log_activity(
+                request.user,
+                'member_invited',
+                {'email': email, 'role': role, 'immediate': True},
+                organization=organization,
+                request=request,
             )
             return Response(MembershipSerializer(membership).data, status=status.HTTP_201_CREATED)
 
@@ -126,6 +155,14 @@ class MemberInviteView(APIView):
             email=email,
             role=role,
             invited_by=request.user,
+            department=department,
+        )
+        log_activity(
+            request.user,
+            'member_invited',
+            {'email': email, 'role': role, 'immediate': False},
+            organization=organization,
+            request=request,
         )
         return Response(
             OrganizationInviteSerializer(invite).data,
@@ -210,7 +247,11 @@ class MembershipListView(generics.ListAPIView):
         organization = get_current_organization()
         if organization is None:
             return Membership.objects.none()
-        return Membership.objects.filter(organization=organization).select_related('user')
+        qs = Membership.objects.filter(organization=organization).select_related('user', 'department')
+        department_id = self.request.query_params.get('department')
+        if department_id:
+            qs = qs.filter(department_id=department_id)
+        return qs
 
 
 class MemberDetailView(APIView):
@@ -238,7 +279,19 @@ class MemberDetailView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         membership.role = new_role
-        membership.save(update_fields=['role'])
+        if 'department_id' in serializer.validated_data:
+            membership.department = resolve_department(
+                membership.organization,
+                department_id=serializer.validated_data.get('department_id'),
+            )
+        membership.save()
+        log_activity(
+            request.user,
+            'member_role_changed',
+            {'membership_id': str(membership.id), 'role': new_role},
+            organization=membership.organization,
+            request=request,
+        )
         return Response(MembershipSerializer(membership).data)
 
     def delete(self, request, membership_id):
@@ -254,7 +307,16 @@ class MemberDetailView(APIView):
                     {'detail': 'Cannot remove the only owner.'},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+        org = membership.organization
+        mid = str(membership.id)
         membership.delete()
+        log_activity(
+            request.user,
+            'member_removed',
+            {'membership_id': mid},
+            organization=org,
+            request=request,
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

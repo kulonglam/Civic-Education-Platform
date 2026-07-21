@@ -6,11 +6,11 @@ from rest_framework.views import APIView
 
 from apps.audit.services import log_activity
 from apps.billing.services import check_quota
-from apps.core.permissions import IsEditorOrAdmin
 from apps.core.storage import get_signed_url
 from apps.notifications.services import notify_user
 from apps.tenants.context import get_current_organization
-from apps.tenants.permissions import IsOrgMember
+from apps.tenants.models import Membership
+from apps.tenants.permissions import IsOrgContentEditor, IsOrgMember, get_membership
 
 from .models import Certificate, Quiz, QuizAttempt
 from .serializers import (
@@ -31,8 +31,17 @@ class QuizViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = Quiz.objects.prefetch_related('questions')
         user = self.request.user
-        if user.is_authenticated and user.role.name in ('editor', 'admin'):
-            return qs
+        if user.is_authenticated:
+            role = getattr(user.role, 'name', None)
+            if role in ('editor', 'admin'):
+                return qs
+            membership = get_membership(user)
+            if membership and membership.role in (
+                Membership.OWNER,
+                Membership.ADMIN,
+                Membership.CONTENT_MANAGER,
+            ):
+                return qs
         return qs.filter(is_active=True)
 
     def get_serializer_class(self):
@@ -42,13 +51,24 @@ class QuizViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action in ('create', 'update', 'partial_update', 'destroy'):
-            return [IsAuthenticated(), IsOrgMember(), IsEditorOrAdmin()]
+            return [IsAuthenticated(), IsOrgMember(), IsOrgContentEditor()]
         return [IsAuthenticated(), IsOrgMember()]
 
     def get_serializer_context(self):
         ctx = super().get_serializer_context()
         user = self.request.user
-        is_editor = user.is_authenticated and user.role.name in ('editor', 'admin')
+        is_editor = False
+        if user.is_authenticated:
+            role = getattr(user.role, 'name', None)
+            if role in ('editor', 'admin'):
+                is_editor = True
+            else:
+                membership = get_membership(user)
+                is_editor = bool(
+                    membership
+                    and membership.role
+                    in (Membership.OWNER, Membership.ADMIN, Membership.CONTENT_MANAGER)
+                )
         ctx['hide_answers'] = self.action in ('list', 'retrieve') and not is_editor
         return ctx
 

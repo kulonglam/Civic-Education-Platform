@@ -16,16 +16,19 @@ MFA_PENDING_TTL = 300  # 5 minutes
 
 
 def user_requires_mfa(user) -> bool:
-    """Platform admins and organization owners/admins must use MFA."""
+    """Platform admins and organization owners/admins must use MFA when org requires it."""
     if not user or not user.is_authenticated:
         return False
     if getattr(user, 'role', None) and user.role.name == Role.ADMIN:
         return True
-    return Membership.objects.filter(
+    privileged = Membership.objects.filter(
         user=user,
         role__in=(Membership.OWNER, Membership.ADMIN),
-    ).exists()
-
+    ).select_related('organization')
+    for membership in privileged:
+        if membership.organization.force_mfa_for_admins:
+            return True
+    return False
 
 def user_has_mfa_enabled(user) -> bool:
     profile = getattr(user, 'profile', None)

@@ -292,4 +292,26 @@ Frontend build (separate static deploy):
 | `VITE_API_BASE_URL` | Yes |
 | `VITE_DEFAULT_TENANT_SLUG` | Yes (usually `platform-demo`) |
 | `VITE_VAPID_PUBLIC_KEY` | For push |
-| `VITE_SENTRY_DSN` | Optional |
+| `VITE_SENTRY_DSN` | Recommended |
+
+---
+
+## 9. Disaster recovery
+
+- [ ] Cron/schedule `python manage.py backup_database`
+- [ ] Quarterly (or CI): `python manage.py restore_database_drill`
+- [ ] Document RPO/RTO with hosting provider — see [disaster-recovery.md](disaster-recovery.md)
+
+---
+
+## 10. Compliance / monitoring gates (production)
+
+Production Django settings also require:
+
+| Variable | Notes |
+|----------|--------|
+| `EMAIL_HOST` (+ user/password as needed) | Verification and password reset |
+| `SENTRY_DSN` | Required when `REQUIRE_SENTRY=True` (default) |
+| `REQUIRE_SENTRY=False` | Staging escape hatch only |
+
+After deploy, org admins should download **Organization → Security → Compliance pack** and confirm `integrity.valid` is true. See [compliance-readiness.md](compliance-readiness.md).

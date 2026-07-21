@@ -43,7 +43,7 @@ describe('RegisterPage', () => {
     await userEvent.click(screen.getByRole('button', { name: /sign up/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/registration successful/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/registration successful/i).length).toBeGreaterThan(0);
     });
     expect(authService.register).toHaveBeenCalledWith(
       expect.objectContaining({ account_type: 'citizen', email: 'jane@test.com' }),

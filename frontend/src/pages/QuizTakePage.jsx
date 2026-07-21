@@ -55,15 +55,12 @@ function QuizProgress({ current, total, answeredCount }) {
   const pct = total > 0 ? Math.round((answeredCount / total) * 100) : 0;
   return (
     <div className="mb-6">
-      <div className="mb-1.5 flex items-center justify-between text-sm text-gray-500 dark:text-slate-400">
+      <div className="mb-1.5 flex items-center justify-between text-sm text-ink-700/60 dark:text-slate-400">
         <span>Question {current + 1} of {total}</span>
         <span>{pct}% answered</span>
       </div>
-      <div className="h-1.5 overflow-hidden rounded-full bg-gray-200 dark:bg-slate-700">
-        <div
-          className="h-full rounded-full bg-brand-500 transition-all duration-300"
-          style={{ width: `${pct}%` }}
-        />
+      <div className="quiz-progress">
+        <div className="quiz-progress-bar" style={{ width: `${pct}%` }} />
       </div>
     </div>
   );
@@ -119,12 +116,12 @@ export function QuizTakePage() {
   if (queued) {
     return (
       <div className="mx-auto max-w-2xl">
-        <div className="card text-center dark:border-slate-700 dark:bg-slate-800">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-50 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400">
+        <div className="quiz-stage text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400">
             <CloudArrowDown className="h-8 w-8" />
           </div>
-          <h1 className="mt-4 text-2xl font-bold dark:text-slate-100">{t('offline.quizQueuedTitle')}</h1>
-          <p className="mt-2 text-gray-600 dark:text-slate-400">{t('offline.quizQueuedBody')}</p>
+          <h1 className="mt-4 font-display text-2xl font-semibold dark:text-slate-100">{t('offline.quizQueuedTitle')}</h1>
+          <p className="mt-2 text-ink-700/70 dark:text-slate-400">{t('offline.quizQueuedBody')}</p>
           <Link to="/quizzes" className="btn-primary mt-6 inline-block">
             {t('quizzes.title')}
           </Link>
@@ -137,22 +134,22 @@ export function QuizTakePage() {
     const { attempt, certificate } = result;
     return (
       <div className="mx-auto max-w-lg">
-        <div className={`card text-center dark:border-slate-700 dark:bg-slate-800 ${attempt.passed ? 'border-emerald-300' : 'border-amber-300'}`}>
-          <div className={`mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full ${attempt.passed ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400'}`}>
+        <div className={`quiz-stage text-center ${attempt.passed ? 'ring-1 ring-emerald-300/80' : 'ring-1 ring-amber-300/80'}`}>
+          <div className={`mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-2xl ${attempt.passed ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400'}`}>
             {attempt.passed ? <Trophy className="h-7 w-7" /> : <AcademicCap className="h-7 w-7" />}
           </div>
 
           <ScoreRing score={attempt.score} passed={attempt.passed} />
 
-          <h1 className="mt-3 text-2xl font-bold dark:text-slate-100">
+          <h1 className="mt-3 font-display text-2xl font-semibold dark:text-slate-100">
             {attempt.passed ? t('quizzes.passed') : t('quizzes.failed')}
           </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">
+          <p className="mt-1 text-sm text-ink-700/60 dark:text-slate-400">
             {t('quizzes.completed', { score: attempt.score })}
           </p>
 
           {certificate && (
-            <div className="mt-5 rounded-lg bg-emerald-50 p-4 text-sm text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300">
+            <div className="mt-5 rounded-xl bg-emerald-50 p-4 text-sm text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300">
               {t('quizzes.certificateNo')}: <strong>{certificate.certificate_number}</strong>
             </div>
           )}
@@ -192,7 +189,7 @@ export function QuizTakePage() {
     <div className="mx-auto max-w-2xl">
       <Link
         to="/quizzes"
-        className="mb-4 inline-flex items-center gap-1 text-sm text-brand-600 hover:underline dark:text-brand-400"
+        className="mb-5 inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:underline dark:text-brand-400"
       >
         <ChevronLeft className="h-4 w-4" />
         {t('quizzes.title')}
@@ -209,8 +206,8 @@ export function QuizTakePage() {
         </div>
       )}
 
-      <h1 className="text-2xl font-bold dark:text-slate-100">{quiz.title}</h1>
-      <p className="mt-2 text-gray-600 dark:text-slate-400">{quiz.description}</p>
+      <h1 className="font-display text-3xl font-semibold dark:text-slate-100">{quiz.title}</h1>
+      <p className="mt-2 text-ink-700/75 dark:text-slate-400">{quiz.description}</p>
 
       {error && (
         <div className="mt-4">
@@ -218,26 +215,26 @@ export function QuizTakePage() {
         </div>
       )}
 
-      <div className="mt-6">
+      <div className="mt-8">
         <QuizProgress current={currentQIdx} total={total} answeredCount={answeredCount} />
-        <div className="space-y-6">
+        <div className="space-y-4">
           {quiz.questions.map((q, idx) => (
             <div
               key={q.id}
-              className="card dark:border-slate-700 dark:bg-slate-800"
+              className="quiz-stage"
               onClick={() => setCurrentQIdx(idx)}
             >
-              <p className="font-medium text-gray-900 dark:text-slate-100">
+              <p className="font-display text-base font-semibold text-ink-900 dark:text-slate-100">
                 {idx + 1}. {q.question_text}
               </p>
               <div className="mt-4 space-y-2">
                 {(q.displayOptions ?? []).map((opt) => (
                   <label
                     key={opt.value}
-                    className={`flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-2.5 text-sm transition-colors ${
+                    className={`flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-sm transition-colors ${
                       answers[q.id] === opt.value
                         ? 'border-brand-500 bg-brand-50 dark:border-brand-400 dark:bg-brand-900/30'
-                        : 'border-gray-200 hover:bg-gray-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700'
+                        : 'border-ink-100 hover:bg-ink-50/80 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/60'
                     }`}
                   >
                     <input
@@ -259,7 +256,7 @@ export function QuizTakePage() {
 
       <button
         type="button"
-        className="btn-primary mt-6 w-full"
+        className="btn-primary mt-8 w-full"
         disabled={!allAnswered || submitAttempt.isPending}
         onClick={() => {
           setError('');

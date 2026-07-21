@@ -93,6 +93,10 @@ class UserProfile(models.Model):
     )
     totp_secret = models.CharField(max_length=64, blank=True, default='')
     mfa_enabled = models.BooleanField(default=False)
+    session_epoch = models.PositiveIntegerField(
+        default=0,
+        help_text='Incremented to revoke all outstanding JWTs for this user.',
+    )
 
     class Meta:
         db_table = 'user_profiles'

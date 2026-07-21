@@ -71,8 +71,9 @@ export function ForumPage() {
   };
 
   return (
-    <div>
+    <div className="page-shell">
       <PageHeader
+        eyebrow={t('nav.learn')}
         title={t('forum.title')}
         action={
           user && (
@@ -83,9 +84,8 @@ export function ForumPage() {
         }
       />
 
-      {/* Search + Sort bar */}
-      <div className="mb-5 flex flex-wrap gap-3">
-        <form onSubmit={handleSearch} className="flex flex-1 gap-2">
+      <div className="filter-bar flex flex-wrap gap-3">
+        <form onSubmit={handleSearch} className="flex min-w-0 flex-1 gap-2">
           <input
             type="search"
             className="input min-w-0 flex-1"
@@ -119,7 +119,7 @@ export function ForumPage() {
       </div>
 
       {showForm && (
-        <form onSubmit={submit} className="card mb-6 space-y-4 dark:border-slate-700 dark:bg-slate-800">
+        <form onSubmit={submit} className="card space-y-4">
           {error && <Alert>{error}</Alert>}
           <div>
             <label className="label">{t('forum.topicTitle')}</label>
@@ -153,22 +153,28 @@ export function ForumPage() {
       {isLoading ? (
         <Spinner />
       ) : topics.length === 0 ? (
-        <EmptyState>{search ? t('common.noResults') : t('forum.noTopics')}</EmptyState>
+        <EmptyState title={search ? t('common.noResults') : t('forum.noTopics')}>
+          {t('common.noResults')}
+        </EmptyState>
       ) : (
         <>
-          <div className="space-y-3">
+          <div className="content-list">
             {topics.map((topic) => (
               <Link
                 key={topic.id}
                 to={`/forum/${topic.id}`}
-                className="card flex items-center justify-between transition-shadow hover:shadow-md dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-750"
+                className="content-row flex items-center justify-between gap-4"
               >
                 <div className="min-w-0">
-                  <h3 className="font-semibold text-gray-900 dark:text-slate-100">{topic.title}</h3>
-                  <p className="mt-1 line-clamp-1 text-sm text-gray-500 dark:text-slate-400">{topic.content}</p>
-                  <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-gray-400 dark:text-slate-500">
+                  <h3 className="font-display text-base font-semibold text-ink-900 dark:text-slate-100">
+                    {topic.title}
+                  </h3>
+                  <p className="mt-1 line-clamp-1 text-sm text-ink-700/65 dark:text-slate-400">
+                    {topic.content}
+                  </p>
+                  <div className="content-meta">
                     <span>{topic.author_name}</span>
-                    <span>•</span>
+                    <span aria-hidden="true">·</span>
                     <span>{formatDate(topic.created_at)}</span>
                     {!topic.is_approved && (
                       <span className="badge bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
@@ -177,7 +183,7 @@ export function ForumPage() {
                     )}
                   </div>
                 </div>
-                <span className="ml-4 shrink-0 badge bg-gray-100 text-gray-600 dark:bg-slate-700 dark:text-slate-300">
+                <span className="badge shrink-0 bg-ink-100 text-ink-700 dark:bg-slate-700 dark:text-slate-300">
                   {topic.comment_count} {t('forum.comments')}
                 </span>
               </Link>

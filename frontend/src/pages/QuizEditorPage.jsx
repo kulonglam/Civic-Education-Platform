@@ -53,7 +53,11 @@ function buildPayload(form) {
       const options =
         q.question_type === 'true_false' ? ['True', 'False'] : optionsFromText(q.optionsText);
       const options_ar =
-        q.question_type === 'true_false' ? [] : optionsFromText(q.optionsTextAr);
+        q.question_type === 'true_false'
+          ? optionsFromText(q.optionsTextAr).length === 2
+            ? optionsFromText(q.optionsTextAr)
+            : ['صحيح', 'خطأ']
+          : optionsFromText(q.optionsTextAr);
       return {
         question_text: q.question_text,
         question_text_ar: q.question_text_ar,
@@ -66,6 +70,13 @@ function buildPayload(form) {
       };
     }),
   };
+}
+
+function optionsArMismatch(q) {
+  if (q.question_type !== 'mcq') return false;
+  const en = optionsFromText(q.optionsText);
+  const ar = optionsFromText(q.optionsTextAr);
+  return ar.length > 0 && ar.length !== en.length;
 }
 
 export function QuizEditorPage() {
@@ -141,6 +152,12 @@ export function QuizEditorPage() {
     e.preventDefault();
     setSaving(true);
     setError('');
+    const mismatched = form.questions.find(optionsArMismatch);
+    if (mismatched) {
+      setError(t('quizzes.optionsArMismatch'));
+      setSaving(false);
+      return;
+    }
     try {
       const payload = buildPayload(form);
       if (isEdit) {
@@ -310,13 +327,43 @@ export function QuizEditorPage() {
                       <label className="label">{t('quizzes.fieldOptionsAr')}</label>
                       <input
                         className="input"
-                        placeholder={t('quizzes.optionsPlaceholder')}
+                        dir="rtl"
+                        placeholder={t('quizzes.optionsArPlaceholder')}
                         value={q.optionsTextAr}
                         onChange={(e) => updateQuestion(index, { optionsTextAr: e.target.value })}
                       />
+                      {optionsArMismatch(q) && (
+                        <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">
+                          {t('quizzes.optionsArMismatch')}
+                        </p>
+                      )}
                     </div>
                   </>
                 )}
+                {q.question_type === 'true_false' && (
+                  <div>
+                    <label className="label">{t('quizzes.fieldOptionsAr')}</label>
+                    <input
+                      className="input"
+                      dir="rtl"
+                      placeholder={t('quizzes.trueFalseArPlaceholder')}
+                      value={q.optionsTextAr}
+                      onChange={(e) => updateQuestion(index, { optionsTextAr: e.target.value })}
+                    />
+                    <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">
+                      {t('quizzes.trueFalseArHint')}
+                    </p>
+                  </div>
+                )}
+                <div>
+                  <label className="label">{t('quizzes.fieldQuestionAr')}</label>
+                  <textarea
+                    className="input min-h-[60px]"
+                    dir="rtl"
+                    value={q.question_text_ar}
+                    onChange={(e) => updateQuestion(index, { question_text_ar: e.target.value })}
+                  />
+                </div>
                 <div>
                   <label className="label">{t('quizzes.fieldCorrectAnswer')}</label>
                   {q.question_type === 'mcq' ? (

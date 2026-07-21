@@ -5,10 +5,13 @@ from django.db import connections
 from django.db.utils import OperationalError
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.core.permissions import IsAdmin
+
+from .models import SecurityEvent
 from .serializers import HealthSerializer
 
 logger = logging.getLogger(__name__)
@@ -49,8 +52,52 @@ class ReadinessCheckView(APIView):
             logger.error('Readiness cache check failed: %s', exc)
             checks['cache'] = 'error'
 
-        healthy = all(v == 'ok' for v in checks.values())
+        from django.conf import settings as dj_settings
+
+        checks['sentry_configured'] = 'ok' if getattr(dj_settings, 'SENTRY_DSN', '') else 'unset'
+        # Sentry is recommended but not required for process readiness (liveness of deps).
+        healthy = checks.get('database') == 'ok' and checks.get('cache') == 'ok'
         return Response(
-            {'status': 'ready' if healthy else 'degraded', **checks},
+            {
+                'status': 'ready' if healthy else 'degraded',
+                **checks,
+                'observability': {
+                    'sentry': checks['sentry_configured'],
+                    'health': '/api/health/',
+                    'ready': '/api/ready/',
+                    'slo': '/api/organization/platform/slo/',
+                    'security_events': '/api/security/events/',
+                },
+            },
             status=status.HTTP_200_OK if healthy else status.HTTP_503_SERVICE_UNAVAILABLE,
         )
+
+
+class SecurityEventListView(APIView):
+    """Platform admin: recent security events (failed logins, MFA, etc.)."""
+
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    def get(self, request):
+        qs = SecurityEvent.objects.all()
+        event_type = (request.query_params.get('event_type') or '').strip()
+        if event_type:
+            qs = qs.filter(event_type=event_type)
+        try:
+            limit = min(int(request.query_params.get('page_size') or 50), 200)
+        except (TypeError, ValueError):
+            limit = 50
+        rows = []
+        for event in qs[:limit]:
+            rows.append({
+                'id': str(event.id),
+                'event_type': event.event_type,
+                'user_id': str(event.user_id) if event.user_id else None,
+                'user_email': event.user_email,
+                'ip_address': event.ip_address,
+                'path': event.path,
+                'method': event.method,
+                'detail': event.detail,
+                'created_at': event.created_at,
+            })
+        return Response({'results': rows, 'count': len(rows)})

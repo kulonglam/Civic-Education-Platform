@@ -47,6 +47,18 @@ In production (`config.settings.production`, `DEBUG=False`) async mode is the
 default; just point `CELERY_BROKER_URL` at your managed Redis and run one or
 more worker processes (e.g. a separate Render worker service).
 
+## CI load-test gate
+
+GitHub Actions job `loadtest` starts the API after migrate/seed and runs:
+
+```bash
+python loadtest/ci_gate.py --host http://127.0.0.1:8000 \
+  --users 8 --spawn-rate 2 --run-time 20s \
+  --max-fail-ratio 0.05 --max-p95-ms 2500
+```
+
+The gate fails if Locust’s aggregated failure ratio or p95 latency exceeds the thresholds (stats from Locust CSV).
+
 ## Load testing (Locust)
 
 A Locust scenario lives at `backend/loadtest/locustfile.py`. It registers and
@@ -112,3 +124,13 @@ The CI scenario lives in `loadtest/ci_locustfile.py` (seeded admin login + read-
 Watch the Locust percentile table (p50/p95/p99) and failure rate as you ramp.
 Rising p99 or failures is the signal to scale web workers, the database, or add
 caching / read replicas.
+
+## Institutional scale notes (10k concurrent)
+
+For ministry / NGO pilots aiming at thousands of concurrent learners:
+
+1. **Web** — increase Gunicorn workers (2–4× CPU) behind Render autoscaling; keep Celery on a separate worker service.
+2. **Postgres** — enable connection pooling (PgBouncer / Render pooler). Add a **read replica** when dashboard/analytics queries dominate; point reporting views at the replica via a second `DATABASE_URL` only after measuring primary load.
+3. **Cache** — Redis already backs Celery; use it for short-TTL caches of public article lists if Locust shows hot GET paths.
+4. **Quotas** — plan limits (members, articles, tutor messages) are enforced in billing services; document contractual caps in institutional SOWs alongside the rates in `config/settings`.
+5. **Observability** — require `SENTRY_DSN` + uptime checks on `/api/health/` and `/api/ready/` before go-live.

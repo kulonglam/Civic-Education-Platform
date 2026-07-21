@@ -26,9 +26,11 @@ export function QuizzesPage() {
   const totalCount = data?.count ?? 0;
 
   return (
-    <div>
+    <div className="page-shell">
       <PageHeader
+        eyebrow={t('nav.learn')}
         title={t('quizzes.title')}
+        subtitle={t('quizzes.subtitle')}
         action={
           <div className="flex gap-2">
             <Link to="/quizzes/results" className="btn-secondary">
@@ -42,35 +44,39 @@ export function QuizzesPage() {
       />
 
       {isLoading ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => <CardSkeleton key={i} />)}
         </div>
       ) : quizzes.length === 0 ? (
-        <EmptyState>{t('quizzes.noQuizzes')}</EmptyState>
+        <EmptyState title={t('quizzes.noQuizzes')}>{t('common.noResults')}</EmptyState>
       ) : (
         <>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {quizzes.map((raw) => {
               const quiz = localizedQuiz(raw, i18n.language);
               return (
-              <div key={quiz.id} className="card flex flex-col dark:hover:border-slate-600">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">{quiz.title}</h3>
-                <p className="mt-2 line-clamp-3 flex-1 text-sm text-gray-600 dark:text-slate-400">
-                  {quiz.description}
-                </p>
-                <div className="mt-4 flex items-center justify-between text-xs text-gray-500 dark:text-slate-400">
-                  <span>
-                    {quiz.questions.length} {t('quizzes.questions')}
-                  </span>
-                  <span>
-                    {t('quizzes.passingScore')}: {quiz.passing_score}%
-                  </span>
+                <div key={quiz.id} className="content-tile">
+                  <h3 className="font-display text-lg font-semibold text-ink-900 dark:text-slate-100">
+                    {quiz.title}
+                  </h3>
+                  <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-ink-700/75 dark:text-slate-400">
+                    {quiz.description}
+                  </p>
+                  <div className="content-meta">
+                    <span>
+                      {quiz.questions.length} {t('quizzes.questions')}
+                    </span>
+                    <span aria-hidden="true">·</span>
+                    <span>
+                      {t('quizzes.passingScore')}: {quiz.passing_score}%
+                    </span>
+                  </div>
+                  <Link to={`/quizzes/${quiz.id}`} className="btn-primary mt-5 w-full">
+                    {t('quizzes.start')}
+                  </Link>
                 </div>
-                <Link to={`/quizzes/${quiz.id}`} className="btn-primary mt-4">
-                  {t('quizzes.start')}
-                </Link>
-              </div>
-            );})}
+              );
+            })}
           </div>
           <Pagination
             page={page}

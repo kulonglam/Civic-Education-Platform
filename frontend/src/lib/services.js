@@ -2,7 +2,8 @@ import { api } from "./api";
 const authService = {
   register: (payload) => api.post("/auth/register/", payload),
   login: (email, password) => api.post("/auth/login/", { email, password }),
-  logout: (refresh) => api.post("/auth/logout/", { refresh }),
+  logout: (refresh) => api.post("/auth/logout/", refresh ? { refresh } : {}),
+  refreshSession: () => api.post("/auth/token/refresh/", {}),
   ssoStatus: (org) => api.get("/auth/sso/status/", { params: { org } }),
   verifyEmail: (token) => api.get(`/auth/verify-email/${token}/`),
   resendVerification: () => api.post("/auth/verify-email/resend/"),
@@ -33,6 +34,8 @@ const userService = {
   suspend: (userId) => api.post(`/users/${userId}/suspend/`),
   unsuspend: (userId) => api.post(`/users/${userId}/unsuspend/`),
   updateRole: (userId, role) => api.patch(`/users/${userId}/role/`, { role }),
+  exportMyData: () => api.get("/users/me/export/"),
+  deactivate: () => api.post("/users/me/deactivate/"),
 };
 const articleService = {
   list: (params) => api.get("/articles/", { params }),
@@ -40,10 +43,40 @@ const articleService = {
   create: (payload) => api.post("/articles/", payload),
   update: (id, payload) => api.patch(`/articles/${id}/`, payload),
   remove: (id) => api.delete(`/articles/${id}/`),
+  approve: (id) => api.post(`/articles/${id}/approve/`),
+  reject: (id) => api.post(`/articles/${id}/reject/`),
   uploadAttachment: (file) => {
     const formData = new FormData();
     formData.append("file", file);
     return api.post("/articles/attachments/upload/", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+  uploadImage: (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.post("/articles/images/upload/", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+};
+const mediaService = {
+  list: (params) => api.get("/media/", { params }),
+  get: (id) => api.get(`/media/${id}/`),
+  create: (payload) => api.post("/media/", payload),
+  update: (id, payload) => api.patch(`/media/${id}/`, payload),
+  remove: (id) => api.delete(`/media/${id}/`),
+  uploadAudio: (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.post("/media/audio/upload/", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+  uploadVideo: (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.post("/media/video/upload/", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
   },
@@ -87,6 +120,10 @@ const notificationService = {
 };
 const auditService = {
   logs: (params) => api.get("/audit/logs/", { params }),
+  export: (params) => api.get("/audit/logs/export/", { params, responseType: "blob" }),
+};
+const securityService = {
+  events: (params) => api.get("/security/events/", { params }),
 };
 const analyticsService = {
   overview: () => api.get("/analytics/overview/"),
@@ -96,22 +133,57 @@ const analyticsService = {
   dashboard: (params) => api.get("/analytics/dashboard/", { params }),
   progress: (params) => api.get("/analytics/progress/", { params }),
   exportCsv: (params) =>
-    api.get("/analytics/export/csv/", { params, responseType: "blob" })
+    api.get("/analytics/export/csv/", { params, responseType: "blob" }),
+  exportReportPdf: (params) =>
+    api.get("/analytics/export/report.pdf/", { params, responseType: "blob" }),
 };
 const organizationService = {
   current: () => api.get("/organization/current/"),
   mine: () => api.get("/organization/mine/"),
   update: (payload) => api.patch("/organization/current/", payload),
   bySlug: (slug) => api.get(`/organization/by-slug/${slug}/`),
-  members: () => api.get("/organization/members/"),
-  invite: (email, role = "member") => api.post("/organization/members/invite/", { email, role }),
+  members: (params) => api.get("/organization/members/", { params }),
+  invite: (email, role = "member", departmentId = null) =>
+    api.post("/organization/members/invite/", {
+      email,
+      role,
+      ...(departmentId ? { department_id: departmentId } : {}),
+    }),
+  bulkImport: (payload) => api.post("/organization/members/bulk-import/", payload),
   pendingInvites: () => api.get("/organization/invites/"),
   revokeInvite: (inviteId) => api.delete(`/organization/invites/${inviteId}/`),
   invitePreview: (token) => api.get(`/organization/invites/preview/${token}/`),
   acceptInvite: (token) => api.post(`/organization/invites/accept/${token}/`),
-  updateMemberRole: (membershipId, role) => api.patch(`/organization/members/${membershipId}/`, { role }),
+  updateMemberRole: (membershipId, role, departmentId) =>
+    api.patch(`/organization/members/${membershipId}/`, {
+      role,
+      ...(departmentId !== undefined ? { department_id: departmentId } : {}),
+    }),
   removeMember: (membershipId) => api.delete(`/organization/members/${membershipId}/`),
-  leave: () => api.post("/organization/leave/")
+  leave: () => api.post("/organization/leave/"),
+  departments: () => api.get("/organization/departments/"),
+  createDepartment: (payload) => api.post("/organization/departments/", payload),
+  deleteDepartment: (id) => api.delete(`/organization/departments/${id}/`),
+  getSso: () => api.get("/organization/sso/"),
+  updateSso: (payload) => api.put("/organization/sso/", payload),
+  scimTokens: () => api.get("/organization/scim/tokens/"),
+  createScimToken: (name) => api.post("/organization/scim/tokens/", { name }),
+  revokeScimToken: (id) => api.delete(`/organization/scim/tokens/${id}/`),
+  compliancePack: () => api.get("/organization/compliance/pack/"),
+  verifyAudit: () => api.get("/organization/compliance/verify/"),
+  supportCases: () => api.get("/organization/support/cases/"),
+  createSupportCase: (payload) => api.post("/organization/support/cases/", payload),
+  closeSupportCase: (id, status = "closed") =>
+    api.patch(`/organization/support/cases/${id}/`, { status }),
+  platformOrgs: (params) => api.get("/organization/platform/orgs/", { params }),
+  platformOrgDetail: (orgId) => api.get(`/organization/platform/orgs/${orgId}/`),
+  setOrgActive: (orgId, is_active) =>
+    api.patch(`/organization/platform/orgs/${orgId}/`, { is_active }),
+  platformUsage: () => api.get("/organization/platform/usage/"),
+  platformSupportCases: (params) => api.get("/organization/platform/support/cases/", { params }),
+  updatePlatformSupportCase: (id, payload) =>
+    api.patch(`/organization/platform/support/cases/${id}/`, payload),
+  platformSlo: () => api.get("/organization/platform/slo/"),
 };
 const billingService = {
   plans: () => api.get("/billing/plans/"),
@@ -142,10 +214,12 @@ export {
   billingService,
   categoryService,
   forumService,
+  mediaService,
   notificationService,
   notifyService,
   organizationService,
   quizService,
+  securityService,
   tutorService,
   userService
 };

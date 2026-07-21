@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { authService } from '../lib/services';
 import { useAuth } from '../context/AuthContext';
 import { extractError } from '../lib/api';
-import { Alert } from './ui';
 
 export function EmailVerifyBanner() {
   const { t } = useTranslation();

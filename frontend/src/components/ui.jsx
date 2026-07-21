@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Eye, EyeOff } from "./Icons";
 function Spinner({
@@ -7,7 +7,7 @@ function Spinner({
   const {
     t
   } = useTranslation();
-  return <div className="flex items-center justify-center gap-3 py-12 text-gray-500 dark:text-slate-400"><span className="h-5 w-5 animate-spin rounded-full border-2 border-brand-500 border-t-transparent" /><span>{label ?? t("common.loading")}</span></div>;
+  return <div className="flex items-center justify-center gap-3 py-12 text-ink-700/60 dark:text-slate-400"><span className="h-5 w-5 animate-spin rounded-full border-2 border-brand-600 border-t-transparent" /><span className="text-sm font-medium">{label ?? t("common.loading")}</span></div>;
 }
 function Alert({
   kind = "error",
@@ -19,39 +19,78 @@ function Alert({
     info: "bg-brand-50 text-brand-700 border-brand-200 dark:bg-brand-950/40 dark:text-brand-300 dark:border-brand-900",
     warning: "bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900"
   }[kind];
-  return <div className={`rounded-lg border px-4 py-3 text-sm ${styles}`}>{children}</div>;
+  return <div className={`rounded-xl border px-4 py-3.5 text-sm leading-relaxed shadow-soft ${styles}`}>{children}</div>;
 }
-function EmptyState({ children, icon }) {
+function EmptyState({ children, icon, title, action }) {
   return (
-    <div className="rounded-xl border border-dashed border-gray-300 bg-white py-12 text-center text-gray-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
-      {icon || (
-        <svg className="mx-auto mb-4 h-12 w-12 text-gray-300 dark:text-slate-600" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="8" y="8" width="48" height="48" rx="6" />
-          <path d="M8 40h14l4 6h12l4-6h14" />
-          <path d="M24 24h16M24 32h10" />
-        </svg>
+    <div className="empty-state">
+      <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 dark:bg-brand-950/50 dark:text-brand-300">
+        {icon || (
+          <svg
+            className="h-7 w-7"
+            viewBox="0 0 64 64"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="8" y="8" width="48" height="48" rx="10" />
+            <path d="M8 40h14l4 6h12l4-6h14" />
+            <path d="M24 24h16M24 32h10" />
+          </svg>
+        )}
+      </div>
+      {title && (
+        <p className="mb-1.5 font-display text-xl font-semibold text-ink-900 dark:text-slate-100">
+          {title}
+        </p>
       )}
-      <p className="text-sm">{children}</p>
+      <p className="mx-auto max-w-sm text-sm leading-relaxed text-ink-700/70 dark:text-slate-400">{children}</p>
+      {action && <div className="mt-6 flex justify-center">{action}</div>}
     </div>
   );
 }
-function PageHeader({
-  title,
-  subtitle,
-  action
-}) {
-  return <div className="mb-6 flex items-center justify-between gap-4"><div><h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">{title}</h1>{subtitle && <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">{subtitle}</p>}</div>{action}</div>;
+function PageHeader({ title, subtitle, action, eyebrow }) {
+  return (
+    <div className="page-header">
+      <div className="relative min-w-0">
+        {eyebrow && <p className="eyebrow mb-2.5">{eyebrow}</p>}
+        <h1 className="font-display text-[2rem] font-semibold leading-[1.15] text-ink-900 dark:text-slate-50 sm:text-4xl">
+          {title}
+        </h1>
+        {subtitle && (
+          <p className="mt-2.5 max-w-2xl text-sm leading-relaxed text-ink-700/70 dark:text-slate-400 sm:text-[0.95rem]">
+            {subtitle}
+          </p>
+        )}
+      </div>
+      {action && <div className="relative flex shrink-0 flex-wrap items-center gap-2">{action}</div>}
+    </div>
+  );
+}
+
+function StatTile({ label, value }) {
+  return (
+    <div className="stat-tile">
+      <p className="stat-tile-label">{label}</p>
+      <p className="stat-tile-value">{value}</p>
+    </div>
+  );
 }
 const ROLE_STYLES = {
-  admin: "bg-purple-100 text-purple-700",
-  editor: "bg-brand-100 text-brand-700",
-  moderator: "bg-amber-100 text-amber-700",
-  citizen: "bg-gray-100 text-gray-700"
+  admin: 'bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-200',
+  editor: 'bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300',
+  moderator: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200',
+  citizen: 'bg-ink-100 text-ink-700 dark:bg-slate-700 dark:text-slate-200',
 };
 const ORG_ROLE_STYLES = {
-  owner: "bg-brand-100 text-brand-800",
-  admin: "bg-teal-100 text-teal-700",
-  member: "bg-gray-100 text-gray-600"
+  owner: 'bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-200',
+  admin: 'bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-200',
+  content_manager: 'bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300',
+  moderator: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200',
+  member: 'bg-ink-100 text-ink-600 dark:bg-slate-700 dark:text-slate-300',
 };
 function RoleBadge({
   role
@@ -73,9 +112,8 @@ function OrgRoleBadge({
 }
 function CardSkeleton() {
   return (
-    <div className="card flex flex-col gap-3">
-      <div className="skeleton h-40 w-full" />
-      <div className="skeleton h-4 w-1/3" />
+    <div className="content-tile flex flex-col gap-3">
+      <div className="skeleton h-4 w-1/4" />
       <div className="skeleton h-5 w-3/4" />
       <div className="skeleton h-4 w-full" />
       <div className="skeleton h-4 w-5/6" />
@@ -89,8 +127,8 @@ function CardSkeleton() {
 
 function StatCardSkeleton() {
   return (
-    <div className="card flex flex-col gap-2">
-      <div className="skeleton h-4 w-1/2" />
+    <div className="stat-tile flex flex-col gap-2">
+      <div className="skeleton h-3 w-1/2" />
       <div className="skeleton h-8 w-1/3" />
     </div>
   );
@@ -186,14 +224,45 @@ function ConfirmDialog({
   kind = 'danger',
 }) {
   const { t } = useTranslation();
+  const dialogRef = useRef(null);
+  const cancelRef = useRef(null);
+  const previousFocus = useRef(null);
 
   useEffect(() => {
     if (!open) return undefined;
+    previousFocus.current = document.activeElement;
+    const focusTimer = window.setTimeout(() => cancelRef.current?.focus(), 0);
+
     const onKeyDown = (e) => {
-      if (e.key === 'Escape' && !busy) onCancel();
+      if (e.key === 'Escape' && !busy) {
+        e.preventDefault();
+        onCancel();
+        return;
+      }
+      if (e.key !== 'Tab' || !dialogRef.current) return;
+      const focusable = dialogRef.current.querySelectorAll(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
+
     document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.removeEventListener('keydown', onKeyDown);
+      if (previousFocus.current && typeof previousFocus.current.focus === 'function') {
+        previousFocus.current.focus();
+      }
+    };
   }, [open, busy, onCancel]);
 
   if (!open) return null;
@@ -207,21 +276,32 @@ function ConfirmDialog({
         className="absolute inset-0 bg-black/50"
         aria-label={cancelLabel ?? t('common.cancel')}
         onClick={busy ? undefined : onCancel}
+        tabIndex={-1}
       />
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirm-dialog-title"
-        className="relative w-full max-w-md rounded-xl border border-gray-200 bg-white p-6 shadow-xl dark:border-slate-700 dark:bg-slate-800"
+        aria-describedby={message ? 'confirm-dialog-desc' : undefined}
+        className="relative w-full max-w-md rounded-xl border border-ink-100 bg-white p-6 shadow-xl dark:border-slate-700 dark:bg-slate-800"
       >
-        <h2 id="confirm-dialog-title" className="text-lg font-semibold text-gray-900 dark:text-slate-100">
+        <h2 id="confirm-dialog-title" className="font-display text-lg font-semibold text-ink-900 dark:text-slate-100">
           {title}
         </h2>
         {message && (
-          <p className="mt-2 text-sm text-gray-600 dark:text-slate-300">{message}</p>
+          <p id="confirm-dialog-desc" className="mt-2 text-sm text-ink-700/70 dark:text-slate-300">
+            {message}
+          </p>
         )}
         <div className="mt-6 flex flex-wrap justify-end gap-2">
-          <button type="button" className="btn-secondary" disabled={busy} onClick={onCancel}>
+          <button
+            ref={cancelRef}
+            type="button"
+            className="btn-secondary"
+            disabled={busy}
+            onClick={onCancel}
+          >
             {cancelLabel ?? t('common.cancel')}
           </button>
           <button type="button" className={confirmClass} disabled={busy} onClick={onConfirm}>
@@ -233,4 +313,4 @@ function ConfirmDialog({
   );
 }
 
-export { Alert, CardSkeleton, ConfirmDialog, EmptyState, OrgRoleBadge, PageHeader, PasswordInput, PasswordStrengthBar, passwordStrength, RoleBadge, Spinner, StatCardSkeleton, TableRowSkeleton };
+export { Alert, CardSkeleton, ConfirmDialog, EmptyState, OrgRoleBadge, PageHeader, PasswordInput, PasswordStrengthBar, RoleBadge, Spinner, StatCardSkeleton, StatTile, TableRowSkeleton };

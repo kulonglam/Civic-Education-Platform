@@ -1,7 +1,8 @@
+from django.utils import timezone
 from django_filters import rest_framework as filters
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers, status, viewsets
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -10,33 +11,76 @@ from rest_framework.views import APIView
 
 from apps.audit.services import log_activity
 from apps.billing.services import check_quota
-from apps.core.permissions import IsAdmin, IsEditorOrAdmin
+from apps.core.permissions import IsAdmin
 from apps.core.storage import upload_file
 from apps.tenants.context import get_current_organization
-from apps.tenants.permissions import IsOrgMember, IsOrgOwnerOrAdmin
+from apps.tenants.models import Membership
+from apps.tenants.permissions import (
+    CanDeleteOrgContent,
+    IsOrgContentEditor,
+    IsOrgMember,
+    IsOrgOwnerOrAdmin,
+    get_membership,
+)
 from apps.quizzes.models import Quiz
 from apps.quizzes.serializers import QuizSerializer
 
-from .models import Article, Category
-from .serializers import ArticleSerializer, CategorySerializer
+from .models import Article, Category, MediaAsset
+from .serializers import ArticleSerializer, CategorySerializer, MediaAssetSerializer
 
 ALLOWED_ATTACHMENT_TYPES = {
     'application/pdf': '.pdf',
     'application/msword': '.doc',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
 }
+ALLOWED_IMAGE_TYPES = {
+    'image/jpeg': '.jpg',
+    'image/jpg': '.jpg',
+    'image/png': '.png',
+    'image/webp': '.webp',
+    'image/gif': '.gif',
+}
 MAX_ATTACHMENT_BYTES = 20 * 1024 * 1024
+MAX_IMAGE_BYTES = 5 * 1024 * 1024
+
+
+def _can_see_unpublished(user) -> bool:
+    if not user or not user.is_authenticated:
+        return False
+    role = getattr(user, 'role', None)
+    if role and role.name in ('editor', 'admin', 'moderator'):
+        return True
+    membership = get_membership(user)
+    return membership is not None and membership.role in (
+        Membership.OWNER,
+        Membership.ADMIN,
+        Membership.CONTENT_MANAGER,
+        Membership.MODERATOR,
+    )
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = 'id'
+
+    def get_queryset(self):
+        return Category.objects.all()
 
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
             return [AllowAny()]
+        if self.action == 'destroy':
+            return [IsAuthenticated(), IsOrgMember(), CanDeleteOrgContent()]
         return [IsAuthenticated(), IsOrgMember(), IsOrgOwnerOrAdmin()]
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.is_locked:
+            return Response(
+                {'detail': 'Locked curriculum categories cannot be deleted.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return super().destroy(request, *args, **kwargs)
 
 
 class ArticleFilter(filters.FilterSet):
@@ -60,9 +104,10 @@ class ArticleViewSet(viewsets.ModelViewSet):
     lookup_field = 'id'
 
     def get_queryset(self):
-        qs = Article.objects.select_related('category', 'author').all()
-        user = self.request.user
-        if not user.is_authenticated or user.role.name not in ('editor', 'admin'):
+        qs = Article.objects.select_related(
+            'category', 'author', 'reviewed_by', 'audio_media', 'video_media',
+        ).all()
+        if not _can_see_unpublished(self.request.user):
             qs = qs.filter(status='published')
         return qs
 
@@ -70,30 +115,70 @@ class ArticleViewSet(viewsets.ModelViewSet):
         if self.action in ('list', 'retrieve'):
             return [AllowAny()]
         if self.action == 'destroy':
-            return [IsAuthenticated(), IsOrgMember(), IsAdmin()]
-        return [IsAuthenticated(), IsOrgMember(), IsEditorOrAdmin()]
+            return [IsAuthenticated(), IsOrgMember(), CanDeleteOrgContent()]
+        if self.action in ('approve', 'reject'):
+            return [IsAuthenticated(), IsOrgMember(), IsOrgOwnerOrAdmin()]
+        return [IsAuthenticated(), IsOrgMember(), IsOrgContentEditor()]
 
     def perform_create(self, serializer):
         organization = get_current_organization()
         if organization is not None:
             check_quota(organization, 'articles')
         article = serializer.save()
-        log_activity(self.request.user, 'article_created', {'article_id': str(article.id)})
+        activity = 'article_submitted' if article.status == 'pending_review' else 'article_created'
+        log_activity(self.request.user, activity, {'article_id': str(article.id)}, request=self.request)
 
     def perform_update(self, serializer):
         article = serializer.save()
-        log_activity(self.request.user, 'article_updated', {'article_id': str(article.id)})
+        activity = 'article_submitted' if article.status == 'pending_review' else 'article_updated'
+        log_activity(self.request.user, activity, {'article_id': str(article.id)}, request=self.request)
 
     def perform_destroy(self, instance):
+        if instance.is_controlled_document:
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError(
+                'Controlled documents cannot be deleted. Archive them or ask an organization owner.'
+            )
         article_id = str(instance.id)
         instance.delete()
-        log_activity(self.request.user, 'article_deleted', {'article_id': article_id})
+        log_activity(self.request.user, 'article_deleted', {'article_id': article_id}, request=self.request)
+
+    @action(detail=True, methods=['post'])
+    def approve(self, request, id=None):
+        article = self.get_object()
+        article.status = 'published'
+        article.published_at = timezone.now()
+        article.reviewed_by = request.user
+        article.reviewed_at = timezone.now()
+        article.save(update_fields=['status', 'published_at', 'reviewed_by', 'reviewed_at', 'updated_at'])
+        log_activity(
+            request.user,
+            'article_approved',
+            {'article_id': str(article.id)},
+            request=request,
+        )
+        return Response(ArticleSerializer(article, context={'request': request}).data)
+
+    @action(detail=True, methods=['post'])
+    def reject(self, request, id=None):
+        article = self.get_object()
+        article.status = 'draft'
+        article.reviewed_by = request.user
+        article.reviewed_at = timezone.now()
+        article.save(update_fields=['status', 'reviewed_by', 'reviewed_at', 'updated_at'])
+        log_activity(
+            request.user,
+            'article_rejected',
+            {'article_id': str(article.id)},
+            request=request,
+        )
+        return Response(ArticleSerializer(article, context={'request': request}).data)
 
 
 class ArticleAttachmentUploadView(APIView):
     """Upload a PDF or document attachment for an article (e.g. full constitution text)."""
 
-    permission_classes = [IsAuthenticated, IsOrgMember, IsEditorOrAdmin]
+    permission_classes = [IsAuthenticated, IsOrgMember, IsOrgContentEditor]
     parser_classes = [MultiPartParser, FormParser]
 
     @extend_schema(
@@ -158,8 +243,77 @@ class ArticleAttachmentUploadView(APIView):
         })
 
 
+class ArticleImageUploadView(APIView):
+    """Upload an image for featured media or inline markdown embeds."""
+
+    permission_classes = [IsAuthenticated, IsOrgMember, IsOrgContentEditor]
+    parser_classes = [MultiPartParser, FormParser]
+
+    @extend_schema(
+        request=inline_serializer(
+            name='ArticleImageUploadRequest',
+            fields={'file': serializers.FileField()},
+        ),
+        responses=inline_serializer(
+            name='ArticleImageUploadResponse',
+            fields={
+                'url': serializers.CharField(),
+                'name': serializers.CharField(),
+            },
+        ),
+    )
+    def post(self, request):
+        import uuid
+        from pathlib import Path
+
+        uploaded = request.FILES.get('file')
+        if not uploaded:
+            return Response({'detail': 'No file provided.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        content_type = uploaded.content_type or 'application/octet-stream'
+        suffix = Path(uploaded.name).suffix.lower()
+        if content_type not in ALLOWED_IMAGE_TYPES and suffix not in (
+            '.jpg',
+            '.jpeg',
+            '.png',
+            '.webp',
+            '.gif',
+        ):
+            return Response(
+                {'detail': 'Only JPEG, PNG, WebP, or GIF images are allowed.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if uploaded.size > MAX_IMAGE_BYTES:
+            return Response(
+                {'detail': 'Image must be 5 MB or smaller.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        organization = get_current_organization()
+        org_part = str(organization.id) if organization is not None else 'platform'
+        ext = ALLOWED_IMAGE_TYPES.get(content_type) or suffix or '.jpg'
+        storage_name = f'{uuid.uuid4().hex}{ext}'
+        storage_path = f'articles/{org_part}/images/{storage_name}'
+
+        url = upload_file(
+            storage_path,
+            uploaded.read(),
+            content_type,
+            request=request,
+        )
+        if not url:
+            return Response(
+                {'detail': 'File upload is not available. Configure Supabase storage or local media.'},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+
+        return Response({
+            'url': url,
+            'name': uploaded.name,
+        })
+
+
 class ContentBundleThrottle(UserRateThrottle):
-    rate = '4/hour'
     scope = 'content_bundle'
 
 
@@ -181,25 +335,37 @@ def content_bundle(request):
         from rest_framework.exceptions import Throttled
         raise Throttled(detail='Content bundle rate limit exceeded. Try again in an hour.')
 
-    qs = Article.objects.filter(status='published').select_related('category', 'author')
+    qs = Article.objects.filter(status='published').select_related(
+        'category', 'author', 'audio_media', 'video_media',
+    )
     category_id = request.query_params.get('category_id')
     if category_id:
         qs = qs.filter(category_id=category_id)
 
     articles_data = ArticleSerializer(qs, many=True, context={'request': request}).data
 
-    # Fetch quizzes associated with the same categories as the articles
-    cat_ids = qs.values_list('category_id', flat=True).distinct()
-    quizzes_qs = Quiz.objects.filter(category_id__in=cat_ids).prefetch_related('questions__choices')
+    # Quizzes are org-scoped (no category FK). Include active quizzes for offline study.
+    quizzes_qs = Quiz.objects.filter(is_active=True).prefetch_related('questions')
     quizzes_data = QuizSerializer(quizzes_qs, many=True, context={'request': request}).data
 
-    categories_qs = Category.objects.filter(id__in=cat_ids)
+    media_qs = MediaAsset.objects.filter(status='published').select_related('category', 'author')
+    if category_id:
+        media_qs = media_qs.filter(category_id=category_id)
+    media_data = MediaAssetSerializer(media_qs, many=True, context={'request': request}).data
+
+    if category_id:
+        categories_qs = Category.objects.filter(id=category_id)
+    else:
+        categories_qs = Category.objects.filter(
+            id__in=qs.values_list('category_id', flat=True).distinct()
+        )
     categories_data = CategorySerializer(categories_qs, many=True, context={'request': request}).data
 
     return Response({
         'version': 1,
-        'generated_at': __import__('django.utils.timezone', fromlist=['timezone']).timezone.now().isoformat(),
+        'generated_at': timezone.now().isoformat(),
         'categories': categories_data,
         'articles': articles_data,
         'quizzes': quizzes_data,
+        'media': media_data,
     })

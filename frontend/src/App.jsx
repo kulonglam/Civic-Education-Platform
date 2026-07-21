@@ -1,41 +1,126 @@
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import { OrganizationProvider } from './context/OrganizationContext';
+import { Spinner } from './components/ui';
+import { startOfflineSync } from './lib/offline/sync';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
-import { VerifyEmailPage } from './pages/VerifyEmailPage';
-import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
-import { ResetPasswordPage } from './pages/ResetPasswordPage';
-import { ArticlesPage } from './pages/ArticlesPage';
-import { ArticleDetailPage } from './pages/ArticleDetailPage';
-import { QuizzesPage } from './pages/QuizzesPage';
-import { QuizTakePage } from './pages/QuizTakePage';
-import { ResultsPage } from './pages/ResultsPage';
-import { CertificatesPage } from './pages/CertificatesPage';
-import { ForumPage } from './pages/ForumPage';
-import { TopicDetailPage } from './pages/TopicDetailPage';
-import { ProfilePage } from './pages/ProfilePage';
-import { NotificationsPage } from './pages/NotificationsPage';
-import { AdminPage } from './pages/AdminPage';
-import { BillingPage } from './pages/BillingPage';
-import { OrganizationPage } from './pages/OrganizationPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { TutorPage } from './pages/TutorPage';
-import { AcceptInvitePage } from './pages/AcceptInvitePage';
-import { SsoCallbackPage } from './pages/SsoCallbackPage';
-import { ArticlesManagePage } from './pages/ArticlesManagePage';
-import { ArticleEditorPage } from './pages/ArticleEditorPage';
-import { QuizzesManagePage } from './pages/QuizzesManagePage';
-import { QuizEditorPage } from './pages/QuizEditorPage';
-import { CategoriesManagePage } from './pages/CategoriesManagePage';
 import { NotFoundPage } from './pages/NotFoundPage';
-import { PrivacyPage, TermsPage } from './pages/LegalPage';
+
+const VerifyEmailPage = lazy(() =>
+  import('./pages/VerifyEmailPage').then((m) => ({ default: m.VerifyEmailPage })),
+);
+const ForgotPasswordPage = lazy(() =>
+  import('./pages/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage })),
+);
+const ResetPasswordPage = lazy(() =>
+  import('./pages/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage })),
+);
+const ArticlesPage = lazy(() =>
+  import('./pages/ArticlesPage').then((m) => ({ default: m.ArticlesPage })),
+);
+const ArticleDetailPage = lazy(() =>
+  import('./pages/ArticleDetailPage').then((m) => ({ default: m.ArticleDetailPage })),
+);
+const QuizzesPage = lazy(() =>
+  import('./pages/QuizzesPage').then((m) => ({ default: m.QuizzesPage })),
+);
+const QuizTakePage = lazy(() =>
+  import('./pages/QuizTakePage').then((m) => ({ default: m.QuizTakePage })),
+);
+const ResultsPage = lazy(() =>
+  import('./pages/ResultsPage').then((m) => ({ default: m.ResultsPage })),
+);
+const CertificatesPage = lazy(() =>
+  import('./pages/CertificatesPage').then((m) => ({ default: m.CertificatesPage })),
+);
+const ForumPage = lazy(() =>
+  import('./pages/ForumPage').then((m) => ({ default: m.ForumPage })),
+);
+const TopicDetailPage = lazy(() =>
+  import('./pages/TopicDetailPage').then((m) => ({ default: m.TopicDetailPage })),
+);
+const ProfilePage = lazy(() =>
+  import('./pages/ProfilePage').then((m) => ({ default: m.ProfilePage })),
+);
+const NotificationsPage = lazy(() =>
+  import('./pages/NotificationsPage').then((m) => ({ default: m.NotificationsPage })),
+);
+const AdminPage = lazy(() =>
+  import('./pages/AdminPage').then((m) => ({ default: m.AdminPage })),
+);
+const BillingPage = lazy(() =>
+  import('./pages/BillingPage').then((m) => ({ default: m.BillingPage })),
+);
+const OrganizationPage = lazy(() =>
+  import('./pages/OrganizationPage').then((m) => ({ default: m.OrganizationPage })),
+);
+const DashboardPage = lazy(() =>
+  import('./pages/DashboardPage').then((m) => ({ default: m.DashboardPage })),
+);
+const TutorPage = lazy(() =>
+  import('./pages/TutorPage').then((m) => ({ default: m.TutorPage })),
+);
+const AcceptInvitePage = lazy(() =>
+  import('./pages/AcceptInvitePage').then((m) => ({ default: m.AcceptInvitePage })),
+);
+const SsoCallbackPage = lazy(() =>
+  import('./pages/SsoCallbackPage').then((m) => ({ default: m.SsoCallbackPage })),
+);
+const ArticlesManagePage = lazy(() =>
+  import('./pages/ArticlesManagePage').then((m) => ({ default: m.ArticlesManagePage })),
+);
+const ArticleEditorPage = lazy(() =>
+  import('./pages/ArticleEditorPage').then((m) => ({ default: m.ArticleEditorPage })),
+);
+const QuizzesManagePage = lazy(() =>
+  import('./pages/QuizzesManagePage').then((m) => ({ default: m.QuizzesManagePage })),
+);
+const QuizEditorPage = lazy(() =>
+  import('./pages/QuizEditorPage').then((m) => ({ default: m.QuizEditorPage })),
+);
+const CategoriesManagePage = lazy(() =>
+  import('./pages/CategoriesManagePage').then((m) => ({ default: m.CategoriesManagePage })),
+);
+const MediaPage = lazy(() =>
+  import('./pages/MediaPage').then((m) => ({ default: m.MediaPage })),
+);
+const MediaDetailPage = lazy(() =>
+  import('./pages/MediaDetailPage').then((m) => ({ default: m.MediaDetailPage })),
+);
+const MediaManagePage = lazy(() =>
+  import('./pages/MediaManagePage').then((m) => ({ default: m.MediaManagePage })),
+);
+const MediaEditorPage = lazy(() =>
+  import('./pages/MediaEditorPage').then((m) => ({ default: m.MediaEditorPage })),
+);
+const PrivacyPage = lazy(() =>
+  import('./pages/LegalPage').then((m) => ({ default: m.PrivacyPage })),
+);
+const TermsPage = lazy(() =>
+  import('./pages/LegalPage').then((m) => ({ default: m.TermsPage })),
+);
+
+function Lazy({ children }) {
+  return <Suspense fallback={<Spinner />}>{children}</Suspense>;
+}
+
+function guard(element, props = {}) {
+  return (
+    <ProtectedRoute {...props}>
+      <Lazy>{element}</Lazy>
+    </ProtectedRoute>
+  );
+}
 
 export default function App() {
+  useEffect(() => startOfflineSync(), []);
+
   return (
     <ErrorBoundary>
       <AuthProvider>
@@ -46,165 +131,195 @@ export default function App() {
                 <Route index element={<HomePage />} />
                 <Route path="login" element={<LoginPage />} />
                 <Route path="register" element={<RegisterPage />} />
-                <Route path="invite/:token" element={<AcceptInvitePage />} />
-                <Route path="verify-email/:token" element={<VerifyEmailPage />} />
-                <Route path="forgot-password" element={<ForgotPasswordPage />} />
-                <Route path="reset-password" element={<ResetPasswordPage />} />
-                <Route path="sso/callback" element={<SsoCallbackPage />} />
-                <Route path="privacy" element={<PrivacyPage />} />
-                <Route path="terms" element={<TermsPage />} />
+                <Route
+                  path="invite/:token"
+                  element={
+                    <Lazy>
+                      <AcceptInvitePage />
+                    </Lazy>
+                  }
+                />
+                <Route
+                  path="verify-email/:token"
+                  element={
+                    <Lazy>
+                      <VerifyEmailPage />
+                    </Lazy>
+                  }
+                />
+                <Route
+                  path="forgot-password"
+                  element={
+                    <Lazy>
+                      <ForgotPasswordPage />
+                    </Lazy>
+                  }
+                />
+                <Route
+                  path="reset-password"
+                  element={
+                    <Lazy>
+                      <ResetPasswordPage />
+                    </Lazy>
+                  }
+                />
+                <Route
+                  path="sso/callback"
+                  element={
+                    <Lazy>
+                      <SsoCallbackPage />
+                    </Lazy>
+                  }
+                />
+                <Route
+                  path="privacy"
+                  element={
+                    <Lazy>
+                      <PrivacyPage />
+                    </Lazy>
+                  }
+                />
+                <Route
+                  path="terms"
+                  element={
+                    <Lazy>
+                      <TermsPage />
+                    </Lazy>
+                  }
+                />
 
-                <Route path="articles" element={<ArticlesPage />} />
+                <Route
+                  path="articles"
+                  element={
+                    <Lazy>
+                      <ArticlesPage />
+                    </Lazy>
+                  }
+                />
                 <Route
                   path="articles/manage"
-                  element={
-                    <ProtectedRoute roles={['admin', 'editor']}>
-                      <ArticlesManagePage />
-                    </ProtectedRoute>
-                  }
+                  element={guard(<ArticlesManagePage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
                 />
                 <Route
                   path="articles/new"
-                  element={
-                    <ProtectedRoute roles={['admin', 'editor']}>
-                      <ArticleEditorPage />
-                    </ProtectedRoute>
-                  }
+                  element={guard(<ArticleEditorPage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
                 />
                 <Route
                   path="articles/:id/edit"
+                  element={guard(<ArticleEditorPage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
+                />
+                <Route
+                  path="articles/:id"
                   element={
-                    <ProtectedRoute roles={['admin', 'editor']}>
-                      <ArticleEditorPage />
-                    </ProtectedRoute>
+                    <Lazy>
+                      <ArticleDetailPage />
+                    </Lazy>
                   }
                 />
-                <Route path="articles/:id" element={<ArticleDetailPage />} />
-
-                <Route path="forum" element={<ForumPage />} />
-                <Route path="forum/:id" element={<TopicDetailPage />} />
 
                 <Route
-                  path="quizzes"
+                  path="media"
                   element={
-                    <ProtectedRoute>
-                      <QuizzesPage />
-                    </ProtectedRoute>
+                    <Lazy>
+                      <MediaPage />
+                    </Lazy>
                   }
                 />
+                <Route
+                  path="media/manage"
+                  element={guard(<MediaManagePage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
+                />
+                <Route
+                  path="media/new"
+                  element={guard(<MediaEditorPage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
+                />
+                <Route
+                  path="media/:id/edit"
+                  element={guard(<MediaEditorPage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
+                />
+                <Route
+                  path="media/:id"
+                  element={
+                    <Lazy>
+                      <MediaDetailPage />
+                    </Lazy>
+                  }
+                />
+
+                <Route
+                  path="forum"
+                  element={
+                    <Lazy>
+                      <ForumPage />
+                    </Lazy>
+                  }
+                />
+                <Route
+                  path="forum/:id"
+                  element={
+                    <Lazy>
+                      <TopicDetailPage />
+                    </Lazy>
+                  }
+                />
+
+                <Route path="quizzes" element={guard(<QuizzesPage />)} />
                 <Route
                   path="quizzes/manage"
-                  element={
-                    <ProtectedRoute roles={['admin', 'editor']}>
-                      <QuizzesManagePage />
-                    </ProtectedRoute>
-                  }
+                  element={guard(<QuizzesManagePage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
                 />
                 <Route
                   path="quizzes/new"
-                  element={
-                    <ProtectedRoute roles={['admin', 'editor']}>
-                      <QuizEditorPage />
-                    </ProtectedRoute>
-                  }
+                  element={guard(<QuizEditorPage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
                 />
                 <Route
                   path="quizzes/:id/edit"
-                  element={
-                    <ProtectedRoute roles={['admin', 'editor']}>
-                      <QuizEditorPage />
-                    </ProtectedRoute>
-                  }
+                  element={guard(<QuizEditorPage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
                 />
-                <Route
-                  path="quizzes/results"
-                  element={
-                    <ProtectedRoute>
-                      <ResultsPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="quizzes/certificates"
-                  element={
-                    <ProtectedRoute>
-                      <CertificatesPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="quizzes/:id"
-                  element={
-                    <ProtectedRoute>
-                      <QuizTakePage />
-                    </ProtectedRoute>
-                  }
-                />
+                <Route path="quizzes/results" element={guard(<ResultsPage />)} />
+                <Route path="quizzes/certificates" element={guard(<CertificatesPage />)} />
+                <Route path="quizzes/:id" element={guard(<QuizTakePage />)} />
 
-                <Route
-                  path="categories/manage"
-                  element={
-                    <ProtectedRoute>
-                      <CategoriesManagePage />
-                    </ProtectedRoute>
-                  }
-                />
-
-                <Route
-                  path="profile"
-                  element={
-                    <ProtectedRoute>
-                      <ProfilePage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="notifications"
-                  element={
-                    <ProtectedRoute>
-                      <NotificationsPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="organization"
-                  element={
-                    <ProtectedRoute>
-                      <OrganizationPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="tutor"
-                  element={
-                    <ProtectedRoute>
-                      <TutorPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <DashboardPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="billing"
-                  element={
-                    <ProtectedRoute>
-                      <BillingPage />
-                    </ProtectedRoute>
-                  }
-                />
+                <Route path="categories/manage" element={guard(<CategoriesManagePage />)} />
+                <Route path="profile" element={guard(<ProfilePage />)} />
+                <Route path="notifications" element={guard(<NotificationsPage />)} />
+                <Route path="organization" element={guard(<OrganizationPage />)} />
+                <Route path="tutor" element={guard(<TutorPage />)} />
+                <Route path="dashboard" element={guard(<DashboardPage />)} />
+                <Route path="billing" element={guard(<BillingPage />)} />
                 <Route
                   path="admin"
-                  element={
-                    <ProtectedRoute roles={['admin', 'moderator']}>
-                      <AdminPage />
-                    </ProtectedRoute>
-                  }
+                  element={guard(<AdminPage />, {
+                    roles: ['admin', 'moderator'],
+                    orgRoles: ['owner', 'admin', 'moderator'],
+                  })}
                 />
 
                 <Route path="*" element={<NotFoundPage />} />

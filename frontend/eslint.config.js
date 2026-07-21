@@ -7,7 +7,7 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 export default defineConfig([
   globalIgnores(['dist']),
   {
-    files: ['playwright.config.js', 'e2e/**/*.js'],
+    files: ['playwright.config.js', 'vite.config.js', 'e2e/**/*.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -15,7 +15,16 @@ export default defineConfig([
     },
   },
   {
+    files: ['public/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'script',
+      globals: globals.serviceworker,
+    },
+  },
+  {
     files: ['**/*.{js,jsx}'],
+    ignores: ['vite.config.js', 'playwright.config.js', 'e2e/**/*.js', 'public/**/*.js'],
     extends: [
       js.configs.recommended,
       reactHooks.configs.flat.recommended,

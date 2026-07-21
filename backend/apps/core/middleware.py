@@ -1,6 +1,24 @@
 """Custom middleware for the Civic Education Platform."""
 
 from django.conf import settings
+from django.http import JsonResponse
+
+
+class SecurityHeadersMiddleware:
+    """Extra browser hardening headers used for enterprise security reviews."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        response.setdefault(
+            'Permissions-Policy',
+            'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
+        )
+        response.setdefault('Cross-Origin-Opener-Policy', 'same-origin')
+        response.setdefault('X-Content-Type-Options', 'nosniff')
+        return response
 
 
 class ContentSecurityPolicyMiddleware:
@@ -43,6 +61,31 @@ class ContentSecurityPolicyMiddleware:
         if self._header_value:
             response['Content-Security-Policy'] = self._header_value
         return response
+
+
+class IpAllowlistMiddleware:
+    """Enforce organization IP allowlist when configured (non-empty)."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        from apps.core.db import client_ip_from_request, ip_allowed
+        from apps.tenants.context import get_current_organization
+
+        organization = get_current_organization()
+        allowlist = getattr(organization, 'ip_allowlist', None) if organization else None
+        if allowlist:
+            client_ip = client_ip_from_request(request)
+            if not ip_allowed(client_ip, allowlist):
+                return JsonResponse(
+                    {
+                        'detail': 'Access denied from this network address.',
+                        'code': 'ip_not_allowed',
+                    },
+                    status=403,
+                )
+        return self.get_response(request)
 
 
 class SetJWTCookieMiddleware:
@@ -110,6 +153,6 @@ class SetJWTCookieMiddleware:
                 httponly=True,
                 secure=secure,
                 samesite=samesite,
-                path='/api/auth/token/refresh/',
+                path='/api/',
             )
         return response

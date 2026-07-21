@@ -78,31 +78,28 @@ export function BillingPage() {
   const statusMsg = params.get('status');
 
   return (
-    <div>
-      <PageHeader title={t('saas.billingTitle')} subtitle={t('saas.billingSubtitle')} />
+    <div className="page-shell">
+      <PageHeader
+        eyebrow={t('nav.organization')}
+        title={t('saas.billingTitle')}
+        subtitle={t('saas.billingSubtitle')}
+      />
 
-      {statusMsg === 'success' && (
-        <div className="mb-4">
-          <Alert kind="success">{t('saas.checkoutSuccess')}</Alert>
-        </div>
-      )}
-      {error && (
-        <div className="mb-4">
-          <Alert>{error}</Alert>
-        </div>
-      )}
-
-      {billingError && (
-        <div className="mb-4">
-          <Alert>{t('saas.billingUnavailable')}</Alert>
-        </div>
-      )}
+      {statusMsg === 'success' && <Alert kind="success">{t('saas.checkoutSuccess')}</Alert>}
+      {error && <Alert>{error}</Alert>}
+      {billingError && <Alert>{t('saas.billingUnavailable')}</Alert>}
 
       {billing && (
-        <div className="card mb-8">
-          <h2 className="mb-4 text-lg font-semibold">{t('saas.currentPlan')}</h2>
-          <p className="text-2xl font-bold text-brand-700">{billing.subscription.plan.name}</p>
-          <p className="mt-1 text-sm capitalize text-gray-500">{billing.subscription.status}</p>
+        <div className="card">
+          <h2 className="font-display text-lg font-semibold text-ink-900 dark:text-slate-100">
+            {t('saas.currentPlan')}
+          </h2>
+          <p className="mt-2 font-display text-3xl font-semibold text-brand-700 dark:text-brand-400">
+            {billing.subscription.plan.name}
+          </p>
+          <p className="mt-1 text-sm capitalize text-ink-700/60 dark:text-slate-400">
+            {billing.subscription.status}
+          </p>
           <div className="mt-6 space-y-4">
             <UsageBar
               label={t('saas.members')}
@@ -136,82 +133,90 @@ export function BillingPage() {
         </div>
       )}
 
-      <h2 className="mb-4 text-lg font-semibold">{t('saas.availablePlans')}</h2>
-      <div className="grid gap-4 md:grid-cols-3">
-        {plans.map((plan, idx) => {
-          const isCurrent = billing?.subscription.plan.code === plan.code;
-          const isPopular = idx === 1 && plans.length >= 2;
-          return (
-            <div
-              key={plan.id}
-              className={`card relative flex flex-col transition-shadow ${
-                isCurrent
-                  ? 'ring-2 ring-brand-500 dark:ring-brand-400'
-                  : isPopular
-                    ? 'shadow-lg ring-1 ring-brand-200 dark:ring-brand-700'
-                    : ''
-              }`}
-            >
-              {isPopular && !isCurrent && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-600 px-3 py-0.5 text-xs font-semibold text-white shadow">
-                  {t('saas.mostPopular')}
-                </span>
-              )}
-              {isCurrent && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-emerald-600 px-3 py-0.5 text-xs font-semibold text-white shadow">
-                  {t('saas.currentPlanBadge')}
-                </span>
-              )}
-              <h3 className="text-xl font-bold dark:text-slate-100">{plan.name}</h3>
-              <p className="mt-2 text-3xl font-semibold dark:text-slate-100">
-                {formatPrice(plan.price_cents, plan.currency)}
-                {plan.price_cents > 0 && (
-                  <span className="text-sm font-normal text-gray-500 dark:text-slate-400">/{plan.interval}</span>
+      <div>
+        <h2 className="mb-4 font-display text-xl font-semibold text-ink-900 dark:text-slate-100">
+          {t('saas.availablePlans')}
+        </h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          {plans.map((plan, idx) => {
+            const isCurrent = billing?.subscription.plan.code === plan.code;
+            const isPopular = idx === 1 && plans.length >= 2;
+            return (
+              <div
+                key={plan.id}
+                className={`content-tile relative ${
+                  isCurrent
+                    ? 'ring-2 ring-brand-500 dark:ring-brand-400'
+                    : isPopular
+                      ? 'ring-1 ring-brand-200 dark:ring-brand-700'
+                      : ''
+                }`}
+              >
+                {isPopular && !isCurrent && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-md bg-brand-700 px-3 py-0.5 text-xs font-semibold text-white shadow-soft">
+                    {t('saas.mostPopular')}
+                  </span>
                 )}
-              </p>
-              <ul className="mt-4 flex-1 space-y-2 text-sm text-gray-600 dark:text-slate-400">
-                <li className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-brand-500" />
-                  {plan.max_members ?? '∞'} {t('saas.members')}
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-brand-500" />
-                  {plan.max_articles ?? '∞'} {t('saas.articles')}
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-brand-500" />
-                  {plan.max_quizzes ?? '∞'} {t('saas.quizzes')}
-                </li>
-              </ul>
-              {isOrgAdmin && !isCurrent && (
-                <button
-                  type="button"
-                  className={`mt-6 w-full ${isPopular ? 'btn-primary' : 'btn-secondary'}`}
-                  disabled={busy === plan.code || checkout.isPending}
-                  onClick={() => {
-                    setError('');
-                    setBusy(plan.code);
-                    checkout.mutate(plan.code);
-                  }}
-                >
-                  {busy === plan.code ? t('common.loading') : t('saas.upgrade')}
-                </button>
-              )}
-              {isCurrent && (
-                <div className="mt-6 rounded-lg bg-emerald-50 py-2 text-center text-sm font-medium text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400">
-                  ✓ {t('saas.currentPlanBadge')}
-                </div>
-              )}
-            </div>
-          );
-        })}
+                {isCurrent && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-md bg-emerald-700 px-3 py-0.5 text-xs font-semibold text-white shadow-soft">
+                    {t('saas.currentPlanBadge')}
+                  </span>
+                )}
+                <h3 className="font-display text-xl font-semibold dark:text-slate-100">{plan.name}</h3>
+                <p className="mt-2 font-display text-3xl font-semibold dark:text-slate-100">
+                  {formatPrice(plan.price_cents, plan.currency)}
+                  {plan.price_cents > 0 && (
+                    <span className="text-sm font-normal text-ink-700/55 dark:text-slate-400">
+                      /{plan.interval}
+                    </span>
+                  )}
+                </p>
+                <ul className="mt-4 flex-1 space-y-2 text-sm text-ink-700/70 dark:text-slate-400">
+                  <li className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-brand-500" />
+                    {plan.max_members ?? '∞'} {t('saas.members')}
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-brand-500" />
+                    {plan.max_articles ?? '∞'} {t('saas.articles')}
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-brand-500" />
+                    {plan.max_quizzes ?? '∞'} {t('saas.quizzes')}
+                  </li>
+                </ul>
+                {isOrgAdmin && !isCurrent && (
+                  <button
+                    type="button"
+                    className={`mt-6 w-full ${isPopular ? 'btn-primary' : 'btn-secondary'}`}
+                    disabled={busy === plan.code || checkout.isPending}
+                    onClick={() => {
+                      setError('');
+                      setBusy(plan.code);
+                      checkout.mutate(plan.code);
+                    }}
+                  >
+                    {busy === plan.code ? t('common.loading') : t('saas.upgrade')}
+                  </button>
+                )}
+                {isCurrent && (
+                  <div className="mt-6 rounded-xl bg-emerald-50 py-2.5 text-center text-sm font-medium text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400">
+                    {t('saas.currentPlanBadge')}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="card mt-8 border-brand-100 bg-brand-50">
-        <h2 className="text-lg font-semibold text-brand-900">{t('billing.enterpriseTitle')}</h2>
+      <div className="card border-brand-100/80 bg-gradient-to-br from-brand-50/90 to-white dark:border-brand-900/40 dark:from-brand-950/40 dark:to-slate-800/80">
+        <h2 className="font-display text-lg font-semibold text-brand-900 dark:text-brand-200">
+          {t('billing.enterpriseTitle')}
+        </h2>
         {hasEnterpriseSso ? (
           <>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-ink-700/70 dark:text-slate-400">
               {ssoReady ? t('billing.enterpriseSsoReady') : t('billing.enterpriseSsoSetup')}
             </p>
             {ssoReady && (
@@ -233,9 +238,9 @@ export function BillingPage() {
           </>
         ) : (
           <>
-            <p className="mt-2 text-sm text-gray-600">{t('billing.enterpriseSsoHint')}</p>
+            <p className="mt-2 text-sm text-ink-700/70 dark:text-slate-400">{t('billing.enterpriseSsoHint')}</p>
             {enterprisePlan && (
-              <p className="mt-2 text-xs text-gray-500">
+              <p className="mt-2 text-xs text-ink-700/55 dark:text-slate-500">
                 {t('billing.enterpriseUpgradeHint', { plan: enterprisePlan.name })}
               </p>
             )}

@@ -9,7 +9,7 @@ Step-by-step checklist to take the Civic Education Platform from local developme
 | **Web API** | Django + Gunicorn (`/api/*`) |
 | **Worker** | Celery (notifications, email, certificate PDFs) |
 | **Redis** | Celery broker + cache (readiness probe) |
-| **PostgreSQL** | Primary database |
+| **PostgreSQL** | Primary database (+ optional read replica via `DATABASE_URL_REPLICA`) |
 | **Static frontend** | Vite build served from CDN/static host |
 | **Supabase Storage** | File uploads and certificate PDFs |
 | **Stripe** | Subscription billing (required in production) |
@@ -83,11 +83,13 @@ Deploy the `frontend/dist` folder to your static host (Render Static Site, Netli
 
 ### 6. Render (included blueprint)
 
-The repo includes [render.yaml](../render.yaml) for API + worker + Redis + Postgres. After connecting the repo:
+The repo includes [render.yaml](../render.yaml) for API + worker + Redis + Postgres + daily backup + weekly audit purge + static frontend. After connecting the repo:
 
-1. Set sync=false env vars in the Render dashboard (`ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS`, Stripe, Supabase, email).
-2. Add a **Static Site** for the frontend or deploy frontend separately.
-3. Confirm worker and web services share the same `SECRET_KEY` and `DATABASE_URL`.
+1. Set sync=false env vars in the Render dashboard (`ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS`, Stripe, Supabase, email, Sentry).
+2. Attach custom domains: API (`api.yourdomain.com`) on the web service and app (`app.yourdomain.com`) on the static site — HTTPS is automatic.
+3. Configure **Supabase Storage** (or S3-compatible): set `SUPABASE_URL` + `SUPABASE_KEY` on both web and worker so certificate PDFs and article attachments upload correctly.
+4. Confirm worker and web services share the same `SECRET_KEY` and `DATABASE_URL`.
+5. Optional: set `VITE_SENTRY_DSN` on the static site (build-time) and `SENTRY_DSN` on the API.
 
 Build command runs migrations automatically:
 
@@ -95,6 +97,7 @@ Build command runs migrations automatically:
 pip install -r backend/requirements.txt && cd backend && python manage.py migrate && python manage.py collectstatic --noinput
 ```
 
+**Enterprise SSO:** prefer per-organization IdP settings in Organization → SSO (Enterprise plan). Global `OIDC_*` env vars remain as a platform-wide fallback.
 ### 7. Health checks
 
 Configure your load balancer or platform probes:
@@ -173,7 +176,26 @@ Environment variables:
 | `BACKUP_DIR` | Output directory (default: `./backups`) |
 | `BACKUP_RETAIN_DAYS` | Auto-delete backups older than N days |
 
-Render: the `civic-education-backup` cron job in `render.yaml` runs daily. Mount persistent disk at `/var/data/backups` or sync to object storage for off-site retention.
+Render: the `civic-education-backup` cron job in `render.yaml` runs daily at 03:00 UTC. Mount persistent disk at `/var/data/backups` or sync to object storage for off-site retention.
+
+Audit log retention: the `civic-education-audit-purge` cron runs weekly and executes `python manage.py purge_audit_logs` using each org's `audit_retention_days`.
+
+#### Restore runbook
+
+1. **Stop writers** — scale down web/worker (or put maintenance mode) so no new writes race the restore.
+2. **Identify backup** — pick the `.sql` / `.dump` file from `BACKUP_DIR` (or object storage) for the target time.
+3. **Restore PostgreSQL** (example with custom-format dump from `pg_dump -Fc`):
+
+   ```bash
+   pg_restore --clean --if-exists --no-owner --dbname="$DATABASE_URL" /path/to/backup.dump
+   ```
+
+   For plain SQL dumps: `psql "$DATABASE_URL" < backup.sql`
+4. **Media** — if Supabase/S3 holds PDFs and avatars, restore the bucket snapshot from the same window (DB alone is not enough for certificates).
+5. **Verify** — hit `GET /api/ready/`, log in as platform admin, spot-check org membership and a recent certificate download.
+6. **Scale up** — restart worker, then web; confirm Sentry is quiet and Stripe webhooks resume.
+
+Document the restore time and backup filename in your incident notes.
 
 ### 14. E2E testing
 

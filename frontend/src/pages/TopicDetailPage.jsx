@@ -27,7 +27,7 @@ function TopicDetailPage() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(load, [id]);
+  useEffect(load, [id, t]);
 
   const submit = async (e) => {
     e.preventDefault();

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Pagination } from '../components/Pagination';
 import { Alert, CardSkeleton, EmptyState, PageHeader } from '../components/ui';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
@@ -17,7 +17,8 @@ const PAGE_SIZE = 20;
 export function ArticlesPage() {
   const { t, i18n } = useTranslation();
   const online = useOnlineStatus();
-  const [search, setSearch] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [search, setSearch] = useState(() => searchParams.get('q') || '');
   const [category, setCategory] = useState('');
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebouncedValue(search);
@@ -29,6 +30,19 @@ export function ArticlesPage() {
       return data;
     },
   });
+
+  // Support /articles?category=<slug|uuid> from landing "Explore topics"
+  useEffect(() => {
+    const raw = searchParams.get('category');
+    if (!raw || !categories.length) return;
+    const match = categories.find((c) => c.id === raw || c.slug === raw);
+    if (!match) return;
+    setCategory((prev) => {
+      if (prev === match.id) return prev;
+      setPage(1);
+      return match.id;
+    });
+  }, [searchParams, categories]);
 
   const listParams = useMemo(() => {
     const params = { page: String(page) };
@@ -65,24 +79,28 @@ export function ArticlesPage() {
   const handleCategoryChange = (value) => {
     setCategory(value);
     setPage(1);
+    const next = new URLSearchParams(searchParams);
+    if (value) {
+      const cat = categories.find((c) => c.id === value);
+      next.set('category', cat?.slug || value);
+    } else {
+      next.delete('category');
+    }
+    setSearchParams(next, { replace: true });
   };
 
   return (
-    <div>
-      <PageHeader title={t('articles.title')} />
+    <div className="page-shell">
+      <PageHeader
+        eyebrow={t('nav.learn')}
+        title={t('articles.title')}
+        subtitle={t('articles.subtitle')}
+      />
 
-      {!online && (
-        <div className="mb-4">
-          <Alert kind="warning">{t('offline.readingCached')}</Alert>
-        </div>
-      )}
-      {fromCache && online && (
-        <div className="mb-4">
-          <Alert kind="warning">{t('offline.staleCache')}</Alert>
-        </div>
-      )}
+      {!online && <Alert kind="warning">{t('offline.readingCached')}</Alert>}
+      {fromCache && online && <Alert kind="warning">{t('offline.staleCache')}</Alert>}
 
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row">
+      <div className="filter-bar flex flex-col gap-3 sm:flex-row sm:items-center">
         <input
           className="input sm:max-w-sm"
           placeholder={t('articles.searchPlaceholder')}
@@ -103,53 +121,55 @@ export function ArticlesPage() {
       </div>
 
       {isLoading ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => <CardSkeleton key={i} />)}
         </div>
       ) : isError && articles.length === 0 ? (
-        <EmptyState>{t('articles.noArticles')}</EmptyState>
+        <EmptyState title={t('articles.noArticles')}>{t('common.noResults')}</EmptyState>
       ) : articles.length === 0 ? (
-        <EmptyState>{t('articles.noArticles')}</EmptyState>
+        <EmptyState title={t('articles.noArticles')}>{t('common.noResults')}</EmptyState>
       ) : (
         <>
           {isFetching && !isLoading && (
-            <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('common.loading')}</p>
+            <p className="text-sm text-ink-700/55 dark:text-slate-400">{t('common.loading')}</p>
           )}
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {articles.map((raw) => {
               const article = localizedArticle(raw, i18n.language);
               return (
-              <Link
-                key={article.id}
-                to={`/articles/${article.id}`}
-                className="card group flex flex-col transition-shadow hover:shadow-md dark:hover:border-slate-600"
-              >
-                {article.featured_image_url && (
-                  <img
-                    src={article.featured_image_url}
-                    alt={article.title}
-                    className="mb-4 h-40 w-full rounded-lg object-cover"
-                  />
-                )}
-                <span className="badge mb-2 self-start bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300">
-                  {article.category?.name}
-                </span>
-                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-brand-700 dark:text-slate-100 dark:group-hover:text-brand-300">
-                  {article.title}
-                </h3>
-                <p className="mt-2 line-clamp-3 flex-1 text-sm text-gray-600 dark:text-slate-400">
-                  {plainTextExcerpt(article.content)}
-                </p>
-                <div className="mt-4 flex items-center justify-between text-xs text-gray-400 dark:text-slate-500">
-                  <span>{article.author_name}</span>
-                  <span className="flex items-center gap-2">
-                    <span>{readingTime(article.content)} {t('misc.minRead')}</span>
-                    <span>·</span>
-                    <span>{formatDate(article.published_at)}</span>
+                <Link
+                  key={article.id}
+                  to={`/articles/${article.id}`}
+                  className="content-tile group"
+                >
+                  {article.featured_image_url && (
+                    <img
+                      src={article.featured_image_url}
+                      alt=""
+                      className="mb-4 h-36 w-full rounded-xl object-cover"
+                    />
+                  )}
+                  <span className="badge mb-2 self-start bg-brand-50 text-brand-800 dark:bg-brand-900/40 dark:text-brand-300">
+                    {article.category?.name}
                   </span>
-                </div>
-              </Link>
-            );})}
+                  <h3 className="font-display text-lg font-semibold text-ink-900 transition-colors group-hover:text-brand-700 dark:text-slate-100 dark:group-hover:text-brand-300">
+                    {article.title}
+                  </h3>
+                  <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-ink-700/75 dark:text-slate-400">
+                    {plainTextExcerpt(article.content)}
+                  </p>
+                  <div className="content-meta">
+                    <span>{article.author_name}</span>
+                    <span aria-hidden="true">·</span>
+                    <span>
+                      {readingTime(article.content)} {t('misc.minRead')}
+                    </span>
+                    <span aria-hidden="true">·</span>
+                    <span>{formatDate(article.published_at)}</span>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
           <Pagination
             page={page}

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { analyticsService, auditService, forumService, notificationService, notifyService, userService } from '../lib/services';
+import { analyticsService, auditService, forumService, notificationService, notifyService, organizationService, securityService, userService } from '../lib/services';
 import { useAuth } from '../context/AuthContext';
+import { useOrganization } from '../context/OrganizationContext';
 import { extractError } from '../lib/api';
 import { Alert, PageHeader, Spinner } from '../components/ui';
 import { formatDate } from '../lib/format';
@@ -19,8 +20,10 @@ function StatCard({ label, value }) {
 function AdminPage() {
   const { t } = useTranslation();
   const { user: currentUser, hasRole, isPlatformAdmin } = useAuth();
+  const { isOrgModerator } = useOrganization();
   const isAdmin = isPlatformAdmin();
-  const canModerateUsers = hasRole('admin', 'moderator');
+  const canModerateUsers = hasRole('admin', 'moderator') || isOrgModerator;
+  const canManagePlatformUsers = hasRole('admin', 'moderator');
   const ASSIGNABLE_ROLES = ['citizen', 'editor', 'moderator', 'admin'];
   const [overview, setOverview] = useState(null);
   const [quizStats, setQuizStats] = useState([]);
@@ -36,6 +39,15 @@ function AdminPage() {
   const [pushStats, setPushStats] = useState(null);
   const [pushCleanupBusy, setPushCleanupBusy] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [platformOrgs, setPlatformOrgs] = useState([]);
+  const [orgSearch, setOrgSearch] = useState('');
+  const [orgBusyId, setOrgBusyId] = useState(null);
+  const [usageSummary, setUsageSummary] = useState(null);
+  const [securityEvents, setSecurityEvents] = useState([]);
+  const [supportOrg, setSupportOrg] = useState(null);
+  const [supportBusy, setSupportBusy] = useState(false);
+  const [sloMetrics, setSloMetrics] = useState(null);
+  const [platformCases, setPlatformCases] = useState([]);
 
   const loadModeration = () =>
     forumService
@@ -55,16 +67,33 @@ function AdminPage() {
         analyticsService.forum().then((r) => setForumStats(r.data)),
         analyticsService.learning().then((r) => setLearningStats(r.data)),
         notificationService.pushStats().then((r) => setPushStats(r.data)),
+        organizationService.platformOrgs().then((r) => setPlatformOrgs(r.data.results ?? r.data)),
+        organizationService.platformUsage().then((r) => setUsageSummary(r.data)),
+        securityService.events({ page_size: 40 }).then((r) => setSecurityEvents(r.data.results ?? [])),
+        organizationService.platformSlo().then((r) => setSloMetrics(r.data)),
+        organizationService.platformSupportCases().then((r) => setPlatformCases(r.data.results ?? r.data)),
       );
     }
-    if (canModerateUsers) {
+    if (canManagePlatformUsers) {
       tasks.push(userService.list().then((r) => setUsers(r.data.results ?? r.data)));
       tasks.push(
         auditService.logs({ page_size: 50 }).then((r) => setAuditLogs(r.data.results ?? r.data)),
       );
     }
     Promise.allSettled(tasks).finally(() => setLoading(false));
-  }, [isAdmin, canModerateUsers]);
+  }, [isAdmin, canModerateUsers, canManagePlatformUsers]);
+
+  const viewOrgSupport = async (orgId) => {
+    setSupportBusy(true);
+    try {
+      const { data } = await organizationService.platformOrgDetail(orgId);
+      setSupportOrg(data);
+    } catch (err) {
+      toast.error(extractError(err));
+    } finally {
+      setSupportBusy(false);
+    }
+  };
 
   const moderateTopic = async (id, approve) => {
     await forumService.moderateTopic(id, approve);
@@ -136,6 +165,27 @@ function AdminPage() {
     }
   };
 
+  const searchPlatformOrgs = async (search = orgSearch) => {
+    try {
+      const { data } = await organizationService.platformOrgs({ search: search || undefined });
+      setPlatformOrgs(data.results ?? data);
+    } catch (err) {
+      toast.error(extractError(err));
+    }
+  };
+
+  const toggleOrgActive = async (org) => {
+    setOrgBusyId(org.id);
+    try {
+      const { data } = await organizationService.setOrgActive(org.id, !org.is_active);
+      setPlatformOrgs((list) => list.map((o) => (o.id === org.id ? { ...o, ...data } : o)));
+    } catch (err) {
+      toast.error(extractError(err));
+    } finally {
+      setOrgBusyId(null);
+    }
+  };
+
   if (loading) return <Spinner />;
 
   return (
@@ -164,6 +214,203 @@ function AdminPage() {
             <StatCard label={t('admin.activeUsers')} value={overview.active_users_30d} />
             <StatCard label={t('admin.articlesPublished')} value={overview.articles_published} />
             <StatCard label={t('admin.quizCompletions')} value={overview.quiz_completions} />
+          </div>
+        </section>
+      )}
+
+      {isAdmin && (
+        <section>
+          <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.platformOrgs')}</h2>
+          <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('admin.platformOrgsSubtitle')}</p>
+          <form
+            className="mb-4 flex flex-wrap gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              searchPlatformOrgs();
+            }}
+          >
+            <input
+              className="input max-w-md flex-1"
+              placeholder={t('admin.searchOrgs')}
+              value={orgSearch}
+              onChange={(e) => setOrgSearch(e.target.value)}
+            />
+            <button type="submit" className="btn-secondary">
+              {t('common.search')}
+            </button>
+          </form>
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50 text-left text-gray-500 dark:bg-slate-700/50 dark:text-slate-400">
+                <tr>
+                  <th className="px-4 py-3 font-medium">{t('saas.orgName')}</th>
+                  <th className="px-4 py-3 font-medium">{t('admin.plan')}</th>
+                  <th className="px-4 py-3 font-medium">{t('admin.membersCount')}</th>
+                  <th className="px-4 py-3 font-medium">{t('admin.accountStatus')}</th>
+                  <th className="px-4 py-3 font-medium">{t('admin.actions')}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+                {platformOrgs.map((org) => (
+                  <tr key={org.id} className="dark:hover:bg-slate-700/30">
+                    <td className="px-4 py-3">
+                      <p className="font-medium text-gray-900 dark:text-slate-100">{org.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-slate-400">{org.slug}</p>
+                    </td>
+                    <td className="px-4 py-3 dark:text-slate-300">{org.plan_code || '—'}</td>
+                    <td className="px-4 py-3 dark:text-slate-300">{org.member_count ?? '—'}</td>
+                    <td className="px-4 py-3">
+                      {org.is_active ? (
+                        <span className="badge bg-green-100 text-green-700">{t('admin.active')}</span>
+                      ) : (
+                        <span className="badge bg-gray-100 text-gray-600">{t('admin.inactive')}</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          className="btn-secondary text-xs"
+                          disabled={supportBusy}
+                          onClick={() => viewOrgSupport(org.id)}
+                        >
+                          {t('admin.viewSupport')}
+                        </button>
+                        <button
+                          type="button"
+                          className={org.is_active ? 'btn-danger text-xs' : 'btn-primary text-xs'}
+                          disabled={orgBusyId === org.id}
+                          onClick={() => toggleOrgActive(org)}
+                        >
+                          {org.is_active ? t('admin.deactivate') : t('admin.activate')}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {isAdmin && supportOrg && (
+        <section className="card">
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">
+              {t('admin.supportView')}: {supportOrg.name}
+            </h2>
+            <button type="button" className="btn-secondary text-xs" onClick={() => setSupportOrg(null)}>
+              {t('common.close')}
+            </button>
+          </div>
+          <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('admin.supportViewHint')}</p>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard label={t('admin.membersCount')} value={supportOrg.member_count} />
+            <StatCard label={t('admin.plan')} value={supportOrg.plan_code || '—'} />
+            <StatCard label={t('dashboard.publishedArticles')} value={supportOrg.published_articles} />
+            <StatCard label={t('dashboard.quizAttempts')} value={supportOrg.quiz_attempts} />
+            <StatCard label={t('dashboard.certificates')} value={supportOrg.certificates_issued} />
+            <StatCard label={t('admin.activeLearners')} value={supportOrg.active_learners_30d} />
+            <StatCard label={t('saas.departments')} value={supportOrg.department_count} />
+            <StatCard label={t('admin.controlledDocs')} value={supportOrg.controlled_documents} />
+          </div>
+        </section>
+      )}
+
+      {isAdmin && usageSummary?.totals && (
+        <section>
+          <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.usageSummary')}</h2>
+          <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('admin.usageSummarySubtitle')}</p>
+          <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard label={t('admin.platformOrgs')} value={usageSummary.totals.organizations} />
+            <StatCard label={t('admin.membersCount')} value={usageSummary.totals.members} />
+            <StatCard label={t('dashboard.quizAttempts')} value={usageSummary.totals.quiz_attempts} />
+            <StatCard label={t('admin.activeLearners')} value={usageSummary.totals.active_learners_30d} />
+          </div>
+        </section>
+      )}
+
+      {isAdmin && sloMetrics && (
+        <section>
+          <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">SLO status</h2>
+          <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">
+            24h auth success and security-event snapshot ({sloMetrics.status})
+          </p>
+          <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard
+              label="Auth success %"
+              value={sloMetrics.observed?.auth_success_rate_percent ?? '—'}
+            />
+            <StatCard label="Security events" value={sloMetrics.observed?.security_events_24h ?? 0} />
+            <StatCard label="Open support cases" value={sloMetrics.observed?.open_support_cases ?? 0} />
+            <StatCard label="Status" value={sloMetrics.status} />
+          </div>
+          {platformCases.length > 0 && (
+            <ul className="mb-6 divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white text-sm dark:divide-slate-700 dark:border-slate-700 dark:bg-slate-800">
+              {platformCases.slice(0, 8).map((c) => (
+                <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-slate-100">{c.subject}</p>
+                    <p className="text-xs text-gray-500 dark:text-slate-400">
+                      {c.organization_name} · {c.status} · {c.priority}
+                    </p>
+                  </div>
+                  {c.status !== 'resolved' && c.status !== 'closed' && (
+                    <button
+                      type="button"
+                      className="btn-secondary text-xs"
+                      onClick={async () => {
+                        try {
+                          await organizationService.updatePlatformSupportCase(c.id, {
+                            status: 'resolved',
+                            assignee_notes: 'Resolved by platform admin',
+                          });
+                          const { data } = await organizationService.platformSupportCases();
+                          setPlatformCases(data.results ?? data);
+                          toast.success('Case resolved');
+                        } catch (err) {
+                          toast.error(extractError(err));
+                        }
+                      }}
+                    >
+                      Resolve
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
+
+      {isAdmin && securityEvents.length > 0 && (
+        <section>
+          <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.securityEvents')}</h2>
+          <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('admin.securityEventsSubtitle')}</p>
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50 text-left text-gray-500 dark:bg-slate-700/50 dark:text-slate-400">
+                <tr>
+                  <th className="px-4 py-3 font-medium">{t('audit.when')}</th>
+                  <th className="px-4 py-3 font-medium">{t('audit.type')}</th>
+                  <th className="px-4 py-3 font-medium">{t('audit.user')}</th>
+                  <th className="px-4 py-3 font-medium">IP</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+                {securityEvents.map((ev) => (
+                  <tr key={ev.id} className="dark:hover:bg-slate-700/30">
+                    <td className="px-4 py-3 whitespace-nowrap text-gray-500 dark:text-slate-400">
+                      {formatDate(ev.created_at)}
+                    </td>
+                    <td className="px-4 py-3 dark:text-slate-300">{ev.event_type}</td>
+                    <td className="px-4 py-3 dark:text-slate-300">{ev.user_email || '—'}</td>
+                    <td className="px-4 py-3 dark:text-slate-400">{ev.ip_address || '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </section>
       )}
@@ -258,7 +505,7 @@ function AdminPage() {
         </section>
       )}
 
-      {canModerateUsers && users.length > 0 && (
+      {canManagePlatformUsers && users.length > 0 && (
         <section>
           <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.userManagement')}</h2>
           {isAdmin && (
@@ -278,7 +525,7 @@ function AdminPage() {
                   <th className="px-4 py-3 font-medium">{t('auth.email')}</th>
                   <th className="px-4 py-3 font-medium">{t('profile.role')}</th>
                   <th className="px-4 py-3 font-medium">{t('admin.accountStatus')}</th>
-                  {canModerateUsers && (
+                  {canManagePlatformUsers && (
                     <th className="px-4 py-3 font-medium">{t('admin.actions')}</th>
                   )}
                 </tr>
@@ -316,7 +563,7 @@ function AdminPage() {
                         <span className="badge bg-gray-100 text-gray-600">{t('admin.inactive')}</span>
                       )}
                     </td>
-                    {canModerateUsers && (
+                    {canManagePlatformUsers && (
                       <td className="px-4 py-3">
                         {u.is_suspended ? (
                           <button
@@ -345,7 +592,7 @@ function AdminPage() {
         </section>
       )}
 
-      {canModerateUsers && (
+      {canManagePlatformUsers && (
         <section>
           <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('audit.title')}</h2>
           {auditLogs.length === 0 ? (

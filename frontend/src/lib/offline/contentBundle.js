@@ -1,55 +1,54 @@
-/**
- * Server-side content bundle downloader.
- *
- * Downloads a full study pack from /api/v1/content-bundle/ and stores
- * every article/quiz/category in IndexedDB so the app works fully offline.
- *
- * Usage:
- *   import { downloadContentBundle } from './contentBundle';
- *   const result = await downloadContentBundle();
- *   toast.success(`Downloaded ${result.articles} articles for offline use`);
- */
-
 import { api } from '../api';
-import { getDb, scopeKey, setEntry } from './db';
+import { getEntry, scopeKey, setEntry } from './db';
 
+/**
+ * Download a full offline study pack from GET /content-bundle/ and cache
+ * articles, quizzes, media metadata, and categories in IndexedDB for offline reading.
+ */
 export async function downloadContentBundle({ categoryId } = {}) {
-  const params = categoryId ? { category_id: categoryId } : {};
+  const params = {};
+  if (categoryId) params.category_id = categoryId;
+
   const { data } = await api.get('/content-bundle/', { params });
+  const categories = data.categories ?? [];
+  const articles = data.articles ?? [];
+  const quizzes = data.quizzes ?? [];
+  const media = data.media ?? [];
 
-  const db = await getDb();
-  const tx = db.transaction(
-    ['articles', 'article_lists', 'categories', 'quizzes'],
-    'readwrite',
-  );
+  await setEntry('categories', scopeKey('categories'), categories);
 
-  // Cache each article individually
-  for (const article of data.articles || []) {
-    await tx.objectStore('articles').put({ key: scopeKey(article.id), data: article });
+  for (const article of articles) {
+    await setEntry('articles', scopeKey(article.id), article);
   }
 
-  // Cache article list snapshot
-  await tx.objectStore('article_lists').put({
-    key: scopeKey('bundle'),
-    data: data.articles || [],
+  await setEntry('article_lists', scopeKey('list:default'), {
+    count: articles.length,
+    results: articles,
   });
 
-  // Cache categories
-  for (const cat of data.categories || []) {
-    await tx.objectStore('categories').put({ key: scopeKey(cat.id), data: cat });
+  for (const quiz of quizzes) {
+    await setEntry('quizzes', scopeKey(quiz.id), quiz);
   }
 
-  // Cache quizzes
-  for (const quiz of data.quizzes || []) {
-    await tx.objectStore('quizzes').put({ key: scopeKey(quiz.id), data: quiz });
+  for (const item of media) {
+    await setEntry('media', scopeKey(item.id), item);
   }
+  await setEntry('media', scopeKey('list:default'), {
+    count: media.length,
+    results: media,
+  });
 
-  await tx.done;
-
-  return {
-    articles: (data.articles || []).length,
-    quizzes: (data.quizzes || []).length,
-    categories: (data.categories || []).length,
-    generatedAt: data.generated_at,
+  const summary = {
+    articles: articles.length,
+    quizzes: quizzes.length,
+    media: media.length,
+    categories: categories.length,
+    generatedAt: data.generated_at ?? null,
   };
+  await setEntry('categories', scopeKey('bundle:meta'), summary);
+  return summary;
+}
+
+export async function getContentBundleMeta() {
+  return getEntry('categories', scopeKey('bundle:meta'));
 }

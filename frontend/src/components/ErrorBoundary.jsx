@@ -1,12 +1,15 @@
 import { Component } from 'react';
 import { useTranslation } from 'react-i18next';
+import { captureUiError } from '../lib/sentry';
 
 function ErrorFallback({ onRetry }) {
   const { t } = useTranslation();
   return (
-    <div className="mx-auto max-w-lg py-16 text-center">
-      <h1 className="text-2xl font-bold text-gray-900">{t('errors.boundaryTitle')}</h1>
-      <p className="mt-2 text-gray-600">{t('errors.boundaryMessage')}</p>
+    <div className="mx-auto max-w-lg py-16 text-center" role="alert">
+      <h1 className="font-display text-2xl font-semibold text-ink-900 dark:text-slate-100">
+        {t('errors.boundaryTitle')}
+      </h1>
+      <p className="mt-2 text-ink-700/70 dark:text-slate-400">{t('errors.boundaryMessage')}</p>
       <button type="button" className="btn-primary mt-6" onClick={onRetry}>
         {t('errors.tryAgain')}
       </button>
@@ -22,7 +25,7 @@ class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, info) {
-    console.error('UI error:', error, info.componentStack);
+    captureUiError(error, info);
   }
 
   render() {

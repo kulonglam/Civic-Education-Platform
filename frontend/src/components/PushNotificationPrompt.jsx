@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { notificationService } from '../lib/services';
 import { useAuth } from '../context/AuthContext';
 import { extractError } from '../lib/api';
-import { Alert } from './ui';
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY || '';
 

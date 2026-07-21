@@ -17,6 +17,13 @@ class TestHealthCheck:
         assert response.status_code == status.HTTP_200_OK
         assert response.data['status'] == 'ok'
 
+    def test_security_headers_present(self, api_client):
+        response = api_client.get('/api/health/')
+        assert response['X-Content-Type-Options'] == 'nosniff'
+        assert 'Permissions-Policy' in response
+        assert response['Cross-Origin-Opener-Policy'] == 'same-origin'
+        assert 'Content-Security-Policy' in response
+
 
 @pytest.mark.django_db
 class TestAuth:
@@ -129,3 +136,51 @@ class TestArticles:
         }, format='json')
         assert response.status_code == status.HTTP_201_CREATED, response.data
         assert response.data['attachment_url'] == upload.data['attachment_url']
+        # Editors cannot publish directly — workflow routes to pending review.
+        assert response.data['status'] == 'pending_review'
+
+    def test_upload_article_image(self, api_client, editor_user, org):
+        bind_client_to_org(api_client, editor_user, org)
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        image = SimpleUploadedFile(
+            'hero.png',
+            b'\x89PNG\r\n\x1a\n' + b'\x00' * 32,
+            content_type='image/png',
+        )
+        response = api_client.post(
+            '/api/articles/images/upload/',
+            {'file': image},
+            format='multipart',
+        )
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['url']
+        assert response.data['name'] == 'hero.png'
+
+    def test_content_bundle(self, api_client, citizen_user, org, category):
+        bind_client_to_org(api_client, citizen_user, org)
+        Article.objects.create(
+            organization=org,
+            category=category,
+            title='Published lesson',
+            content='Body',
+            status='published',
+            author=citizen_user,
+        )
+        from apps.quizzes.models import Quiz
+
+        Quiz.objects.create(
+            organization=org,
+            title='Civic quiz',
+            description='Basics',
+            created_by=citizen_user,
+            is_active=True,
+        )
+        response = api_client.get('/api/v1/content-bundle/')
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['version'] == 1
+        assert len(response.data['articles']) >= 1
+        assert len(response.data['quizzes']) >= 1
+        assert len(response.data['categories']) >= 1
+        assert 'media' in response.data
+        assert isinstance(response.data['media'], list)

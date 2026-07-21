@@ -24,24 +24,6 @@ function ChatBubble({ className = 'h-6 w-6' }) {
   );
 }
 
-function CheckCircle({ className = 'h-6 w-6' }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <path d="M8 12l3 3 5-5" />
-    </svg>
-  );
-}
-
-function XCircle({ className = 'h-6 w-6' }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <path d="M15 9l-6 6M9 9l6 6" />
-    </svg>
-  );
-}
-
 function CloudArrowDown({ className = 'h-6 w-6' }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -191,14 +173,23 @@ function ChevronLeft({ className = 'h-5 w-5' }) {
   );
 }
 
-function InboxEmpty({ className = 'h-10 w-10' }) {
-  return (
-    <svg className={className} viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="8" y="12" width="48" height="40" rx="4" />
-      <path d="M8 36h14l4 6h12l4-6h14" />
-      <path d="M24 24h16M24 30h10" />
-    </svg>
-  );
-}
-
-export { AcademicCap, ArrowUp, Bell, BookOpen, ChatBubble, CheckCircle, ChevronLeft, ChevronRight, CloudArrowDown, Eye, EyeOff, FileText, InboxEmpty, Megaphone, Medal, Moon, ShieldCheck, Sun, Target, Trophy, XCircle };
+export {
+  AcademicCap,
+  ArrowUp,
+  Bell,
+  BookOpen,
+  ChatBubble,
+  ChevronLeft,
+  ChevronRight,
+  CloudArrowDown,
+  Eye,
+  EyeOff,
+  FileText,
+  Megaphone,
+  Medal,
+  Moon,
+  ShieldCheck,
+  Sun,
+  Target,
+  Trophy,
+};

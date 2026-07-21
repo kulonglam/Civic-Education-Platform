@@ -23,6 +23,7 @@ const EMPTY_FORM = {
   description: '',
   name_ar: '',
   description_ar: '',
+  is_locked: false,
 };
 
 export function CategoriesManagePage() {
@@ -58,6 +59,7 @@ export function CategoriesManagePage() {
       description: cat.description ?? '',
       name_ar: cat.name_ar ?? '',
       description_ar: cat.description_ar ?? '',
+      is_locked: Boolean(cat.is_locked),
     });
   };
 
@@ -183,6 +185,15 @@ export function CategoriesManagePage() {
             onChange={(e) => setForm({ ...form, description: e.target.value })}
           />
         </div>
+        <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-300">
+          <input
+            type="checkbox"
+            checked={form.is_locked}
+            onChange={(e) => setForm({ ...form, is_locked: e.target.checked })}
+          />
+          {t('categories.lockCurriculum')}
+        </label>
+        <p className="text-xs text-gray-500 dark:text-slate-400">{t('categories.lockHint')}</p>
         <div className="flex flex-wrap gap-3">
           <button type="submit" className="btn-primary" disabled={saving}>
             {saving ? t('common.loading') : editId ? t('common.save') : t('common.create')}
@@ -202,20 +213,29 @@ export function CategoriesManagePage() {
           {categories.map((cat) => (
             <li key={cat.id} className="flex items-center justify-between gap-4 px-4 py-3">
               <div>
-                <p className="font-medium text-gray-900 dark:text-slate-100">{cat.name}</p>
+                <p className="font-medium text-gray-900 dark:text-slate-100">
+                  {cat.name}
+                  {cat.is_locked ? (
+                    <span className="ml-2 text-xs font-normal text-amber-700 dark:text-amber-300">
+                      ({t('categories.locked')})
+                    </span>
+                  ) : null}
+                </p>
                 <p className="text-xs text-gray-500 dark:text-slate-400">{cat.slug}</p>
               </div>
               <div className="flex gap-2">
                 <button type="button" className="btn-secondary text-xs" onClick={() => startEdit(cat)}>
                   {t('common.edit')}
                 </button>
-                <button
-                  type="button"
-                  className="btn-danger text-xs"
-                  onClick={() => setPendingDelete({ id: cat.id, name: cat.name })}
-                >
-                  {t('common.delete')}
-                </button>
+                {!cat.is_locked && (
+                  <button
+                    type="button"
+                    className="btn-danger text-xs"
+                    onClick={() => setPendingDelete({ id: cat.id, name: cat.name })}
+                  >
+                    {t('common.delete')}
+                  </button>
+                )}
               </div>
             </li>
           ))}

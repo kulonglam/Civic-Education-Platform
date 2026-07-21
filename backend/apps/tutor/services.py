@@ -135,7 +135,7 @@ def _user_language(user) -> str:
     return 'en'
 
 
-def _build_system_prompt(user, article: Article | None) -> str:
+def _build_system_prompt(user, article: Article | None, message: str = '') -> str:
     lang = _user_language(user)
     lang_name = LANGUAGE_NAMES.get(lang, 'English')
     org = get_current_organization() or get_user_organization(user)
@@ -145,6 +145,8 @@ def _build_system_prompt(user, article: Article | None) -> str:
         'You are a civic education tutor for citizens of South Sudan on the '
         f'"{org_name}" platform. Answer clearly and accurately about democracy, '
         'constitutional rights, governance, elections, peacebuilding, and civic participation. '
+        'Prefer the Transitional Constitution of the Republic of South Sudan and other '
+        'platform learning materials when they are provided below. '
         'Use age-appropriate language. If unsure, say so rather than invent facts. '
         f'Reply in {lang_name}.'
     )
@@ -153,6 +155,16 @@ def _build_system_prompt(user, article: Article | None) -> str:
             f'\n\nThe learner is reading this article titled "{article.title}":\n'
             f'{article.content[:3000]}'
         )
+
+    from .retrieval import format_retrieved_context, retrieve_article_chunks
+
+    chunks = retrieve_article_chunks(
+        message,
+        exclude_article_id=article.pk if article is not None else None,
+    )
+    knowledge = format_retrieved_context(chunks)
+    if knowledge:
+        prompt += f'\n\n{knowledge}'
     return prompt
 
 
@@ -210,7 +222,7 @@ class ClaudeTutorService:
             session['article_id'] = str(article_id)
 
         session['messages'].append({'role': 'user', 'content': message})
-        system_prompt = _build_system_prompt(user, article)
+        system_prompt = _build_system_prompt(user, article, message)
         reply, tokens_used = _call_claude(
             system_prompt=system_prompt,
             messages=_build_api_messages(session),

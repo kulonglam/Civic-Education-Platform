@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'apps.core.middleware.ContentSecurityPolicyMiddleware',
+    'apps.core.middleware.SecurityHeadersMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -63,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'apps.tenants.middleware.TenantMiddleware',
+    'apps.core.middleware.IpAllowlistMiddleware',
     'apps.core.middleware.SetJWTCookieMiddleware',
 ]
 
@@ -94,6 +96,15 @@ DATABASES = {
         conn_max_age=600,
     )
 }
+
+# Optional read replica — set DATABASE_URL_REPLICA to enable.
+_DATABASE_URL_REPLICA = config('DATABASE_URL_REPLICA', default='')
+if _DATABASE_URL_REPLICA:
+    DATABASES['replica'] = dj_database_url.config(
+        default=_DATABASE_URL_REPLICA,
+        conn_max_age=600,
+    )
+    DATABASE_ROUTERS = ['apps.core.db.ReadReplicaRouter']
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -155,6 +166,7 @@ REST_FRAMEWORK = {
         'user': '100/min',
         'auth': '5/min',
         'ai_tutor': '10/min',
+        'content_bundle': '4/hour',
     },
     'EXCEPTION_HANDLER': 'apps.core.exceptions.custom_exception_handler',
 }
@@ -310,6 +322,9 @@ LOGGING = {
 }
 
 MFA_ISSUER_NAME = config('MFA_ISSUER_NAME', default='Civic Education Platform')
+
+# Privileged-role idle timeout (seconds). Enforced server-side via cache.
+SESSION_IDLE_TIMEOUT_SECONDS = config('SESSION_IDLE_TIMEOUT_SECONDS', default=30 * 60, cast=int)
 
 # ── JWT Cookie settings ──────────────────────────────────────────────────────
 JWT_ACCESS_COOKIE = 'cep_access'

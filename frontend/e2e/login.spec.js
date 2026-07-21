@@ -1,10 +1,9 @@
 import { test, expect } from '@playwright/test';
-
-const API = 'http://127.0.0.1:8000/api';
+import { API } from './helpers';
 
 test.describe('Login flow', () => {
   test('user can log in with valid credentials', async ({ page }) => {
-    await page.route(`${API}/auth/login/`, async (route) => {
+    await page.route('**/api/**/auth/login/**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -15,7 +14,7 @@ test.describe('Login flow', () => {
       });
     });
 
-    await page.route(`${API}/users/profile/`, async (route) => {
+    await page.route('**/api/**/users/profile/**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -34,15 +33,15 @@ test.describe('Login flow', () => {
     });
 
     await page.goto('/login');
-    await page.getByLabel(/email/i).fill('user@test.com');
-    await page.getByLabel(/password/i).fill('TestPass123!');
+    await page.locator('#email').fill('user@test.com');
+    await page.locator('#password').fill('TestPass123!');
     await page.getByRole('button', { name: /log in/i }).click();
 
     await expect(page).not.toHaveURL(/\/login/);
   });
 
   test('shows error for invalid credentials', async ({ page }) => {
-    await page.route(`${API}/auth/login/`, async (route) => {
+    await page.route('**/api/**/auth/login/**', async (route) => {
       await route.fulfill({
         status: 401,
         contentType: 'application/json',
@@ -51,8 +50,8 @@ test.describe('Login flow', () => {
     });
 
     await page.goto('/login');
-    await page.getByLabel(/email/i).fill('bad@test.com');
-    await page.getByLabel(/password/i).fill('wrong');
+    await page.locator('#email').fill('bad@test.com');
+    await page.locator('#password').fill('wrong');
     await page.getByRole('button', { name: /log in/i }).click();
 
     await expect(page.getByText(/invalid credentials/i)).toBeVisible();

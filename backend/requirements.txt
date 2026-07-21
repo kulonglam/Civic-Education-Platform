@@ -1,6 +1,6 @@
-Django==6.0.5
+Django==6.0.7
 djangorestframework==3.16.0
-djangorestframework-simplejwt==5.5.0
+djangorestframework-simplejwt==5.5.1
 django-cors-headers==4.7.0
 psycopg2-binary==2.9.10
 python-decouple==3.8
@@ -9,7 +9,7 @@ drf-spectacular==0.28.0
 supabase==2.15.2
 dj-database-url==3.1.2
 gunicorn==23.0.0
-daphne==4.1.2
+daphne==4.2.2
 whitenoise==6.9.0
 channels==4.2.0
 channels-redis==4.2.1
@@ -18,11 +18,12 @@ celery==5.5.3
 redis==5.2.1
 # --- auth / crypto ---
 bcrypt==4.3.0
-cryptography==44.0.3
+cryptography==48.0.1
+PyJWT==2.13.0
 pyotp==2.9.0
-bleach==6.2.0
+bleach==6.4.0
 # --- testing ---
-pytest==8.3.5
+pytest==9.0.3
 pytest-django==4.11.1
 pytest-cov==6.2.1
 factory-boy==3.3.3

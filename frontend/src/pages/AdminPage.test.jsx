@@ -14,6 +14,16 @@ vi.mock('../context/AuthContext', () => ({
   }),
 }));
 
+vi.mock('../context/OrganizationContext', () => ({
+  useOrganization: () => ({
+    membership: null,
+    isOrgAdmin: false,
+    isOrgModerator: false,
+    isOrgContentManager: false,
+    loading: false,
+  }),
+}));
+
 vi.mock('../lib/services', () => ({
   forumService: {
     pending: vi.fn().mockResolvedValue({ data: { topics: [], comments: [] } }),
@@ -30,6 +40,17 @@ vi.mock('../lib/services', () => ({
   },
   auditService: { logs: vi.fn().mockResolvedValue({ data: { results: [] } }) },
   notifyService: { platformBroadcast: vi.fn() },
+  organizationService: {
+    platformOrgs: vi.fn().mockResolvedValue({ data: { results: [] } }),
+    platformOrgDetail: vi.fn().mockResolvedValue({ data: {} }),
+    setOrgActive: vi.fn().mockResolvedValue({ data: {} }),
+    platformUsage: vi.fn().mockResolvedValue({ data: { totals: {}, organizations: [] } }),
+    platformSlo: vi.fn().mockResolvedValue({ data: {} }),
+    platformSupportCases: vi.fn().mockResolvedValue({ data: { results: [] } }),
+  },
+  securityService: {
+    events: vi.fn().mockResolvedValue({ data: { results: [] } }),
+  },
 }));
 
 describe('AdminPage', () => {

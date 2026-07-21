@@ -21,6 +21,19 @@ class Organization(models.Model):
     logo_url = models.URLField(blank=True)
     primary_color = models.CharField(max_length=7, default=DEFAULT_PRIMARY_COLOR)
     is_active = models.BooleanField(default=True)
+    force_mfa_for_admins = models.BooleanField(
+        default=True,
+        help_text='Require MFA for organization owners and admins.',
+    )
+    audit_retention_days = models.PositiveIntegerField(
+        default=365,
+        help_text='Days to retain activity logs for this organization (0 = keep forever).',
+    )
+    ip_allowlist = models.JSONField(
+        default=list,
+        blank=True,
+        help_text='Optional list of CIDR/IP strings. Empty = allow all client IPs.',
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -32,13 +45,67 @@ class Organization(models.Model):
         return self.name
 
 
+class Department(models.Model):
+    """Organizational unit within a tenant (ministry division, county office, etc.)."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE,
+        related_name='departments',
+    )
+    name = models.CharField(max_length=150)
+    slug = models.SlugField(max_length=150)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'departments'
+        ordering = ['name']
+        unique_together = [('organization', 'slug'), ('organization', 'name')]
+
+    def __str__(self):
+        return f'{self.name} ({self.organization_id})'
+
+
+class OrganizationSsoConfig(models.Model):
+    """Per-organization OpenID Connect settings (Enterprise plan)."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    organization = models.OneToOneField(
+        Organization,
+        on_delete=models.CASCADE,
+        related_name='sso_config',
+    )
+    enabled = models.BooleanField(default=False)
+    issuer = models.URLField(blank=True)
+    client_id = models.CharField(max_length=255, blank=True)
+    client_secret = models.CharField(max_length=512, blank=True)
+    scopes = models.CharField(max_length=255, blank=True, default='openid email profile')
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'organization_sso_configs'
+
+    def __str__(self):
+        return f'SSO config for {self.organization_id}'
+
+    @property
+    def is_ready(self) -> bool:
+        return bool(self.enabled and self.issuer and self.client_id and self.client_secret)
+
+
 class Membership(models.Model):
     OWNER = 'owner'
     ADMIN = 'admin'
+    CONTENT_MANAGER = 'content_manager'
+    MODERATOR = 'moderator'
     MEMBER = 'member'
     ROLE_CHOICES = [
         (OWNER, 'Owner'),
         (ADMIN, 'Admin'),
+        (CONTENT_MANAGER, 'Content manager'),
+        (MODERATOR, 'Moderator'),
         (MEMBER, 'Member'),
     ]
 
@@ -54,6 +121,13 @@ class Membership(models.Model):
         related_name='memberships',
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=MEMBER)
+    department = models.ForeignKey(
+        Department,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='memberships',
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -75,6 +149,13 @@ class OrganizationInvite(models.Model):
     )
     email = models.EmailField(db_index=True)
     role = models.CharField(max_length=20, choices=Membership.ROLE_CHOICES, default=Membership.MEMBER)
+    department = models.ForeignKey(
+        Department,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='invites',
+    )
     token = models.CharField(max_length=64, unique=True, db_index=True)
     invited_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -108,6 +189,81 @@ class OrganizationInvite(models.Model):
     @classmethod
     def generate_token(cls):
         return secrets.token_urlsafe(32)
+
+
+class OrganizationScimToken(models.Model):
+    """Bearer token for SCIM 2.0 provisioning integrations (hashed at rest)."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE,
+        related_name='scim_tokens',
+    )
+    name = models.CharField(max_length=100, default='SCIM token')
+    token_prefix = models.CharField(max_length=12, blank=True)
+    token_hash = models.CharField(max_length=64, unique=True, db_index=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_used_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'organization_scim_tokens'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'SCIM token {self.token_prefix}… ({self.organization_id})'
+
+
+class SupportCase(models.Model):
+    """Tenant-raised support case visible to platform operators."""
+
+    STATUS_OPEN = 'open'
+    STATUS_IN_PROGRESS = 'in_progress'
+    STATUS_RESOLVED = 'resolved'
+    STATUS_CLOSED = 'closed'
+    STATUS_CHOICES = [
+        (STATUS_OPEN, 'Open'),
+        (STATUS_IN_PROGRESS, 'In progress'),
+        (STATUS_RESOLVED, 'Resolved'),
+        (STATUS_CLOSED, 'Closed'),
+    ]
+    PRIORITY_LOW = 'low'
+    PRIORITY_NORMAL = 'normal'
+    PRIORITY_HIGH = 'high'
+    PRIORITY_CHOICES = [
+        (PRIORITY_LOW, 'Low'),
+        (PRIORITY_NORMAL, 'Normal'),
+        (PRIORITY_HIGH, 'High'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE,
+        related_name='support_cases',
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='support_cases_created',
+    )
+    subject = models.CharField(max_length=255)
+    body = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_OPEN)
+    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default=PRIORITY_NORMAL)
+    assignee_notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'support_cases'
+        ordering = ['-updated_at']
+
+    def __str__(self):
+        return f'{self.subject} ({self.status})'
 
 
 class TenantModel(models.Model):

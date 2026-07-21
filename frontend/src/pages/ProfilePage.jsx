@@ -5,8 +5,10 @@ import { useAuth } from '../context/AuthContext';
 import { useOrganization } from '../context/OrganizationContext';
 import { authService, notificationService, userService } from '../lib/services';
 import { extractError } from '../lib/api';
-import { Alert, OrgRoleBadge, PageHeader, PasswordInput, PasswordStrengthBar, RoleBadge } from '../components/ui';
+import { ConfirmDialog, OrgRoleBadge, PageHeader, PasswordInput, PasswordStrengthBar, RoleBadge } from '../components/ui';
+import { CloudArrowDown } from '../components/Icons';
 import { formatDate } from '../lib/format';
+import { downloadContentBundle, getContentBundleMeta } from '../lib/offline/contentBundle';
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY || '';
 
@@ -19,7 +21,7 @@ function urlBase64ToUint8Array(base64String) {
 
 export function ProfilePage() {
   const { t, i18n } = useTranslation();
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, logout } = useAuth();
   const { membership } = useOrganization();
   const [form, setForm] = useState({
     first_name: '',
@@ -43,6 +45,11 @@ export function ProfilePage() {
   const [mfaSetup, setMfaSetup] = useState(null);
   const [mfaCode, setMfaCode] = useState('');
   const [mfaBusy, setMfaBusy] = useState('');
+  const [dataBusy, setDataBusy] = useState('');
+  const [deactivateOpen, setDeactivateOpen] = useState(false);
+  const [bundleBusy, setBundleBusy] = useState(false);
+  const [bundleMeta, setBundleMeta] = useState(null);
+  const [bundleError, setBundleError] = useState('');
 
   useEffect(() => {
     if (!VAPID_PUBLIC_KEY || !('Notification' in window) || !('serviceWorker' in navigator)) {
@@ -68,6 +75,29 @@ export function ProfilePage() {
       });
     }
   }, [user]);
+
+  useEffect(() => {
+    getContentBundleMeta().then(setBundleMeta).catch(() => setBundleMeta(null));
+  }, []);
+
+  const downloadStudyPack = async () => {
+    setBundleBusy(true);
+    setBundleError('');
+    try {
+      const summary = await downloadContentBundle();
+      setBundleMeta(summary);
+      toast.success(
+        t('offline.bundleDownloaded', {
+          articles: summary.articles,
+          quizzes: summary.quizzes,
+        }),
+      );
+    } catch (err) {
+      setBundleError(extractError(err));
+    } finally {
+      setBundleBusy(false);
+    }
+  };
 
   const submit = async (e) => {
     e.preventDefault();
@@ -210,6 +240,38 @@ export function ProfilePage() {
       toast.error(extractError(err));
     } finally {
       setMfaBusy('');
+    }
+  };
+
+  const downloadMyData = async () => {
+    setDataBusy('export');
+    try {
+      const { data } = await userService.exportMyData();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'my-civic-data.json';
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      toast.error(extractError(err));
+    } finally {
+      setDataBusy('');
+    }
+  };
+
+  const confirmDeactivate = async () => {
+    setDataBusy('deactivate');
+    try {
+      await userService.deactivate();
+      setDeactivateOpen(false);
+      toast.success(t('profile.deactivateSuccess'));
+      await logout();
+    } catch (err) {
+      toast.error(extractError(err));
+    } finally {
+      setDataBusy('');
     }
   };
 
@@ -445,6 +507,35 @@ export function ProfilePage() {
         </button>
       </form>
 
+      <div className="card mt-6 space-y-3">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300">
+            <CloudArrowDown className="h-5 w-5" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-slate-100">{t('offline.bundleTitle')}</h2>
+            <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">{t('offline.bundleHint')}</p>
+            {bundleMeta && (
+              <p className="mt-2 text-xs text-gray-500 dark:text-slate-500">
+                {t('offline.bundleStatus', {
+                  articles: bundleMeta.articles,
+                  quizzes: bundleMeta.quizzes,
+                })}
+              </p>
+            )}
+            {bundleError && <p className="mt-2 text-xs text-red-600">{bundleError}</p>}
+            <button
+              type="button"
+              className="btn-primary mt-3 text-sm"
+              onClick={downloadStudyPack}
+              disabled={bundleBusy}
+            >
+              {bundleBusy ? t('common.loading') : t('offline.bundleDownload')}
+            </button>
+          </div>
+        </div>
+      </div>
+
       {pushSupported && (
         <div className="card mt-6 space-y-3">
           <h2 className="text-sm font-semibold text-gray-900 dark:text-slate-100">{t('push.profileTitle')}</h2>
@@ -462,6 +553,42 @@ export function ProfilePage() {
           </div>
         </div>
       )}
+
+      <div className="card mt-6 space-y-4">
+        <h2 className="text-sm font-semibold text-gray-900 dark:text-slate-100">{t('profile.exportMyData')}</h2>
+        <p className="text-sm text-gray-600 dark:text-slate-400">{t('profile.exportMyDataHint')}</p>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            className="btn-secondary text-sm"
+            onClick={downloadMyData}
+            disabled={!!dataBusy}
+          >
+            {dataBusy === 'export' ? t('common.loading') : t('profile.exportMyData')}
+          </button>
+          <button
+            type="button"
+            className="btn-danger text-sm"
+            onClick={() => setDeactivateOpen(true)}
+            disabled={!!dataBusy}
+          >
+            {t('profile.deactivateAccount')}
+          </button>
+        </div>
+      </div>
+
+      <ConfirmDialog
+        open={deactivateOpen}
+        title={t('profile.deactivateAccount')}
+        message={t('profile.deactivateConfirm')}
+        confirmLabel={t('profile.deactivateAccount')}
+        onConfirm={confirmDeactivate}
+        onCancel={() => {
+          if (dataBusy === 'deactivate') return;
+          setDeactivateOpen(false);
+        }}
+        busy={dataBusy === 'deactivate'}
+      />
     </div>
   );
 }

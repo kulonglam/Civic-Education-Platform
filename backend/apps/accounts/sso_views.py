@@ -24,12 +24,13 @@ class SsoStatusView(APIView):
         org_slug = request.query_params.get('org') or request.headers.get('X-Tenant-Slug')
         organization = None
         enabled_for_org = False
+        configured = False
         if org_slug:
             organization = Organization.objects.filter(slug=org_slug, is_active=True).first()
             if organization:
                 enabled_for_org = plan_has_sso(organization)
+                configured = sso.oidc_configured(organization)
 
-        configured = sso.oidc_configured()
         login_path = None
         if configured and enabled_for_org and org_slug:
             login_path = f'/api/auth/sso/login/?{urlencode({"org": org_slug})}'
@@ -48,12 +49,6 @@ class SsoLoginView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        if not sso.oidc_configured():
-            return Response(
-                {'detail': 'SSO is not configured on this server.'},
-                status=status.HTTP_503_SERVICE_UNAVAILABLE,
-            )
-
         org_slug = request.query_params.get('org')
         if not org_slug:
             return Response({'detail': 'Organization slug is required.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -61,10 +56,14 @@ class SsoLoginView(APIView):
         organization = get_object_or_404(Organization, slug=org_slug, is_active=True)
         require_sso(organization)
 
+        if not sso.oidc_configured(organization):
+            return Response(
+                {'detail': 'SSO is not configured for this organization.'},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+
         try:
-            # build_authorize_url now returns (url, state) — state is already
-            # persisted in cache by store_sso_state() inside the helper.
-            authorize_url, _state = sso.build_authorize_url(org_slug)
+            authorize_url, _state = sso.build_authorize_url(org_slug, organization)
         except Exception as exc:
             return Response(
                 {'detail': f'Could not start SSO login: {exc}'},
@@ -93,26 +92,37 @@ class SsoCallbackView(APIView):
             return Response({'detail': 'Invalid or expired SSO state.'}, status=status.HTTP_400_BAD_REQUEST)
 
         org_slug = state_payload.get('org_slug')
-        # Retrieve nonce stored at login time for replay-attack prevention
         nonce = state_payload.get('nonce')
+        organization = Organization.objects.filter(slug=org_slug, is_active=True).first()
+        if organization is None:
+            return Response({'detail': 'Organization not found.'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            token_payload = sso.exchange_code_for_tokens(code)
-            # Pass nonce so _verify_id_token can validate it against the id_token claim
-            claims = sso.claims_from_tokens(token_payload, nonce=nonce)
+            token_payload = sso.exchange_code_for_tokens(code, organization)
+            claims = sso.claims_from_tokens(token_payload, organization, nonce=nonce)
             user = sso.get_or_create_user_from_sso(claims, org_slug)
             tokens = sso.issue_jwt_tokens(user)
-            log_activity(user, 'user_login', {'email': user.email, 'method': 'sso'})
+            log_activity(
+                user,
+                'sso_login',
+                {'email': user.email, 'method': 'sso'},
+                organization=organization,
+                request=request,
+            )
+            log_activity(
+                user,
+                'user_login',
+                {'email': user.email, 'method': 'sso'},
+                organization=organization,
+                request=request,
+            )
         except ValueError as exc:
             params = urlencode({'error': str(exc)})
             return HttpResponseRedirect(f'{settings.FRONTEND_URL.rstrip("/")}/sso/callback?{params}')
         except Exception as exc:
-            logger_msg = f'SSO login failed: {exc}'
             return Response(
-                {'detail': logger_msg},
+                {'detail': f'SSO login failed: {exc}'},
                 status=status.HTTP_503_SERVICE_UNAVAILABLE,
             )
 
-        # Tokens are placed in the URL *fragment* (hash), not query params,
-        # to avoid leakage in server logs and Referer headers.
         return HttpResponseRedirect(sso.frontend_callback_url(tokens, org_slug=org_slug))

@@ -66,11 +66,14 @@ def category(db, org):
 
 def bind_client_to_org(api_client, user, org, *, membership_role=Membership.MEMBER, skip_mfa=False):
     """Authenticate and scope requests to ``org`` (creates membership if needed)."""
-    Membership.objects.get_or_create(
+    membership, created = Membership.objects.get_or_create(
         organization=org,
         user=user,
         defaults={'role': membership_role},
     )
+    if not created and membership.role != membership_role:
+        membership.role = membership_role
+        membership.save(update_fields=['role'])
     api_client.force_authenticate(user=user)
     api_client.credentials(HTTP_X_TENANT_SLUG=org.slug)
     if user_requires_mfa(user) and not skip_mfa:

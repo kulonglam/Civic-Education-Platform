@@ -38,14 +38,22 @@ function OrganizationProvider({ children }) {
   }, [refetch]);
 
   const rawOrganization = data?.organization ?? null;
-  const organization = rawOrganization
-    ? {
-        ...rawOrganization,
-        primary_color: normalizePrimaryColor(rawOrganization.primary_color),
-      }
-    : null;
+  const organization = useMemo(
+    () =>
+      rawOrganization
+        ? {
+            ...rawOrganization,
+            primary_color: normalizePrimaryColor(rawOrganization.primary_color),
+          }
+        : null,
+    [rawOrganization],
+  );
   const membership = data?.membership ?? null;
   const isOrgAdmin = membership?.role === 'owner' || membership?.role === 'admin';
+  const isOrgContentManager =
+    isOrgAdmin || membership?.role === 'content_manager';
+  const isOrgModerator =
+    isOrgAdmin || membership?.role === 'moderator';
 
   const value = useMemo(
     () => ({
@@ -54,8 +62,10 @@ function OrganizationProvider({ children }) {
       loading: isLoading,
       refresh,
       isOrgAdmin,
+      isOrgContentManager,
+      isOrgModerator,
     }),
-    [organization, membership, isLoading, refresh, isOrgAdmin]
+    [organization, membership, isLoading, refresh, isOrgAdmin, isOrgContentManager, isOrgModerator]
   );
 
   return (

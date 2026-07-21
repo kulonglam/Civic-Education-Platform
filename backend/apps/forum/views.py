@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.audit.services import log_activity
-from apps.core.permissions import IsModeratorOrAdmin
-from apps.tenants.permissions import IsOrgMember
+from apps.tenants.models import Membership
+from apps.tenants.permissions import IsOrgForumModerator, IsOrgMember, get_membership
 
 from .models import DiscussionComment, DiscussionTopic
 from .serializers import (
@@ -18,13 +18,26 @@ from .serializers import (
 )
 
 
+def _can_moderate_forum(user) -> bool:
+    if not user or not user.is_authenticated:
+        return False
+    role = getattr(user, 'role', None)
+    if role and role.name in ('moderator', 'admin'):
+        return True
+    membership = get_membership(user)
+    return membership is not None and membership.role in (
+        Membership.OWNER,
+        Membership.ADMIN,
+        Membership.MODERATOR,
+    )
+
+
 class DiscussionTopicViewSet(viewsets.ModelViewSet):
     lookup_field = 'id'
 
     def get_queryset(self):
         qs = DiscussionTopic.objects.select_related('author').prefetch_related('comments')
-        user = self.request.user
-        if user.is_authenticated and user.role.name in ('moderator', 'admin'):
+        if _can_moderate_forum(self.request.user):
             return qs
         return qs.filter(is_approved=True)
 
@@ -67,7 +80,7 @@ class TopicCommentCreateView(generics.CreateAPIView):
 
 
 class TopicModerateView(APIView):
-    permission_classes = [IsModeratorOrAdmin, IsOrgMember]
+    permission_classes = [IsOrgForumModerator, IsOrgMember]
     serializer_class = ModerateSerializer
 
     @extend_schema(request=ModerateSerializer, responses=DiscussionTopicSerializer)
@@ -87,7 +100,7 @@ class TopicModerateView(APIView):
 
 
 class CommentModerateView(APIView):
-    permission_classes = [IsModeratorOrAdmin, IsOrgMember]
+    permission_classes = [IsOrgForumModerator, IsOrgMember]
     serializer_class = ModerateSerializer
 
     @extend_schema(request=ModerateSerializer, responses=DiscussionCommentSerializer)
@@ -107,7 +120,7 @@ class CommentModerateView(APIView):
 
 
 class PendingModerationView(APIView):
-    permission_classes = [IsModeratorOrAdmin, IsOrgMember]
+    permission_classes = [IsOrgForumModerator, IsOrgMember]
 
     @extend_schema(
         responses=inline_serializer(

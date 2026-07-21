@@ -20,6 +20,7 @@ from apps.tenants.context import get_current_organization
 from .permissions import IsOrgAnalyticsAdmin
 from .services import (
     build_dashboard_summary,
+    build_institutional_report_pdf,
     build_member_progress,
     build_progress_csv,
     parse_report_dates,
@@ -141,8 +142,12 @@ class MemberProgressView(APIView):
     def get(self, request):
         require_analytics(get_current_organization())
         date_from, date_to = parse_report_dates(request)
+        members = build_member_progress(date_from=date_from, date_to=date_to)
+        department = request.query_params.get('department')
+        if department:
+            members = [m for m in members if m.get('department_id') == department]
         return Response({
-            'members': build_member_progress(date_from=date_from, date_to=date_to),
+            'members': members,
         })
 
 
@@ -165,5 +170,37 @@ class ExportProgressCSVView(APIView):
         csv_content = build_progress_csv(date_from=date_from, date_to=date_to)
         filename = f'{organization.slug}-progress.csv'
         response = HttpResponse(csv_content, content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+
+
+@extend_schema(
+    responses={(200, 'application/pdf'): OpenApiTypes.BINARY},
+    parameters=[
+        OpenApiParameter(name='from', type=str, description='Start date (YYYY-MM-DD)'),
+        OpenApiParameter(name='to', type=str, description='End date (YYYY-MM-DD)'),
+    ],
+)
+class InstitutionalReportPDFView(APIView):
+    """Branded PDF summary for institutional / funder reporting."""
+
+    permission_classes = [IsAuthenticated, IsOrgAnalyticsAdmin]
+
+    def get(self, request):
+        from apps.audit.services import log_activity
+
+        organization = get_current_organization()
+        require_analytics(organization)
+        date_from, date_to = parse_report_dates(request)
+        pdf_bytes = build_institutional_report_pdf(date_from=date_from, date_to=date_to)
+        log_activity(
+            request.user,
+            'data_exported',
+            {'resource': 'institutional_report_pdf'},
+            organization=organization,
+            request=request,
+        )
+        filename = f'{organization.slug}-learning-report.pdf'
+        response = HttpResponse(pdf_bytes, content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
         return response

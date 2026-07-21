@@ -14,6 +14,7 @@ _v1_patterns = [
     path('users/', include('apps.accounts.urls.users')),
     path('articles/', include('apps.learning.urls.articles')),
     path('categories/', include('apps.learning.urls.categories')),
+    path('media/', include('apps.learning.urls.media')),
     path('content-bundle/', include('apps.learning.urls.bundle')),
     path('quizzes/', include('apps.quizzes.urls')),
     path('topics/', include('apps.forum.urls.topics')),
@@ -38,6 +39,9 @@ urlpatterns = [
     # Clients that already use /api/... continue to work without changes.
     # New integrations should target /api/v1/.
     path('api/', include(_v1_patterns)),
+
+    # ── SCIM 2.0 (enterprise IdP provisioning) ────────────────────────────
+    path('scim/v2/', include('apps.tenants.scim_urls')),
 
     # ── Schema / docs ─────────────────────────────────────────────────────
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

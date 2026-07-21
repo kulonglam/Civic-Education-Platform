@@ -248,12 +248,18 @@ class LogoutView(APIView):
     )
     def post(self, request):
         refresh_token = request.data.get('refresh')
+        revoke_all = bool(request.data.get('revoke_all'))
         if refresh_token:
             try:
                 token = RefreshToken(refresh_token)
                 token.blacklist()
             except Exception:
                 pass
+        if revoke_all:
+            from apps.accounts.session import bump_session_epoch
+
+            bump_session_epoch(request.user)
+            log_activity(request.user, 'session_revoked', {'reason': 'logout_all'}, request=request)
         log_activity(request.user, 'user_logout', {})
         return Response({'message': 'Logged out successfully.'})
 
@@ -476,6 +482,74 @@ class AvatarUploadView(APIView):
         return Response({'avatar_url': request.user.profile.avatar_url})
 
 
+class MyDataExportView(APIView):
+    """Download the authenticated user's personal data (GDPR-style)."""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        from apps.quizzes.models import Certificate, QuizAttempt
+        from apps.tenants.models import Membership
+
+        user = request.user
+        memberships = list(
+            Membership.objects.filter(user=user)
+            .select_related('organization', 'department')
+            .values(
+                'organization__name',
+                'organization__slug',
+                'role',
+                'department__name',
+                'created_at',
+            )
+        )
+        attempts = list(
+            QuizAttempt.objects.filter(user=user)
+            .select_related('quiz')
+            .order_by('-attempted_at')[:200]
+            .values('quiz__title', 'score', 'passed', 'attempted_at')
+        )
+        certificates = list(
+            Certificate.objects.filter(user=user)
+            .select_related('quiz')
+            .values('quiz__title', 'issued_at', 'certificate_id')
+        )
+        log_activity(
+            user,
+            'data_exported',
+            {'resource': 'user_self'},
+            request=request,
+        )
+        return Response({
+            'user': UserSerializer(user).data,
+            'memberships': memberships,
+            'quiz_attempts': attempts,
+            'certificates': certificates,
+            'exported_at': timezone.now().isoformat(),
+        })
+
+
+class DeactivateAccountView(APIView):
+    """Soft-deactivate the authenticated account."""
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        if user.is_superuser or user.role.name == 'admin':
+            return Response(
+                {'detail': 'Platform admin accounts cannot self-deactivate. Contact support.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        user.is_active = False
+        user.save(update_fields=['is_active'])
+        from apps.accounts.session import bump_session_epoch
+
+        bump_session_epoch(user)
+        log_activity(user, 'user_deactivated', {'email': user.email}, request=request)
+        return Response({'message': 'Account deactivated.'})
+
+
 class SuspendUserView(APIView):
     permission_classes = [IsModeratorOrAdmin]
 
@@ -487,6 +561,9 @@ class SuspendUserView(APIView):
             return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
         user.is_suspended = True
         user.save(update_fields=['is_suspended'])
+        from apps.accounts.session import bump_session_epoch
+
+        bump_session_epoch(user)
         log_activity(request.user, 'user_suspended', {'target_user_id': str(user.id)})
         return Response({'message': f'User {user.email} suspended.'})
 
@@ -562,6 +639,9 @@ class ChangePasswordView(APIView):
 
         request.user.set_password(new_password)
         request.user.save(update_fields=['password'])
+        from apps.accounts.session import bump_session_epoch
+
+        bump_session_epoch(request.user)
         log_activity(request.user, 'password_changed', {})
         return Response({'message': 'Password updated successfully.'})
 

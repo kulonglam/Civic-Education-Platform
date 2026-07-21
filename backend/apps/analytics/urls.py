@@ -6,6 +6,7 @@ from .views import (
     AnalyticsOverviewView,
     AnalyticsQuizzesView,
     ExportProgressCSVView,
+    InstitutionalReportPDFView,
     MemberProgressView,
     OrgDashboardView,
 )
@@ -18,4 +19,5 @@ urlpatterns = [
     path('dashboard/', OrgDashboardView.as_view(), name='analytics-dashboard'),
     path('progress/', MemberProgressView.as_view(), name='analytics-progress'),
     path('export/csv/', ExportProgressCSVView.as_view(), name='analytics-export-csv'),
+    path('export/report.pdf/', InstitutionalReportPDFView.as_view(), name='analytics-export-report-pdf'),
 ]

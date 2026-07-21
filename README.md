@@ -7,7 +7,7 @@ Full-stack civic education platform for South Sudan: Django REST API + React (Vi
 
 **Local dev:** run the backend, then `cd frontend && npm install && npm run dev` (API default: `http://127.0.0.1:8000/api`).
 
-**Production:** [docs/production-launch.md](docs/production-launch.md) · [docs/production-env-checklist.md](docs/production-env-checklist.md)
+**Production:** [docs/production-launch.md](docs/production-launch.md) · [docs/production-env-checklist.md](docs/production-env-checklist.md) · [docs/enterprise.md](docs/enterprise.md) · [docs/compliance-readiness.md](docs/compliance-readiness.md) · [docs/disaster-recovery.md](docs/disaster-recovery.md) · [docs/scaling.md](docs/scaling.md)
 
 ---
 
