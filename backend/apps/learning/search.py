@@ -2,12 +2,23 @@
 
 from __future__ import annotations
 
+from django.conf import settings
 from django.db.models import Q
 
 from apps.forum.models import DiscussionTopic
 from apps.tenants.context import get_current_organization
+from apps.tenants.models import Organization
 
 from .models import Article, MediaAsset
+
+
+def _resolve_search_organization() -> Organization | None:
+    """Scope search to the request tenant, defaulting to the public workspace."""
+    organization = get_current_organization()
+    if organization is not None:
+        return organization
+    slug = getattr(settings, 'PUBLIC_ORGANIZATION_SLUG', 'platform-demo')
+    return Organization.objects.filter(slug=slug, is_active=True).first()
 
 
 def global_search(query: str, *, limit: int = 8) -> dict:
@@ -15,17 +26,24 @@ def global_search(query: str, *, limit: int = 8) -> dict:
     if len(query) < 2:
         return {'query': query, 'articles': [], 'media': [], 'topics': []}
 
+    organization = _resolve_search_organization()
+    if organization is None:
+        return {'query': query, 'articles': [], 'media': [], 'topics': []}
+
     per_type = max(1, min(limit, 20))
-    organization = get_current_organization()
 
-    articles_qs = Article.objects.filter(status='published').select_related('category')
-    media_qs = MediaAsset.objects.filter(status='published').select_related('category')
-    topics_qs = DiscussionTopic.objects.filter(is_approved=True)
-
-    if organization is not None:
-        articles_qs = articles_qs.filter(organization=organization)
-        media_qs = media_qs.filter(organization=organization)
-        topics_qs = topics_qs.filter(organization=organization)
+    articles_qs = Article.objects.filter(
+        status='published',
+        organization=organization,
+    ).select_related('category')
+    media_qs = MediaAsset.objects.filter(
+        status='published',
+        organization=organization,
+    ).select_related('category')
+    topics_qs = DiscussionTopic.objects.filter(
+        is_approved=True,
+        organization=organization,
+    )
 
     article_filter = (
         Q(title__icontains=query)

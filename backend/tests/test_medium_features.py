@@ -106,3 +106,45 @@ class TestGlobalSearch:
         forum = api_client.get('/api/search/', {'q': 'governance'})
         assert forum.status_code == status.HTTP_200_OK
         assert len(forum.data['topics']) == 1
+
+    def test_search_without_tenant_header_scopes_to_public_org(
+        self, api_client, org, category, citizen_user, django_user_model, settings,
+    ):
+        from apps.accounts.models import Role
+        from apps.tenants.services import create_organization_with_owner
+
+        settings.PUBLIC_ORGANIZATION_SLUG = org.slug
+
+        other_owner = django_user_model.objects.create_user(
+            email='other-org@test.com',
+            password='TestPass123!',
+            first_name='Other',
+            last_name='Org',
+            role=Role.objects.get(name='citizen'),
+        )
+        other_org = create_organization_with_owner(name='Private Org', owner=other_owner, slug='private-org')
+
+        Article.objects.create(
+            organization=org,
+            title='Public elections guide',
+            content='Published on the public demo workspace.',
+            category=category,
+            author=citizen_user,
+            status='published',
+            published_at=timezone.now(),
+        )
+        Article.objects.create(
+            organization=other_org,
+            title='Secret elections memo',
+            content='Must not appear without tenant context.',
+            category=category,
+            author=other_owner,
+            status='published',
+            published_at=timezone.now(),
+        )
+
+        response = api_client.get('/api/search/', {'q': 'elections'})
+        assert response.status_code == status.HTTP_200_OK
+        titles = [row['title'] for row in response.data['articles']]
+        assert 'Public elections guide' in titles
+        assert 'Secret elections memo' not in titles

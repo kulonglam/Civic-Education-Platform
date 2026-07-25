@@ -44,7 +44,10 @@ class TestReadinessEndpoint:
         response = api_client.get('/api/ready/')
         assert 'celery' in response.data
         assert response.data['celery'] == STATUS_EAGER
-        assert response.data['status'] in ('ready', 'degraded')
+        assert response.data['database'] == STATUS_LIVE
+        assert response.data['cache'] == STATUS_LIVE
+        assert response.data['status'] == 'ready'
+        assert response.status_code == status.HTTP_200_OK
         assert 'integrations/status/' in response.data['observability']['integrations']
 
 

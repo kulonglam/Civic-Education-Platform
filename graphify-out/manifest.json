@@ -455,8 +455,8 @@
     "semantic_hash": "5f51e98a3813435e0a9f4d8e93eea04b"
   },
   "backend/apps/core/views.py": {
-    "mtime": 1785015706.7712407,
-    "ast_hash": "5598fc6193c12a996865557de4e26471",
+    "mtime": 1785018549.9394462,
+    "ast_hash": "cb4908a60fb5eef8bf09b211fbee2949",
     "semantic_hash": ""
   },
   "backend/apps/forum/__init__.py": {
@@ -2120,8 +2120,8 @@
     "semantic_hash": ""
   },
   "backend/apps/learning/search.py": {
-    "mtime": 1785014123.6569946,
-    "ast_hash": "64c9e3ee9cd3ccbacd84cb96142ba673",
+    "mtime": 1785018550.3172162,
+    "ast_hash": "a2bc43caf85aa416d41c407f6ad635bf",
     "semantic_hash": ""
   },
   "backend/apps/learning/search_views.py": {
@@ -2140,8 +2140,8 @@
     "semantic_hash": ""
   },
   "backend/tests/test_integrations.py": {
-    "mtime": 1785015787.9163249,
-    "ast_hash": "cb4da25cb82d46f6e4e872f7f7869296",
+    "mtime": 1785018554.6738007,
+    "ast_hash": "fb03392b8183b6dd3bab87d83918fe0d",
     "semantic_hash": ""
   },
   "backend/tests/test_low_vision_features.py": {
@@ -2150,8 +2150,8 @@
     "semantic_hash": ""
   },
   "backend/tests/test_medium_features.py": {
-    "mtime": 1785014146.514707,
-    "ast_hash": "e94f27eb8d1c5732d962a2a6d76564bf",
+    "mtime": 1785018563.948423,
+    "ast_hash": "b2c2fcf1b1a71b95eb6b2fa65f20ce69",
     "semantic_hash": ""
   },
   "frontend/e2e/live/tutor.spec.js": {

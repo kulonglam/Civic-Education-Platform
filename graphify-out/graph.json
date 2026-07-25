@@ -21,8 +21,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_accounts_init",
-      "community": 61,
-      "community_name": "sso_views.py",
+      "community": 24,
+      "community_name": "billing/services.py",
       "norm_label": "accounts/__init__.py"
     },
     {
@@ -32,8 +32,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_accounts_admin",
-      "community": 43,
-      "community_name": "ArticleSerializer",
+      "community": 53,
+      "community_name": "get_membership",
       "norm_label": "accounts/admin.py"
     },
     {
@@ -428,8 +428,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "backend_apps_accounts_mfa_verify_totp_code",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 41,
+      "community_name": "Command",
       "norm_label": "verify_totp_code()"
     },
     {
@@ -461,8 +461,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "backend_apps_accounts_mfa_consume_mfa_challenge",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 41,
+      "community_name": "Command",
       "norm_label": "consume_mfa_challenge()"
     },
     {
@@ -637,8 +637,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_accounts_models",
-      "community": 43,
-      "community_name": "ArticleSerializer",
+      "community": 53,
+      "community_name": "get_membership",
       "norm_label": "accounts/models.py"
     },
     {
@@ -681,8 +681,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "backend_apps_accounts_models_usermanager",
-      "community": 43,
-      "community_name": "ArticleSerializer",
+      "community": 53,
+      "community_name": "get_membership",
       "norm_label": "usermanager"
     },
     {
@@ -692,8 +692,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "baseusermanager",
-      "community": 43,
-      "community_name": "ArticleSerializer",
+      "community": 53,
+      "community_name": "get_membership",
       "norm_label": "baseusermanager"
     },
     {
@@ -703,8 +703,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "backend_apps_accounts_models_usermanager_create_user",
-      "community": 43,
-      "community_name": "ArticleSerializer",
+      "community": 53,
+      "community_name": "get_membership",
       "norm_label": ".create_user()"
     },
     {
@@ -714,8 +714,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "backend_apps_accounts_models_usermanager_create_superuser",
-      "community": 43,
-      "community_name": "ArticleSerializer",
+      "community": 53,
+      "community_name": "get_membership",
       "norm_label": ".create_superuser()"
     },
     {
@@ -802,8 +802,8 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "backend_apps_accounts_models_emailverificationtoken",
-      "community": 0,
-      "community_name": "accounts/views.py",
+      "community": 53,
+      "community_name": "get_membership",
       "norm_label": "emailverificationtoken"
     },
     {
@@ -835,8 +835,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "backend_apps_accounts_permissions_check_mfa_enrolled",
-      "community": 3,
-      "community_name": "get_current_organization",
+      "community": 57,
+      "community_name": "test_enterprise_gaps.py",
       "norm_label": "check_mfa_enrolled()"
     },
     {
@@ -857,8 +857,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "backend_apps_accounts_permissions_rationale_9",
-      "community": 3,
-      "community_name": "get_current_organization",
+      "community": 57,
+      "community_name": "test_enterprise_gaps.py",
       "norm_label": "raise ``mfasetuprequired`` when a privileged user has not enrolled mfa."
     },
     {
@@ -923,8 +923,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "backend_apps_accounts_serializers_userserializer_get_mfa_required",
-      "community": 41,
-      "community_name": "Command",
+      "community": 79,
+      "community_name": "TestMediaLibraryApi",
       "norm_label": ".get_mfa_required()"
     },
     {
@@ -934,8 +934,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "backend_apps_accounts_serializers_userserializer_get_mfa_enabled",
-      "community": 41,
-      "community_name": "Command",
+      "community": 79,
+      "community_name": "TestMediaLibraryApi",
       "norm_label": ".get_mfa_enabled()"
     },
     {
@@ -945,8 +945,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "backend_apps_accounts_serializers_registerserializer",
-      "community": 0,
-      "community_name": "accounts/views.py",
+      "community": 43,
+      "community_name": "ArticleSerializer",
       "norm_label": "registerserializer"
     },
     {
@@ -956,8 +956,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "backend_apps_accounts_serializers_registerserializer_validate",
-      "community": 38,
-      "community_name": "tutor/views.py",
+      "community": 43,
+      "community_name": "ArticleSerializer",
       "norm_label": ".validate()"
     },
     {
@@ -978,8 +978,8 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "backend_apps_accounts_serializers_profileupdateserializer",
-      "community": 0,
-      "community_name": "accounts/views.py",
+      "community": 43,
+      "community_name": "ArticleSerializer",
       "norm_label": "profileupdateserializer"
     },
     {
@@ -1000,8 +1000,8 @@
       "source_location": "L150",
       "_origin": "ast",
       "id": "backend_apps_accounts_serializers_profileupdateserializer_update",
-      "community": 203,
-      "community_name": ".save",
+      "community": 43,
+      "community_name": "ArticleSerializer",
       "norm_label": ".update()"
     },
     {
@@ -1044,8 +1044,8 @@
       "source_location": "L189",
       "_origin": "ast",
       "id": "backend_apps_accounts_serializers_passwordresetconfirmserializer_save",
-      "community": 203,
-      "community_name": ".save",
+      "community": 43,
+      "community_name": "ArticleSerializer",
       "norm_label": ".save()"
     },
     {
@@ -1088,8 +1088,8 @@
       "source_location": "L221",
       "_origin": "ast",
       "id": "backend_apps_accounts_serializers_passwordresetotpconfirmserializer_save",
-      "community": 203,
-      "community_name": ".save",
+      "community": 43,
+      "community_name": "ArticleSerializer",
       "norm_label": ".save()"
     },
     {
@@ -1121,8 +1121,8 @@
       "source_location": "L249",
       "_origin": "ast",
       "id": "backend_apps_accounts_serializers_userroleupdateserializer",
-      "community": 0,
-      "community_name": "accounts/views.py",
+      "community": 79,
+      "community_name": "TestMediaLibraryApi",
       "norm_label": "userroleupdateserializer"
     },
     {
@@ -1187,8 +1187,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "backend_apps_accounts_session_get_session_epoch",
-      "community": 1,
-      "community_name": "log_activity",
+      "community": 37,
+      "community_name": "learning/views.py",
       "norm_label": "get_session_epoch()"
     },
     {
@@ -1264,8 +1264,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_accounts_signals",
-      "community": 43,
-      "community_name": "ArticleSerializer",
+      "community": 53,
+      "community_name": "get_membership",
       "norm_label": "accounts/signals.py"
     },
     {
@@ -1275,8 +1275,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "backend_apps_accounts_signals_ensure_profile",
-      "community": 43,
-      "community_name": "ArticleSerializer",
+      "community": 53,
+      "community_name": "get_membership",
       "norm_label": "ensure_profile()"
     },
     {
@@ -1506,8 +1506,8 @@
       "source_location": "L286",
       "_origin": "ast",
       "id": "backend_apps_accounts_sso_issue_jwt_tokens",
-      "community": 1,
-      "community_name": "log_activity",
+      "community": 37,
+      "community_name": "learning/views.py",
       "norm_label": "issue_jwt_tokens()"
     },
     {
@@ -1550,8 +1550,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_accounts_sso_views",
-      "community": 61,
-      "community_name": "sso_views.py",
+      "community": 24,
+      "community_name": "billing/services.py",
       "norm_label": "sso_views.py"
     },
     {
@@ -1561,8 +1561,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "backend_apps_accounts_sso_views_ssostatusview",
-      "community": 61,
-      "community_name": "sso_views.py",
+      "community": 24,
+      "community_name": "billing/services.py",
       "norm_label": "ssostatusview"
     },
     {
@@ -1572,8 +1572,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_apps_accounts_sso_views_py_apiview",
-      "community": 61,
-      "community_name": "sso_views.py",
+      "community": 24,
+      "community_name": "billing/services.py",
       "norm_label": "apiview"
     },
     {
@@ -1583,8 +1583,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "backend_apps_accounts_sso_views_ssostatusview_get",
-      "community": 61,
-      "community_name": "sso_views.py",
+      "community": 24,
+      "community_name": "billing/services.py",
       "norm_label": ".get()"
     },
     {
@@ -1594,8 +1594,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "backend_apps_accounts_sso_views_ssologinview",
-      "community": 61,
-      "community_name": "sso_views.py",
+      "community": 24,
+      "community_name": "billing/services.py",
       "norm_label": "ssologinview"
     },
     {
@@ -1605,8 +1605,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "backend_apps_accounts_sso_views_ssologinview_get",
-      "community": 61,
-      "community_name": "sso_views.py",
+      "community": 24,
+      "community_name": "billing/services.py",
       "norm_label": ".get()"
     },
     {
@@ -1616,8 +1616,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "backend_apps_accounts_sso_views_ssocallbackview",
-      "community": 61,
-      "community_name": "sso_views.py",
+      "community": 24,
+      "community_name": "billing/services.py",
       "norm_label": "ssocallbackview"
     },
     {
@@ -1627,8 +1627,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "backend_apps_accounts_sso_views_ssocallbackview_get",
-      "community": 61,
-      "community_name": "sso_views.py",
+      "community": 24,
+      "community_name": "billing/services.py",
       "norm_label": ".get()"
     },
     {
@@ -1638,8 +1638,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_accounts_token_views",
-      "community": 62,
-      "community_name": "CookieTokenRefreshView",
+      "community": 0,
+      "community_name": "accounts/views.py",
       "norm_label": "token_views.py"
     },
     {
@@ -1682,8 +1682,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "backend_apps_accounts_token_views_cookietokenrefreshview",
-      "community": 62,
-      "community_name": "CookieTokenRefreshView",
+      "community": 0,
+      "community_name": "accounts/views.py",
       "norm_label": "cookietokenrefreshview"
     },
     {
@@ -1693,8 +1693,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tokenrefreshview",
-      "community": 62,
-      "community_name": "CookieTokenRefreshView",
+      "community": 0,
+      "community_name": "accounts/views.py",
       "norm_label": "tokenrefreshview"
     },
     {
@@ -1704,8 +1704,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "backend_apps_accounts_token_views_cookietokenrefreshview_post",
-      "community": 62,
-      "community_name": "CookieTokenRefreshView",
+      "community": 0,
+      "community_name": "accounts/views.py",
       "norm_label": ".post()"
     },
     {
@@ -1715,8 +1715,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_accounts_token_views_rationale_1",
-      "community": 62,
-      "community_name": "CookieTokenRefreshView",
+      "community": 0,
+      "community_name": "accounts/views.py",
       "norm_label": "cookie-aware jwt refresh \u2014 accepts refresh from body or httponly cookie."
     },
     {
@@ -1726,8 +1726,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "backend_apps_accounts_token_views_rationale_54",
-      "community": 62,
-      "community_name": "CookieTokenRefreshView",
+      "community": 0,
+      "community_name": "accounts/views.py",
       "norm_label": "refresh access tokens using body or the httponly refresh cookie."
     },
     {
@@ -1770,8 +1770,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "backend_apps_accounts_tokens_emailtokenobtainpairserializer_get_token",
-      "community": 1,
-      "community_name": "log_activity",
+      "community": 37,
+      "community_name": "learning/views.py",
       "norm_label": ".get_token()"
     },
     {
@@ -1803,8 +1803,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_accounts_urls_users",
-      "community": 0,
-      "community_name": "accounts/views.py",
+      "community": 79,
+      "community_name": "TestMediaLibraryApi",
       "norm_label": "users.py"
     },
     {
@@ -1814,8 +1814,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_accounts_views",
-      "community": 0,
-      "community_name": "accounts/views.py",
+      "community": 41,
+      "community_name": "Command",
       "norm_label": "accounts/views.py"
     },
     {
@@ -1825,8 +1825,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_registerview",
-      "community": 79,
-      "community_name": "TestMediaLibraryApi",
+      "community": 61,
+      "community_name": "sso_views.py",
       "norm_label": "registerview"
     },
     {
@@ -1836,8 +1836,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_registerview_perform_create",
-      "community": 79,
-      "community_name": "TestMediaLibraryApi",
+      "community": 61,
+      "community_name": "sso_views.py",
       "norm_label": ".perform_create()"
     },
     {
@@ -1847,8 +1847,8 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_registerview_send_verification_email",
-      "community": 79,
-      "community_name": "TestMediaLibraryApi",
+      "community": 61,
+      "community_name": "sso_views.py",
       "norm_label": "._send_verification_email()"
     },
     {
@@ -1858,8 +1858,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_registerview_create",
-      "community": 79,
-      "community_name": "TestMediaLibraryApi",
+      "community": 61,
+      "community_name": "sso_views.py",
       "norm_label": ".create()"
     },
     {
@@ -2023,8 +2023,8 @@
       "source_location": "L287",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_resendverificationemailview",
-      "community": 0,
-      "community_name": "accounts/views.py",
+      "community": 61,
+      "community_name": "sso_views.py",
       "norm_label": "resendverificationemailview"
     },
     {
@@ -2034,8 +2034,8 @@
       "source_location": "L292",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_resendverificationemailview_post",
-      "community": 79,
-      "community_name": "TestMediaLibraryApi",
+      "community": 61,
+      "community_name": "sso_views.py",
       "norm_label": ".post()"
     },
     {
@@ -2078,8 +2078,8 @@
       "source_location": "L337",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_phoneverifyconfirmview_post",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 0,
+      "community_name": "accounts/views.py",
       "norm_label": ".post()"
     },
     {
@@ -2144,8 +2144,8 @@
       "source_location": "L401",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_passwordresetotpconfirmview_post",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 0,
+      "community_name": "accounts/views.py",
       "norm_label": ".post()"
     },
     {
@@ -2166,8 +2166,8 @@
       "source_location": "L415",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_passwordresetconfirmview_post",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 0,
+      "community_name": "accounts/views.py",
       "norm_label": ".post()"
     },
     {
@@ -2177,8 +2177,8 @@
       "source_location": "L423",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_userlistview",
-      "community": 0,
-      "community_name": "accounts/views.py",
+      "community": 79,
+      "community_name": "TestMediaLibraryApi",
       "norm_label": "userlistview"
     },
     {
@@ -2254,8 +2254,8 @@
       "source_location": "L458",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_avataruploadview",
-      "community": 0,
-      "community_name": "accounts/views.py",
+      "community": 79,
+      "community_name": "TestMediaLibraryApi",
       "norm_label": "avataruploadview"
     },
     {
@@ -2265,8 +2265,8 @@
       "source_location": "L472",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_avataruploadview_patch",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 79,
+      "community_name": "TestMediaLibraryApi",
       "norm_label": ".patch()"
     },
     {
@@ -2276,8 +2276,8 @@
       "source_location": "L485",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_mydataexportview",
-      "community": 0,
-      "community_name": "accounts/views.py",
+      "community": 79,
+      "community_name": "TestMediaLibraryApi",
       "norm_label": "mydataexportview"
     },
     {
@@ -2298,8 +2298,8 @@
       "source_location": "L532",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_deactivateaccountview",
-      "community": 0,
-      "community_name": "accounts/views.py",
+      "community": 37,
+      "community_name": "learning/views.py",
       "norm_label": "deactivateaccountview"
     },
     {
@@ -2320,8 +2320,8 @@
       "source_location": "L553",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_suspenduserview",
-      "community": 0,
-      "community_name": "accounts/views.py",
+      "community": 37,
+      "community_name": "learning/views.py",
       "norm_label": "suspenduserview"
     },
     {
@@ -2342,8 +2342,8 @@
       "source_location": "L571",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_unsuspenduserview",
-      "community": 0,
-      "community_name": "accounts/views.py",
+      "community": 79,
+      "community_name": "TestMediaLibraryApi",
       "norm_label": "unsuspenduserview"
     },
     {
@@ -2397,8 +2397,8 @@
       "source_location": "L649",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_updateuserroleview",
-      "community": 0,
-      "community_name": "accounts/views.py",
+      "community": 79,
+      "community_name": "TestMediaLibraryApi",
       "norm_label": "updateuserroleview"
     },
     {
@@ -2408,8 +2408,8 @@
       "source_location": "L653",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_updateuserroleview_patch",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 79,
+      "community_name": "TestMediaLibraryApi",
       "norm_label": ".patch()"
     },
     {
@@ -2441,8 +2441,8 @@
       "source_location": "L486",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_rationale_486",
-      "community": 0,
-      "community_name": "accounts/views.py",
+      "community": 79,
+      "community_name": "TestMediaLibraryApi",
       "norm_label": "download the authenticated user's personal data (gdpr-style)."
     },
     {
@@ -2452,8 +2452,8 @@
       "source_location": "L533",
       "_origin": "ast",
       "id": "backend_apps_accounts_views_rationale_533",
-      "community": 0,
-      "community_name": "accounts/views.py",
+      "community": 37,
+      "community_name": "learning/views.py",
       "norm_label": "soft-deactivate the authenticated account."
     },
     {
@@ -2584,8 +2584,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "backend_apps_analytics_permissions_isorganalyticsadmin_has_permission",
-      "community": 3,
-      "community_name": "get_current_organization",
+      "community": 57,
+      "community_name": "test_enterprise_gaps.py",
       "norm_label": ".has_permission()"
     },
     {
@@ -3123,8 +3123,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_audit_management_commands_backfill_audit_orgs",
-      "community": 7,
-      "community_name": "Membership",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": "backfill_audit_orgs.py"
     },
     {
@@ -3464,8 +3464,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "backend_apps_audit_services_compute_integrity_hash",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": "compute_integrity_hash()"
     },
     {
@@ -3486,8 +3486,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "backend_apps_audit_services_verify_audit_chain",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": "verify_audit_chain()"
     },
     {
@@ -3497,8 +3497,8 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "backend_apps_audit_services_rationale_77",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": "verify hash-chain integrity for recent activity logs."
     },
     {
@@ -3607,8 +3607,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_billing_admin",
-      "community": 65,
-      "community_name": "test_sms.py",
+      "community": 16,
+      "community_name": "Subscription",
       "norm_label": "billing/admin.py"
     },
     {
@@ -3618,8 +3618,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "backend_apps_billing_admin_planadmin",
-      "community": 65,
-      "community_name": "test_sms.py",
+      "community": 16,
+      "community_name": "Subscription",
       "norm_label": "planadmin"
     },
     {
@@ -3629,8 +3629,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "backend_apps_billing_admin_subscriptionadmin",
-      "community": 65,
-      "community_name": "test_sms.py",
+      "community": 16,
+      "community_name": "Subscription",
       "norm_label": "subscriptionadmin"
     },
     {
@@ -3640,8 +3640,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_billing_apps",
-      "community": 65,
-      "community_name": "test_sms.py",
+      "community": 148,
+      "community_name": "vitest",
       "norm_label": "billing/apps.py"
     },
     {
@@ -3651,8 +3651,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "backend_apps_billing_apps_billingconfig",
-      "community": 65,
-      "community_name": "test_sms.py",
+      "community": 148,
+      "community_name": "vitest",
       "norm_label": "billingconfig"
     },
     {
@@ -3662,8 +3662,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_apps_billing_apps_py_appconfig",
-      "community": 65,
-      "community_name": "test_sms.py",
+      "community": 148,
+      "community_name": "vitest",
       "norm_label": "appconfig"
     },
     {
@@ -3673,8 +3673,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "backend_apps_billing_apps_billingconfig_ready",
-      "community": 65,
-      "community_name": "test_sms.py",
+      "community": 148,
+      "community_name": "vitest",
       "norm_label": ".ready()"
     },
     {
@@ -3717,8 +3717,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_billing_models",
-      "community": 65,
-      "community_name": "test_sms.py",
+      "community": 16,
+      "community_name": "Subscription",
       "norm_label": "billing/models.py"
     },
     {
@@ -3739,8 +3739,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "backend_apps_billing_models_meta",
-      "community": 65,
-      "community_name": "test_sms.py",
+      "community": 16,
+      "community_name": "Subscription",
       "norm_label": "meta"
     },
     {
@@ -3772,8 +3772,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "backend_apps_billing_models_subscription",
-      "community": 65,
-      "community_name": "test_sms.py",
+      "community": 16,
+      "community_name": "Subscription",
       "norm_label": "subscription"
     },
     {
@@ -3783,8 +3783,8 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "backend_apps_billing_models_subscription_str",
-      "community": 65,
-      "community_name": "test_sms.py",
+      "community": 16,
+      "community_name": "Subscription",
       "norm_label": ".__str__()"
     },
     {
@@ -3794,8 +3794,8 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "backend_apps_billing_models_subscription_is_current",
-      "community": 65,
-      "community_name": "test_sms.py",
+      "community": 16,
+      "community_name": "Subscription",
       "norm_label": ".is_current()"
     },
     {
@@ -4234,8 +4234,8 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "backend_apps_billing_services_check_quota",
-      "community": 20,
-      "community_name": "enterprise_views.py",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": "check_quota()"
     },
     {
@@ -4432,8 +4432,8 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "backend_apps_billing_services_rationale_89",
-      "community": 20,
-      "community_name": "enterprise_views.py",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": "raise ``quotaexceeded`` if creating one more ``resource`` would exceed the plan."
     },
     {
@@ -4476,8 +4476,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_billing_signals",
-      "community": 65,
-      "community_name": "test_sms.py",
+      "community": 24,
+      "community_name": "billing/services.py",
       "norm_label": "billing/signals.py"
     },
     {
@@ -4487,8 +4487,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "backend_apps_billing_signals_create_default_subscription",
-      "community": 65,
-      "community_name": "test_sms.py",
+      "community": 24,
+      "community_name": "billing/services.py",
       "norm_label": "create_default_subscription()"
     },
     {
@@ -4498,8 +4498,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "backend_apps_billing_signals_rationale_12",
-      "community": 65,
-      "community_name": "test_sms.py",
+      "community": 24,
+      "community_name": "billing/services.py",
       "norm_label": "every new organization starts on the default (free) plan."
     },
     {
@@ -4608,8 +4608,8 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "backend_apps_billing_views_billingportalview_post",
-      "community": 34,
-      "community_name": "BaseBillingProvider",
+      "community": 24,
+      "community_name": "billing/services.py",
       "norm_label": ".post()"
     },
     {
@@ -4751,8 +4751,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_core_constants",
-      "community": 216,
-      "community_name": "constants.py",
+      "community": 26,
+      "community_name": "tutor/services.py",
       "norm_label": "constants.py"
     },
     {
@@ -4762,8 +4762,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "backend_apps_core_constants_normalize_language",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 26,
+      "community_name": "tutor/services.py",
       "norm_label": "normalize_language()"
     },
     {
@@ -4773,8 +4773,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "backend_apps_core_constants_normalize_primary_color",
-      "community": 216,
-      "community_name": "constants.py",
+      "community": 9,
+      "community_name": "OrganizationInvite",
       "norm_label": "normalize_primary_color()"
     },
     {
@@ -4784,8 +4784,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_core_constants_rationale_1",
-      "community": 216,
-      "community_name": "constants.py",
+      "community": 26,
+      "community_name": "tutor/services.py",
       "norm_label": "shared application constants."
     },
     {
@@ -4795,8 +4795,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "backend_apps_core_constants_rationale_29",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 26,
+      "community_name": "tutor/services.py",
       "norm_label": "return ``en`` or ``ar``; any other value maps to ``en``."
     },
     {
@@ -4806,8 +4806,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "backend_apps_core_constants_rationale_38",
-      "community": 216,
-      "community_name": "constants.py",
+      "community": 9,
+      "community_name": "OrganizationInvite",
       "norm_label": "return green default when ``color`` is a legacy blue brand value."
     },
     {
@@ -4949,8 +4949,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "backend_apps_core_exceptions_mfasetuprequired",
-      "community": 3,
-      "community_name": "get_current_organization",
+      "community": 57,
+      "community_name": "test_enterprise_gaps.py",
       "norm_label": "mfasetuprequired"
     },
     {
@@ -4960,8 +4960,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_apps_core_exceptions_py_apiexception",
-      "community": 3,
-      "community_name": "get_current_organization",
+      "community": 57,
+      "community_name": "test_enterprise_gaps.py",
       "norm_label": "apiexception"
     },
     {
@@ -6016,8 +6016,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "backend_apps_core_permissions_rolepermission_has_permission",
-      "community": 3,
-      "community_name": "get_current_organization",
+      "community": 57,
+      "community_name": "test_enterprise_gaps.py",
       "norm_label": ".has_permission()"
     },
     {
@@ -6412,8 +6412,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_core_storage",
-      "community": 40,
-      "community_name": "session.py",
+      "community": 2,
+      "community_name": "quizzes/views.py",
       "norm_label": "storage.py"
     },
     {
@@ -6423,8 +6423,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "backend_apps_core_storage_get_supabase_client",
-      "community": 40,
-      "community_name": "session.py",
+      "community": 2,
+      "community_name": "quizzes/views.py",
       "norm_label": "get_supabase_client()"
     },
     {
@@ -6434,8 +6434,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "client",
-      "community": 40,
-      "community_name": "session.py",
+      "community": 2,
+      "community_name": "quizzes/views.py",
       "norm_label": "client"
     },
     {
@@ -6445,8 +6445,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "backend_apps_core_storage_local_media_url",
-      "community": 40,
-      "community_name": "session.py",
+      "community": 2,
+      "community_name": "quizzes/views.py",
       "norm_label": "_local_media_url()"
     },
     {
@@ -6456,8 +6456,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "backend_apps_core_storage_save_local_file",
-      "community": 40,
-      "community_name": "session.py",
+      "community": 2,
+      "community_name": "quizzes/views.py",
       "norm_label": "_save_local_file()"
     },
     {
@@ -6467,8 +6467,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "backend_apps_core_storage_upload_file",
-      "community": 40,
-      "community_name": "session.py",
+      "community": 2,
+      "community_name": "quizzes/views.py",
       "norm_label": "upload_file()"
     },
     {
@@ -6478,8 +6478,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "backend_apps_core_storage_upload_bytesio",
-      "community": 40,
-      "community_name": "session.py",
+      "community": 2,
+      "community_name": "quizzes/views.py",
       "norm_label": "upload_bytesio()"
     },
     {
@@ -6500,8 +6500,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "backend_apps_core_storage_get_signed_url",
-      "community": 40,
-      "community_name": "session.py",
+      "community": 2,
+      "community_name": "quizzes/views.py",
       "norm_label": "get_signed_url()"
     },
     {
@@ -6511,8 +6511,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_core_tasks",
-      "community": 20,
-      "community_name": "enterprise_views.py",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": "core/tasks.py"
     },
     {
@@ -6522,8 +6522,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "backend_apps_core_tasks_send_email_task",
-      "community": 20,
-      "community_name": "enterprise_views.py",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": "send_email_task()"
     },
     {
@@ -6533,8 +6533,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "backend_apps_core_tasks_rationale_18",
-      "community": 20,
-      "community_name": "enterprise_views.py",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": "send an email asynchronously with retry and logging.      replaces fail_silent"
     },
     {
@@ -6588,8 +6588,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_core_utils",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 26,
+      "community_name": "tutor/services.py",
       "norm_label": "utils.py"
     },
     {
@@ -6684,7 +6684,7 @@
       "label": "IntegrationsStatusView",
       "file_type": "code",
       "source_file": "backend/apps/core/views.py",
-      "source_location": "L86",
+      "source_location": "L88",
       "_origin": "ast",
       "id": "backend_apps_core_views_integrationsstatusview",
       "community": 31,
@@ -6695,7 +6695,7 @@
       "label": ".get()",
       "file_type": "code",
       "source_file": "backend/apps/core/views.py",
-      "source_location": "L92",
+      "source_location": "L94",
       "_origin": "ast",
       "id": "backend_apps_core_views_integrationsstatusview_get",
       "community": 31,
@@ -6706,7 +6706,7 @@
       "label": "SecurityEventListView",
       "file_type": "code",
       "source_file": "backend/apps/core/views.py",
-      "source_location": "L97",
+      "source_location": "L99",
       "_origin": "ast",
       "id": "backend_apps_core_views_securityeventlistview",
       "community": 31,
@@ -6717,7 +6717,7 @@
       "label": ".get()",
       "file_type": "code",
       "source_file": "backend/apps/core/views.py",
-      "source_location": "L102",
+      "source_location": "L104",
       "_origin": "ast",
       "id": "backend_apps_core_views_securityeventlistview_get",
       "community": 31,
@@ -6750,9 +6750,9 @@
       "label": "Platform admin: full integration status (Stripe, Celery, SMS, tutor, etc.).",
       "file_type": "rationale",
       "source_file": "backend/apps/core/views.py",
-      "source_location": "L87",
+      "source_location": "L89",
       "_origin": "ast",
-      "id": "backend_apps_core_views_rationale_87",
+      "id": "backend_apps_core_views_rationale_89",
       "community": 31,
       "community_name": "SecurityEvent",
       "norm_label": "platform admin: full integration status (stripe, celery, sms, tutor, etc.)."
@@ -6761,9 +6761,9 @@
       "label": "Platform admin: recent security events (failed logins, MFA, etc.).",
       "file_type": "rationale",
       "source_file": "backend/apps/core/views.py",
-      "source_location": "L98",
+      "source_location": "L100",
       "_origin": "ast",
-      "id": "backend_apps_core_views_rationale_98",
+      "id": "backend_apps_core_views_rationale_100",
       "community": 31,
       "community_name": "SecurityEvent",
       "norm_label": "platform admin: recent security events (failed logins, mfa, etc.)."
@@ -7853,8 +7853,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "backend_apps_forum_views_discussiontopicviewset_get_permissions",
-      "community": 36,
-      "community_name": "MediaAssetSerializer",
+      "community": 6,
+      "community_name": "forum/views.py",
       "norm_label": ".get_permissions()"
     },
     {
@@ -7864,8 +7864,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "backend_apps_forum_views_discussiontopicviewset_perform_create",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 6,
+      "community_name": "forum/views.py",
       "norm_label": ".perform_create()"
     },
     {
@@ -7908,8 +7908,8 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "backend_apps_forum_views_topiccommentcreateview_perform_create",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 6,
+      "community_name": "forum/views.py",
       "norm_label": ".perform_create()"
     },
     {
@@ -8326,8 +8326,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_learning_admin",
-      "community": 29,
-      "community_name": "Article",
+      "community": 56,
+      "community_name": "CiSmokeUser",
       "norm_label": "learning/admin.py"
     },
     {
@@ -8458,8 +8458,8 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "backend_apps_learning_media_views_mediaassetviewset_perform_create",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 40,
+      "community_name": "session.py",
       "norm_label": ".perform_create()"
     },
     {
@@ -8469,8 +8469,8 @@
       "source_location": "L103",
       "_origin": "ast",
       "id": "backend_apps_learning_media_views_mediaassetviewset_perform_update",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 40,
+      "community_name": "session.py",
       "norm_label": ".perform_update()"
     },
     {
@@ -8480,8 +8480,8 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "backend_apps_learning_media_views_mediaassetviewset_perform_destroy",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 40,
+      "community_name": "session.py",
       "norm_label": ".perform_destroy()"
     },
     {
@@ -8491,8 +8491,8 @@
       "source_location": "L138",
       "_origin": "ast",
       "id": "backend_apps_learning_media_views_mediaassetviewset_progress",
-      "community": 56,
-      "community_name": "CiSmokeUser",
+      "community": 40,
+      "community_name": "session.py",
       "norm_label": ".progress()"
     },
     {
@@ -8810,8 +8810,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_learning_models",
-      "community": 29,
-      "community_name": "Article",
+      "community": 56,
+      "community_name": "CiSmokeUser",
       "norm_label": "learning/models.py"
     },
     {
@@ -8854,8 +8854,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "backend_apps_learning_models_mediaasset",
-      "community": 29,
-      "community_name": "Article",
+      "community": 56,
+      "community_name": "CiSmokeUser",
       "norm_label": "mediaasset"
     },
     {
@@ -8865,8 +8865,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "backend_apps_learning_models_mediaasset_str",
-      "community": 29,
-      "community_name": "Article",
+      "community": 56,
+      "community_name": "CiSmokeUser",
       "norm_label": ".__str__()"
     },
     {
@@ -8876,8 +8876,8 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "backend_apps_learning_models_mediaasset_playback_url",
-      "community": 29,
-      "community_name": "Article",
+      "community": 56,
+      "community_name": "CiSmokeUser",
       "norm_label": ".playback_url()"
     },
     {
@@ -8887,8 +8887,8 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "backend_apps_learning_models_article",
-      "community": 29,
-      "community_name": "Article",
+      "community": 56,
+      "community_name": "CiSmokeUser",
       "norm_label": "article"
     },
     {
@@ -8898,8 +8898,8 @@
       "source_location": "L172",
       "_origin": "ast",
       "id": "backend_apps_learning_models_article_str",
-      "community": 29,
-      "community_name": "Article",
+      "community": 56,
+      "community_name": "CiSmokeUser",
       "norm_label": ".__str__()"
     },
     {
@@ -9008,15 +9008,26 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_learning_search",
-      "community": 202,
-      "community_name": "5. AI tutor \u2014 Anthropic (optional)",
+      "community": 56,
+      "community_name": "CiSmokeUser",
       "norm_label": "learning/search.py"
+    },
+    {
+      "label": "_resolve_search_organization()",
+      "file_type": "code",
+      "source_file": "backend/apps/learning/search.py",
+      "source_location": "L15",
+      "_origin": "ast",
+      "id": "backend_apps_learning_search_resolve_search_organization",
+      "community": 30,
+      "community_name": "grade_a_views.py",
+      "norm_label": "_resolve_search_organization()"
     },
     {
       "label": "global_search()",
       "file_type": "code",
       "source_file": "backend/apps/learning/search.py",
-      "source_location": "L13",
+      "source_location": "L24",
       "_origin": "ast",
       "id": "backend_apps_learning_search_global_search",
       "community": 202,
@@ -9030,9 +9041,20 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_learning_search_rationale_1",
-      "community": 202,
-      "community_name": "5. AI tutor \u2014 Anthropic (optional)",
+      "community": 56,
+      "community_name": "CiSmokeUser",
       "norm_label": "unified keyword search across published learning content and forum topics."
+    },
+    {
+      "label": "Scope search to the request tenant, defaulting to the public workspace.",
+      "file_type": "rationale",
+      "source_file": "backend/apps/learning/search.py",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "backend_apps_learning_search_rationale_16",
+      "community": 30,
+      "community_name": "grade_a_views.py",
+      "norm_label": "scope search to the request tenant, defaulting to the public workspace."
     },
     {
       "label": "search_views.py",
@@ -9140,8 +9162,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "backend_apps_learning_serializers_categoryserializer_validate",
-      "community": 3,
-      "community_name": "get_current_organization",
+      "community": 57,
+      "community_name": "test_enterprise_gaps.py",
       "norm_label": ".validate()"
     },
     {
@@ -9470,8 +9492,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_learning_signals",
-      "community": 59,
-      "community_name": "notifications/services.py",
+      "community": 50,
+      "community_name": "test_tutor_retrieval.py",
       "norm_label": "learning/signals.py"
     },
     {
@@ -9481,8 +9503,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "backend_apps_learning_signals_track_attachment_change",
-      "community": 59,
-      "community_name": "notifications/services.py",
+      "community": 50,
+      "community_name": "test_tutor_retrieval.py",
       "norm_label": "track_attachment_change()"
     },
     {
@@ -9492,8 +9514,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "backend_apps_learning_signals_maintain_tutor_index",
-      "community": 59,
-      "community_name": "notifications/services.py",
+      "community": 50,
+      "community_name": "test_tutor_retrieval.py",
       "norm_label": "maintain_tutor_index()"
     },
     {
@@ -9503,8 +9525,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "backend_apps_learning_signals_notify_on_publish",
-      "community": 59,
-      "community_name": "notifications/services.py",
+      "community": 50,
+      "community_name": "test_tutor_retrieval.py",
       "norm_label": "notify_on_publish()"
     },
     {
@@ -9525,8 +9547,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "backend_apps_learning_tutor_index_build_tutor_index_text",
-      "community": 59,
-      "community_name": "notifications/services.py",
+      "community": 50,
+      "community_name": "test_tutor_retrieval.py",
       "norm_label": "build_tutor_index_text()"
     },
     {
@@ -9547,8 +9569,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "backend_apps_learning_tutor_index_rationale_9",
-      "community": 59,
-      "community_name": "notifications/services.py",
+      "community": 50,
+      "community_name": "test_tutor_retrieval.py",
       "norm_label": "combine article body and pdf attachment text for tutor retrieval."
     },
     {
@@ -9635,8 +9657,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "backend_apps_learning_views_can_see_unpublished",
-      "community": 55,
-      "community_name": "TutorChat",
+      "community": 57,
+      "community_name": "test_enterprise_gaps.py",
       "norm_label": "_can_see_unpublished()"
     },
     {
@@ -9734,8 +9756,8 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "backend_apps_learning_views_articleviewset_get_queryset",
-      "community": 55,
-      "community_name": "TutorChat",
+      "community": 57,
+      "community_name": "test_enterprise_gaps.py",
       "norm_label": ".get_queryset()"
     },
     {
@@ -9756,8 +9778,8 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "backend_apps_learning_views_articleviewset_perform_create",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 30,
+      "community_name": "grade_a_views.py",
       "norm_label": ".perform_create()"
     },
     {
@@ -9767,8 +9789,8 @@
       "source_location": "L134",
       "_origin": "ast",
       "id": "backend_apps_learning_views_articleviewset_perform_update",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 55,
+      "community_name": "TutorChat",
       "norm_label": ".perform_update()"
     },
     {
@@ -9778,8 +9800,8 @@
       "source_location": "L139",
       "_origin": "ast",
       "id": "backend_apps_learning_views_articleviewset_perform_destroy",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 55,
+      "community_name": "TutorChat",
       "norm_label": ".perform_destroy()"
     },
     {
@@ -9811,8 +9833,8 @@
       "source_location": "L199",
       "_origin": "ast",
       "id": "backend_apps_learning_views_articleviewset_progress",
-      "community": 56,
-      "community_name": "CiSmokeUser",
+      "community": 55,
+      "community_name": "TutorChat",
       "norm_label": ".progress()"
     },
     {
@@ -9844,8 +9866,8 @@
       "source_location": "L244",
       "_origin": "ast",
       "id": "backend_apps_learning_views_articleattachmentuploadview_post",
-      "community": 29,
-      "community_name": "Article",
+      "community": 2,
+      "community_name": "quizzes/views.py",
       "norm_label": ".post()"
     },
     {
@@ -9866,8 +9888,8 @@
       "source_location": "L312",
       "_origin": "ast",
       "id": "backend_apps_learning_views_articleimageuploadview_post",
-      "community": 29,
-      "community_name": "Article",
+      "community": 2,
+      "community_name": "quizzes/views.py",
       "norm_label": ".post()"
     },
     {
@@ -10152,8 +10174,8 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "backend_apps_notifications_consumers_send_notification_to_user",
-      "community": 45,
-      "community_name": "NotificationConsumer",
+      "community": 39,
+      "community_name": "fan_out.py",
       "norm_label": "send_notification_to_user()"
     },
     {
@@ -10196,8 +10218,8 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "backend_apps_notifications_consumers_rationale_112",
-      "community": 45,
-      "community_name": "NotificationConsumer",
+      "community": 39,
+      "community_name": "fan_out.py",
       "norm_label": "push a notification dict to all websocket connections for ``user_pk``.      ca"
     },
     {
@@ -10493,8 +10515,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "backend_apps_notifications_models_meta",
-      "community": 25,
-      "community_name": "Notification",
+      "community": 39,
+      "community_name": "fan_out.py",
       "norm_label": "meta"
     },
     {
@@ -10581,8 +10603,8 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "backend_apps_notifications_models_webpushsubscription",
-      "community": 25,
-      "community_name": "Notification",
+      "community": 19,
+      "community_name": "notifications/views.py",
       "norm_label": "webpushsubscription"
     },
     {
@@ -10592,8 +10614,8 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "backend_apps_notifications_models_webpushsubscription_str",
-      "community": 25,
-      "community_name": "Notification",
+      "community": 19,
+      "community_name": "notifications/views.py",
       "norm_label": ".__str__()"
     },
     {
@@ -10702,8 +10724,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "backend_apps_notifications_services_notify_all_users",
-      "community": 59,
-      "community_name": "notifications/services.py",
+      "community": 19,
+      "community_name": "notifications/views.py",
       "norm_label": "notify_all_users()"
     },
     {
@@ -10724,8 +10746,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "backend_apps_notifications_services_rationale_18",
-      "community": 59,
-      "community_name": "notifications/services.py",
+      "community": 19,
+      "community_name": "notifications/views.py",
       "norm_label": "fan out a notification to all active users via a background task.      when ``"
     },
     {
@@ -10988,8 +11010,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "backend_apps_notifications_sms_services_queue_sms_to_phone",
-      "community": 35,
-      "community_name": "sms_views.py",
+      "community": 23,
+      "community_name": "SmsMessage",
       "norm_label": "queue_sms_to_phone()"
     },
     {
@@ -11010,8 +11032,8 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "backend_apps_notifications_sms_services_send_sms_to_user",
-      "community": 23,
-      "community_name": "SmsMessage",
+      "community": 39,
+      "community_name": "fan_out.py",
       "norm_label": "send_sms_to_user()"
     },
     {
@@ -11307,8 +11329,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "backend_apps_notifications_views_notificationserializer",
-      "community": 25,
-      "community_name": "Notification",
+      "community": 19,
+      "community_name": "notifications/views.py",
       "norm_label": "notificationserializer"
     },
     {
@@ -11318,8 +11340,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "backend_apps_notifications_views_meta",
-      "community": 25,
-      "community_name": "Notification",
+      "community": 19,
+      "community_name": "notifications/views.py",
       "norm_label": "meta"
     },
     {
@@ -12044,8 +12066,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "backend_apps_quizzes_views_quizviewset_get_queryset",
-      "community": 3,
-      "community_name": "get_current_organization",
+      "community": 57,
+      "community_name": "test_enterprise_gaps.py",
       "norm_label": ".get_queryset()"
     },
     {
@@ -12077,8 +12099,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "backend_apps_quizzes_views_quizviewset_get_serializer_context",
-      "community": 3,
-      "community_name": "get_current_organization",
+      "community": 57,
+      "community_name": "test_enterprise_gaps.py",
       "norm_label": ".get_serializer_context()"
     },
     {
@@ -12088,8 +12110,8 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "backend_apps_quizzes_views_quizviewset_perform_create",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 30,
+      "community_name": "grade_a_views.py",
       "norm_label": ".perform_create()"
     },
     {
@@ -12209,8 +12231,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_tenants_admin",
-      "community": 9,
-      "community_name": "OrganizationInvite",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": "tenants/admin.py"
     },
     {
@@ -12220,8 +12242,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "backend_apps_tenants_admin_organizationadmin",
-      "community": 9,
-      "community_name": "OrganizationInvite",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": "organizationadmin"
     },
     {
@@ -12231,8 +12253,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "backend_apps_tenants_admin_membershipadmin",
-      "community": 9,
-      "community_name": "OrganizationInvite",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": "membershipadmin"
     },
     {
@@ -12242,8 +12264,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "backend_apps_tenants_admin_organizationinviteadmin",
-      "community": 9,
-      "community_name": "OrganizationInvite",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": "organizationinviteadmin"
     },
     {
@@ -12374,8 +12396,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_tenants_enterprise_views",
-      "community": 9,
-      "community_name": "OrganizationInvite",
+      "community": 67,
+      "community_name": "validate_http_url",
       "norm_label": "enterprise_views.py"
     },
     {
@@ -12396,8 +12418,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "backend_apps_tenants_enterprise_views_organizationssoconfigview",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 67,
+      "community_name": "validate_http_url",
       "norm_label": "organizationssoconfigview"
     },
     {
@@ -12418,8 +12440,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "backend_apps_tenants_enterprise_views_organizationssoconfigview_get",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 9,
+      "community_name": "OrganizationInvite",
       "norm_label": ".get()"
     },
     {
@@ -12429,8 +12451,8 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "backend_apps_tenants_enterprise_views_organizationssoconfigview_put",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 9,
+      "community_name": "OrganizationInvite",
       "norm_label": ".put()"
     },
     {
@@ -12440,8 +12462,8 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "backend_apps_tenants_enterprise_views_departmentlistcreateview",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 67,
+      "community_name": "validate_http_url",
       "norm_label": "departmentlistcreateview"
     },
     {
@@ -12462,8 +12484,8 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "backend_apps_tenants_enterprise_views_departmentlistcreateview_perform_create",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 67,
+      "community_name": "validate_http_url",
       "norm_label": ".perform_create()"
     },
     {
@@ -12473,8 +12495,8 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "backend_apps_tenants_enterprise_views_departmentdetailview",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 67,
+      "community_name": "validate_http_url",
       "norm_label": "departmentdetailview"
     },
     {
@@ -12506,8 +12528,8 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "backend_apps_tenants_enterprise_views_bulkmemberimportview_post",
-      "community": 67,
-      "community_name": "validate_http_url",
+      "community": 30,
+      "community_name": "grade_a_views.py",
       "norm_label": ".post()"
     },
     {
@@ -12594,8 +12616,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_tenants_enterprise_views_rationale_1",
-      "community": 9,
-      "community_name": "OrganizationInvite",
+      "community": 67,
+      "community_name": "validate_http_url",
       "norm_label": "enterprise org apis: sso config, departments, bulk import, platform org console."
     },
     {
@@ -12649,8 +12671,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": "grade_a_views.py"
     },
     {
@@ -12660,8 +12682,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_hash_token",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": "_hash_token()"
     },
     {
@@ -12671,8 +12693,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_scimtokenlistcreateview",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": "scimtokenlistcreateview"
     },
     {
@@ -12682,8 +12704,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_py_apiview",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": "apiview"
     },
     {
@@ -12693,8 +12715,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_scimtokenlistcreateview_get",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": ".get()"
     },
     {
@@ -12704,8 +12726,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_scimtokenlistcreateview_post",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": ".post()"
     },
     {
@@ -12715,8 +12737,8 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_scimtokenrevokeview",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": "scimtokenrevokeview"
     },
     {
@@ -12726,8 +12748,8 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_scimtokenrevokeview_delete",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": ".delete()"
     },
     {
@@ -12737,8 +12759,8 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_complianceevidencepackview",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": "complianceevidencepackview"
     },
     {
@@ -12748,8 +12770,8 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_complianceevidencepackview_get",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": ".get()"
     },
     {
@@ -12759,8 +12781,8 @@
       "source_location": "L250",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_auditintegrityverifyview",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": "auditintegrityverifyview"
     },
     {
@@ -12770,8 +12792,8 @@
       "source_location": "L253",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_auditintegrityverifyview_get",
-      "community": 37,
-      "community_name": "learning/views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": ".get()"
     },
     {
@@ -12814,8 +12836,8 @@
       "source_location": "L281",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_supportcasedetailview",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": "supportcasedetailview"
     },
     {
@@ -12825,8 +12847,8 @@
       "source_location": "L284",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_supportcasedetailview_patch",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": ".patch()"
     },
     {
@@ -12836,8 +12858,8 @@
       "source_location": "L302",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_platformsupportcaselistview",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": "platformsupportcaselistview"
     },
     {
@@ -12847,8 +12869,8 @@
       "source_location": "L305",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_platformsupportcaselistview_get",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": ".get()"
     },
     {
@@ -12858,8 +12880,8 @@
       "source_location": "L313",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_platformsupportcaseupdateview",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": "platformsupportcaseupdateview"
     },
     {
@@ -12869,8 +12891,8 @@
       "source_location": "L316",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_platformsupportcaseupdateview_patch",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": ".patch()"
     },
     {
@@ -12880,8 +12902,8 @@
       "source_location": "L331",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_slometricsview",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": "slometricsview"
     },
     {
@@ -12891,8 +12913,8 @@
       "source_location": "L336",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_slometricsview_get",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": ".get()"
     },
     {
@@ -12902,8 +12924,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_rationale_1",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": "grade-a enterprise apis: scim tokens, compliance pack, support cases, slo."
     },
     {
@@ -12913,8 +12935,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_rationale_34",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": "create / list scim bearer tokens for the current organization."
     },
     {
@@ -12924,8 +12946,8 @@
       "source_location": "L103",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_rationale_103",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": "download a compliance evidence pack for audits (iso/soc-style evidence)."
     },
     {
@@ -12935,8 +12957,8 @@
       "source_location": "L332",
       "_origin": "ast",
       "id": "backend_apps_tenants_grade_a_views_rationale_332",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 7,
+      "community_name": "Membership",
       "norm_label": "service-level objective snapshot for ops / enterprise reporting."
     },
     {
@@ -13243,8 +13265,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_tenants_models",
-      "community": 9,
-      "community_name": "OrganizationInvite",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": "tenants/models.py"
     },
     {
@@ -13342,8 +13364,8 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "backend_apps_tenants_models_membership",
-      "community": 9,
-      "community_name": "OrganizationInvite",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": "membership"
     },
     {
@@ -13353,8 +13375,8 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "backend_apps_tenants_models_membership_str",
-      "community": 9,
-      "community_name": "OrganizationInvite",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": ".__str__()"
     },
     {
@@ -13364,8 +13386,8 @@
       "source_location": "L141",
       "_origin": "ast",
       "id": "backend_apps_tenants_models_organizationinvite",
-      "community": 9,
-      "community_name": "OrganizationInvite",
+      "community": 20,
+      "community_name": "enterprise_views.py",
       "norm_label": "organizationinvite"
     },
     {
@@ -13375,8 +13397,8 @@
       "source_location": "L182",
       "_origin": "ast",
       "id": "backend_apps_tenants_models_organizationinvite_str",
-      "community": 9,
-      "community_name": "OrganizationInvite",
+      "community": 20,
+      "community_name": "enterprise_views.py",
       "norm_label": ".__str__()"
     },
     {
@@ -13386,8 +13408,8 @@
       "source_location": "L186",
       "_origin": "ast",
       "id": "backend_apps_tenants_models_organizationinvite_is_pending",
-      "community": 9,
-      "community_name": "OrganizationInvite",
+      "community": 20,
+      "community_name": "enterprise_views.py",
       "norm_label": ".is_pending()"
     },
     {
@@ -13507,8 +13529,8 @@
       "source_location": "L142",
       "_origin": "ast",
       "id": "backend_apps_tenants_models_rationale_142",
-      "community": 9,
-      "community_name": "OrganizationInvite",
+      "community": 20,
+      "community_name": "enterprise_views.py",
       "norm_label": "pending email invitation to join an organization."
     },
     {
@@ -13562,8 +13584,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "backend_apps_tenants_permissions_get_membership",
-      "community": 3,
-      "community_name": "get_current_organization",
+      "community": 57,
+      "community_name": "test_enterprise_gaps.py",
       "norm_label": "get_membership()"
     },
     {
@@ -13573,8 +13595,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "backend_apps_tenants_permissions_platform_role_name",
-      "community": 3,
-      "community_name": "get_current_organization",
+      "community": 57,
+      "community_name": "test_enterprise_gaps.py",
       "norm_label": "_platform_role_name()"
     },
     {
@@ -13606,8 +13628,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "backend_apps_tenants_permissions_isorgmember_has_permission",
-      "community": 3,
-      "community_name": "get_current_organization",
+      "community": 57,
+      "community_name": "test_enterprise_gaps.py",
       "norm_label": ".has_permission()"
     },
     {
@@ -13617,8 +13639,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "backend_apps_tenants_permissions_isorgowneroradmin",
-      "community": 36,
-      "community_name": "MediaAssetSerializer",
+      "community": 20,
+      "community_name": "enterprise_views.py",
       "norm_label": "isorgowneroradmin"
     },
     {
@@ -13628,8 +13650,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "backend_apps_tenants_permissions_isorgowneroradmin_has_permission",
-      "community": 3,
-      "community_name": "get_current_organization",
+      "community": 57,
+      "community_name": "test_enterprise_gaps.py",
       "norm_label": ".has_permission()"
     },
     {
@@ -13650,8 +13672,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "backend_apps_tenants_permissions_isorgcontenteditor_has_permission",
-      "community": 3,
-      "community_name": "get_current_organization",
+      "community": 57,
+      "community_name": "test_enterprise_gaps.py",
       "norm_label": ".has_permission()"
     },
     {
@@ -13672,8 +13694,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "backend_apps_tenants_permissions_isorgforummoderator_has_permission",
-      "community": 3,
-      "community_name": "get_current_organization",
+      "community": 57,
+      "community_name": "test_enterprise_gaps.py",
       "norm_label": ".has_permission()"
     },
     {
@@ -13694,8 +13716,8 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "backend_apps_tenants_permissions_candeleteorgcontent_has_permission",
-      "community": 3,
-      "community_name": "get_current_organization",
+      "community": 57,
+      "community_name": "test_enterprise_gaps.py",
       "norm_label": ".has_permission()"
     },
     {
@@ -14123,8 +14145,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "backend_apps_tenants_serializers_organizationserializer_to_representation",
-      "community": 216,
-      "community_name": "constants.py",
+      "community": 9,
+      "community_name": "OrganizationInvite",
       "norm_label": ".to_representation()"
     },
     {
@@ -14200,8 +14222,8 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "backend_apps_tenants_serializers_userorganizationmembershipserializer",
-      "community": 9,
-      "community_name": "OrganizationInvite",
+      "community": 20,
+      "community_name": "enterprise_views.py",
       "norm_label": "userorganizationmembershipserializer"
     },
     {
@@ -14222,8 +14244,8 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "backend_apps_tenants_serializers_organizationinviteserializer",
-      "community": 9,
-      "community_name": "OrganizationInvite",
+      "community": 20,
+      "community_name": "enterprise_views.py",
       "norm_label": "organizationinviteserializer"
     },
     {
@@ -14354,8 +14376,8 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "backend_apps_tenants_services_create_organization_invite",
-      "community": 20,
-      "community_name": "enterprise_views.py",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": "create_organization_invite()"
     },
     {
@@ -14376,8 +14398,8 @@
       "source_location": "L140",
       "_origin": "ast",
       "id": "backend_apps_tenants_services_resolve_department",
-      "community": 20,
-      "community_name": "enterprise_views.py",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": "resolve_department()"
     },
     {
@@ -14387,8 +14409,8 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "backend_apps_tenants_services_bulk_provision_members",
-      "community": 20,
-      "community_name": "enterprise_views.py",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": "bulk_provision_members()"
     },
     {
@@ -14431,8 +14453,8 @@
       "source_location": "L86",
       "_origin": "ast",
       "id": "backend_apps_tenants_services_rationale_86",
-      "community": 20,
-      "community_name": "enterprise_views.py",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": "create or refresh a pending invite and email the recipient."
     },
     {
@@ -14453,8 +14475,8 @@
       "source_location": "L161",
       "_origin": "ast",
       "id": "backend_apps_tenants_services_rationale_161",
-      "community": 20,
-      "community_name": "enterprise_views.py",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": "provision members/invites from csv-like rows. returns a result summary."
     },
     {
@@ -14486,8 +14508,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_apps_tenants_urls",
-      "community": 30,
-      "community_name": "grade_a_views.py",
+      "community": 67,
+      "community_name": "validate_http_url",
       "norm_label": "tenants/urls.py"
     },
     {
@@ -14629,8 +14651,8 @@
       "source_location": "L178",
       "_origin": "ast",
       "id": "backend_apps_tenants_views_organizationinvitelistview_get_queryset",
-      "community": 20,
-      "community_name": "enterprise_views.py",
+      "community": 30,
+      "community_name": "grade_a_views.py",
       "norm_label": ".get_queryset()"
     },
     {
@@ -14651,8 +14673,8 @@
       "source_location": "L192",
       "_origin": "ast",
       "id": "backend_apps_tenants_views_organizationinviterevokeview_delete",
-      "community": 20,
-      "community_name": "enterprise_views.py",
+      "community": 30,
+      "community_name": "grade_a_views.py",
       "norm_label": ".delete()"
     },
     {
@@ -14695,8 +14717,8 @@
       "source_location": "L230",
       "_origin": "ast",
       "id": "backend_apps_tenants_views_acceptinviteview_post",
-      "community": 20,
-      "community_name": "enterprise_views.py",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": ".post()"
     },
     {
@@ -14739,8 +14761,8 @@
       "source_location": "L261",
       "_origin": "ast",
       "id": "backend_apps_tenants_views_memberdetailview_get_membership",
-      "community": 20,
-      "community_name": "enterprise_views.py",
+      "community": 30,
+      "community_name": "grade_a_views.py",
       "norm_label": "._get_membership()"
     },
     {
@@ -14761,8 +14783,8 @@
       "source_location": "L297",
       "_origin": "ast",
       "id": "backend_apps_tenants_views_memberdetailview_delete",
-      "community": 20,
-      "community_name": "enterprise_views.py",
+      "community": 30,
+      "community_name": "grade_a_views.py",
       "norm_label": ".delete()"
     },
     {
@@ -14783,8 +14805,8 @@
       "source_location": "L328",
       "_origin": "ast",
       "id": "backend_apps_tenants_views_leaveorganizationview_post",
-      "community": 20,
-      "community_name": "enterprise_views.py",
+      "community": 30,
+      "community_name": "grade_a_views.py",
       "norm_label": ".post()"
     },
     {
@@ -14904,8 +14926,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "backend_apps_tutor_document_text_cache_key",
-      "community": 59,
-      "community_name": "notifications/services.py",
+      "community": 50,
+      "community_name": "test_tutor_retrieval.py",
       "norm_label": "_cache_key()"
     },
     {
@@ -14948,8 +14970,8 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "backend_apps_tutor_document_text_invalidate_attachment_text_cache",
-      "community": 59,
-      "community_name": "notifications/services.py",
+      "community": 50,
+      "community_name": "test_tutor_retrieval.py",
       "norm_label": "invalidate_attachment_text_cache()"
     },
     {
@@ -15003,8 +15025,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "backend_apps_tutor_document_text_rationale_97",
-      "community": 59,
-      "community_name": "notifications/services.py",
+      "community": 50,
+      "community_name": "test_tutor_retrieval.py",
       "norm_label": "drop cached pdf text when an article attachment changes."
     },
     {
@@ -15564,8 +15586,8 @@
       "source_location": "L131",
       "_origin": "ast",
       "id": "backend_apps_tutor_services_user_language",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 26,
+      "community_name": "tutor/services.py",
       "norm_label": "_user_language()"
     },
     {
@@ -15575,8 +15597,8 @@
       "source_location": "L138",
       "_origin": "ast",
       "id": "backend_apps_tutor_services_build_system_prompt",
-      "community": 50,
-      "community_name": "test_tutor_retrieval.py",
+      "community": 26,
+      "community_name": "tutor/services.py",
       "norm_label": "_build_system_prompt()"
     },
     {
@@ -16290,8 +16312,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_loadtest_ci_locustfile",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 59,
+      "community_name": "notifications/services.py",
       "norm_label": "ci_locustfile.py"
     },
     {
@@ -16301,8 +16323,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "backend_loadtest_ci_locustfile_cismokeuser",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 59,
+      "community_name": "notifications/services.py",
       "norm_label": "cismokeuser"
     },
     {
@@ -16312,8 +16334,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_loadtest_ci_locustfile_py_httpuser",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 59,
+      "community_name": "notifications/services.py",
       "norm_label": "httpuser"
     },
     {
@@ -16323,8 +16345,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "backend_loadtest_ci_locustfile_cismokeuser_on_start",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 59,
+      "community_name": "notifications/services.py",
       "norm_label": ".on_start()"
     },
     {
@@ -16334,8 +16356,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "backend_loadtest_ci_locustfile_cismokeuser_auth_headers",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 59,
+      "community_name": "notifications/services.py",
       "norm_label": ".auth_headers()"
     },
     {
@@ -16345,8 +16367,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "backend_loadtest_ci_locustfile_cismokeuser_health",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 59,
+      "community_name": "notifications/services.py",
       "norm_label": ".health()"
     },
     {
@@ -16356,8 +16378,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "backend_loadtest_ci_locustfile_cismokeuser_articles",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 59,
+      "community_name": "notifications/services.py",
       "norm_label": ".articles()"
     },
     {
@@ -16367,8 +16389,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "backend_loadtest_ci_locustfile_cismokeuser_quizzes",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 59,
+      "community_name": "notifications/services.py",
       "norm_label": ".quizzes()"
     },
     {
@@ -16378,8 +16400,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "backend_loadtest_ci_locustfile_cismokeuser_topics",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 59,
+      "community_name": "notifications/services.py",
       "norm_label": ".topics()"
     },
     {
@@ -16389,8 +16411,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "backend_loadtest_ci_locustfile_cismokeuser_billing_plans",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 59,
+      "community_name": "notifications/services.py",
       "norm_label": ".billing_plans()"
     },
     {
@@ -16400,8 +16422,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "backend_loadtest_ci_locustfile_cismokeuser_profile",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 37,
+      "community_name": "learning/views.py",
       "norm_label": ".profile()"
     },
     {
@@ -16411,8 +16433,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_loadtest_ci_locustfile_rationale_1",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 59,
+      "community_name": "notifications/services.py",
       "norm_label": "lightweight locust scenario for ci \u2014 avoids mass registration throttling."
     },
     {
@@ -16796,8 +16818,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_tests_test_api",
-      "community": 29,
-      "community_name": "Article",
+      "community": 64,
+      "community_name": "test_api.py",
       "norm_label": "test_api.py"
     },
     {
@@ -16807,8 +16829,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "backend_tests_test_api_category",
-      "community": 29,
-      "community_name": "Article",
+      "community": 64,
+      "community_name": "test_api.py",
       "norm_label": "category()"
     },
     {
@@ -16818,8 +16840,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "backend_tests_test_api_testhealthcheck",
-      "community": 29,
-      "community_name": "Article",
+      "community": 64,
+      "community_name": "test_api.py",
       "norm_label": "testhealthcheck"
     },
     {
@@ -16829,8 +16851,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "backend_tests_test_api_testhealthcheck_test_health_endpoint",
-      "community": 29,
-      "community_name": "Article",
+      "community": 64,
+      "community_name": "test_api.py",
       "norm_label": ".test_health_endpoint()"
     },
     {
@@ -16840,8 +16862,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "backend_tests_test_api_testhealthcheck_test_security_headers_present",
-      "community": 29,
-      "community_name": "Article",
+      "community": 64,
+      "community_name": "test_api.py",
       "norm_label": ".test_security_headers_present()"
     },
     {
@@ -17247,8 +17269,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "backend_tests_test_backfill_audit_testbackfillauditorgs",
-      "community": 7,
-      "community_name": "Membership",
+      "community": 37,
+      "community_name": "learning/views.py",
       "norm_label": "testbackfillauditorgs"
     },
     {
@@ -17258,8 +17280,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "backend_tests_test_backfill_audit_testbackfillauditorgs_test_backfills_from_user_membership",
-      "community": 7,
-      "community_name": "Membership",
+      "community": 37,
+      "community_name": "learning/views.py",
       "norm_label": ".test_backfills_from_user_membership()"
     },
     {
@@ -17269,8 +17291,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "backend_tests_test_backfill_audit_testbackfillauditorgs_test_backfills_from_metadata_organization_id",
-      "community": 7,
-      "community_name": "Membership",
+      "community": 37,
+      "community_name": "learning/views.py",
       "norm_label": ".test_backfills_from_metadata_organization_id()"
     },
     {
@@ -17280,8 +17302,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "backend_tests_test_backfill_audit_testbackfillauditorgs_test_dry_run_leaves_rows_unchanged",
-      "community": 7,
-      "community_name": "Membership",
+      "community": 37,
+      "community_name": "learning/views.py",
       "norm_label": ".test_dry_run_leaves_rows_unchanged()"
     },
     {
@@ -17478,8 +17500,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "backend_tests_test_enterprise_gaps_testorgrolerbac",
-      "community": 57,
-      "community_name": "test_enterprise_gaps.py",
+      "community": 10,
+      "community_name": "bind_client_to_org",
       "norm_label": "testorgrolerbac"
     },
     {
@@ -17489,8 +17511,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "backend_tests_test_enterprise_gaps_testorgrolerbac_test_content_manager_can_create_article",
-      "community": 57,
-      "community_name": "test_enterprise_gaps.py",
+      "community": 10,
+      "community_name": "bind_client_to_org",
       "norm_label": ".test_content_manager_can_create_article()"
     },
     {
@@ -17500,8 +17522,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "backend_tests_test_enterprise_gaps_testorgrolerbac_test_org_moderator_can_list_pending_forum",
-      "community": 57,
-      "community_name": "test_enterprise_gaps.py",
+      "community": 10,
+      "community_name": "bind_client_to_org",
       "norm_label": ".test_org_moderator_can_list_pending_forum()"
     },
     {
@@ -17863,8 +17885,8 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "backend_tests_test_i18n_testquizoptionsi18n",
-      "community": 209,
-      "community_name": "TestQuizOptionsI18n",
+      "community": 2,
+      "community_name": "quizzes/views.py",
       "norm_label": "testquizoptionsi18n"
     },
     {
@@ -17874,8 +17896,8 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "backend_tests_test_i18n_testquizoptionsi18n_test_mcq_options_ar_exposed_for_frontend",
-      "community": 209,
-      "community_name": "TestQuizOptionsI18n",
+      "community": 2,
+      "community_name": "quizzes/views.py",
       "norm_label": ".test_mcq_options_ar_exposed_for_frontend()"
     },
     {
@@ -17970,7 +17992,7 @@
       "label": "TestIntegrationsStatusEndpoint",
       "file_type": "code",
       "source_file": "backend/tests/test_integrations.py",
-      "source_location": "L52",
+      "source_location": "L55",
       "_origin": "ast",
       "id": "backend_tests_test_integrations_testintegrationsstatusendpoint",
       "community": 221,
@@ -17981,7 +18003,7 @@
       "label": ".test_requires_platform_admin()",
       "file_type": "code",
       "source_file": "backend/tests/test_integrations.py",
-      "source_location": "L53",
+      "source_location": "L56",
       "_origin": "ast",
       "id": "backend_tests_test_integrations_testintegrationsstatusendpoint_test_requires_platform_admin",
       "community": 221,
@@ -17992,7 +18014,7 @@
       "label": ".test_admin_gets_report()",
       "file_type": "code",
       "source_file": "backend/tests/test_integrations.py",
-      "source_location": "L60",
+      "source_location": "L63",
       "_origin": "ast",
       "id": "backend_tests_test_integrations_testintegrationsstatusendpoint_test_admin_gets_report",
       "community": 221,
@@ -18003,7 +18025,7 @@
       "label": "TestCheckIntegrationsCommand",
       "file_type": "code",
       "source_file": "backend/tests/test_integrations.py",
-      "source_location": "L71",
+      "source_location": "L74",
       "_origin": "ast",
       "id": "backend_tests_test_integrations_testcheckintegrationscommand",
       "community": 31,
@@ -18014,7 +18036,7 @@
       "label": ".test_command_runs()",
       "file_type": "code",
       "source_file": "backend/tests/test_integrations.py",
-      "source_location": "L72",
+      "source_location": "L75",
       "_origin": "ast",
       "id": "backend_tests_test_integrations_testcheckintegrationscommand_test_command_runs",
       "community": 31,
@@ -18025,7 +18047,7 @@
       "label": ".test_json_output()",
       "file_type": "code",
       "source_file": "backend/tests/test_integrations.py",
-      "source_location": "L77",
+      "source_location": "L80",
       "_origin": "ast",
       "id": "backend_tests_test_integrations_testcheckintegrationscommand_test_json_output",
       "community": 31,
@@ -18369,8 +18391,8 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "backend_tests_test_low_vision_features_testmediacaptions",
-      "community": 10,
-      "community_name": "bind_client_to_org",
+      "community": 225,
+      "community_name": "TestPendingQueue",
       "norm_label": "testmediacaptions"
     },
     {
@@ -18380,8 +18402,8 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "backend_tests_test_low_vision_features_testmediacaptions_test_captions_url_on_media",
-      "community": 10,
-      "community_name": "bind_client_to_org",
+      "community": 225,
+      "community_name": "TestPendingQueue",
       "norm_label": ".test_captions_url_on_media()"
     },
     {
@@ -18413,8 +18435,8 @@
       "source_location": "L173",
       "_origin": "ast",
       "id": "backend_tests_test_low_vision_features_testtutorindex",
-      "community": 59,
-      "community_name": "notifications/services.py",
+      "community": 50,
+      "community_name": "test_tutor_retrieval.py",
       "norm_label": "testtutorindex"
     },
     {
@@ -18424,8 +18446,8 @@
       "source_location": "L174",
       "_origin": "ast",
       "id": "backend_tests_test_low_vision_features_testtutorindex_test_article_save_builds_index",
-      "community": 59,
-      "community_name": "notifications/services.py",
+      "community": 50,
+      "community_name": "test_tutor_retrieval.py",
       "norm_label": ".test_article_save_builds_index()"
     },
     {
@@ -18435,8 +18457,8 @@
       "source_location": "L186",
       "_origin": "ast",
       "id": "backend_tests_test_low_vision_features_testtutorindex_test_invalidate_attachment_cache",
-      "community": 59,
-      "community_name": "notifications/services.py",
+      "community": 50,
+      "community_name": "test_tutor_retrieval.py",
       "norm_label": ".test_invalidate_attachment_cache()"
     },
     {
@@ -18446,8 +18468,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_tests_test_media",
-      "community": 29,
-      "community_name": "Article",
+      "community": 56,
+      "community_name": "CiSmokeUser",
       "norm_label": "test_media.py"
     },
     {
@@ -18545,8 +18567,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_tests_test_media_articles",
-      "community": 29,
-      "community_name": "Article",
+      "community": 56,
+      "community_name": "CiSmokeUser",
       "norm_label": "test_media_articles.py"
     },
     {
@@ -18556,8 +18578,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "backend_tests_test_media_articles_test_media_asset_playback_url_prefers_upload",
-      "community": 29,
-      "community_name": "Article",
+      "community": 56,
+      "community_name": "CiSmokeUser",
       "norm_label": "test_media_asset_playback_url_prefers_upload()"
     },
     {
@@ -18567,8 +18589,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "backend_tests_test_media_articles_test_media_asset_playback_url_external",
-      "community": 29,
-      "community_name": "Article",
+      "community": 56,
+      "community_name": "CiSmokeUser",
       "norm_label": "test_media_asset_playback_url_external()"
     },
     {
@@ -18578,8 +18600,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "backend_tests_test_media_articles_test_article_can_attach_audio_and_video",
-      "community": 29,
-      "community_name": "Article",
+      "community": 56,
+      "community_name": "CiSmokeUser",
       "norm_label": "test_article_can_attach_audio_and_video()"
     },
     {
@@ -18589,8 +18611,8 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "backend_tests_test_media_articles_test_article_rejects_wrong_media_type",
-      "community": 29,
-      "community_name": "Article",
+      "community": 56,
+      "community_name": "CiSmokeUser",
       "norm_label": "test_article_rejects_wrong_media_type()"
     },
     {
@@ -18600,8 +18622,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_tests_test_media_articles_rationale_1",
-      "community": 29,
-      "community_name": "Article",
+      "community": 56,
+      "community_name": "CiSmokeUser",
       "norm_label": "coverage-oriented tests for media\u2013article linking and mediaasset helpers."
     },
     {
@@ -18611,8 +18633,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_tests_test_medium_features",
-      "community": 29,
-      "community_name": "Article",
+      "community": 223,
+      "community_name": "TestGlobalSearch",
       "norm_label": "test_medium_features.py"
     },
     {
@@ -18622,8 +18644,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "backend_tests_test_medium_features_free_plan",
-      "community": 29,
-      "community_name": "Article",
+      "community": 223,
+      "community_name": "TestGlobalSearch",
       "norm_label": "free_plan()"
     },
     {
@@ -18691,6 +18713,17 @@
       "community": 223,
       "community_name": "TestGlobalSearch",
       "norm_label": ".test_search_finds_published_content()"
+    },
+    {
+      "label": ".test_search_without_tenant_header_scopes_to_public_org()",
+      "file_type": "code",
+      "source_file": "backend/tests/test_medium_features.py",
+      "source_location": "L110",
+      "_origin": "ast",
+      "id": "backend_tests_test_medium_features_testglobalsearch_test_search_without_tenant_header_scopes_to_public_org",
+      "community": 223,
+      "community_name": "TestGlobalSearch",
+      "norm_label": ".test_search_without_tenant_header_scopes_to_public_org()"
     },
     {
       "label": "test_moderation.py",
@@ -18820,8 +18853,8 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "backend_tests_test_moderation_testpendingqueue",
-      "community": 225,
-      "community_name": "TestPendingQueue",
+      "community": 10,
+      "community_name": "bind_client_to_org",
       "norm_label": "testpendingqueue"
     },
     {
@@ -18831,8 +18864,8 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "backend_tests_test_moderation_testpendingqueue_test_pending_lists_unapproved_content",
-      "community": 225,
-      "community_name": "TestPendingQueue",
+      "community": 10,
+      "community_name": "bind_client_to_org",
       "norm_label": ".test_pending_lists_unapproved_content()"
     },
     {
@@ -18842,8 +18875,8 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "backend_tests_test_moderation_testpendingqueue_test_suspended_user_cannot_post_topic",
-      "community": 225,
-      "community_name": "TestPendingQueue",
+      "community": 10,
+      "community_name": "bind_client_to_org",
       "norm_label": ".test_suspended_user_cannot_post_topic()"
     },
     {
@@ -18952,8 +18985,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_tests_test_org_analytics",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 203,
+      "community_name": ".save",
       "norm_label": "test_org_analytics.py"
     },
     {
@@ -18963,8 +18996,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "backend_tests_test_org_analytics_pro_plan",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 203,
+      "community_name": ".save",
       "norm_label": "pro_plan()"
     },
     {
@@ -18974,8 +19007,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "backend_tests_test_org_analytics_free_plan",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 203,
+      "community_name": ".save",
       "norm_label": "free_plan()"
     },
     {
@@ -18985,8 +19018,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "backend_tests_test_org_analytics_org_admin_member",
-      "community": 2,
-      "community_name": "quizzes/views.py",
+      "community": 203,
+      "community_name": ".save",
       "norm_label": "org_admin_member()"
     },
     {
@@ -19073,8 +19106,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_tests_test_phase4",
-      "community": 65,
-      "community_name": "test_sms.py",
+      "community": 16,
+      "community_name": "Subscription",
       "norm_label": "test_phase4.py"
     },
     {
@@ -19183,8 +19216,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "backend_tests_test_product_features_testresendverificationemail",
-      "community": 226,
-      "community_name": "TestResendVerificationEmail",
+      "community": 25,
+      "community_name": "Notification",
       "norm_label": "testresendverificationemail"
     },
     {
@@ -19194,8 +19227,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "backend_tests_test_product_features_testresendverificationemail_test_resend_queues_email",
-      "community": 226,
-      "community_name": "TestResendVerificationEmail",
+      "community": 25,
+      "community_name": "Notification",
       "norm_label": ".test_resend_queues_email()"
     },
     {
@@ -19205,8 +19238,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "backend_tests_test_product_features_testresendverificationemail_test_resend_when_already_verified",
-      "community": 226,
-      "community_name": "TestResendVerificationEmail",
+      "community": 25,
+      "community_name": "Notification",
       "norm_label": ".test_resend_when_already_verified()"
     },
     {
@@ -19249,8 +19282,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "backend_tests_test_product_features_testunsuspenduser",
-      "community": 227,
-      "community_name": "TestUnsuspendUser",
+      "community": 25,
+      "community_name": "Notification",
       "norm_label": "testunsuspenduser"
     },
     {
@@ -19260,8 +19293,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "backend_tests_test_product_features_testunsuspenduser_test_moderator_can_unsuspend",
-      "community": 227,
-      "community_name": "TestUnsuspendUser",
+      "community": 25,
+      "community_name": "Notification",
       "norm_label": ".test_moderator_can_unsuspend()"
     },
     {
@@ -19271,8 +19304,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "backend_tests_test_product_features_testunsuspenduser_test_citizen_cannot_unsuspend",
-      "community": 227,
-      "community_name": "TestUnsuspendUser",
+      "community": 25,
+      "community_name": "Notification",
       "norm_label": ".test_citizen_cannot_unsuspend()"
     },
     {
@@ -19315,8 +19348,8 @@
       "source_location": "L121",
       "_origin": "ast",
       "id": "backend_tests_test_product_features_testauditlogs",
-      "community": 25,
-      "community_name": "Notification",
+      "community": 209,
+      "community_name": "TestQuizOptionsI18n",
       "norm_label": "testauditlogs"
     },
     {
@@ -19326,8 +19359,8 @@
       "source_location": "L122",
       "_origin": "ast",
       "id": "backend_tests_test_product_features_testauditlogs_test_moderator_can_list_logs",
-      "community": 25,
-      "community_name": "Notification",
+      "community": 209,
+      "community_name": "TestQuizOptionsI18n",
       "norm_label": ".test_moderator_can_list_logs()"
     },
     {
@@ -19337,8 +19370,8 @@
       "source_location": "L136",
       "_origin": "ast",
       "id": "backend_tests_test_product_features_testauditlogs_test_citizen_cannot_list_logs",
-      "community": 25,
-      "community_name": "Notification",
+      "community": 209,
+      "community_name": "TestQuizOptionsI18n",
       "norm_label": ".test_citizen_cannot_list_logs()"
     },
     {
@@ -19414,8 +19447,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "backend_tests_test_quizzes_forum_testforum",
-      "community": 10,
-      "community_name": "bind_client_to_org",
+      "community": 216,
+      "community_name": "constants.py",
       "norm_label": "testforum"
     },
     {
@@ -19425,8 +19458,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "backend_tests_test_quizzes_forum_testforum_test_create_topic",
-      "community": 10,
-      "community_name": "bind_client_to_org",
+      "community": 216,
+      "community_name": "constants.py",
       "norm_label": ".test_create_topic()"
     },
     {
@@ -19436,8 +19469,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "backend_tests_test_quizzes_forum_testforum_test_moderator_approves_topic",
-      "community": 10,
-      "community_name": "bind_client_to_org",
+      "community": 216,
+      "community_name": "constants.py",
       "norm_label": ".test_moderator_approves_topic()"
     },
     {
@@ -19579,8 +19612,8 @@
       "source_location": "L166",
       "_origin": "ast",
       "id": "backend_tests_test_saas_testtenantisolation_test_member_can_switch_org_via_header",
-      "community": 21,
-      "community_name": "conftest.py",
+      "community": 27,
+      "community_name": "test_saas.py",
       "norm_label": ".test_member_can_switch_org_via_header()"
     },
     {
@@ -19590,8 +19623,8 @@
       "source_location": "L188",
       "_origin": "ast",
       "id": "backend_tests_test_saas_testtenantisolation_test_articles_scoped_to_tenant",
-      "community": 38,
-      "community_name": "tutor/views.py",
+      "community": 27,
+      "community_name": "test_saas.py",
       "norm_label": ".test_articles_scoped_to_tenant()"
     },
     {
@@ -19744,8 +19777,8 @@
       "source_location": "L167",
       "_origin": "ast",
       "id": "backend_tests_test_saas_rationale_167",
-      "community": 21,
-      "community_name": "conftest.py",
+      "community": 27,
+      "community_name": "test_saas.py",
       "norm_label": "org switcher: header selects another org the user belongs to."
     },
     {
@@ -20085,8 +20118,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "backend_tests_test_sms_testsmsalerts",
-      "community": 10,
-      "community_name": "bind_client_to_org",
+      "community": 87,
+      "community_name": "jwt.js",
       "norm_label": "testsmsalerts"
     },
     {
@@ -20096,8 +20129,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "backend_tests_test_sms_testsmsalerts_test_send_sms_requires_paid_plan",
-      "community": 10,
-      "community_name": "bind_client_to_org",
+      "community": 87,
+      "community_name": "jwt.js",
       "norm_label": ".test_send_sms_requires_paid_plan()"
     },
     {
@@ -20107,8 +20140,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "backend_tests_test_sms_testsmsalerts_test_send_sms_queues_message",
-      "community": 10,
-      "community_name": "bind_client_to_org",
+      "community": 87,
+      "community_name": "jwt.js",
       "norm_label": ".test_send_sms_queues_message()"
     },
     {
@@ -20118,8 +20151,8 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "backend_tests_test_sms_testsmsalerts_test_broadcast_sms",
-      "community": 10,
-      "community_name": "bind_client_to_org",
+      "community": 87,
+      "community_name": "jwt.js",
       "norm_label": ".test_broadcast_sms()"
     },
     {
@@ -20129,8 +20162,8 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "backend_tests_test_sms_testsmsalerts_test_sms_history",
-      "community": 10,
-      "community_name": "bind_client_to_org",
+      "community": 87,
+      "community_name": "jwt.js",
       "norm_label": ".test_sms_history()"
     },
     {
@@ -20283,8 +20316,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_tests_test_tutor",
-      "community": 65,
-      "community_name": "test_sms.py",
+      "community": 16,
+      "community_name": "Subscription",
       "norm_label": "test_tutor.py"
     },
     {
@@ -20294,8 +20327,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "backend_tests_test_tutor_free_plan",
-      "community": 65,
-      "community_name": "test_sms.py",
+      "community": 16,
+      "community_name": "Subscription",
       "norm_label": "free_plan()"
     },
     {
@@ -20338,8 +20371,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "backend_tests_test_tutor_testtutorchat_test_daily_limit_enforced",
-      "community": 26,
-      "community_name": "tutor/services.py",
+      "community": 75,
+      "community_name": "TestTutorChat",
       "norm_label": ".test_daily_limit_enforced()"
     },
     {
@@ -20382,8 +20415,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "backend_tests_test_tutor_testtutoradminusage",
-      "community": 230,
-      "community_name": "TestTutorAdminUsage",
+      "community": 10,
+      "community_name": "bind_client_to_org",
       "norm_label": "testtutoradminusage"
     },
     {
@@ -20393,8 +20426,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "backend_tests_test_tutor_testtutoradminusage_test_platform_usage_requires_admin",
-      "community": 230,
-      "community_name": "TestTutorAdminUsage",
+      "community": 10,
+      "community_name": "bind_client_to_org",
       "norm_label": ".test_platform_usage_requires_admin()"
     },
     {
@@ -20404,8 +20437,8 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "backend_tests_test_tutor_testtutoradminusage_test_platform_usage_returns_aggregate",
-      "community": 230,
-      "community_name": "TestTutorAdminUsage",
+      "community": 10,
+      "community_name": "bind_client_to_org",
       "norm_label": ".test_platform_usage_returns_aggregate()"
     },
     {
@@ -20547,8 +20580,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_tests_test_user_roles",
-      "community": 9,
-      "community_name": "OrganizationInvite",
+      "community": 38,
+      "community_name": "tutor/views.py",
       "norm_label": "test_user_roles.py"
     },
     {
@@ -22329,8 +22362,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "frontend_src_components_authshell_authshell",
-      "community": 11,
-      "community_name": "BillingPage.jsx",
+      "community": 15,
+      "community_name": "extractError",
       "norm_label": "authshell()"
     },
     {
@@ -22340,8 +22373,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_components_breadcrumb",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "breadcrumb.jsx"
     },
     {
@@ -22351,8 +22384,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "frontend_src_components_breadcrumb_breadcrumb",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "breadcrumb()"
     },
     {
@@ -22362,8 +22395,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_components_emailverifybanner",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "emailverifybanner.jsx"
     },
     {
@@ -22373,8 +22406,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "frontend_src_components_emailverifybanner_emailverifybanner",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "emailverifybanner()"
     },
     {
@@ -22450,8 +22483,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_components_gamificationsummary",
-      "community": 18,
-      "community_name": "Organization",
+      "community": 5,
+      "community_name": "ui.jsx",
       "norm_label": "gamificationsummary.jsx"
     },
     {
@@ -22461,8 +22494,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "frontend_src_components_gamificationsummary_gamificationsummary",
-      "community": 18,
-      "community_name": "Organization",
+      "community": 5,
+      "community_name": "ui.jsx",
       "norm_label": "gamificationsummary()"
     },
     {
@@ -22527,8 +22560,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "frontend_src_components_icons_trophy",
-      "community": 15,
-      "community_name": "extractError",
+      "community": 8,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "trophy()"
     },
     {
@@ -22626,8 +22659,8 @@
       "source_location": "L133",
       "_origin": "ast",
       "id": "frontend_src_components_icons_chevronright",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "chevronright()"
     },
     {
@@ -22670,8 +22703,8 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "frontend_src_components_icons_chevronleft",
-      "community": 15,
-      "community_name": "extractError",
+      "community": 143,
+      "community_name": "@sentry/react",
       "norm_label": "chevronleft()"
     },
     {
@@ -22857,8 +22890,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "frontend_src_components_orgswitcher_orgswitcher",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 44,
+      "community_name": "services.js",
       "norm_label": "orgswitcher()"
     },
     {
@@ -22901,8 +22934,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_components_platformlogo",
-      "community": 11,
-      "community_name": "BillingPage.jsx",
+      "community": 15,
+      "community_name": "extractError",
       "norm_label": "platformlogo.jsx"
     },
     {
@@ -22912,8 +22945,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "frontend_src_components_platformlogo_platformlogo",
-      "community": 11,
-      "community_name": "BillingPage.jsx",
+      "community": 15,
+      "community_name": "extractError",
       "norm_label": "platformlogo()"
     },
     {
@@ -22923,8 +22956,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_components_protectedroute",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "protectedroute.jsx"
     },
     {
@@ -22934,8 +22967,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "frontend_src_components_protectedroute_protectedroute",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "protectedroute()"
     },
     {
@@ -22945,8 +22978,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_components_protectedroute_test",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "protectedroute.test.jsx"
     },
     {
@@ -22956,8 +22989,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "frontend_src_components_protectedroute_test_mockuser",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "mockuser"
     },
     {
@@ -22967,8 +23000,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "frontend_src_components_protectedroute_test_mockeduseauth",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "mockeduseauth"
     },
     {
@@ -22978,8 +23011,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "frontend_src_components_protectedroute_test_renderprotected",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "renderprotected()"
     },
     {
@@ -23121,8 +23154,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "frontend_src_components_ui_spinner",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "spinner()"
     },
     {
@@ -23132,8 +23165,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "frontend_src_components_ui_alert",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "alert()"
     },
     {
@@ -23165,8 +23198,8 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "frontend_src_components_ui_stattile",
-      "community": 18,
-      "community_name": "Organization",
+      "community": 5,
+      "community_name": "ui.jsx",
       "norm_label": "stattile()"
     },
     {
@@ -23198,8 +23231,8 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "frontend_src_components_ui_rolebadge",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 5,
+      "community_name": "ui.jsx",
       "norm_label": "rolebadge()"
     },
     {
@@ -23209,8 +23242,8 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "frontend_src_components_ui_orgrolebadge",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 5,
+      "community_name": "ui.jsx",
       "norm_label": "orgrolebadge()"
     },
     {
@@ -23231,8 +23264,8 @@
       "source_location": "L128",
       "_origin": "ast",
       "id": "frontend_src_components_ui_statcardskeleton",
-      "community": 18,
-      "community_name": "Organization",
+      "community": 143,
+      "community_name": "@sentry/react",
       "norm_label": "statcardskeleton()"
     },
     {
@@ -23253,8 +23286,8 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "frontend_src_components_ui_passwordinput",
-      "community": 11,
-      "community_name": "BillingPage.jsx",
+      "community": 5,
+      "community_name": "ui.jsx",
       "norm_label": "passwordinput()"
     },
     {
@@ -23264,8 +23297,8 @@
       "source_location": "L181",
       "_origin": "ast",
       "id": "frontend_src_components_ui_passwordstrength",
-      "community": 11,
-      "community_name": "BillingPage.jsx",
+      "community": 5,
+      "community_name": "ui.jsx",
       "norm_label": "passwordstrength()"
     },
     {
@@ -23297,8 +23330,8 @@
       "source_location": "L195",
       "_origin": "ast",
       "id": "frontend_src_components_ui_passwordstrengthbar",
-      "community": 11,
-      "community_name": "BillingPage.jsx",
+      "community": 5,
+      "community_name": "ui.jsx",
       "norm_label": "passwordstrengthbar()"
     },
     {
@@ -23319,8 +23352,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_context_authcontext",
-      "community": 44,
-      "community_name": "services.js",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "authcontext.jsx"
     },
     {
@@ -23330,8 +23363,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "frontend_src_context_authcontext_authcontext",
-      "community": 44,
-      "community_name": "services.js",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "authcontext"
     },
     {
@@ -23352,8 +23385,8 @@
       "source_location": "L155",
       "_origin": "ast",
       "id": "frontend_src_context_authcontext_useauth",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "useauth()"
     },
     {
@@ -23396,8 +23429,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "frontend_src_context_organizationcontext_useorganization",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 44,
+      "community_name": "services.js",
       "norm_label": "useorganization()"
     },
     {
@@ -23429,8 +23462,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_hooks_usedebouncedvalue",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "usedebouncedvalue.js"
     },
     {
@@ -23440,8 +23473,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "frontend_src_hooks_usedebouncedvalue_usedebouncedvalue",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "usedebouncedvalue()"
     },
     {
@@ -23572,8 +23605,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_lib_api",
-      "community": 44,
-      "community_name": "services.js",
+      "community": 22,
+      "community_name": "Icons.jsx",
       "norm_label": "api.js"
     },
     {
@@ -23583,8 +23616,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "frontend_src_lib_api_clearlegacytokenstorage",
-      "community": 44,
-      "community_name": "services.js",
+      "community": 22,
+      "community_name": "Icons.jsx",
       "norm_label": "clearlegacytokenstorage()"
     },
     {
@@ -23594,8 +23627,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "frontend_src_lib_api_tenantstore",
-      "community": 44,
-      "community_name": "services.js",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "tenantstore"
     },
     {
@@ -23605,8 +23638,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "frontend_src_lib_api_tokenstore",
-      "community": 44,
-      "community_name": "services.js",
+      "community": 22,
+      "community_name": "Icons.jsx",
       "norm_label": "tokenstore"
     },
     {
@@ -23627,8 +23660,8 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "frontend_src_lib_api_pendingqueue",
-      "community": 44,
-      "community_name": "services.js",
+      "community": 22,
+      "community_name": "Icons.jsx",
       "norm_label": "pendingqueue"
     },
     {
@@ -23638,8 +23671,8 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "frontend_src_lib_api_flushqueue",
-      "community": 44,
-      "community_name": "services.js",
+      "community": 22,
+      "community_name": "Icons.jsx",
       "norm_label": "flushqueue()"
     },
     {
@@ -23649,8 +23682,8 @@
       "source_location": "L170",
       "_origin": "ast",
       "id": "frontend_src_lib_api_extracterror",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 143,
+      "community_name": "@sentry/react",
       "norm_label": "extracterror()"
     },
     {
@@ -23660,8 +23693,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_lib_api_test",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 143,
+      "community_name": "@sentry/react",
       "norm_label": "api.test.js"
     },
     {
@@ -23671,8 +23704,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_lib_branding",
-      "community": 11,
-      "community_name": "BillingPage.jsx",
+      "community": 15,
+      "community_name": "extractError",
       "norm_label": "branding.js"
     },
     {
@@ -23693,8 +23726,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "frontend_src_lib_format_formatdate",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "formatdate()"
     },
     {
@@ -23715,8 +23748,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_lib_jwt",
-      "community": 87,
-      "community_name": "jwt.js",
+      "community": 22,
+      "community_name": "Icons.jsx",
       "norm_label": "jwt.js"
     },
     {
@@ -23726,8 +23759,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_lib_jwt_decodejwtpayload",
-      "community": 87,
-      "community_name": "jwt.js",
+      "community": 22,
+      "community_name": "Icons.jsx",
       "norm_label": "decodejwtpayload()"
     },
     {
@@ -23737,8 +23770,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "frontend_src_lib_jwt_getorgslugfromtoken",
-      "community": 87,
-      "community_name": "jwt.js",
+      "community": 22,
+      "community_name": "Icons.jsx",
       "norm_label": "getorgslugfromtoken()"
     },
     {
@@ -23748,8 +23781,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_lib_jwt_test",
-      "community": 87,
-      "community_name": "jwt.js",
+      "community": 22,
+      "community_name": "Icons.jsx",
       "norm_label": "jwt.test.js"
     },
     {
@@ -23759,8 +23792,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_lib_localizedcontent",
-      "community": 22,
-      "community_name": "Icons.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "localizedcontent.js"
     },
     {
@@ -23770,8 +23803,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "frontend_src_lib_localizedcontent_contentlanguage",
-      "community": 22,
-      "community_name": "Icons.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "contentlanguage()"
     },
     {
@@ -23781,8 +23814,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "frontend_src_lib_localizedcontent_localizedfield",
-      "community": 22,
-      "community_name": "Icons.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "localizedfield()"
     },
     {
@@ -23792,8 +23825,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "frontend_src_lib_localizedcontent_localizedcategory",
-      "community": 22,
-      "community_name": "Icons.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "localizedcategory()"
     },
     {
@@ -23803,8 +23836,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "frontend_src_lib_localizedcontent_localizedquestionoptions",
-      "community": 22,
-      "community_name": "Icons.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "localizedquestionoptions()"
     },
     {
@@ -23814,8 +23847,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "frontend_src_lib_localizedcontent_localizedquestion",
-      "community": 22,
-      "community_name": "Icons.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "localizedquestion()"
     },
     {
@@ -23825,8 +23858,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "frontend_src_lib_localizedcontent_localizedquiz",
-      "community": 22,
-      "community_name": "Icons.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "localizedquiz()"
     },
     {
@@ -23836,8 +23869,8 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "frontend_src_lib_localizedcontent_localizedarticle",
-      "community": 22,
-      "community_name": "Icons.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "localizedarticle()"
     },
     {
@@ -23847,8 +23880,8 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "frontend_src_lib_localizedcontent_truefalseoptions",
-      "community": 22,
-      "community_name": "Icons.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "truefalseoptions()"
     },
     {
@@ -23858,8 +23891,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_lib_localizedcontent_test",
-      "community": 22,
-      "community_name": "Icons.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "localizedcontent.test.js"
     },
     {
@@ -24397,8 +24430,8 @@
       "source_location": "L2",
       "_origin": "ast",
       "id": "frontend_src_lib_services_authservice",
-      "community": 11,
-      "community_name": "BillingPage.jsx",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "authservice"
     },
     {
@@ -24419,8 +24452,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "frontend_src_lib_services_articleservice",
-      "community": 22,
-      "community_name": "Icons.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "articleservice"
     },
     {
@@ -24441,8 +24474,8 @@
       "source_location": "L86",
       "_origin": "ast",
       "id": "frontend_src_lib_services_categoryservice",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 143,
+      "community_name": "@sentry/react",
       "norm_label": "categoryservice"
     },
     {
@@ -24529,8 +24562,8 @@
       "source_location": "L191",
       "_origin": "ast",
       "id": "frontend_src_lib_services_billingservice",
-      "community": 11,
-      "community_name": "BillingPage.jsx",
+      "community": 44,
+      "community_name": "services.js",
       "norm_label": "billingservice"
     },
     {
@@ -24540,8 +24573,8 @@
       "source_location": "L197",
       "_origin": "ast",
       "id": "frontend_src_lib_services_tutorservice",
-      "community": 22,
-      "community_name": "Icons.jsx",
+      "community": 44,
+      "community_name": "services.js",
       "norm_label": "tutorservice"
     },
     {
@@ -24551,8 +24584,8 @@
       "source_location": "L209",
       "_origin": "ast",
       "id": "frontend_src_lib_services_gamificationservice",
-      "community": 18,
-      "community_name": "Organization",
+      "community": 5,
+      "community_name": "ui.jsx",
       "norm_label": "gamificationservice"
     },
     {
@@ -24573,8 +24606,8 @@
       "source_location": "L220",
       "_origin": "ast",
       "id": "frontend_src_lib_services_searchservice",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "searchservice"
     },
     {
@@ -24628,8 +24661,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_lib_tutorstream",
-      "community": 44,
-      "community_name": "services.js",
+      "community": 22,
+      "community_name": "Icons.jsx",
       "norm_label": "tutorstream.js"
     },
     {
@@ -24661,8 +24694,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_pages_acceptinvitepage",
-      "community": 44,
-      "community_name": "services.js",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "acceptinvitepage.jsx"
     },
     {
@@ -24672,8 +24705,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "frontend_src_pages_acceptinvitepage_acceptinvitepage",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "acceptinvitepage()"
     },
     {
@@ -24705,8 +24738,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "frontend_src_pages_adminpage_adminpage",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 11,
+      "community_name": "BillingPage.jsx",
       "norm_label": "adminpage()"
     },
     {
@@ -24859,8 +24892,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "frontend_src_pages_articlesmanagepage_articlesmanagepage",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 44,
+      "community_name": "services.js",
       "norm_label": "articlesmanagepage()"
     },
     {
@@ -24870,8 +24903,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_pages_articlespage",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "articlespage.jsx"
     },
     {
@@ -24881,8 +24914,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "frontend_src_pages_articlespage_articlespage",
-      "community": 22,
-      "community_name": "Icons.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "articlespage()"
     },
     {
@@ -24969,8 +25002,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "frontend_src_pages_categoriesmanagepage_slugify",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 5,
+      "community_name": "ui.jsx",
       "norm_label": "slugify()"
     },
     {
@@ -24991,8 +25024,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "frontend_src_pages_categoriesmanagepage_categoriesmanagepage",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 5,
+      "community_name": "ui.jsx",
       "norm_label": "categoriesmanagepage()"
     },
     {
@@ -25024,8 +25057,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "frontend_src_pages_certificatespage_certificatespage",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "certificatespage()"
     },
     {
@@ -25035,8 +25068,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_pages_dashboardpage",
-      "community": 18,
-      "community_name": "Organization",
+      "community": 143,
+      "community_name": "@sentry/react",
       "norm_label": "dashboardpage.jsx"
     },
     {
@@ -25046,8 +25079,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "frontend_src_pages_dashboardpage_formatdate",
-      "community": 18,
-      "community_name": "Organization",
+      "community": 143,
+      "community_name": "@sentry/react",
       "norm_label": "formatdate()"
     },
     {
@@ -25057,8 +25090,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "frontend_src_pages_dashboardpage_activitylink",
-      "community": 18,
-      "community_name": "Organization",
+      "community": 143,
+      "community_name": "@sentry/react",
       "norm_label": "activitylink()"
     },
     {
@@ -25068,8 +25101,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "frontend_src_pages_dashboardpage_learnerdashboard",
-      "community": 18,
-      "community_name": "Organization",
+      "community": 143,
+      "community_name": "@sentry/react",
       "norm_label": "learnerdashboard()"
     },
     {
@@ -25079,8 +25112,8 @@
       "source_location": "L158",
       "_origin": "ast",
       "id": "frontend_src_pages_dashboardpage_dashboardpage",
-      "community": 18,
-      "community_name": "Organization",
+      "community": 143,
+      "community_name": "@sentry/react",
       "norm_label": "dashboardpage()"
     },
     {
@@ -25145,8 +25178,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_pages_forgotpasswordpage",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 143,
+      "community_name": "@sentry/react",
       "norm_label": "forgotpasswordpage.jsx"
     },
     {
@@ -25156,8 +25189,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "frontend_src_pages_forgotpasswordpage_forgotpasswordpage",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 143,
+      "community_name": "@sentry/react",
       "norm_label": "forgotpasswordpage()"
     },
     {
@@ -25167,8 +25200,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_pages_forumpage",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "forumpage.jsx"
     },
     {
@@ -25178,8 +25211,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "frontend_src_pages_forumpage_sort_options",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "sort_options"
     },
     {
@@ -25189,8 +25222,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "frontend_src_pages_forumpage_forumpage",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "forumpage()"
     },
     {
@@ -25288,8 +25321,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_pages_loginpage",
-      "community": 11,
-      "community_name": "BillingPage.jsx",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "loginpage.jsx"
     },
     {
@@ -25299,8 +25332,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "frontend_src_pages_loginpage_api_origin",
-      "community": 11,
-      "community_name": "BillingPage.jsx",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "api_origin"
     },
     {
@@ -25310,8 +25343,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "frontend_src_pages_loginpage_loginpage",
-      "community": 11,
-      "community_name": "BillingPage.jsx",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "loginpage()"
     },
     {
@@ -25354,8 +25387,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_pages_mediadetailpage",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "mediadetailpage.jsx"
     },
     {
@@ -25365,8 +25398,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "frontend_src_pages_mediadetailpage_mediadetailpage",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "mediadetailpage()"
     },
     {
@@ -25376,8 +25409,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_pages_mediaeditorpage",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 143,
+      "community_name": "@sentry/react",
       "norm_label": "mediaeditorpage.jsx"
     },
     {
@@ -25387,8 +25420,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "frontend_src_pages_mediaeditorpage_emptyform",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 143,
+      "community_name": "@sentry/react",
       "norm_label": "emptyform"
     },
     {
@@ -25398,8 +25431,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "frontend_src_pages_mediaeditorpage_mediaeditorpage",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 143,
+      "community_name": "@sentry/react",
       "norm_label": "mediaeditorpage()"
     },
     {
@@ -25420,8 +25453,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "frontend_src_pages_mediamanagepage_mediamanagepage",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 44,
+      "community_name": "services.js",
       "norm_label": "mediamanagepage()"
     },
     {
@@ -25442,8 +25475,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "frontend_src_pages_mediapage_mediapage",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "mediapage()"
     },
     {
@@ -25563,8 +25596,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_pages_profilepage",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 5,
+      "community_name": "ui.jsx",
       "norm_label": "profilepage.jsx"
     },
     {
@@ -25574,8 +25607,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "frontend_src_pages_profilepage_urlbase64touint8array",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 8,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "urlbase64touint8array()"
     },
     {
@@ -25585,8 +25618,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "frontend_src_pages_profilepage_profilepage",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 8,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "profilepage()"
     },
     {
@@ -25684,8 +25717,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_pages_quiztakepage",
-      "community": 15,
-      "community_name": "extractError",
+      "community": 8,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "quiztakepage.jsx"
     },
     {
@@ -25695,8 +25728,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "frontend_src_pages_quiztakepage_scorering",
-      "community": 15,
-      "community_name": "extractError",
+      "community": 8,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "scorering()"
     },
     {
@@ -25706,8 +25739,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "frontend_src_pages_quiztakepage_quizprogress",
-      "community": 15,
-      "community_name": "extractError",
+      "community": 8,
+      "community_name": "ProfilePage.jsx",
       "norm_label": "quizprogress()"
     },
     {
@@ -25761,8 +25794,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "frontend_src_pages_quizzesmanagepage_quizzesmanagepage",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 143,
+      "community_name": "@sentry/react",
       "norm_label": "quizzesmanagepage()"
     },
     {
@@ -25783,8 +25816,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "frontend_src_pages_quizzespage_quizzespage",
-      "community": 22,
-      "community_name": "Icons.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "quizzespage()"
     },
     {
@@ -25794,8 +25827,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_pages_registerpage",
-      "community": 11,
-      "community_name": "BillingPage.jsx",
+      "community": 15,
+      "community_name": "extractError",
       "norm_label": "registerpage.jsx"
     },
     {
@@ -25805,8 +25838,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "frontend_src_pages_registerpage_registerpage",
-      "community": 11,
-      "community_name": "BillingPage.jsx",
+      "community": 15,
+      "community_name": "extractError",
       "norm_label": "registerpage()"
     },
     {
@@ -25816,8 +25849,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_pages_registerpage_test",
-      "community": 11,
-      "community_name": "BillingPage.jsx",
+      "community": 15,
+      "community_name": "extractError",
       "norm_label": "registerpage.test.jsx"
     },
     {
@@ -25827,8 +25860,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_pages_resetpasswordpage",
-      "community": 11,
-      "community_name": "BillingPage.jsx",
+      "community": 143,
+      "community_name": "@sentry/react",
       "norm_label": "resetpasswordpage.jsx"
     },
     {
@@ -25838,8 +25871,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "frontend_src_pages_resetpasswordpage_resetpasswordpage",
-      "community": 11,
-      "community_name": "BillingPage.jsx",
+      "community": 143,
+      "community_name": "@sentry/react",
       "norm_label": "resetpasswordpage()"
     },
     {
@@ -25860,8 +25893,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "frontend_src_pages_resultspage_resultspage",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "resultspage()"
     },
     {
@@ -25871,8 +25904,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_pages_searchpage",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "searchpage.jsx"
     },
     {
@@ -25882,8 +25915,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "frontend_src_pages_searchpage_resultsection",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "resultsection()"
     },
     {
@@ -25893,8 +25926,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "frontend_src_pages_searchpage_searchpage",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "searchpage()"
     },
     {
@@ -25904,8 +25937,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_pages_ssocallbackpage",
-      "community": 44,
-      "community_name": "services.js",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "ssocallbackpage.jsx"
     },
     {
@@ -25915,8 +25948,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "frontend_src_pages_ssocallbackpage_readhashparams",
-      "community": 44,
-      "community_name": "services.js",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "readhashparams()"
     },
     {
@@ -25926,8 +25959,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "frontend_src_pages_ssocallbackpage_ssocallbackpage",
-      "community": 44,
-      "community_name": "services.js",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "ssocallbackpage()"
     },
     {
@@ -25937,8 +25970,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_pages_topicdetailpage",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "topicdetailpage.jsx"
     },
     {
@@ -25948,8 +25981,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "frontend_src_pages_topicdetailpage_topicdetailpage",
-      "community": 13,
-      "community_name": "useAuth",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "topicdetailpage()"
     },
     {
@@ -25992,8 +26025,8 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "frontend_src_pages_tutorpage_tutorpage",
-      "community": 22,
-      "community_name": "Icons.jsx",
+      "community": 17,
+      "community_name": "ArticleDetailPage.jsx",
       "norm_label": "tutorpage()"
     },
     {
@@ -26003,8 +26036,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_src_pages_verifyemailpage",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "verifyemailpage.jsx"
     },
     {
@@ -26014,8 +26047,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "frontend_src_pages_verifyemailpage_verifyemailpage",
-      "community": 5,
-      "community_name": "ui.jsx",
+      "community": 18,
+      "community_name": "Organization",
       "norm_label": "verifyemailpage()"
     },
     {
@@ -26982,8 +27015,8 @@
       "source_location": "L147",
       "_origin": "ast",
       "id": "docs_production_env_checklist_4_web_push_vapid_optional",
-      "community": 148,
-      "community_name": "vitest",
+      "community": 58,
+      "community_name": "constants.py",
       "norm_label": "4. web push \u2014 vapid (optional)"
     },
     {
@@ -26993,8 +27026,8 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "docs_production_env_checklist_generate_keys",
-      "community": 148,
-      "community_name": "vitest",
+      "community": 58,
+      "community_name": "constants.py",
       "norm_label": "generate keys"
     },
     {
@@ -27004,8 +27037,8 @@
       "source_location": "L159",
       "_origin": "ast",
       "id": "docs_production_env_checklist_backend_environment_159",
-      "community": 148,
-      "community_name": "vitest",
+      "community": 58,
+      "community_name": "constants.py",
       "norm_label": "backend environment"
     },
     {
@@ -27015,8 +27048,8 @@
       "source_location": "L167",
       "_origin": "ast",
       "id": "docs_production_env_checklist_frontend_environment_build_time",
-      "community": 148,
-      "community_name": "vitest",
+      "community": 58,
+      "community_name": "constants.py",
       "norm_label": "frontend environment (build time)"
     },
     {
@@ -27026,8 +27059,8 @@
       "source_location": "L175",
       "_origin": "ast",
       "id": "docs_production_env_checklist_checklist_175",
-      "community": 148,
-      "community_name": "vitest",
+      "community": 58,
+      "community_name": "constants.py",
       "norm_label": "checklist"
     },
     {
@@ -27037,8 +27070,8 @@
       "source_location": "L183",
       "_origin": "ast",
       "id": "docs_production_env_checklist_verify_183",
-      "community": 148,
-      "community_name": "vitest",
+      "community": 58,
+      "community_name": "constants.py",
       "norm_label": "verify"
     },
     {
@@ -30263,6 +30296,40 @@
       "weight": 0.8,
       "_origin": "ast",
       "source": "backend_tests_test_grade_a_enterprise_testsupportandcompliance",
+      "target": "backend_apps_accounts_models_role",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/tests/test_medium_features.py",
+      "source_location": "L113",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_tests_test_medium_features",
+      "target": "backend_apps_accounts_models_role",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "backend/tests/test_medium_features.py",
+      "source_location": "L113",
+      "weight": 0.8,
+      "_origin": "ast",
+      "source": "backend_tests_test_medium_features_testglobalsearch",
+      "target": "backend_apps_accounts_models_role",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "backend/tests/test_medium_features.py",
+      "source_location": "L113",
+      "weight": 0.8,
+      "_origin": "ast",
+      "source": "backend_tests_test_medium_features_testtutorhistory",
       "target": "backend_apps_accounts_models_role",
       "confidence_score": 0.5
     },
@@ -47385,7 +47452,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/apps/core/views.py",
-      "source_location": "L93",
+      "source_location": "L95",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_apps_core_views_integrationsstatusview_get",
@@ -50386,7 +50453,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "backend/apps/core/views.py",
-      "source_location": "L86",
+      "source_location": "L88",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_apps_core_views",
@@ -50408,7 +50475,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "backend/apps/core/views.py",
-      "source_location": "L97",
+      "source_location": "L99",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_apps_core_views",
@@ -50452,7 +50519,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "backend/apps/core/views.py",
-      "source_location": "L86",
+      "source_location": "L88",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_apps_core_views_integrationsstatusview",
@@ -50474,7 +50541,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "backend/apps/core/views.py",
-      "source_location": "L97",
+      "source_location": "L99",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_apps_core_views_securityeventlistview",
@@ -50519,7 +50586,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "backend/apps/core/views.py",
-      "source_location": "L92",
+      "source_location": "L94",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_apps_core_views_integrationsstatusview",
@@ -50530,10 +50597,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "backend/apps/core/views.py",
-      "source_location": "L87",
+      "source_location": "L89",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "backend_apps_core_views_rationale_87",
+      "source": "backend_apps_core_views_rationale_89",
       "target": "backend_apps_core_views_integrationsstatusview",
       "confidence_score": 1.0
     },
@@ -50541,10 +50608,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "backend/apps/core/views.py",
-      "source_location": "L98",
+      "source_location": "L100",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "backend_apps_core_views_rationale_98",
+      "source": "backend_apps_core_views_rationale_100",
       "target": "backend_apps_core_views_securityeventlistview",
       "confidence_score": 1.0
     },
@@ -50552,7 +50619,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "backend/apps/core/views.py",
-      "source_location": "L102",
+      "source_location": "L104",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_apps_core_views_securityeventlistview",
@@ -53711,7 +53778,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "backend/apps/learning/search.py",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_apps_learning_search",
@@ -53937,7 +54004,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "backend/apps/learning/search.py",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_apps_learning_search",
@@ -56849,7 +56916,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "backend/apps/learning/search.py",
-      "source_location": "L10",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_apps_learning_search",
@@ -57427,7 +57494,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "backend/apps/learning/search.py",
-      "source_location": "L10",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_apps_learning_search",
@@ -57725,7 +57792,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "backend/apps/learning/search.py",
-      "source_location": "L10",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_apps_learning_search",
@@ -58340,7 +58407,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "backend/apps/learning/search.py",
-      "source_location": "L13",
+      "source_location": "L24",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_apps_learning_search",
@@ -58348,11 +58415,22 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/apps/learning/search.py",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_apps_learning_search",
+      "target": "backend_apps_learning_search_resolve_search_organization",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "backend/apps/learning/search.py",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_apps_learning_search",
@@ -58364,11 +58442,35 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "backend/apps/learning/search.py",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_apps_learning_search",
       "target": "backend_apps_tenants_context_get_current_organization",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/apps/learning/search.py",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_apps_learning_search",
+      "target": "backend_apps_tenants_models",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/apps/learning/search.py",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_apps_learning_search",
+      "target": "backend_apps_tenants_models_organization",
       "confidence_score": 1.0
     },
     {
@@ -58399,11 +58501,46 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "backend/apps/learning/search.py",
-      "source_location": "L19",
+      "source_location": "L29",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_apps_learning_search_global_search",
+      "target": "backend_apps_learning_search_resolve_search_organization",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/apps/learning/search.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_apps_learning_search_rationale_16",
+      "target": "backend_apps_learning_search_resolve_search_organization",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/apps/learning/search.py",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_apps_learning_search_resolve_search_organization",
       "target": "backend_apps_tenants_context_get_current_organization",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "return_type",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/apps/learning/search.py",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_apps_learning_search_resolve_search_organization",
+      "target": "backend_apps_tenants_models_organization",
       "confidence_score": 1.0
     },
     {
@@ -75774,6 +75911,30 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "backend/tests/test_medium_features.py",
+      "source_location": "L114",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_tests_test_medium_features",
+      "target": "backend_apps_tenants_services_create_organization_with_owner",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "backend/tests/test_medium_features.py",
+      "source_location": "L125",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_tests_test_medium_features_testglobalsearch_test_search_without_tenant_header_scopes_to_public_org",
+      "target": "backend_apps_tenants_services_create_organization_with_owner"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "backend/tests/test_saas.py",
       "source_location": "L11",
       "weight": 1.0,
@@ -81486,7 +81647,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "backend/tests/test_integrations.py",
-      "source_location": "L54",
+      "source_location": "L57",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_tests_test_integrations",
@@ -81499,7 +81660,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/tests/test_integrations.py",
-      "source_location": "L63",
+      "source_location": "L66",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_tests_test_integrations_testintegrationsstatusendpoint_test_admin_gets_report",
@@ -81511,7 +81672,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/tests/test_integrations.py",
-      "source_location": "L56",
+      "source_location": "L59",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_tests_test_integrations_testintegrationsstatusendpoint_test_requires_platform_admin",
@@ -83508,7 +83669,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "backend/tests/test_integrations.py",
-      "source_location": "L71",
+      "source_location": "L74",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_tests_test_integrations",
@@ -83530,7 +83691,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "backend/tests/test_integrations.py",
-      "source_location": "L52",
+      "source_location": "L55",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_tests_test_integrations",
@@ -83607,7 +83768,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "backend/tests/test_integrations.py",
-      "source_location": "L60",
+      "source_location": "L63",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_tests_test_integrations_testintegrationsstatusendpoint",
@@ -83618,7 +83779,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "backend/tests/test_integrations.py",
-      "source_location": "L53",
+      "source_location": "L56",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_tests_test_integrations_testintegrationsstatusendpoint",
@@ -83629,7 +83790,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "backend/tests/test_integrations.py",
-      "source_location": "L72",
+      "source_location": "L75",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_tests_test_integrations_testcheckintegrationscommand",
@@ -83640,7 +83801,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "backend/tests/test_integrations.py",
-      "source_location": "L77",
+      "source_location": "L80",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_tests_test_integrations_testcheckintegrationscommand",
@@ -84229,6 +84390,17 @@
       "_origin": "ast",
       "source": "backend_tests_test_medium_features_testglobalsearch",
       "target": "backend_tests_test_medium_features_testglobalsearch_test_search_requires_min_length",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/tests/test_medium_features.py",
+      "source_location": "L110",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_tests_test_medium_features_testglobalsearch",
+      "target": "backend_tests_test_medium_features_testglobalsearch_test_search_without_tenant_header_scopes_to_public_org",
       "confidence_score": 1.0
     },
     {
@@ -103678,5 +103850,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "4d51bd52b330655a8803f0ab214531a1f9cbf86a"
+  "built_at_commit": "9f67baec88dc8c99a8c4de15b2eeee3c72a11227"
 }

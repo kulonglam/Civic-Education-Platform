@@ -48,8 +48,8 @@ class ReadinessCheckView(APIView):
         celery = check_celery()
 
         checks = {
-            'database': db['status'] if db['status'] == STATUS_LIVE else 'error',
-            'cache': cache['status'] if cache['status'] == STATUS_LIVE else 'error',
+            'database': db['status'],
+            'cache': cache['status'],
             'celery': celery['status'],
         }
 
@@ -57,13 +57,15 @@ class ReadinessCheckView(APIView):
 
         checks['sentry_configured'] = 'ok' if getattr(dj_settings, 'SENTRY_DSN', '') else 'unset'
 
-        core_ok = checks['database'] == 'ok' and checks['cache'] == 'ok'
+        core_ok = db['status'] == STATUS_LIVE and cache['status'] == STATUS_LIVE
         celery_ok = celery['status'] in (STATUS_LIVE, STATUS_EAGER)
         healthy = core_ok and celery_ok
 
         payload = {
             'status': 'ready' if healthy else 'degraded',
             **checks,
+            'database_detail': db.get('detail', ''),
+            'cache_detail': cache.get('detail', ''),
             'celery_detail': celery.get('detail', ''),
             'observability': {
                 'sentry': checks['sentry_configured'],
