@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useOrganization } from '../context/OrganizationContext';
 import { authService, notificationService, userService } from '../lib/services';
 import { extractError } from '../lib/api';
+import { GamificationSummary } from '../components/GamificationSummary';
 import { ConfirmDialog, OrgRoleBadge, PageHeader, PasswordInput, PasswordStrengthBar, RoleBadge } from '../components/ui';
 import { CloudArrowDown } from '../components/Icons';
 import { formatDate } from '../lib/format';
@@ -318,6 +319,9 @@ export function ProfilePage() {
             {t('profile.memberSince')} {formatDate(user.created_at)}
           </p>
         </div>
+      </div>
+      <div className="card mb-6">
+        <GamificationSummary compact />
       </div>
       <form onSubmit={submit} className="card space-y-4">
         <div className="grid grid-cols-2 gap-3">

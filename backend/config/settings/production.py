@@ -67,6 +67,11 @@ if BILLING_PROVIDER == 'dummy':  # noqa: F405
     raise ImproperlyConfigured('BILLING_PROVIDER must be "stripe" in production.')
 if not CELERY_BROKER_URL:  # noqa: F405
     raise ImproperlyConfigured('CELERY_BROKER_URL is required in production.')
+if BILLING_PROVIDER == 'stripe':  # noqa: F405
+    if not STRIPE_SECRET_KEY:  # noqa: F405
+        raise ImproperlyConfigured('STRIPE_SECRET_KEY is required when BILLING_PROVIDER=stripe.')
+    if not STRIPE_WEBHOOK_SECRET:  # noqa: F405
+        raise ImproperlyConfigured('STRIPE_WEBHOOK_SECRET is required when BILLING_PROVIDER=stripe.')
 if not EMAIL_HOST:
     raise ImproperlyConfigured('EMAIL_HOST is required in production for verification and password reset.')
 if config('REQUIRE_SENTRY', default=True, cast=bool) and not SENTRY_DSN:  # noqa: F405

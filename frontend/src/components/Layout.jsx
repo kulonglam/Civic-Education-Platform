@@ -22,7 +22,53 @@ function navLinkClass({ isActive }) {
   return `nav-link ${isActive ? 'nav-link-active' : 'nav-link-idle'}`;
 }
 
-function NavDropdown({ label, avatar, badge, items, align = 'left' }) {
+function HeaderSearch() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [query, setQuery] = useState('');
+
+  return (
+    <form
+      className="hidden min-w-[10rem] max-w-xs flex-1 xl:block"
+      onSubmit={(e) => {
+        e.preventDefault();
+        const q = query.trim();
+        if (q.length < 2) return;
+        navigate(`/search?q=${encodeURIComponent(q)}`);
+      }}
+    >
+      <label className="sr-only" htmlFor="header-search">
+        {t('search.placeholder')}
+      </label>
+      <input
+        id="header-search"
+        type="search"
+        className="input py-2 text-sm"
+        placeholder={t('search.placeholder')}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+    </form>
+  );
+}
+
+function HeaderSearchLink() {
+  const { t } = useTranslation();
+  return (
+    <Link
+      to="/search"
+      className="hidden rounded-xl border border-ink-200 p-2 text-ink-700 hover:bg-ink-100/70 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800 lg:inline-flex xl:hidden"
+      aria-label={t('nav.search')}
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+        <circle cx="11" cy="11" r="8" />
+        <path d="M21 21l-4.35-4.35" />
+      </svg>
+    </Link>
+  );
+}
+
+function NavDropdown({ label, avatar, badge, items, align = 'left', active = false }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -46,7 +92,7 @@ function NavDropdown({ label, avatar, badge, items, align = 'left' }) {
       <button
         type="button"
         className={`relative flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-          open
+          open || active
             ? 'bg-brand-50 text-brand-800 dark:bg-brand-900/40 dark:text-brand-300'
             : 'text-ink-700 hover:bg-ink-100/70 dark:text-slate-300 dark:hover:bg-slate-800'
         }`}
@@ -187,10 +233,18 @@ export function Layout() {
   const learnLinks = [
     { to: '/articles', label: t('nav.articles') },
     { to: '/media', label: t('nav.media') },
+    { to: '/search', label: t('nav.search') },
     { to: '/quizzes', label: t('nav.quizzes'), auth: true },
     { to: '/forum', label: t('nav.forum') },
+    { to: '/engage', label: t('nav.engage'), auth: true },
     { to: '/tutor', label: t('nav.tutor'), auth: true },
+    ...(user ? [{ to: '/dashboard', label: t('nav.dashboard') }] : []),
   ].filter((link) => !link.auth || user);
+
+  const learnMenuItems = learnLinks.map(({ to, label }) => ({ to, label }));
+  const learnNavActive = learnLinks.some(
+    ({ to }) => location.pathname === to || location.pathname.startsWith(`${to}/`),
+  );
 
   const manageItems = [];
   if (hasRole('admin', 'editor') || isOrgContentManager) {
@@ -207,7 +261,6 @@ export function Layout() {
 
   const orgItems = isOrgAdmin
     ? [
-        { to: '/dashboard', label: t('nav.dashboard') },
         { to: '/organization', label: t('nav.organization') },
         { to: '/billing', label: t('nav.billing') },
       ]
@@ -264,7 +317,7 @@ export function Layout() {
                 {organization?.name ?? t('app.name')}
               </span>
               {organization?.name && !isAuthSurface && (
-                <span className="hidden truncate text-[11px] font-medium uppercase tracking-wide text-ink-700/45 dark:text-slate-500 sm:block">
+                <span className="hidden truncate text-[11px] font-medium uppercase tracking-wide text-ink-700/45 dark:text-slate-500 xl:block">
                   {t('app.tagline')}
                 </span>
               )}
@@ -273,17 +326,27 @@ export function Layout() {
 
           {!isAuthSurface && (
             <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
-              {learnLinks.map((link) => (
-                <NavLink key={link.to} to={link.to} className={navLinkClass}>
-                  {link.label}
-                </NavLink>
-              ))}
+              <NavLink to="/articles" className={navLinkClass}>
+                {t('nav.articles')}
+              </NavLink>
+              <NavDropdown
+                label={t('nav.learn')}
+                items={learnMenuItems.filter((item) => item.to !== '/articles')}
+                active={learnNavActive && !location.pathname.startsWith('/articles')}
+              />
               <NavDropdown label={t('nav.manage')} items={manageItems} />
               <NavDropdown label={t('nav.organization')} items={orgItems} />
             </nav>
           )}
 
-          <div className="flex shrink-0 items-center gap-2">
+          {!isAuthSurface && (
+            <>
+              <HeaderSearchLink />
+              <HeaderSearch />
+            </>
+          )}
+
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             {user && !isAuthSurface && <OrgSwitcher />}
             <LanguageSwitcher />
 
@@ -452,21 +515,24 @@ export function Layout() {
               </p>
             </div>
             <nav
-              className="flex gap-6 text-sm font-medium text-ink-700/70 dark:text-slate-400"
+              className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-medium text-ink-700/70 dark:text-slate-400 sm:justify-end"
               aria-label={t('a11y.footerNav')}
             >
+              <Link to="/articles" className="transition-colors hover:text-brand-700 dark:hover:text-brand-300">
+                {t('footer.articles')}
+              </Link>
+              <Link to="/engage" className="transition-colors hover:text-brand-700 dark:hover:text-brand-300">
+                {t('footer.engage')}
+              </Link>
               <Link to="/privacy" className="transition-colors hover:text-brand-700 dark:hover:text-brand-300">
                 {t('footer.privacy')}
               </Link>
               <Link to="/terms" className="transition-colors hover:text-brand-700 dark:hover:text-brand-300">
                 {t('footer.terms')}
               </Link>
-              <a
-                href="mailto:support@civiced.org"
-                className="transition-colors hover:text-brand-700 dark:hover:text-brand-300"
-              >
+              <Link to="/contact" className="transition-colors hover:text-brand-700 dark:hover:text-brand-300">
                 {t('footer.contact')}
-              </a>
+              </Link>
             </nav>
           </div>
         </div>
@@ -477,7 +543,7 @@ export function Layout() {
       {showTop && (
         <button
           type="button"
-          aria-label="Back to top"
+          aria-label={t('a11y.backToTop')}
           className="fixed bottom-6 right-6 z-40 flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-700 text-white shadow-lift transition-all hover:bg-brand-800"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
@@ -493,7 +559,7 @@ export function Layout() {
             fontSize: '0.875rem',
             maxWidth: '360px',
             borderRadius: '12px',
-            fontFamily: 'Figtree, system-ui, sans-serif',
+            fontFamily: 'Poppins, system-ui, sans-serif',
           },
           success: { iconTheme: { primary: '#047857', secondary: '#fff' } },
           error: { iconTheme: { primary: '#dc2626', secondary: '#fff' } },

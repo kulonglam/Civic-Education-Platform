@@ -33,8 +33,23 @@ export default {
         },
       },
       fontFamily: {
-        display: ['"Fraunces"', 'Georgia', 'serif'],
-        sans: ['"Figtree"', 'system-ui', 'sans-serif'],
+        /* Spacewalk marketplace typography — single Poppins stack */
+        sans: ['"Poppins"', 'system-ui', 'sans-serif'],
+        display: ['"Poppins"', 'system-ui', 'sans-serif'],
+      },
+      fontSize: {
+        hero: [
+          'clamp(1.6rem, 1.0333rem + 2.2667vw, 3.3rem)',
+          { lineHeight: '1.15', fontWeight: '600' },
+        ],
+        'hero-sub': [
+          'clamp(1.1rem, 0.8293rem + 1.203vw, 1.5rem)',
+          { lineHeight: '1.55', fontWeight: '400' },
+        ],
+        'page-title': [
+          'clamp(1.35rem, 1.05rem + 1.1vw, 2rem)',
+          { lineHeight: '1.2', fontWeight: '600' },
+        ],
       },
       boxShadow: {
         soft: '0 1px 2px rgba(15, 18, 14, 0.04), 0 8px 24px rgba(15, 18, 14, 0.06)',

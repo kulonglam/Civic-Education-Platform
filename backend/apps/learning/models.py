@@ -61,6 +61,11 @@ class MediaAsset(TenantModel):
     mime_type = models.CharField(max_length=100, blank=True, default='')
     duration_seconds = models.PositiveIntegerField(null=True, blank=True)
     thumbnail_url = models.URLField(blank=True, default='')
+    captions_url = models.URLField(
+        blank=True,
+        default='',
+        help_text='WebVTT captions URL for audio/video accessibility.',
+    )
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
@@ -152,6 +157,11 @@ class Article(TenantModel):
     )
     reviewed_at = models.DateTimeField(null=True, blank=True)
     published_at = models.DateTimeField(null=True, blank=True)
+    tutor_index_text = models.TextField(
+        blank=True,
+        default='',
+        help_text='Pre-indexed body + PDF text for AI tutor retrieval.',
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -161,3 +171,54 @@ class Article(TenantModel):
 
     def __str__(self):
         return self.title
+
+
+class ArticleProgress(TenantModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='article_progress',
+    )
+    article = models.ForeignKey(
+        Article,
+        on_delete=models.CASCADE,
+        related_name='progress_records',
+    )
+    progress_percent = models.PositiveSmallIntegerField(default=0)
+    completed = models.BooleanField(default=False, db_index=True)
+    last_viewed_at = models.DateTimeField(auto_now=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'article_progress'
+        unique_together = [('organization', 'user', 'article')]
+        ordering = ['-last_viewed_at']
+
+    def __str__(self):
+        return f'{self.user_id} · {self.article_id} ({self.progress_percent}%)'
+
+
+class MediaProgress(TenantModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='media_progress',
+    )
+    media = models.ForeignKey(
+        MediaAsset,
+        on_delete=models.CASCADE,
+        related_name='progress_records',
+    )
+    completed = models.BooleanField(default=False, db_index=True)
+    last_viewed_at = models.DateTimeField(auto_now=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'media_progress'
+        unique_together = [('organization', 'user', 'media')]
+        ordering = ['-last_viewed_at']
+
+    def __str__(self):
+        return f'{self.user_id} · {self.media_id}'

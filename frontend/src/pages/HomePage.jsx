@@ -1,18 +1,18 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useOrganization } from '../context/OrganizationContext';
 import {
   AcademicCap,
   BookOpen,
+  ChatBubble,
   CloudArrowDown,
+  Megaphone,
   ShieldCheck,
 } from '../components/Icons';
 
 function HomePage() {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const { isOrgAdmin } = useOrganization();
 
   const features = [
     {
@@ -24,6 +24,16 @@ function HomePage() {
       title: t('home.featureQuizTitle'),
       text: t('home.featureQuizText'),
       Icon: AcademicCap,
+    },
+    {
+      title: t('home.featureTutorTitle'),
+      text: t('home.featureTutorText'),
+      Icon: ChatBubble,
+    },
+    {
+      title: t('home.featureEngageTitle'),
+      text: t('home.featureEngageText'),
+      Icon: Megaphone,
     },
     {
       title: t('home.featureForumTitle'),
@@ -41,6 +51,8 @@ function HomePage() {
   const trustItems = [
     t('home.trustArticles'),
     t('home.trustQuizzes'),
+    t('home.trustTutor'),
+    t('home.trustEngage'),
     t('home.trustOffline'),
     t('home.trustLanguages'),
   ];
@@ -84,11 +96,11 @@ function HomePage() {
 
             <h1
               id="home-hero-title"
-              className={`animate-fade-up-delay font-display text-4xl font-semibold leading-[1.1] text-white sm:text-5xl lg:text-6xl ${user ? 'mt-5' : ''}`}
+              className={`animate-fade-up-delay font-display text-hero text-white ${user ? 'mt-5' : ''}`}
             >
               {t('home.heroTitle')}
             </h1>
-            <p className="animate-fade-up-late mt-5 max-w-xl text-lg leading-relaxed text-brand-100/95">
+            <p className="animate-fade-up-late mt-5 max-w-xl text-hero-sub text-brand-100/95">
               {t('home.heroSubtitle')}
             </p>
 
@@ -102,19 +114,23 @@ function HomePage() {
                     {t('home.continueLearning')}
                   </Link>
                   <Link
-                    to="/quizzes"
+                    to="/tutor"
                     className="btn border border-white/35 bg-white/5 text-white backdrop-blur hover:bg-white/10"
                   >
-                    {t('home.takeQuiz')}
+                    {t('home.askTutor')}
                   </Link>
-                  {isOrgAdmin && (
-                    <Link
-                      to="/dashboard"
-                      className="btn border border-white/35 bg-white/5 text-white backdrop-blur hover:bg-white/10"
-                    >
-                      {t('home.goToDashboard')}
-                    </Link>
-                  )}
+                  <Link
+                    to="/dashboard"
+                    className="btn border border-white/35 bg-white/5 text-white backdrop-blur hover:bg-white/10"
+                  >
+                    {t('home.myProgress')}
+                  </Link>
+                  <Link
+                    to="/engage"
+                    className="btn border border-white/35 bg-white/5 text-white backdrop-blur hover:bg-white/10"
+                  >
+                    {t('home.civicAction')}
+                  </Link>
                 </>
               ) : (
                 <>
@@ -174,7 +190,7 @@ function HomePage() {
             </h2>
             <p className="section-lead">{t('home.featuresSubtitle')}</p>
           </div>
-          <div className="mt-10 grid gap-10 sm:grid-cols-3">
+          <div className="mt-10 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
               <div key={f.title} className="group">
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-100 text-brand-700 transition-transform duration-300 group-hover:-translate-y-0.5 dark:bg-brand-900/50 dark:text-brand-300">

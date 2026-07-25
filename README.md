@@ -7,7 +7,7 @@ Full-stack civic education platform for South Sudan: Django REST API + React (Vi
 
 **Local dev:** run the backend, then `cd frontend && npm install && npm run dev` (API default: `http://127.0.0.1:8000/api`).
 
-**Production:** [docs/production-launch.md](docs/production-launch.md) · [docs/production-env-checklist.md](docs/production-env-checklist.md) · [docs/enterprise.md](docs/enterprise.md) · [docs/compliance-readiness.md](docs/compliance-readiness.md) · [docs/disaster-recovery.md](docs/disaster-recovery.md) · [docs/scaling.md](docs/scaling.md)
+**Production:** [docs/production-launch.md](docs/production-launch.md) · [docs/production-env-checklist.md](docs/production-env-checklist.md) · [docs/enterprise.md](docs/enterprise.md) · [docs/tutor-rag.md](docs/tutor-rag.md) · [docs/constitution-content.md](docs/constitution-content.md) · [docs/compliance-readiness.md](docs/compliance-readiness.md) · [docs/disaster-recovery.md](docs/disaster-recovery.md) · [docs/scaling.md](docs/scaling.md)
 
 ---
 
@@ -51,6 +51,8 @@ Org registration creates an **editor** platform role + **owner** org membership 
 python manage.py demote_legacy_org_admins --dry-run   # legacy org owners with platform admin role
 python manage.py backfill_audit_orgs --dry-run        # audit logs missing organization
 python manage.py smoke_check --base-url http://127.0.0.1:8000
+python manage.py check_integrations          # verify Stripe, Celery, Anthropic, etc.
+python manage.py check_integrations --strict
 python loadtest/ci_gate.py --host http://127.0.0.1:8000   # Locust smoke (also runs in CI)
 python scripts/generate_pwa_icons.py                  # regenerate frontend/public/icon-*.png
 ```
@@ -81,6 +83,21 @@ locust -f loadtest/locustfile.py --host http://localhost:8000
 
 See [docs/scaling.md](docs/scaling.md) for async architecture and SRS scale targets.
 
+### AI tutor (RAG)
+
+The AI civic tutor answers questions using **published articles and PDF attachments** (keyword retrieval + Claude). Learners see **source citations** in the UI.
+
+- **Docs:** [docs/tutor-rag.md](docs/tutor-rag.md) (endpoints, streaming, admin usage)
+- **Constitution setup:** [docs/constitution-content.md](docs/constitution-content.md) (seed assets + article editor)
+- **Production:** set `ANTHROPIC_API_KEY` — see [production-env-checklist.md](docs/production-env-checklist.md)
+
+Quick test after `seed_data`:
+
+```bash
+# Log in, then POST /api/tutor/chat/ with a constitutional question
+# Or open http://localhost:5173/tutor in the frontend
+```
+
 ### Project structure
 
 ```
@@ -93,9 +110,12 @@ backend/
 │   ├── quizzes/      # Quizzes, certificates
 │   ├── forum/        # Topics & comments
 │   ├── notifications/# In-app, SMS, web push
-│   ├── tutor/        # AI tutor (Anthropic)
-│   ├── analytics/    # Platform + org dashboards
-│   └── audit/        # Activity logs (org-scoped)
+│   ├── tutor/        # AI tutor (Anthropic + RAG/PDF grounding)
+│   ├── gamification/ # XP, levels, badges
+│   ├── engagement/   # Polls, petitions, campaigns
+│   ├── analytics/    # Platform + org + personal dashboards
+│   ├── audit/        # Activity logs (org-scoped)
+│   └── core/         # Health, readiness, integration checks
 └── config/           # Django settings
 ```
 
@@ -106,3 +126,13 @@ See [render.yaml](render.yaml). Copy env vars from [backend/.env.production.exam
 ## API reference
 
 Hand-maintained overview: [docs/api.md](docs/api.md). Authoritative schema: `/api/docs/` (Swagger).
+
+Testing: [docs/testing.md](docs/testing.md) — pytest, Vitest, mocked & live Playwright e2e.
+
+Key doc pages:
+
+| Topic | Doc |
+|-------|-----|
+| Tutor RAG + streaming | [docs/tutor-rag.md](docs/tutor-rag.md) |
+| Constitution / PDF upload | [docs/constitution-content.md](docs/constitution-content.md) |
+| Integration env vars | [docs/production-env-checklist.md](docs/production-env-checklist.md) |

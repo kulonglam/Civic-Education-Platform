@@ -27,16 +27,16 @@ export function AuthShell({ children, title, subtitle }) {
             <div className="flex items-center gap-3">
               <PlatformLogo className="h-12 w-12 ring-1 ring-white/20" />
               <div>
-                <p className="font-display text-xl font-semibold tracking-tight">{t('app.name')}</p>
-                <p className="mt-0.5 text-sm text-brand-100/90">{t('app.tagline')}</p>
+                <p className="font-display text-xl font-semibold">{t('app.name')}</p>
+                <p className="mt-0.5 text-sm font-normal text-brand-100/90">{t('app.tagline')}</p>
               </div>
             </div>
             <p className="eyebrow mt-14 text-brand-200">{t('auth.enterpriseEyebrow')}</p>
-            <h1 className="mt-3 max-w-md font-display text-3xl font-semibold leading-tight xl:text-[2.5rem] xl:leading-[1.15]">
+            <h1 className="mt-3 max-w-md font-display text-hero text-white">
               {title}
             </h1>
             {subtitle && (
-              <p className="mt-4 max-w-md text-base leading-relaxed text-brand-100/90">{subtitle}</p>
+              <p className="mt-4 max-w-md text-hero-sub text-brand-100/90">{subtitle}</p>
             )}
           </div>
           <ul className="relative mt-12 space-y-4 border-t border-white/15 pt-8">

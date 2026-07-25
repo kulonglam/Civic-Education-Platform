@@ -16,12 +16,14 @@ from apps.forum.models import DiscussionComment, DiscussionTopic
 from apps.learning.models import Article, Category
 from apps.quizzes.models import Quiz, QuizAttempt
 from apps.tenants.context import get_current_organization
+from apps.tenants.permissions import IsOrgMember
 
 from .permissions import IsOrgAnalyticsAdmin
 from .services import (
     build_dashboard_summary,
     build_institutional_report_pdf,
     build_member_progress,
+    build_my_learning_summary,
     build_progress_csv,
     parse_report_dates,
 )
@@ -113,6 +115,16 @@ class AnalyticsLearningView(APIView):
             'articles_by_category': by_category,
             'top_tags': [{'tag': t, 'count': c} for t, c in top_tags],
         })
+
+
+@extend_schema(responses=OpenApiTypes.OBJECT)
+class MyLearningView(APIView):
+    """Personal learning progress for the authenticated member."""
+
+    permission_classes = [IsAuthenticated, IsOrgMember]
+
+    def get(self, request):
+        return Response(build_my_learning_summary(request.user))
 
 
 @extend_schema(responses=OpenApiTypes.OBJECT)

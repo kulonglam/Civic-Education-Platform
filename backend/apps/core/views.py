@@ -1,8 +1,5 @@
 import logging
 
-from django.core.cache import cache
-from django.db import connections
-from django.db.utils import OperationalError
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -13,6 +10,16 @@ from apps.core.permissions import IsAdmin
 
 from .models import SecurityEvent
 from .serializers import HealthSerializer
+
+from .integrations import (
+    STATUS_DEGRADED,
+    STATUS_EAGER,
+    STATUS_LIVE,
+    build_integrations_report,
+    check_cache,
+    check_celery,
+    check_database,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -36,41 +43,55 @@ class ReadinessCheckView(APIView):
 
     @extend_schema(responses=HealthSerializer)
     def get(self, request):
-        checks = {}
+        db = check_database()
+        cache = check_cache()
+        celery = check_celery()
 
-        try:
-            connections['default'].cursor().execute('SELECT 1')
-            checks['database'] = 'ok'
-        except OperationalError as exc:
-            logger.error('Readiness DB check failed: %s', exc)
-            checks['database'] = 'error'
-
-        try:
-            cache.set('readiness_probe', '1', 5)
-            checks['cache'] = 'ok' if cache.get('readiness_probe') == '1' else 'error'
-        except Exception as exc:  # noqa: BLE001 - cache backend errors vary
-            logger.error('Readiness cache check failed: %s', exc)
-            checks['cache'] = 'error'
+        checks = {
+            'database': db['status'] if db['status'] == STATUS_LIVE else 'error',
+            'cache': cache['status'] if cache['status'] == STATUS_LIVE else 'error',
+            'celery': celery['status'],
+        }
 
         from django.conf import settings as dj_settings
 
         checks['sentry_configured'] = 'ok' if getattr(dj_settings, 'SENTRY_DSN', '') else 'unset'
-        # Sentry is recommended but not required for process readiness (liveness of deps).
-        healthy = checks.get('database') == 'ok' and checks.get('cache') == 'ok'
-        return Response(
-            {
-                'status': 'ready' if healthy else 'degraded',
-                **checks,
-                'observability': {
-                    'sentry': checks['sentry_configured'],
-                    'health': '/api/health/',
-                    'ready': '/api/ready/',
-                    'slo': '/api/organization/platform/slo/',
-                    'security_events': '/api/security/events/',
-                },
+
+        core_ok = checks['database'] == 'ok' and checks['cache'] == 'ok'
+        celery_ok = celery['status'] in (STATUS_LIVE, STATUS_EAGER)
+        healthy = core_ok and celery_ok
+
+        payload = {
+            'status': 'ready' if healthy else 'degraded',
+            **checks,
+            'celery_detail': celery.get('detail', ''),
+            'observability': {
+                'sentry': checks['sentry_configured'],
+                'health': '/api/health/',
+                'ready': '/api/ready/',
+                'integrations': '/api/integrations/status/',
+                'slo': '/api/organization/platform/slo/',
+                'security_events': '/api/security/events/',
             },
+        }
+        if celery.get('meta'):
+            payload['celery_workers'] = celery['meta'].get('workers', [])
+
+        return Response(
+            payload,
             status=status.HTTP_200_OK if healthy else status.HTTP_503_SERVICE_UNAVAILABLE,
         )
+
+
+class IntegrationsStatusView(APIView):
+    """Platform admin: full integration status (Stripe, Celery, SMS, tutor, etc.)."""
+
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    @extend_schema(responses=dict)
+    def get(self, request):
+        report = build_integrations_report(include_infra=True)
+        return Response(report, status=status.HTTP_200_OK)
 
 
 class SecurityEventListView(APIView):

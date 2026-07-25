@@ -118,6 +118,7 @@ jobs:
   e2e-live:
     name: E2E (live backend)
     runs-on: ubuntu-latest
+    needs: [backend]
     services:
       postgres:
         image: postgres:16
@@ -139,7 +140,9 @@ jobs:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/civic_education
       DJANGO_SETTINGS_MODULE: config.settings.development
       CELERY_TASK_ALWAYS_EAGER: "True"
+      SECRET_KEY: ci-e2e-secret-key
       E2E_LIVE: "1"
+      E2E_API_URL: http://127.0.0.1:8000
     steps:
       - uses: actions/checkout@v4
 
@@ -157,6 +160,19 @@ jobs:
           pip install -r requirements.txt
           python manage.py migrate
           python manage.py seed_data
+
+      - name: Verify backend health (smoke)
+        working-directory: backend
+        run: |
+          python manage.py runserver 127.0.0.1:8000 &
+          SERVER_PID=$!
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8000/api/health/ && break
+            sleep 1
+          done
+          curl -sf http://127.0.0.1:8000/api/ready/
+          kill $SERVER_PID || true
+          wait $SERVER_PID 2>/dev/null || true
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -226,6 +242,12 @@ jobs:
             curl -sf http://127.0.0.1:8000/api/health/ && break
             sleep 1
           done
+
+      - name: Smoke check API
+        run: python manage.py smoke_check --base-url http://127.0.0.1:8000
+
+      - name: Integration status (local)
+        run: python manage.py check_integrations --json
 
       - name: Run Locust CI gate
         run: >

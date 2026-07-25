@@ -1,12 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Alert, EmptyState, PageHeader, Spinner } from '../components/ui';
-import { AcademicCap } from '../components/Icons';
+import { AcademicCap, BookOpen } from '../components/Icons';
 import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
-import { tutorService } from '../lib/services';
+import { formatDate } from '../lib/format';
+import { localizedArticle } from '../lib/localizedContent';
+import { streamTutorChat } from '../lib/tutorStream';
+import { articleService, tutorService } from '../lib/services';
 
 function UsageMeter({ usage }) {
   const { t } = useTranslation();
@@ -48,16 +51,61 @@ function UsageMeter({ usage }) {
   );
 }
 
-export function TutorPage() {
+function TutorSources({ sources }) {
   const { t } = useTranslation();
+  if (!sources?.length) return null;
+
+  return (
+    <div className="mt-2 max-w-[85%] rounded-xl border border-brand-200/80 bg-brand-50/80 px-3 py-2.5 text-xs dark:border-brand-800/50 dark:bg-brand-950/40">
+      <p className="mb-1.5 flex items-center gap-1.5 font-semibold text-brand-900 dark:text-brand-200">
+        <BookOpen className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+        {t('tutor.sources')}
+      </p>
+      <ul className="space-y-2">
+        {sources.map((source) => (
+          <li key={`${source.article_id}-${source.source}`}>
+            {source.article_id ? (
+              <Link
+                to={`/articles/${source.article_id}`}
+                className="inline-flex items-center gap-1 font-medium text-brand-700 hover:underline dark:text-brand-300"
+              >
+                {source.title || source.source}
+                <span aria-hidden="true">→</span>
+              </Link>
+            ) : (
+              <span className="font-medium text-ink-800 dark:text-slate-200">
+                {source.title || source.source}
+              </span>
+            )}
+            {source.category && (
+              <span className="ml-1 text-ink-700/60 dark:text-slate-400">· {source.category}</span>
+            )}
+            {source.excerpt && (
+              <p className="mt-0.5 line-clamp-2 text-ink-700/70 dark:text-slate-400">{source.excerpt}</p>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export function TutorPage() {
+  const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
   const articleId = searchParams.get('article') || undefined;
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
+  const [streaming, setStreaming] = useState(false);
+  const [streamText, setStreamText] = useState('');
+  const streamAbortRef = useRef(null);
+  const [viewingHistory, setViewingHistory] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
   const [error, setError] = useState('');
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
+  const restoredRef = useRef(false);
 
   const { data: usage, isLoading: usageLoading } = useQuery({
     queryKey: queryKeys.tutorUsage,
@@ -67,16 +115,103 @@ export function TutorPage() {
     },
   });
 
+  const { data: contextArticle } = useQuery({
+    queryKey: queryKeys.article(articleId),
+    queryFn: async () => {
+      const { data } = await articleService.get(articleId);
+      return data;
+    },
+    enabled: Boolean(articleId),
+  });
+
+  const contextArticleTitle = contextArticle
+    ? localizedArticle(contextArticle, i18n.language).title
+    : '';
+
+  const { data: history = [] } = useQuery({
+    queryKey: queryKeys.tutorHistory,
+    queryFn: async () => {
+      const { data } = await tutorService.history();
+      return data;
+    },
+  });
+
+  useEffect(() => {
+    if (restoredRef.current) return;
+    restoredRef.current = true;
+    tutorService
+      .getSession()
+      .then(({ data }) => {
+        if (data.messages?.length) {
+          setMessages(data.messages);
+          setViewingHistory(false);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const loadHistorySession = useMutation({
+    mutationFn: (sessionId) => tutorService.historyDetail(sessionId),
+    onSuccess: ({ data }) => {
+      setMessages(data.messages ?? []);
+      setViewingHistory(true);
+      setHistoryOpen(false);
+      setError('');
+    },
+    onError: (err) => setError(extractError(err)),
+  });
+
   const sendMessage = useMutation({
-    mutationFn: (message) => tutorService.chat(message, articleId),
-    onSuccess: ({ data }, message) => {
+    mutationFn: async (message) => {
+      setStreaming(true);
+      setStreamText('');
+      streamAbortRef.current?.abort();
+      const controller = new AbortController();
+      streamAbortRef.current = controller;
+
+      return new Promise((resolve, reject) => {
+        let accumulated = '';
+        streamTutorChat(message, {
+          articleId,
+          signal: controller.signal,
+          onToken: (token) => {
+            accumulated += token;
+            setStreamText(accumulated);
+          },
+          onDone: (data) => resolve({ message, data, streamed: true, reply: accumulated || data.reply }),
+          onError: async (err) => {
+            if (controller.signal.aborted) {
+              reject(err);
+              return;
+            }
+            try {
+              const { data } = await tutorService.chat(message, articleId);
+              resolve({ message, data, streamed: false });
+            } catch (fallbackErr) {
+              reject(fallbackErr);
+            }
+          },
+        });
+      });
+    },
+    onMutate: (message) => {
+      setViewingHistory(false);
+      setMessages((prev) => [...prev, { role: 'user', content: message }]);
+      setInput('');
+    },
+    onSuccess: ({ data, streamed, reply }) => {
+      setStreaming(false);
+      setStreamText('');
       setMessages((prev) => [
         ...prev,
-        { role: 'user', content: message },
-        { role: 'assistant', content: data.reply },
+        {
+          role: 'assistant',
+          content: streamed ? reply : data.reply,
+          sources: data.sources ?? [],
+        },
       ]);
-      setInput('');
       setError('');
+      queryClient.invalidateQueries({ queryKey: queryKeys.tutorHistory });
       queryClient.setQueryData(queryKeys.tutorUsage, (old) =>
         old
           ? {
@@ -89,13 +224,23 @@ export function TutorPage() {
       );
       inputRef.current?.focus();
     },
-    onError: (err) => setError(extractError(err)),
+    onError: (err) => {
+      setStreaming(false);
+      setStreamText('');
+      setMessages((prev) => {
+        const last = prev[prev.length - 1];
+        if (last?.role === 'user') return prev.slice(0, -1);
+        return prev;
+      });
+      setError(extractError(err));
+    },
   });
 
   const clearSession = useMutation({
     mutationFn: () => tutorService.clearSession(),
     onSuccess: () => {
       setMessages([]);
+      setViewingHistory(false);
       setError('');
       queryClient.invalidateQueries({ queryKey: queryKeys.tutorUsage });
     },
@@ -104,7 +249,9 @@ export function TutorPage() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, sendMessage.isPending]);
+  }, [messages, sendMessage.isPending, streamText]);
+
+  useEffect(() => () => streamAbortRef.current?.abort(), []);
 
   const atLimit = usage?.daily_limit != null && usage.messages_remaining === 0;
 
@@ -119,20 +266,59 @@ export function TutorPage() {
         title={t('tutor.title')}
         subtitle={t('tutor.subtitle')}
         action={
-          messages.length > 0 ? (
-            <button
-              type="button"
-              className="btn-secondary text-sm"
-              disabled={clearSession.isPending}
-              onClick={() => clearSession.mutate()}
-            >
-              {t('tutor.clearSession')}
-            </button>
-          ) : null
+          <div className="flex flex-wrap gap-2">
+            {history.length > 0 && (
+              <button
+                type="button"
+                className="btn-secondary text-sm"
+                onClick={() => setHistoryOpen((open) => !open)}
+              >
+                {t('tutor.history')}
+              </button>
+            )}
+            {messages.length > 0 && (
+              <button
+                type="button"
+                className="btn-secondary text-sm"
+                disabled={clearSession.isPending}
+                onClick={() => clearSession.mutate()}
+              >
+                {t('tutor.clearSession')}
+              </button>
+            )}
+          </div>
         }
       />
 
       <UsageMeter usage={usage} />
+
+      {historyOpen && history.length > 0 && (
+        <div className="surface mb-4 max-h-56 overflow-y-auto p-3">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-700/60 dark:text-slate-400">
+            {t('tutor.recentChats')}
+          </p>
+          <ul className="space-y-2">
+            {history.map((session) => (
+              <li key={session.session_id}>
+                <button
+                  type="button"
+                  className="w-full rounded-lg border border-ink-100 px-3 py-2 text-left text-sm transition-colors hover:border-brand-200 hover:bg-brand-50/50 dark:border-slate-700 dark:hover:bg-slate-800"
+                  disabled={loadHistorySession.isPending}
+                  onClick={() => loadHistorySession.mutate(session.session_id)}
+                >
+                  <span className="line-clamp-2 font-medium text-ink-900 dark:text-slate-100">
+                    {session.preview || t('tutor.untitledChat')}
+                  </span>
+                  <span className="mt-1 block text-xs text-ink-700/55 dark:text-slate-400">
+                    {t('tutor.turnCount', { count: session.turns })}
+                    {session.last_at ? ` · ${formatDate(session.last_at)}` : ''}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="mb-4">
         <Alert kind="info">{t('tutor.constitutionHint')}</Alert>
@@ -140,7 +326,20 @@ export function TutorPage() {
 
       {articleId && (
         <div className="mb-4">
-          <Alert kind="info">{t('tutor.articleContext')}</Alert>
+          <Alert kind="info">
+            {contextArticleTitle
+              ? t('tutor.articleContextNamed', { title: contextArticleTitle })
+              : t('tutor.articleContext')}{' '}
+            <Link to={`/articles/${articleId}`} className="font-semibold underline">
+              {t('tutor.viewArticle')}
+            </Link>
+          </Alert>
+        </div>
+      )}
+
+      {viewingHistory && (
+        <div className="mb-4">
+          <Alert kind="warning">{t('tutor.viewingHistory')}</Alert>
         </div>
       )}
 
@@ -174,7 +373,7 @@ export function TutorPage() {
               {messages.map((msg, index) => (
                 <div
                   key={`${msg.role}-${index}`}
-                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
                 >
                   <div
                     className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
@@ -185,9 +384,17 @@ export function TutorPage() {
                   >
                     {msg.content}
                   </div>
+                  {msg.role === 'assistant' && <TutorSources sources={msg.sources} />}
                 </div>
               ))}
-              {sendMessage.isPending && (
+              {sendMessage.isPending && streamText && (
+                <div className="flex justify-start">
+                  <div className="max-w-[85%] rounded-2xl bg-ink-50 px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap text-ink-900 dark:bg-slate-800 dark:text-slate-100">
+                    {streamText}
+                  </div>
+                </div>
+              )}
+              {sendMessage.isPending && !streamText && (
                 <div className="flex justify-start">
                   <div className="rounded-2xl bg-ink-50 px-4 py-3 text-sm text-ink-700/60 dark:bg-slate-800 dark:text-slate-400">
                     <span className="inline-flex gap-1">

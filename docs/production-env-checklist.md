@@ -54,8 +54,14 @@ CELERY_TASK_ALWAYS_EAGER=False
 # After deploy — readiness should pass
 curl https://api.yourdomain.com/api/ready/
 
-# Trigger async work (register user → verification email should send via worker)
-# Check worker logs for task execution
+# Full integration report (platform admin JWT)
+curl -H "Authorization: Bearer $TOKEN" https://api.yourdomain.com/api/integrations/status/
+
+# CLI on web or worker container
+cd backend
+python manage.py check_integrations
+python manage.py check_integrations --strict   # exit 1 if required integrations missing
+python manage.py check_integrations --json
 ```
 
 ### Render
@@ -264,6 +270,7 @@ Automated HTTP smoke (after deploy):
 ```bash
 cd backend
 python manage.py smoke_check --base-url https://api.yourdomain.com --tenant-slug platform-demo
+python manage.py check_integrations --strict
 ```
 
 ---

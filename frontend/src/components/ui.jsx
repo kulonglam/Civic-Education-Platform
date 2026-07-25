@@ -57,11 +57,11 @@ function PageHeader({ title, subtitle, action, eyebrow }) {
     <div className="page-header">
       <div className="relative min-w-0">
         {eyebrow && <p className="eyebrow mb-2.5">{eyebrow}</p>}
-        <h1 className="font-display text-[2rem] font-semibold leading-[1.15] text-ink-900 dark:text-slate-50 sm:text-4xl">
+        <h1 className="font-display text-page-title text-ink-900 dark:text-slate-50">
           {title}
         </h1>
         {subtitle && (
-          <p className="mt-2.5 max-w-2xl text-sm leading-relaxed text-ink-700/70 dark:text-slate-400 sm:text-[0.95rem]">
+          <p className="mt-2.5 max-w-2xl text-hero-sub text-ink-700/70 dark:text-slate-400">
             {subtitle}
           </p>
         )}

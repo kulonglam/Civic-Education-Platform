@@ -105,6 +105,15 @@ const PrivacyPage = lazy(() =>
 const TermsPage = lazy(() =>
   import('./pages/LegalPage').then((m) => ({ default: m.TermsPage })),
 );
+const ContactPage = lazy(() =>
+  import('./pages/LegalPage').then((m) => ({ default: m.ContactPage })),
+);
+const SearchPage = lazy(() =>
+  import('./pages/SearchPage').then((m) => ({ default: m.SearchPage })),
+);
+const EngagementPage = lazy(() =>
+  import('./pages/EngagementPage').then((m) => ({ default: m.EngagementPage })),
+);
 
 function Lazy({ children }) {
   return <Suspense fallback={<Spinner />}>{children}</Suspense>;
@@ -187,6 +196,14 @@ export default function App() {
                     </Lazy>
                   }
                 />
+                <Route
+                  path="contact"
+                  element={
+                    <Lazy>
+                      <ContactPage />
+                    </Lazy>
+                  }
+                />
 
                 <Route
                   path="articles"
@@ -222,6 +239,15 @@ export default function App() {
                   element={
                     <Lazy>
                       <ArticleDetailPage />
+                    </Lazy>
+                  }
+                />
+
+                <Route
+                  path="search"
+                  element={
+                    <Lazy>
+                      <SearchPage />
                     </Lazy>
                   }
                 />
@@ -312,6 +338,7 @@ export default function App() {
                 <Route path="notifications" element={guard(<NotificationsPage />)} />
                 <Route path="organization" element={guard(<OrganizationPage />)} />
                 <Route path="tutor" element={guard(<TutorPage />)} />
+                <Route path="engage" element={guard(<EngagementPage />)} />
                 <Route path="dashboard" element={guard(<DashboardPage />)} />
                 <Route path="billing" element={guard(<BillingPage />)} />
                 <Route

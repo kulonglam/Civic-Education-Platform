@@ -8,6 +8,55 @@ export const API = process.env.E2E_API_BASE ?? 'http://127.0.0.1:8000/api';
 /** Match both /api/… and /api/v1/… paths. */
 export const apiGlob = (suffix) => `**/api/**/${suffix}`;
 
+export const LIVE_API = process.env.E2E_API_URL
+  ? `${process.env.E2E_API_URL}/api`
+  : 'http://127.0.0.1:8000/api';
+
+export const LIVE_ADMIN_EMAIL = process.env.E2E_ADMIN_EMAIL ?? 'admin@civic-education.ss';
+export const LIVE_ADMIN_PASSWORD = process.env.E2E_ADMIN_PASSWORD ?? 'AdminPass123!';
+export const LIVE_ORG_SLUG = process.env.E2E_ORG_SLUG ?? 'platform-demo';
+
+/**
+ * Log in against the live backend (e2e-live job).
+ * @param {import('@playwright/test').APIRequestContext} request
+ */
+export async function loginLive(
+  request,
+  email = LIVE_ADMIN_EMAIL,
+  password = LIVE_ADMIN_PASSWORD,
+) {
+  const response = await request.post(`${LIVE_API}/auth/login/`, {
+    data: { email, password },
+  });
+  if (!response.ok()) {
+    throw new Error(`Live login failed (${response.status()}): ${await response.text()}`);
+  }
+  return response.json();
+}
+
+/**
+ * Seed JWT + org slug in the browser before navigation (live e2e).
+ * @param {import('@playwright/test').Page} page
+ */
+export async function seedLiveAuth(page, tokens, orgSlug = LIVE_ORG_SLUG) {
+  await page.addInitScript(({ access, slug }) => {
+    localStorage.setItem('cep_access', access);
+    localStorage.setItem('cep_refresh', 'refresh-not-needed-for-read');
+    localStorage.setItem('cep_org_slug', slug);
+    sessionStorage.setItem('cep_session', '1');
+  }, { access: tokens.access, slug: orgSlug });
+}
+
+/**
+ * Default auth headers for live API calls.
+ */
+export function liveAuthHeaders(tokens, orgSlug = LIVE_ORG_SLUG) {
+  return {
+    Authorization: `Bearer ${tokens.access}`,
+    'X-Tenant-Slug': orgSlug,
+  };
+}
+
 /**
  * @param {import('@playwright/test').Page} page
  * @param {object} [profileOverrides]

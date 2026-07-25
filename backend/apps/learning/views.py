@@ -26,6 +26,7 @@ from apps.quizzes.models import Quiz
 from apps.quizzes.serializers import QuizSerializer
 
 from .models import Article, Category, MediaAsset
+from .progress import record_article_progress
 from .serializers import ArticleSerializer, CategorySerializer, MediaAssetSerializer
 
 ALLOWED_ATTACHMENT_TYPES = {
@@ -114,6 +115,8 @@ class ArticleViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
             return [AllowAny()]
+        if self.action == 'progress':
+            return [IsAuthenticated(), IsOrgMember()]
         if self.action == 'destroy':
             return [IsAuthenticated(), IsOrgMember(), CanDeleteOrgContent()]
         if self.action in ('approve', 'reject'):
@@ -173,6 +176,50 @@ class ArticleViewSet(viewsets.ModelViewSet):
             request=request,
         )
         return Response(ArticleSerializer(article, context={'request': request}).data)
+
+    @extend_schema(
+        request=inline_serializer(
+            name='ArticleProgressRequest',
+            fields={
+                'progress_percent': serializers.IntegerField(required=False, min_value=0, max_value=100),
+                'completed': serializers.BooleanField(required=False, default=False),
+            },
+        ),
+        responses=inline_serializer(
+            name='ArticleProgressResponse',
+            fields={
+                'progress_percent': serializers.IntegerField(),
+                'completed': serializers.BooleanField(),
+                'completed_at': serializers.DateTimeField(allow_null=True),
+                'last_viewed_at': serializers.DateTimeField(),
+            },
+        ),
+    )
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated, IsOrgMember])
+    def progress(self, request, id=None):
+        article = self.get_object()
+        progress_percent = request.data.get('progress_percent')
+        completed = bool(request.data.get('completed', False))
+        if progress_percent is not None:
+            try:
+                progress_percent = int(progress_percent)
+            except (TypeError, ValueError):
+                return Response(
+                    {'detail': 'progress_percent must be an integer between 0 and 100.'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        row = record_article_progress(
+            request.user,
+            article,
+            progress_percent=progress_percent,
+            completed=completed,
+        )
+        return Response({
+            'progress_percent': row.progress_percent,
+            'completed': row.completed,
+            'completed_at': row.completed_at,
+            'last_viewed_at': row.last_viewed_at,
+        })
 
 
 class ArticleAttachmentUploadView(APIView):

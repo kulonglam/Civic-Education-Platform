@@ -488,4 +488,83 @@ class Command(BaseCommand):
                         article.video_media = media
                         article.save(update_fields=['video_media', 'updated_at'])
 
+        self._seed_gamification_and_engagement(org, admin)
         self.stdout.write(self.style.SUCCESS('Seed complete.'))
+
+    def _seed_gamification_and_engagement(self, org, admin):
+        from apps.engagement.models import Campaign, Petition, Poll, PollOption
+        from apps.gamification.models import Badge
+
+        badges = [
+            ('first_steps', 'First Steps', 'أول خطوات', 'Earn your first 25 XP', 'star', 25, 1),
+            ('article_reader', 'Article Reader', 'قارئ المقالات', 'Complete your first article', 'book', 0, 2),
+            ('media_listener', 'Media Listener', 'مستمع', 'Complete your first media lesson', 'headphones', 0, 3),
+            ('quiz_starter', 'Quiz Starter', 'بداية الاختبار', 'Attempt your first quiz', 'clipboard', 0, 4),
+            ('quiz_champion', 'Quiz Champion', 'بطل الاختبارات', 'Pass three quizzes', 'trophy', 0, 5),
+            ('civic_voice', 'Civic Voice', 'صوت مدني', 'Vote in a poll or sign a petition', 'megaphone', 0, 6),
+            ('engaged_citizen', 'Engaged Citizen', 'مواطن مشارك', 'Reach 100 XP', 'medal', 100, 7),
+            ('constitution_scholar', 'Constitution Scholar', 'دارس الدستور', 'Complete a constitution article', 'scroll', 0, 8),
+        ]
+        for slug, name, name_ar, desc, icon, xp_req, order in badges:
+            Badge.objects.get_or_create(
+                organization=org,
+                slug=slug,
+                defaults={
+                    'name': name,
+                    'name_ar': name_ar,
+                    'description': desc,
+                    'icon': icon,
+                    'xp_required': xp_req,
+                    'sort_order': order,
+                },
+            )
+
+        poll, created = Poll.objects.get_or_create(
+            organization=org,
+            question='What civic topic should we cover next?',
+            defaults={
+                'question_ar': 'ما الموضوع المدني الذي يجب أن نغطيه بعد ذلك؟',
+                'description': 'Help shape future learning content.',
+                'status': Poll.STATUS_OPEN,
+                'created_by': admin,
+            },
+        )
+        if created or not poll.options.exists():
+            PollOption.objects.filter(poll=poll).delete()
+            for label, label_ar in [
+                ('Elections', 'الانتخابات'),
+                ('Local governance', 'الحكم المحلي'),
+                ('Peacebuilding', 'بناء السلام'),
+            ]:
+                PollOption.objects.create(
+                    organization=org,
+                    poll=poll,
+                    label=label,
+                    label_ar=label_ar,
+                )
+
+        Petition.objects.get_or_create(
+            organization=org,
+            title='Support civic education in every county',
+            defaults={
+                'title_ar': 'دعم التعليم المدني في كل مقاطعة',
+                'description': 'Join citizens calling for accessible civic education resources nationwide.',
+                'description_ar': 'انضم إلى المواطنين الذين يطالبون بموارد تعليم مدني في جميع أنحاء البلاد.',
+                'goal_signatures': 500,
+                'status': Petition.STATUS_OPEN,
+                'created_by': admin,
+            },
+        )
+
+        Campaign.objects.get_or_create(
+            organization=org,
+            title='Register to vote',
+            defaults={
+                'title_ar': 'سجّل للتصويت',
+                'description': 'Check your voter registration status before the next election.',
+                'description_ar': 'تحقق من حالة تسجيلك الناخب قبل الانتخابات القادمة.',
+                'link_url': 'https://example.org/voter-registration',
+                'status': Campaign.STATUS_ACTIVE,
+                'created_by': admin,
+            },
+        )

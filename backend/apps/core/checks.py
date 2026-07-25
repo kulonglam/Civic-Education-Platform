@@ -87,4 +87,27 @@ def production_security_checks(app_configs, **kwargs):
                 )
             )
 
+    if not getattr(settings, 'EMAIL_HOST', ''):
+        errors.append(
+            Error(
+                'EMAIL_HOST is required in production for verification and password reset.',
+                id='core.E009',
+            )
+        )
+
+    require_sentry = True
+    try:
+        from decouple import config
+
+        require_sentry = config('REQUIRE_SENTRY', default=True, cast=bool)
+    except Exception:  # noqa: BLE001
+        pass
+    if require_sentry and not getattr(settings, 'SENTRY_DSN', ''):
+        errors.append(
+            Error(
+                'SENTRY_DSN is required in production (set REQUIRE_SENTRY=False only for staging).',
+                id='core.E010',
+            )
+        )
+
     return errors + warnings

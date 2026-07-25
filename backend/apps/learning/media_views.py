@@ -5,6 +5,7 @@ from pathlib import Path
 from django_filters import rest_framework as filters
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -22,6 +23,7 @@ from apps.tenants.permissions import (
 )
 
 from .models import MediaAsset
+from .progress import record_media_progress
 from .serializers import MediaAssetSerializer
 
 ALLOWED_AUDIO_TYPES = {
@@ -83,6 +85,8 @@ class MediaAssetViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
             return [AllowAny()]
+        if self.action == 'progress':
+            return [IsAuthenticated(), IsOrgMember()]
         if self.action == 'destroy':
             return [IsAuthenticated(), IsOrgMember(), CanDeleteOrgContent()]
         return [IsAuthenticated(), IsOrgMember(), IsOrgContentEditor()]
@@ -115,6 +119,31 @@ class MediaAssetViewSet(viewsets.ModelViewSet):
             {'media_id': media_id, 'media_type': media_type},
             request=self.request,
         )
+
+    @extend_schema(
+        request=inline_serializer(
+            name='MediaProgressRequest',
+            fields={'completed': serializers.BooleanField(required=False, default=False)},
+        ),
+        responses=inline_serializer(
+            name='MediaProgressResponse',
+            fields={
+                'completed': serializers.BooleanField(),
+                'completed_at': serializers.DateTimeField(allow_null=True),
+                'last_viewed_at': serializers.DateTimeField(),
+            },
+        ),
+    )
+    @action(detail=True, methods=['post'])
+    def progress(self, request, id=None):
+        media = self.get_object()
+        completed = bool(request.data.get('completed', False))
+        row = record_media_progress(request.user, media, completed=completed)
+        return Response({
+            'completed': row.completed,
+            'completed_at': row.completed_at,
+            'last_viewed_at': row.last_viewed_at,
+        })
 
 
 def _upload_media_file(

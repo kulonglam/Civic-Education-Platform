@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -13,12 +13,14 @@ import { formatDate, readingTime } from '../lib/format';
 import { localizedArticle } from '../lib/localizedContent';
 import { renderMarkdown } from '../lib/markdown';
 import { resolveMediaUrl } from '../lib/media';
+import { articleService } from '../lib/services';
 
 export function ArticleDetailPage() {
   const { t, i18n } = useTranslation();
   const { user, hasRole } = useAuth();
   const { id } = useParams();
   const [readProgress, setReadProgress] = useState(0);
+  const progressSentRef = useRef({ lastPct: 0, completed: false });
 
   useEffect(() => {
     const update = () => {
@@ -35,6 +37,38 @@ export function ArticleDetailPage() {
     enabled: !!id,
     queryFn: async () => loadArticle(id),
   });
+
+  const isCached = data?.source === 'cache';
+
+  useEffect(() => {
+    if (!user || !id || isCached) return undefined;
+
+    const pct = Math.round(readProgress);
+    const shouldComplete = pct >= 90;
+    const throttleMs = shouldComplete ? 0 : 4000;
+    const delta = Math.abs(pct - progressSentRef.current.lastPct);
+    if (!shouldComplete && delta < 10 && progressSentRef.current.lastPct > 0) {
+      return undefined;
+    }
+    if (shouldComplete && progressSentRef.current.completed) {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => {
+      articleService
+        .recordProgress(id, {
+          progress_percent: pct,
+          completed: shouldComplete,
+        })
+        .then(() => {
+          progressSentRef.current.lastPct = pct;
+          if (shouldComplete) progressSentRef.current.completed = true;
+        })
+        .catch(() => {});
+    }, throttleMs);
+
+    return () => window.clearTimeout(timer);
+  }, [user, id, readProgress, isCached]);
 
   if (isLoading) return <Spinner />;
   if (error || !data?.data) return <Alert>{t('common.noResults')}</Alert>;
@@ -126,6 +160,7 @@ export function ArticleDetailPage() {
               article.video_media.external_url ||
               article.video_media.file_url
             }
+            captionsUrl={article.video_media.captions_url}
             title={article.video_media.title || article.title}
           />
         </div>
@@ -142,6 +177,7 @@ export function ArticleDetailPage() {
               article.audio_media.external_url ||
               article.audio_media.file_url
             }
+            captionsUrl={article.audio_media.captions_url}
             title={article.audio_media.title || article.title}
           />
         </div>

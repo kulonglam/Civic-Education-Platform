@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import Avg, Count, Max, Q
 from django.utils import timezone
 
-from apps.learning.models import Article
+from apps.learning.models import Article, ArticleProgress, Category, MediaAsset, MediaProgress
 from apps.quizzes.models import Certificate, QuizAttempt
 from apps.tenants.context import get_current_organization
 from apps.tenants.models import Membership
@@ -87,6 +87,8 @@ def build_member_progress(*, date_from=None, date_to=None) -> list[dict]:
             last_activity=Max('attempted_at'),
         )
         cert_count = Certificate.objects.filter(user=user).count()
+        articles_completed = ArticleProgress.objects.filter(user=user, completed=True).count()
+        media_completed = MediaProgress.objects.filter(user=user, completed=True).count()
         rows.append({
             'user_id': str(user.id),
             'email': user.email,
@@ -99,6 +101,8 @@ def build_member_progress(*, date_from=None, date_to=None) -> list[dict]:
             'quizzes_passed': stats['passed'] or 0,
             'avg_score': round(stats['avg_score'] or 0, 1),
             'certificates': cert_count,
+            'articles_completed': articles_completed,
+            'media_completed': media_completed,
             'last_activity': stats['last_activity'],
         })
 
@@ -118,6 +122,8 @@ def build_progress_csv(*, date_from=None, date_to=None) -> str:
         'quizzes_passed',
         'avg_score',
         'certificates',
+        'articles_completed',
+        'media_completed',
         'last_activity',
     ])
 
@@ -133,6 +139,8 @@ def build_progress_csv(*, date_from=None, date_to=None) -> str:
             row['quizzes_passed'],
             row['avg_score'],
             row['certificates'],
+            row['articles_completed'],
+            row['media_completed'],
             last_activity.isoformat() if last_activity else '',
         ])
 
@@ -179,3 +187,91 @@ def build_institutional_report_pdf(*, date_from=None, date_to=None) -> bytes:
 
 def parse_report_dates(request):
     return _parse_date(request.query_params.get('from')), _parse_date(request.query_params.get('to'))
+
+
+def build_my_learning_summary(user) -> dict:
+    """Personal learning dashboard for the current user in the active organization."""
+    organization = get_current_organization()
+    if organization is None:
+        return {
+            'articles_completed': 0,
+            'articles_in_progress': 0,
+            'articles_total': 0,
+            'media_completed': 0,
+            'media_total': 0,
+            'quizzes_attempted': 0,
+            'quizzes_passed': 0,
+            'avg_quiz_score': 0,
+            'certificates': 0,
+            'by_category': [],
+            'recent_activity': [],
+        }
+
+    article_progress = ArticleProgress.objects.filter(user=user)
+    media_progress = MediaProgress.objects.filter(user=user)
+    attempts = QuizAttempt.objects.filter(user=user)
+    passed = attempts.filter(passed=True).count()
+    total_attempts = attempts.count()
+
+    published_articles = Article.objects.filter(status='published').count()
+    published_media = MediaAsset.objects.filter(status='published').count()
+
+    by_category = []
+    for cat in Category.objects.all().order_by('name'):
+        by_category.append({
+            'category': cat.name,
+            'slug': cat.slug,
+            'articles_completed': article_progress.filter(
+                article__category=cat,
+                completed=True,
+            ).count(),
+            'articles_total': Article.objects.filter(category=cat, status='published').count(),
+            'media_completed': media_progress.filter(
+                media__category=cat,
+                completed=True,
+            ).count(),
+            'media_total': MediaAsset.objects.filter(category=cat, status='published').count(),
+        })
+
+    recent_activity = []
+    for row in article_progress.select_related('article').order_by('-last_viewed_at')[:5]:
+        recent_activity.append({
+            'type': 'article',
+            'id': str(row.article_id),
+            'title': row.article.title,
+            'completed': row.completed,
+            'at': row.last_viewed_at,
+        })
+    for row in media_progress.select_related('media').order_by('-last_viewed_at')[:5]:
+        recent_activity.append({
+            'type': 'media',
+            'id': str(row.media_id),
+            'title': row.media.title,
+            'completed': row.completed,
+            'at': row.last_viewed_at,
+        })
+    for attempt in attempts.select_related('quiz').order_by('-attempted_at')[:5]:
+        recent_activity.append({
+            'type': 'quiz',
+            'id': str(attempt.quiz_id),
+            'title': attempt.quiz.title,
+            'completed': attempt.passed,
+            'at': attempt.attempted_at,
+            'score': attempt.score,
+        })
+
+    recent_activity.sort(key=lambda item: item['at'] or timezone.now(), reverse=True)
+
+    return {
+        'articles_completed': article_progress.filter(completed=True).count(),
+        'articles_in_progress': article_progress.filter(completed=False, progress_percent__gt=0).count(),
+        'articles_total': published_articles,
+        'media_completed': media_progress.filter(completed=True).count(),
+        'media_total': published_media,
+        'quizzes_attempted': total_attempts,
+        'quizzes_passed': passed,
+        'avg_quiz_score': round(attempts.aggregate(avg=Avg('score'))['avg'] or 0, 1),
+        'certificates': Certificate.objects.filter(user=user).count(),
+        'by_category': by_category,
+        'recent_activity': recent_activity[:8],
+    }

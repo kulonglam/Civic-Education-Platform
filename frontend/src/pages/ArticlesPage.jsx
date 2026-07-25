@@ -71,6 +71,14 @@ export function ArticlesPage() {
     [categories, t, i18n.language],
   );
 
+  const activeCategory = useMemo(
+    () => categories.find((c) => c.id === category),
+    [categories, category],
+  );
+  const activeCategoryName = activeCategory
+    ? localizedCategory(activeCategory, i18n.language)
+    : '';
+
   const handleSearchChange = (value) => {
     setSearch(value);
     setPage(1);
@@ -119,6 +127,21 @@ export function ArticlesPage() {
           ))}
         </select>
       </div>
+
+      {activeCategory && (
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <span className="badge bg-brand-50 text-brand-800 dark:bg-brand-900/40 dark:text-brand-300">
+            {t('articles.filteringBy', { category: activeCategoryName })}
+          </span>
+          <button
+            type="button"
+            className="text-sm font-semibold text-brand-700 hover:underline dark:text-brand-300"
+            onClick={() => handleCategoryChange('')}
+          >
+            {t('articles.clearCategory')}
+          </button>
+        </div>
+      )}
 
       {isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

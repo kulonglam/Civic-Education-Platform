@@ -129,6 +129,12 @@ class QuizAttemptView(APIView):
             'passed': passed,
         })
 
+        from apps.gamification.services import XP_QUIZ_ATTEMPT, XP_QUIZ_PASS, award_xp
+
+        award_xp(request.user, XP_QUIZ_ATTEMPT, reason='quiz_attempt')
+        if passed:
+            award_xp(request.user, XP_QUIZ_PASS, reason='quiz_pass')
+
         notify_user(
             request.user,
             'quiz_result',

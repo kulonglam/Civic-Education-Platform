@@ -97,6 +97,7 @@ class UserProfile(models.Model):
         default=0,
         help_text='Incremented to revoke all outstanding JWTs for this user.',
     )
+    xp_points = models.PositiveIntegerField(default=0)
 
     class Meta:
         db_table = 'user_profiles'

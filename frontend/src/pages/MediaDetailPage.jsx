@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { MediaPlayer } from '../components/MediaPlayer';
@@ -12,7 +13,7 @@ import { formatDate } from '../lib/format';
 export function MediaDetailPage() {
   const { t } = useTranslation();
   const { id } = useParams();
-  const { hasRole } = useAuth();
+  const { user, hasRole } = useAuth();
   const canEdit = hasRole('admin', 'editor');
 
   const { data, isLoading, error } = useQuery({
@@ -23,6 +24,16 @@ export function MediaDetailPage() {
       return res;
     },
   });
+
+  useEffect(() => {
+    if (!user || !id) return;
+    mediaService.recordProgress(id, { completed: false }).catch(() => {});
+  }, [user, id]);
+
+  const handleComplete = useCallback(() => {
+    if (!user || !id) return;
+    mediaService.recordProgress(id, { completed: true }).catch(() => {});
+  }, [user, id]);
 
   if (isLoading) return <Spinner />;
   if (error || !data) return <Alert>{t('common.noResults')}</Alert>;
@@ -60,7 +71,9 @@ export function MediaDetailPage() {
         <MediaPlayer
           mediaType={data.media_type}
           url={playback}
+          captionsUrl={data.captions_url}
           title={data.title}
+          onEnded={handleComplete}
         />
       </div>
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useOrganization } from '../context/OrganizationContext';
 import {
   auditService,
@@ -15,10 +15,12 @@ import { Alert, ConfirmDialog, PageHeader, Spinner } from '../components/ui';
 import { TabList, TabPanel } from '../components/SettingsChrome';
 
 const ORG_ROLES = ['member', 'moderator', 'content_manager', 'admin'];
+const ORG_TABS = ['general', 'security', 'people', 'alerts'];
 
 function OrganizationPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { organization, membership, isOrgAdmin, refresh } = useOrganization();
   const [members, setMembers] = useState([]);
   const [pendingInvites, setPendingInvites] = useState([]);
@@ -67,7 +69,24 @@ function OrganizationPage() {
   const [success, setSuccess] = useState('');
   const [leaveConfirmOpen, setLeaveConfirmOpen] = useState(false);
   const [leaving, setLeaving] = useState(false);
-  const [orgTab, setOrgTab] = useState('general');
+  const [orgTab, setOrgTab] = useState(() => {
+    const tab = searchParams.get('tab');
+    return ORG_TABS.includes(tab) ? tab : 'general';
+  });
+
+  const changeOrgTab = (tab) => {
+    setOrgTab(tab);
+    const next = new URLSearchParams(searchParams);
+    if (tab === 'general') next.delete('tab');
+    else next.set('tab', tab);
+    setSearchParams(next, { replace: true });
+  };
+
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    const next = tab && ORG_TABS.includes(tab) ? tab : 'general';
+    setOrgTab((prev) => (prev === next ? prev : next));
+  }, [searchParams]);
 
   const roleLabel = (role) => {
     const map = {
@@ -581,7 +600,7 @@ function OrganizationPage() {
             { id: 'alerts', label: t('saas.tabAlerts') },
           ]}
           active={orgTab}
-          onChange={setOrgTab}
+          onChange={changeOrgTab}
         />
       )}
 

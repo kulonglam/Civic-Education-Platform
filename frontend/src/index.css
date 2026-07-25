@@ -21,7 +21,7 @@
     @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-ink-50 dark:ring-offset-ink-950;
   }
   body {
-    @apply bg-ink-50 font-sans text-ink-900 antialiased dark:bg-ink-950 dark:text-slate-100;
+    @apply bg-ink-50 font-sans text-base font-normal text-ink-900 antialiased dark:bg-ink-950 dark:text-slate-100;
     background-image:
       radial-gradient(ellipse 90% 55% at 0% -8%, rgba(16, 185, 129, 0.11), transparent 58%),
       radial-gradient(ellipse 70% 45% at 100% 0%, rgba(4, 120, 87, 0.08), transparent 52%),
@@ -38,8 +38,8 @@
     text-align: right;
   }
   h1, h2, h3 {
-    font-family: "Fraunces", Georgia, serif;
-    @apply tracking-tight;
+    font-family: "Poppins", system-ui, sans-serif;
+    @apply font-semibold tracking-normal;
   }
   ::selection {
     @apply bg-brand-200 text-brand-950;
@@ -57,7 +57,7 @@
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold tracking-normal transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-primary {
     @apply btn bg-brand-700 text-white shadow-soft hover:bg-brand-800 hover:shadow-lift active:scale-[0.98];
@@ -102,10 +102,10 @@
     animation: progress-bar 1.2s ease-in-out forwards;
   }
   .section-heading {
-    @apply font-display text-3xl font-semibold text-ink-900 dark:text-slate-50 sm:text-4xl;
+    @apply font-display text-page-title text-ink-900 dark:text-slate-50;
   }
   .section-lead {
-    @apply mt-3 max-w-2xl text-base leading-relaxed text-ink-700/80 dark:text-slate-400;
+    @apply mt-3 max-w-2xl text-hero-sub text-ink-700/80 dark:text-slate-400;
   }
   .prose-panel {
     @apply mx-auto w-full max-w-6xl px-4;
@@ -118,7 +118,7 @@
     @apply dark:border-slate-800/80 dark:bg-ink-950/80 dark:shadow-[0_1px_0_rgba(0,0,0,0.25)];
   }
   .nav-link {
-    @apply relative rounded-xl px-3 py-2 text-sm font-semibold transition-colors;
+    @apply relative rounded-xl px-2.5 py-2 text-sm font-semibold transition-colors lg:px-3;
   }
   .nav-link-active {
     @apply bg-brand-50/90 text-brand-800 dark:bg-brand-900/40 dark:text-brand-300;
@@ -170,7 +170,7 @@
     @apply text-xs font-semibold uppercase tracking-wider text-ink-700/60 dark:text-slate-400;
   }
   .stat-tile-value {
-    @apply mt-2 font-display text-3xl font-semibold tracking-tight text-ink-900 dark:text-slate-50;
+    @apply mt-2 font-display text-page-title text-ink-900 dark:text-slate-50;
   }
   .filter-bar {
     @apply rounded-2xl border border-ink-100/70 bg-white/80 p-3.5 shadow-soft backdrop-blur-sm sm:p-4;

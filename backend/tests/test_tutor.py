@@ -36,6 +36,8 @@ class TestTutorChat:
         )
         assert response.status_code == status.HTTP_200_OK
         assert 'reply' in response.data
+        assert 'sources' in response.data
+        assert isinstance(response.data['sources'], list)
         assert response.data['messages_used_today'] == 1
         assert response.data['daily_limit'] == 30
 
@@ -82,3 +84,26 @@ class TestTutorChat:
 
         api_client.post('/api/tutor/chat/', {'message': 'Explain elections'}, format='json')
         assert TutorChat.objects.filter(user=citizen_user).count() == 2
+
+
+@pytest.mark.django_db
+class TestTutorAdminUsage:
+    def test_platform_usage_requires_admin(self, api_client, org, citizen_user, free_plan):
+        Subscription.objects.create(organization=org, plan=free_plan, status=Subscription.ACTIVE)
+        bind_client_to_org(api_client, citizen_user, org, membership_role=Membership.MEMBER)
+
+        response = api_client.get('/api/tutor/usage/platform/')
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_platform_usage_returns_aggregate(self, api_client, org, admin_user, citizen_user, free_plan):
+        Subscription.objects.create(organization=org, plan=free_plan, status=Subscription.ACTIVE)
+
+        bind_client_to_org(api_client, citizen_user, org, membership_role=Membership.MEMBER)
+        api_client.post('/api/tutor/chat/', {'message': 'Hello'}, format='json')
+
+        bind_client_to_org(api_client, admin_user, org, membership_role=Membership.OWNER)
+        response = api_client.get('/api/tutor/usage/platform/')
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['messages_today'] >= 1
+        assert 'tokens_today' in response.data
+        assert 'active_users_today' in response.data

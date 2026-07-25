@@ -81,7 +81,7 @@ class MediaAssetSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'title_ar', 'description', 'description_ar',
             'media_type', 'source', 'file_url', 'external_url', 'playback_url',
-            'mime_type', 'duration_seconds', 'thumbnail_url',
+            'mime_type', 'duration_seconds', 'thumbnail_url', 'captions_url',
             'category', 'category_id', 'status',
             'author', 'author_name', 'published_at', 'created_at', 'updated_at',
         ]
@@ -126,6 +126,9 @@ class MediaAssetSerializer(serializers.ModelSerializer):
 
     def validate_thumbnail_url(self, value):
         return validate_http_url(value, field_name='Thumbnail URL')
+
+    def validate_captions_url(self, value):
+        return validate_http_url(value, field_name='Captions URL')
 
     def validate(self, attrs):
         source = attrs.get('source', getattr(self.instance, 'source', MediaAsset.SOURCE_EXTERNAL))
@@ -176,7 +179,7 @@ class MediaAssetSummarySerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'title_ar', 'media_type', 'source',
             'file_url', 'external_url', 'playback_url', 'mime_type',
-            'duration_seconds', 'thumbnail_url', 'status',
+            'duration_seconds', 'thumbnail_url', 'captions_url', 'status',
         ]
 
     def to_representation(self, instance):

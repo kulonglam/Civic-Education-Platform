@@ -8,11 +8,18 @@ import { getEmbedInfo } from '../lib/mediaEmbed';
 export function MediaPlayer({
   mediaType = 'video',
   url,
+  captionsUrl = '',
   title = '',
   className = '',
+  onEnded,
 }) {
   const playback = resolveMediaUrl(url || '');
+  const captions = resolveMediaUrl(captionsUrl || '');
   if (!playback) return null;
+
+  const track = captions ? (
+    <track kind="captions" src={captions} srcLang="en" label="Captions" default />
+  ) : null;
 
   if (mediaType === 'audio') {
     return (
@@ -23,8 +30,9 @@ export function MediaPlayer({
           preload="metadata"
           src={playback}
           title={title || undefined}
+          onEnded={onEnded}
         >
-          <track kind="captions" />
+          {track}
         </audio>
       </div>
     );
@@ -56,8 +64,9 @@ export function MediaPlayer({
         preload="metadata"
         src={playback}
         title={title || undefined}
+        onEnded={onEnded}
       >
-        <track kind="captions" />
+        {track}
       </video>
     </div>
   );

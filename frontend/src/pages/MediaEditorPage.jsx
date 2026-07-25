@@ -17,6 +17,7 @@ const emptyForm = {
   external_url: '',
   mime_type: '',
   thumbnail_url: '',
+  captions_url: '',
   category_id: '',
   status: 'draft',
 };
@@ -58,6 +59,7 @@ export function MediaEditorPage() {
           external_url: data.external_url ?? '',
           mime_type: data.mime_type ?? '',
           thumbnail_url: data.thumbnail_url ?? '',
+          captions_url: data.captions_url ?? '',
           category_id: data.category?.id ?? '',
           status: data.status ?? 'draft',
         });
@@ -277,6 +279,18 @@ export function MediaEditorPage() {
               </option>
             ))}
           </select>
+        </div>
+
+        <div>
+          <label className="label">{t('media.fieldCaptions')}</label>
+          <input
+            className="input"
+            type="url"
+            value={form.captions_url}
+            onChange={(e) => setForm({ ...form, captions_url: e.target.value })}
+            placeholder="https:// (WebVTT .vtt)"
+          />
+          <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">{t('media.captionsHint')}</p>
         </div>
 
         <div>

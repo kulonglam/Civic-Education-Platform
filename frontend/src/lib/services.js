@@ -59,6 +59,7 @@ const articleService = {
       headers: { "Content-Type": "multipart/form-data" },
     });
   },
+  recordProgress: (id, payload) => api.post(`/articles/${id}/progress/`, payload),
 };
 const mediaService = {
   list: (params) => api.get("/media/", { params }),
@@ -80,6 +81,7 @@ const mediaService = {
       headers: { "Content-Type": "multipart/form-data" },
     });
   },
+  recordProgress: (id, payload) => api.post(`/media/${id}/progress/`, payload),
 };
 const categoryService = {
   list: () => api.get("/categories/"),
@@ -136,6 +138,7 @@ const analyticsService = {
     api.get("/analytics/export/csv/", { params, responseType: "blob" }),
   exportReportPdf: (params) =>
     api.get("/analytics/export/report.pdf/", { params, responseType: "blob" }),
+  me: () => api.get("/analytics/me/"),
 };
 const organizationService = {
   current: () => api.get("/organization/current/"),
@@ -197,8 +200,25 @@ const tutorService = {
       message,
       ...(articleId ? { article_id: articleId } : {}),
     }),
+  getSession: () => api.get("/tutor/chat/session/"),
   clearSession: () => api.delete("/tutor/chat/session/"),
+  history: () => api.get("/tutor/chat/history/"),
+  historyDetail: (sessionId) => api.get(`/tutor/chat/history/${sessionId}/`),
   usage: () => api.get("/tutor/usage/"),
+};
+const gamificationService = {
+  me: () => api.get("/gamification/me/"),
+};
+const engagementService = {
+  polls: () => api.get("/engagement/polls/"),
+  votePoll: (pollId, optionId) =>
+    api.post(`/engagement/polls/${pollId}/vote/`, { option_id: optionId }),
+  petitions: () => api.get("/engagement/petitions/"),
+  signPetition: (petitionId) => api.post(`/engagement/petitions/${petitionId}/sign/`),
+  campaigns: () => api.get("/engagement/campaigns/"),
+};
+const searchService = {
+  query: (q, limit = 8) => api.get("/search/", { params: { q, limit } }),
 };
 const notifyService = {
   sendSms: (payload) => api.post("/notify/sms/", payload),
@@ -213,12 +233,15 @@ export {
   authService,
   billingService,
   categoryService,
+  engagementService,
   forumService,
+  gamificationService,
   mediaService,
   notificationService,
   notifyService,
   organizationService,
   quizService,
+  searchService,
   securityService,
   tutorService,
   userService

@@ -31,7 +31,12 @@ class Command(BaseCommand):
 
         checks = [
             ('GET', f'{base}/api/health/', {}, None),
-            ('GET', f'{base}/api/ready/', {}, None),
+            (
+                'GET',
+                f'{base}/api/ready/',
+                {},
+                lambda body: body.get('status') == 'ready',
+            ),
             ('GET', f'{base}/api/billing/plans/', {}, None),
             (
                 'GET',
