@@ -70,9 +70,9 @@ The repo [render.yaml](../render.yaml) defines `civic-education-worker` and `civ
 
 ---
 
-## 2. Stripe billing (required)
+## 2. Stripe billing (required for paid SaaS)
 
-Production boot **fails** if `BILLING_PROVIDER=dummy`.
+Production boot **fails** if `BILLING_PROVIDER=dummy` unless you explicitly opt out of payments (see **2b** below).
 
 ### Backend environment
 
@@ -103,6 +103,32 @@ FRONTEND_URL=https://app.yourdomain.com
 - [ ] After payment, subscription status updates (webhook received)
 - [ ] Billing portal opens from “Manage billing”
 - [ ] Downgrade/cancel reflects in app after webhook
+
+---
+
+## 2b. No Stripe / unsupported country (e.g. Uganda)
+
+Stripe does not support merchant accounts in every country. For **civic education deployments** where you do not collect subscription payments online:
+
+```env
+BILLING_PROVIDER=dummy
+ALLOW_DUMMY_BILLING_IN_PRODUCTION=True
+```
+
+- No `STRIPE_*` variables required — the API will boot without them.
+- Checkout in the app **instantly activates** the chosen plan (no real payment).
+- Manage plans manually via Django admin (`/admin/billing/subscription/`) or assign Enterprise in admin for pilot orgs.
+- For real payments later, consider **Flutterwave** or **Pesapal** (East Africa) — would need a new billing provider in code.
+
+**Africa payment providers (future integration, not built yet):**
+
+| Provider | Uganda support | Notes |
+|----------|----------------|-------|
+| Flutterwave | Yes | Cards, mobile money |
+| Pesapal | Yes | East Africa focus |
+| Paystack | Limited | Mainly NG/GH/SA |
+
+Do **not** use dummy billing on a public multi-tenant SaaS where strangers can self-upgrade to Pro/Enterprise without paying.
 
 ---
 

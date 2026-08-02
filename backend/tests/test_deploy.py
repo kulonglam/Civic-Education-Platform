@@ -83,3 +83,18 @@ def test_production_checks_reject_dummy_billing():
         CELERY_TASK_ALWAYS_EAGER=False,
     )
     assert any(error.id == 'core.E004' for error in errors)
+
+
+def test_production_checks_allow_dummy_billing_when_flag_set():
+    errors = _run_checks(
+        SECRET_KEY='a-unique-production-secret-key-value',
+        ALLOWED_HOSTS=['api.example.com'],
+        CORS_ALLOWED_ORIGINS=['https://app.example.com'],
+        BILLING_PROVIDER='dummy',
+        ALLOW_DUMMY_BILLING_IN_PRODUCTION=True,
+        CELERY_BROKER_URL='redis://redis:6379/0',
+        CELERY_TASK_ALWAYS_EAGER=False,
+        EMAIL_HOST='smtp.example.com',
+        SENTRY_DSN='https://example@sentry.io/1',
+    )
+    assert not any(error.id == 'core.E004' for error in errors)

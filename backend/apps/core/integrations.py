@@ -120,11 +120,19 @@ def check_celery() -> dict[str, Any]:
 def check_stripe() -> dict[str, Any]:
     provider = getattr(settings, 'BILLING_PROVIDER', 'dummy')
     if provider != 'stripe':
+        allow_dummy = getattr(settings, 'ALLOW_DUMMY_BILLING_IN_PRODUCTION', False)
+        if provider == 'dummy' and allow_dummy:
+            return _entry(
+                'stripe',
+                STATUS_DUMMY,
+                required_in_production=False,
+                detail='BILLING_PROVIDER=dummy — payments disabled (ALLOW_DUMMY_BILLING_IN_PRODUCTION=True)',
+            )
         return _entry(
             'stripe',
             STATUS_DUMMY,
             required_in_production=True,
-            detail=f'BILLING_PROVIDER={provider!r} (production requires stripe)',
+            detail=f'BILLING_PROVIDER={provider!r} (production requires stripe or ALLOW_DUMMY_BILLING_IN_PRODUCTION=True)',
         )
 
     secret = getattr(settings, 'STRIPE_SECRET_KEY', '')

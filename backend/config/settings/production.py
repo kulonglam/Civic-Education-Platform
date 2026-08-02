@@ -75,8 +75,13 @@ if not CORS_ALLOWED_ORIGINS:
     raise ImproperlyConfigured('CORS_ALLOWED_ORIGINS must be set in production.')
 if SECRET_KEY.startswith('django-insecure') or SECRET_KEY.startswith('change-me'):  # noqa: F405
     raise ImproperlyConfigured('SECRET_KEY must be a secure random value in production.')
-if BILLING_PROVIDER == 'dummy':  # noqa: F405
-    raise ImproperlyConfigured('BILLING_PROVIDER must be "stripe" in production.')
+ALLOW_DUMMY_BILLING_IN_PRODUCTION = config('ALLOW_DUMMY_BILLING_IN_PRODUCTION', default=False, cast=bool)  # noqa: F405
+if BILLING_PROVIDER == 'dummy' and not ALLOW_DUMMY_BILLING_IN_PRODUCTION:  # noqa: F405
+    raise ImproperlyConfigured(
+        'BILLING_PROVIDER must be "stripe" in production, or set '
+        'ALLOW_DUMMY_BILLING_IN_PRODUCTION=True when payments are not used '
+        '(e.g. civic deployments in countries without Stripe).'
+    )
 if not CELERY_BROKER_URL:  # noqa: F405
     raise ImproperlyConfigured('CELERY_BROKER_URL is required in production.')
 if BILLING_PROVIDER == 'stripe':  # noqa: F405

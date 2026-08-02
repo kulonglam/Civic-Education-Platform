@@ -39,12 +39,22 @@ def production_security_checks(app_configs, **kwargs):
         )
 
     if getattr(settings, 'BILLING_PROVIDER', 'dummy') == 'dummy':
-        errors.append(
-            Error(
-                'BILLING_PROVIDER must be "stripe" in production (dummy billing is dev-only).',
-                id='core.E004',
+        allow_dummy = getattr(settings, 'ALLOW_DUMMY_BILLING_IN_PRODUCTION', False)
+        if not allow_dummy:
+            try:
+                from decouple import config
+
+                allow_dummy = config('ALLOW_DUMMY_BILLING_IN_PRODUCTION', default=False, cast=bool)
+            except Exception:  # noqa: BLE001
+                pass
+        if not allow_dummy:
+            errors.append(
+                Error(
+                    'BILLING_PROVIDER must be "stripe" in production, or set '
+                    'ALLOW_DUMMY_BILLING_IN_PRODUCTION=True when payments are not used.',
+                    id='core.E004',
+                )
             )
-        )
 
     if not getattr(settings, 'CELERY_BROKER_URL', ''):
         errors.append(
