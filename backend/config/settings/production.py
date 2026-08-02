@@ -2,11 +2,15 @@ from decouple import config
 from corsheaders.defaults import default_headers
 from django.core.exceptions import ImproperlyConfigured
 
-from apps.core.host_utils import unique_hosts, render_hostname
+from apps.core.host_utils import unique_hosts, render_hostname, redis_url_points_to_localhost
 
 from .base import *  # noqa: F403
 
 DEBUG = False
+
+# Do not inherit base.py's localhost Celery default in production.
+CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='')  # noqa: F405
+REDIS_URL = config('REDIS_URL', default='')  # noqa: F405
 
 # ALLOWED_HOSTS is set in the dashboard for custom domains. Render also injects
 # RENDER_EXTERNAL_HOSTNAME (e.g. civic-education-platform-66rb.onrender.com).
@@ -55,13 +59,20 @@ DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@civic-educati
 
 CELERY_TASK_ALWAYS_EAGER = False
 
-# Prefer dedicated REDIS_URL; fall back to the Celery broker for cache.
+# Prefer dedicated REDIS_URL; fall back to the Celery broker for cache/channels.
 if not REDIS_URL and CELERY_BROKER_URL:  # noqa: F405
     REDIS_URL = CELERY_BROKER_URL  # noqa: F405
+if REDIS_URL:  # noqa: F405
     CACHES = {  # noqa: F405
         'default': {
             'BACKEND': 'django.core.cache.backends.redis.RedisCache',
             'LOCATION': REDIS_URL,
+        }
+    }
+    CHANNEL_LAYERS = {  # noqa: F405
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {'hosts': [REDIS_URL]},
         }
     }
 
@@ -83,7 +94,19 @@ if BILLING_PROVIDER == 'dummy' and not ALLOW_DUMMY_BILLING_IN_PRODUCTION:  # noq
         '(e.g. civic deployments in countries without Stripe).'
     )
 if not CELERY_BROKER_URL:  # noqa: F405
-    raise ImproperlyConfigured('CELERY_BROKER_URL is required in production.')
+    raise ImproperlyConfigured(
+        'CELERY_BROKER_URL is required in production. '
+        'On Render, link your Redis service Internal URL.'
+    )
+if redis_url_points_to_localhost(CELERY_BROKER_URL):  # noqa: F405
+    raise ImproperlyConfigured(
+        'CELERY_BROKER_URL points to localhost. Set Render Redis Internal URL '
+        'on the API and worker services (not redis://localhost:6379).'
+    )
+if REDIS_URL and redis_url_points_to_localhost(REDIS_URL):  # noqa: F405
+    raise ImproperlyConfigured(
+        'REDIS_URL points to localhost. Set Render Redis Internal URL on the API and worker.'
+    )
 if BILLING_PROVIDER == 'stripe':  # noqa: F405
     if not STRIPE_SECRET_KEY:  # noqa: F405
         raise ImproperlyConfigured('STRIPE_SECRET_KEY is required when BILLING_PROVIDER=stripe.')

@@ -26,3 +26,11 @@ def render_hostname() -> str:
     if not url:
         return ''
     return (urlparse(url).hostname or '').strip()
+
+
+def redis_url_points_to_localhost(url: str) -> bool:
+    """True when a Redis URL targets this machine (dev default, invalid on Render)."""
+    if not url:
+        return False
+    host = (urlparse(url.strip()).hostname or '').lower()
+    return host in {'localhost', '127.0.0.1', '::1'}

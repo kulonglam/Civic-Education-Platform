@@ -37,6 +37,14 @@ def test_render_hostname_from_url(monkeypatch):
     assert render_hostname() == 'civic-education-platform-66rb.onrender.com'
 
 
+def test_redis_url_points_to_localhost():
+    from apps.core.host_utils import redis_url_points_to_localhost
+
+    assert redis_url_points_to_localhost('redis://localhost:6379/0')
+    assert redis_url_points_to_localhost('redis://127.0.0.1:6379/0')
+    assert not redis_url_points_to_localhost('redis://red-abc123:6379')
+
+
 def _run_checks(**settings):
     with override_settings(DEBUG=False, **settings):
         return production_security_checks(None)
