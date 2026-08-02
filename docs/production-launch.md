@@ -27,7 +27,7 @@ Step-by-step checklist to take the Civic Education Platform from local developme
 Copy [backend/.env.production.example](../backend/.env.production.example) and set every value:
 
 - [ ] `SECRET_KEY` — generate with `python -c "import secrets; print(secrets.token_urlsafe(50))"`
-- [ ] `ALLOWED_HOSTS` — your API domain
+- [ ] `ALLOWED_HOSTS` — your API domain(s); on Render, `RENDER_EXTERNAL_HOSTNAME` is merged automatically
 - [ ] `CORS_ALLOWED_ORIGINS` — your frontend HTTPS URL
 - [ ] `DATABASE_URL` — managed PostgreSQL connection string
 - [ ] `FRONTEND_URL` — frontend HTTPS URL
@@ -85,7 +85,7 @@ Deploy the `frontend/dist` folder to your static host (Render Static Site, Netli
 
 The repo includes [render.yaml](../render.yaml) for API + worker + Redis + Postgres + daily backup + weekly audit purge + static frontend. After connecting the repo:
 
-1. Set sync=false env vars in the Render dashboard (`ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS`, Stripe, Supabase, email, Sentry).
+1. Set sync=false env vars in the Render dashboard (`CORS_ALLOWED_ORIGINS`, Stripe, Supabase, email, Sentry). `ALLOWED_HOSTS` can list custom API domains; the service’s `*.onrender.com` hostname is picked up via `RENDER_EXTERNAL_HOSTNAME` automatically.
 2. Attach custom domains: API (`api.yourdomain.com`) on the web service and app (`app.yourdomain.com`) on the static site — HTTPS is automatic.
 3. Configure **Supabase Storage** (or S3-compatible): set `SUPABASE_URL` + `SUPABASE_KEY` on both web and worker so certificate PDFs and article attachments upload correctly.
 4. Confirm worker and web services share the same `SECRET_KEY` and `DATABASE_URL`.

@@ -2,21 +2,30 @@ from decouple import config
 from corsheaders.defaults import default_headers
 from django.core.exceptions import ImproperlyConfigured
 
+from apps.core.host_utils import unique_hosts
+
 from .base import *  # noqa: F403
 
 DEBUG = False
 
-ALLOWED_HOSTS = [
-    host.strip()
-    for host in config('ALLOWED_HOSTS', default='').split(',')
-    if host.strip()
-]
+# ALLOWED_HOSTS is set in the dashboard for custom domains. Render also injects
+# RENDER_EXTERNAL_HOSTNAME (e.g. civic-education-platform-66rb.onrender.com).
+ALLOWED_HOSTS = unique_hosts(
+    config('ALLOWED_HOSTS', default=''),
+    config('RENDER_EXTERNAL_HOSTNAME', default=''),
+)
 
 CORS_ALLOWED_ORIGINS = [
     origin.strip()
     for origin in config('CORS_ALLOWED_ORIGINS', default='').split(',')
     if origin.strip()
 ]
+
+# Trust HTTPS origins for Django CSRF (admin, session cookie flows).
+CSRF_TRUSTED_ORIGINS = unique_hosts(
+    config('CSRF_TRUSTED_ORIGINS', default=''),
+    *[f'https://{host}' for host in ALLOWED_HOSTS if host and not host.startswith('.')],
+)
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'accept-language',
@@ -58,7 +67,10 @@ if not REDIS_URL and CELERY_BROKER_URL:  # noqa: F405
 
 # Fail fast on boot when critical production settings are missing.
 if not ALLOWED_HOSTS:
-    raise ImproperlyConfigured('ALLOWED_HOSTS must be set in production.')
+    raise ImproperlyConfigured(
+        'ALLOWED_HOSTS must be set in production '
+        '(or rely on RENDER_EXTERNAL_HOSTNAME on Render).'
+    )
 if not CORS_ALLOWED_ORIGINS:
     raise ImproperlyConfigured('CORS_ALLOWED_ORIGINS must be set in production.')
 if SECRET_KEY.startswith('django-insecure') or SECRET_KEY.startswith('change-me'):  # noqa: F405

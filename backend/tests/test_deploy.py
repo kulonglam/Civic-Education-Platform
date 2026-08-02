@@ -3,6 +3,23 @@
 from django.test import override_settings
 
 from apps.core.checks import production_security_checks
+from apps.core.host_utils import unique_hosts
+
+
+def test_unique_hosts_merges_render_hostname():
+    hosts = unique_hosts(
+        'api.example.com',
+        'civic-education-platform-66rb.onrender.com',
+    )
+    assert hosts == [
+        'api.example.com',
+        'civic-education-platform-66rb.onrender.com',
+    ]
+
+
+def test_unique_hosts_dedupes_and_strips():
+    assert unique_hosts(' api.example.com ,api.example.com', '') == ['api.example.com']
+    assert unique_hosts('') == []
 
 
 def _run_checks(**settings):
@@ -21,6 +38,8 @@ def test_production_checks_pass_with_valid_settings():
         STRIPE_SECRET_KEY='sk_test_xxx',
         STRIPE_WEBHOOK_SECRET='whsec_xxx',
         FRONTEND_URL='https://app.example.com',
+        EMAIL_HOST='smtp.example.com',
+        SENTRY_DSN='https://example@sentry.io/1',
     )
     assert errors == []
 
