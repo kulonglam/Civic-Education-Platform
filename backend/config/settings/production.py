@@ -2,7 +2,7 @@ from decouple import config
 from corsheaders.defaults import default_headers
 from django.core.exceptions import ImproperlyConfigured
 
-from apps.core.host_utils import unique_hosts
+from apps.core.host_utils import unique_hosts, render_hostname
 
 from .base import *  # noqa: F403
 
@@ -12,7 +12,7 @@ DEBUG = False
 # RENDER_EXTERNAL_HOSTNAME (e.g. civic-education-platform-66rb.onrender.com).
 ALLOWED_HOSTS = unique_hosts(
     config('ALLOWED_HOSTS', default=''),
-    config('RENDER_EXTERNAL_HOSTNAME', default=''),
+    render_hostname(),
 )
 
 CORS_ALLOWED_ORIGINS = [

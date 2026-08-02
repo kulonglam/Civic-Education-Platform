@@ -1,14 +1,15 @@
 from decouple import config
 from corsheaders.defaults import default_headers
 
+from apps.core.host_utils import unique_hosts, render_hostname
+
 from .base import *  # noqa: F403
 
 DEBUG = True
-ALLOWED_HOSTS = [
-    host.strip()
-    for host in config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
-    if host.strip()
-]
+ALLOWED_HOSTS = unique_hosts(
+    config('ALLOWED_HOSTS', default='localhost,127.0.0.1'),
+    render_hostname(),
+)
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

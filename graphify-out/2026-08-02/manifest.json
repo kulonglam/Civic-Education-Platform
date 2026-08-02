@@ -1040,8 +1040,8 @@
     "semantic_hash": "f730251ad9b832386787d9f714f47334"
   },
   "backend/config/settings/production.py": {
-    "mtime": 1785015667.538589,
-    "ast_hash": "231f2edd3a3bd0bd6c575148dccebad2",
+    "mtime": 1785651716.8609562,
+    "ast_hash": "6a2d0ea905092e0caeb49cbff1494fb7",
     "semantic_hash": ""
   },
   "backend/config/settings/test.py": {
@@ -1120,9 +1120,9 @@
     "semantic_hash": "b92ff8cc508a8b1d8c24fd434a125a05"
   },
   "backend/tests/test_deploy.py": {
-    "mtime": 1782123325.0204177,
-    "ast_hash": "5bf674da21964a2aa4b7c413edb249cd",
-    "semantic_hash": "5bf674da21964a2aa4b7c413edb249cd"
+    "mtime": 1785651716.8619585,
+    "ast_hash": "a66a304f04b92ce9b72296725e2d1157",
+    "semantic_hash": ""
   },
   "backend/tests/test_enterprise_gaps.py": {
     "mtime": 1784582853.4200222,
@@ -1935,8 +1935,8 @@
     "semantic_hash": ""
   },
   "docs/production-launch.md": {
-    "mtime": 1784583681.0939443,
-    "ast_hash": "467df3b7d9066d29a31c4abcfc66b2bd",
+    "mtime": 1785651704.574852,
+    "ast_hash": "b5714c7dee5b78e2526e486ca9baa457",
     "semantic_hash": ""
   },
   "docs/scaling.md": {
@@ -2197,6 +2197,11 @@
   "docs/tutor-rag.md": {
     "mtime": 1785016376.125176,
     "ast_hash": "481650f728e7c0a092be59df025831e3",
+    "semantic_hash": ""
+  },
+  "backend/apps/core/host_utils.py": {
+    "mtime": 1785651713.9567544,
+    "ast_hash": "2439e5280e161a0917b9021abb7aa409",
     "semantic_hash": ""
   }
 }

@@ -22,6 +22,21 @@ def test_unique_hosts_dedupes_and_strips():
     assert unique_hosts('') == []
 
 
+def test_render_hostname_from_env(monkeypatch):
+    from apps.core.host_utils import render_hostname
+
+    monkeypatch.setenv('RENDER_EXTERNAL_HOSTNAME', 'civic-education-platform-66rb.onrender.com')
+    assert render_hostname() == 'civic-education-platform-66rb.onrender.com'
+
+
+def test_render_hostname_from_url(monkeypatch):
+    from apps.core.host_utils import render_hostname
+
+    monkeypatch.delenv('RENDER_EXTERNAL_HOSTNAME', raising=False)
+    monkeypatch.setenv('RENDER_EXTERNAL_URL', 'https://civic-education-platform-66rb.onrender.com')
+    assert render_hostname() == 'civic-education-platform-66rb.onrender.com'
+
+
 def _run_checks(**settings):
     with override_settings(DEBUG=False, **settings):
         return production_security_checks(None)

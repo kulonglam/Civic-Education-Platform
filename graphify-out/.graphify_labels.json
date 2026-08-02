@@ -221,8 +221,6 @@
   "219": "EngagementConfig",
   "220": "GamificationConfig",
   "221": "TestIntegrationsStatusEndpoint",
-  "222": "TestGamification",
-  "223": "TestGlobalSearch",
   "224": "TestTutorHistory",
   "225": "TestPendingQueue",
   "226": "TestOrgRoleRBAC",
@@ -238,6 +236,5 @@
   "236": "engagement/__init__.py",
   "237": "engagement/migrations/__init__.py",
   "238": "gamification/__init__.py",
-  "239": "gamification/migrations/__init__.py",
-  "240": "MessageSerializer"
+  "239": "gamification/migrations/__init__.py"
 }

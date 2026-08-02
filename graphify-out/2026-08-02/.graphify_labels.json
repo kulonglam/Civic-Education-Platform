@@ -225,8 +225,11 @@
   "223": "TestGlobalSearch",
   "224": "TestTutorHistory",
   "225": "TestPendingQueue",
+  "226": "TestOrgRoleRBAC",
+  "227": "TestPendingQueue",
   "228": "TestQuizzes",
   "229": "TestCertificateTask",
+  "230": "TestTutorAdminUsage",
   "231": "0006_userprofile_xp_points.py",
   "232": "engagement/migrations/0001_initial.py",
   "233": "gamification/migrations/0001_initial.py",
@@ -235,5 +238,6 @@
   "236": "engagement/__init__.py",
   "237": "engagement/migrations/__init__.py",
   "238": "gamification/__init__.py",
-  "239": "gamification/migrations/__init__.py"
+  "239": "gamification/migrations/__init__.py",
+  "240": "MessageSerializer"
 }

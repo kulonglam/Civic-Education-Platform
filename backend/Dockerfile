@@ -3,7 +3,8 @@ FROM python:3.13-slim
 # Keep Python output unbuffered so logs surface immediately
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1
+    PIP_NO_CACHE_DIR=1 \
+    DJANGO_SETTINGS_MODULE=config.settings.production
 
 WORKDIR /app
 
