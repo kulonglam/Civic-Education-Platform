@@ -337,9 +337,15 @@ JWT_COOKIE_HTTPONLY = True
 
 # ── Content Security Policy ───────────────────────────────────────────────────
 # unsafe-inline kept for Vite/React style injection; unsafe-eval removed.
+# jsdelivr: drf-spectacular Swagger UI loads swagger-ui-dist from CDN by default.
 CSP_DEFAULT_SRC = ("'self'",)
-CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'")
-CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://fonts.googleapis.com")
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net")
+CSP_STYLE_SRC = (
+    "'self'",
+    "'unsafe-inline'",
+    "https://fonts.googleapis.com",
+    "https://cdn.jsdelivr.net",
+)
 CSP_FONT_SRC = ("'self'", "data:", "https://fonts.gstatic.com")
 CSP_IMG_SRC = ("'self'", "data:", "https:", "blob:")
 CSP_CONNECT_SRC = ("'self'", config('FRONTEND_URL', default='http://localhost:5173'), "wss:")
