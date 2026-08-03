@@ -27,6 +27,6 @@ RUN DJANGO_SETTINGS_MODULE=config.settings.production \
 
 EXPOSE 8000
 
-# Default: run with Daphne (ASGI / Channels) for WebSocket support.
-# Override CMD in docker-compose for the Celery worker.
-CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "config.asgi:application"]
+# Free-tier hosts often lack Shell — migrate + seed on boot.
+# Override with a Celery worker command in docker-compose / Render Background Worker.
+CMD sh -c "python manage.py migrate --noinput && python manage.py seed_data && gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120"

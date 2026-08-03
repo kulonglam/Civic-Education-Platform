@@ -13,10 +13,21 @@ the request and cleared afterwards.
 
 import logging
 
+from django.db.utils import DatabaseError, OperationalError
+
 from .context import clear_current_organization, set_current_organization
 from .models import Membership, Organization
 
 logger = logging.getLogger(__name__)
+
+# Liveness/readiness must not depend on tenant DB lookups (or fail when
+# migrations have not run yet). Frontend and browsers may still send a slug.
+_SKIP_TENANT_PREFIXES = (
+    '/api/health/',
+    '/api/v1/health/',
+    '/api/ready/',
+    '/api/v1/ready/',
+)
 
 
 class TenantMiddleware:
@@ -32,6 +43,23 @@ class TenantMiddleware:
         return response
 
     def _resolve(self, request):
+        path = request.path if request.path.endswith('/') else f'{request.path}/'
+        if path in _SKIP_TENANT_PREFIXES or any(
+            path.startswith(prefix) for prefix in _SKIP_TENANT_PREFIXES
+        ):
+            return None
+
+        try:
+            return self._resolve_organization(request)
+        except (OperationalError, DatabaseError) as exc:
+            # Missing tables / bad DATABASE_URL should not turn every probe into 500.
+            logger.exception('Tenant resolution failed (database): %s', exc)
+            return None
+        except Exception as exc:  # noqa: BLE001
+            logger.exception('Tenant resolution failed: %s', exc)
+            return None
+
+    def _resolve_organization(self, request):
         slug = request.headers.get('X-Tenant-Slug')
         auth = request.headers.get('Authorization', '')
 
