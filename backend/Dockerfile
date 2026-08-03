@@ -21,11 +21,20 @@ COPY . .
 
 RUN chmod +x start.sh
 
-# Collect static files at build time (requires dummy env values)
+# collectstatic at image build (no live DB). Use non-localhost dummies so
+# production.py boot checks pass without connecting.
 RUN DJANGO_SETTINGS_MODULE=config.settings.production \
-    SECRET_KEY=build-dummy \
-    DATABASE_URL=postgres://x:x@localhost/x \
-    python manage.py collectstatic --noinput || true
+    SECRET_KEY=build-collectstatic-only-not-a-real-secret \
+    DATABASE_URL=postgres://build:build@db.invalid/build \
+    CELERY_BROKER_URL=redis://redis.invalid:6379/0 \
+    REDIS_URL=redis://redis.invalid:6379/0 \
+    ALLOW_DUMMY_BILLING_IN_PRODUCTION=True \
+    BILLING_PROVIDER=dummy \
+    REQUIRE_SENTRY=False \
+    EMAIL_HOST=smtp.example.com \
+    CORS_ALLOWED_ORIGINS=https://example.com \
+    ALLOWED_HOSTS=localhost \
+    python manage.py collectstatic --noinput
 
 EXPOSE 8000
 

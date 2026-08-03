@@ -54,6 +54,15 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
     'x-tenant-slug',
 ]
 
+# Prefer JSON over DRF browsable HTML in production so browser Accept: text/html
+# on /api/health/ does not pull missing static CSS from WhiteNoise.
+REST_FRAMEWORK = {
+    **REST_FRAMEWORK,  # noqa: F405
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+}
+
 SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True

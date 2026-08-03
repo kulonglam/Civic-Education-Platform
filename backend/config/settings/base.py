@@ -131,8 +131,11 @@ STORAGES = {
     'default': {
         'BACKEND': 'django.core.files.storage.FileSystemStorage',
     },
+    # CompressedStaticFilesStorage (not Manifest) — Manifest raises 500s when
+    # collectstatic is incomplete (e.g. Docker build with || true) or when the
+    # browsable API asks for DRF CSS that is missing from the hash map.
     'staticfiles': {
-        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
     },
 }
 
