@@ -1,6 +1,7 @@
 from decouple import config
 from corsheaders.defaults import default_headers
 from django.core.exceptions import ImproperlyConfigured
+import dj_database_url
 
 from apps.core.host_utils import unique_hosts, render_hostname, redis_url_points_to_localhost
 
@@ -8,9 +9,26 @@ from .base import *  # noqa: F403
 
 DEBUG = False
 
-# Do not inherit base.py's localhost Celery default in production.
+# Do not inherit base.py's localhost Celery / DB defaults in production.
 CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='')  # noqa: F405
 REDIS_URL = config('REDIS_URL', default='')  # noqa: F405
+_DATABASE_URL = config('DATABASE_URL', default='')
+if not _DATABASE_URL:
+    raise ImproperlyConfigured(
+        'DATABASE_URL is required in production. '
+        'On Render: Postgres → Info → copy Internal Database URL → set DATABASE_URL on the API service.'
+    )
+if redis_url_points_to_localhost(_DATABASE_URL):
+    raise ImproperlyConfigured(
+        'DATABASE_URL points to localhost. Set the Render Postgres Internal Database URL '
+        '(not postgres://...@localhost:5432).'
+    )
+DATABASES = {  # noqa: F405
+    'default': dj_database_url.config(
+        default=_DATABASE_URL,
+        conn_max_age=600,
+    )
+}
 
 # ALLOWED_HOSTS is set in the dashboard for custom domains. Render also injects
 # RENDER_EXTERNAL_HOSTNAME (e.g. civic-education-platform-66rb.onrender.com).
