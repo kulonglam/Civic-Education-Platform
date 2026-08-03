@@ -3,7 +3,8 @@ services:
     name: civic-education-api
     runtime: python
     plan: starter
-    buildCommand: pip install -r backend/requirements.txt && cd backend && python manage.py migrate && python manage.py collectstatic --noinput
+    # Free-tier hosts often lack Shell — migrate + seed run on every deploy instead.
+    buildCommand: pip install -r backend/requirements.txt && cd backend && python manage.py migrate --noinput && python manage.py seed_data && python manage.py collectstatic --noinput
     startCommand: cd backend && python manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
     healthCheckPath: /api/ready/
     envVars:
