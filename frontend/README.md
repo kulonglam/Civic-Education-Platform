@@ -1,6 +1,6 @@
-# Civic Education Platform — Frontend
+# Civic Education RSS — Frontend
 
-React 19 + Vite + Tailwind CSS PWA for the Civic Education Platform. Talks to the Django REST API ([../backend](../backend)).
+React 19 + Vite + Tailwind CSS PWA for the Civic Education RSS. Talks to the Django REST API ([../backend](../backend)).
 
 ## Requirements
 

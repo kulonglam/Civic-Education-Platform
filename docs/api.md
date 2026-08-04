@@ -1,4 +1,4 @@
-# Civic Education Platform API Reference
+# Civic Education RSS API Reference
 
 Base URL: `/api/`
 

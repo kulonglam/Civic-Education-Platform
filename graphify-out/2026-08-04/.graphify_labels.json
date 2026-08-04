@@ -221,6 +221,8 @@
   "219": "EngagementConfig",
   "220": "GamificationConfig",
   "221": "TestIntegrationsStatusEndpoint",
+  "222": "TestGamification",
+  "223": "TestAuditLogs",
   "224": "TestTutorHistory",
   "225": "TestPendingQueue",
   "226": "TestOrgRoleRBAC",

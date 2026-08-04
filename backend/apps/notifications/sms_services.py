@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from apps.accounts.models import PhoneOTP
+from apps.core.branding import PLATFORM_NAME
 from apps.tenants.context import get_current_organization
 
 from .models import SmsMessage
@@ -131,7 +132,7 @@ def send_password_reset_otp(user) -> SmsMessage | None:
         return None
     otp = issue_phone_otp(user, user.phone, PhoneOTP.PURPOSE_RESET)
     message = (
-        f'Your Civic Education Platform password reset code is {otp.code}. '
+        f'Your {PLATFORM_NAME} password reset code is {otp.code}. '
         f'It expires in {OTP_TTL_MINUTES} minutes.'
     )
     return queue_sms_to_phone(
@@ -147,7 +148,7 @@ def send_phone_verify_otp(user) -> SmsMessage | None:
         return None
     otp = issue_phone_otp(user, user.phone, PhoneOTP.PURPOSE_VERIFY)
     message = (
-        f'Your Civic Education Platform verification code is {otp.code}. '
+        f'Your {PLATFORM_NAME} verification code is {otp.code}. '
         f'It expires in {OTP_TTL_MINUTES} minutes.'
     )
     return queue_sms_to_phone(

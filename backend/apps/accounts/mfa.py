@@ -5,7 +5,7 @@ from __future__ import annotations
 import secrets
 
 import pyotp
-from django.conf import settings
+from apps.core.branding import PLATFORM_NAME
 from django.core.cache import cache
 
 from apps.tenants.models import Membership
@@ -51,7 +51,7 @@ def verify_totp_code(secret: str, code: str) -> bool:
 
 
 def provisioning_uri(user, secret: str) -> str:
-    issuer = getattr(settings, 'MFA_ISSUER_NAME', 'Civic Education Platform')
+    issuer = getattr(settings, 'MFA_ISSUER_NAME', PLATFORM_NAME)
     return totp_for_secret(secret).provisioning_uri(name=user.email, issuer_name=issuer)
 
 

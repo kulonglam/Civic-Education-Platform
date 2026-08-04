@@ -16,6 +16,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from apps.audit.services import log_activity
+from apps.core.branding import PLATFORM_NAME
 from apps.core.permissions import IsAdmin, IsModeratorOrAdmin
 from apps.core.security import log_security_event
 from apps.core.serializers import MessageSerializer
@@ -68,7 +69,7 @@ class RegisterView(generics.CreateAPIView):
         )
         verify_url = f'{settings.FRONTEND_URL}/verify-email/{token}'
         send_email_task.delay(
-            'Verify your Civic Education Platform account',
+            f'Verify your {PLATFORM_NAME} account',
             f'Click to verify your email: {verify_url}',
             [user.email],
         )
@@ -302,7 +303,7 @@ class ResendVerificationEmailView(APIView):
         )
         verify_url = f'{settings.FRONTEND_URL}/verify-email/{token}'
         send_email_task.delay(
-            'Verify your Civic Education Platform account',
+            f'Verify your {PLATFORM_NAME} account',
             f'Click to verify your email: {verify_url}',
             [user.email],
         )

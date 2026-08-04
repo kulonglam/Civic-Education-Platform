@@ -1,6 +1,6 @@
 # Testing & CI
 
-How the Civic Education Platform is verified in CI and locally.
+How the Civic Education RSS is verified in CI and locally.
 
 ## CI pipeline (`.github/workflows/ci.yml`)
 

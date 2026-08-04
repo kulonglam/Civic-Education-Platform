@@ -1,4 +1,4 @@
-"""Custom middleware for the Civic Education Platform."""
+"""Custom middleware for Civic Education RSS."""
 
 from django.conf import settings
 from django.http import JsonResponse

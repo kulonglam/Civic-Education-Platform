@@ -5,6 +5,7 @@ from django.db import transaction
 from django.utils import timezone
 from django.utils.text import slugify
 
+from apps.core.branding import PLATFORM_NAME
 from apps.core.tasks import send_email_task
 
 from .models import Membership, Organization, OrganizationInvite
@@ -105,7 +106,7 @@ def create_organization_invite(
         f'You are invited to join {organization.name}',
         (
             f'{invited_by.full_name if invited_by else "An administrator"} invited you to join '
-            f'"{organization.name}" on the Civic Education Platform.\n\n'
+            f'"{organization.name}" on {PLATFORM_NAME}.\n\n'
             f'Accept your invitation: {invite_url}\n\n'
             f'This link expires in {INVITE_TTL_DAYS} days.'
         ),

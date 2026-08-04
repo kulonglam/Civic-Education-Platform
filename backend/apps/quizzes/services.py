@@ -5,6 +5,7 @@ from django.utils import timezone
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
+from apps.core.branding import PLATFORM_NAME
 from apps.core.storage import upload_bytesio
 
 from .models import Certificate
@@ -24,7 +25,7 @@ def generate_certificate_pdf(certificate: Certificate) -> str | None:
     c.setFont('Helvetica-Bold', 24)
     c.drawCentredString(width / 2, height - 100, 'Certificate of Completion')
     c.setFont('Helvetica', 14)
-    c.drawCentredString(width / 2, height - 150, 'Civic Education Platform')
+    c.drawCentredString(width / 2, height - 150, PLATFORM_NAME)
     c.setFont('Helvetica', 12)
     c.drawCentredString(width / 2, height - 200, 'This certifies that')
     c.setFont('Helvetica-Bold', 16)

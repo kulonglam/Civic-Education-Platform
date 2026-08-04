@@ -1,4 +1,4 @@
-"""ASGI config for Civic Education Platform.
+"""ASGI config for Civic Education RSS.
 
 Handles both HTTP (via Django WSGI-over-ASGI shim) and WebSocket
 connections (via Django Channels / Daphne).

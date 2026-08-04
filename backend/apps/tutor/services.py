@@ -9,6 +9,7 @@ from django.utils import timezone
 from rest_framework.exceptions import APIException, ValidationError
 
 from apps.billing.services import get_active_plan
+from apps.core.branding import PLATFORM_NAME
 from apps.core.constants import normalize_language
 from apps.learning.models import Article
 from apps.tenants.context import get_current_organization
@@ -145,7 +146,7 @@ def _build_system_prompt(
     lang = _user_language(user)
     lang_name = LANGUAGE_NAMES.get(lang, 'English')
     org = get_current_organization() or get_user_organization(user)
-    org_name = org.name if org else 'Civic Education Platform'
+    org_name = org.name if org else PLATFORM_NAME
 
     prompt = (
         'You are a civic education tutor for citizens of South Sudan on the '

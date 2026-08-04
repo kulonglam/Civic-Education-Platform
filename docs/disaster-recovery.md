@@ -1,6 +1,6 @@
 # Disaster recovery
 
-Backup and restore procedures for the Civic Education Platform (PostgreSQL).
+Backup and restore procedures for the Civic Education RSS (PostgreSQL).
 
 ## Automated backup
 

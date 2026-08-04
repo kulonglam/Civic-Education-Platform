@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 
 from apps.audit.services import log_activity
 from apps.billing.services import check_quota
+from apps.core.branding import PLATFORM_NAME
 from apps.core.serializers import MessageSerializer
 from apps.core.tasks import send_email_task
 
@@ -137,7 +138,7 @@ class MemberInviteView(APIView):
             )
             send_email_task.delay(
                 f'You were added to {organization.name}',
-                f'You now have access to "{organization.name}" on the Civic Education Platform.',
+                f'You now have access to "{organization.name}" on {PLATFORM_NAME}.',
                 [email],
             )
             log_activity(

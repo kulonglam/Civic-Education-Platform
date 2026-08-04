@@ -6,6 +6,7 @@ from pathlib import Path
 
 from apps.accounts.models import Role
 from apps.billing.models import Plan, Subscription
+from apps.core.branding import PLATFORM_NAME
 from apps.core.storage import upload_file
 from apps.forum.models import DiscussionComment, DiscussionTopic
 from apps.learning.models import Article, Category, MediaAsset
@@ -177,7 +178,7 @@ DEMO_MEDIA = [
 ]
 
 PUBLIC_ORG_SLUG = 'platform-demo'
-PUBLIC_ORG_NAME = 'Civic Education Platform'
+PUBLIC_ORG_NAME = PLATFORM_NAME
 PUBLIC_ORG_TAGLINE = 'Building informed citizens'
 
 PLANS = [

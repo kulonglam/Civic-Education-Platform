@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Civic Education Platform",
+    "name": "Civic Education RSS",
     "tagline": "Building informed citizens"
   },
   "footer": {
@@ -24,7 +24,7 @@
     "privacy": {
       "title": "Privacy Policy",
       "lastUpdated": "Last updated: June 2026",
-      "intro": "The Civic Education Platform respects your privacy. This policy explains what we collect, why we collect it, and how we protect your information.",
+      "intro": "The Civic Education RSS respects your privacy. This policy explains what we collect, why we collect it, and how we protect your information.",
       "sections": [
         {
           "title": "Information we collect",
@@ -55,7 +55,7 @@
     "terms": {
       "title": "Terms of Service",
       "lastUpdated": "Last updated: June 2026",
-      "intro": "By using the Civic Education Platform, you agree to these terms. Please read them carefully.",
+      "intro": "By using the Civic Education RSS, you agree to these terms. Please read them carefully.",
       "sections": [
         {
           "title": "Acceptable use",
@@ -156,7 +156,7 @@
     "loginTitle": "Welcome back",
     "loginPanelTitle": "Secure access for civic learning",
     "loginPanelSubtitle": "Sign in to your organization workspace, continue courses offline, and manage institutional programs.",
-    "registerPanelTitle": "Join the Civic Education Platform",
+    "registerPanelTitle": "Join the Civic Education RSS",
     "registerSuccessTitle": "Check your email",
     "secureAccess": "Secure access",
     "getStarted": "Get started",

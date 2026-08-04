@@ -88,7 +88,7 @@ def fetch_attachment_bytes(attachment_url: str) -> bytes | None:
         return None
 
     try:
-        request = Request(url, headers={'User-Agent': 'CivicEducationPlatform-Tutor/1.0'})
+        request = Request(url, headers={'User-Agent': 'CivicEducationRSS-Tutor/1.0'})
         with urlopen(request, timeout=PDF_FETCH_TIMEOUT) as response:
             data = response.read(MAX_PDF_BYTES + 1)
             if len(data) > MAX_PDF_BYTES:

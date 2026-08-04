@@ -4,6 +4,8 @@ from pathlib import Path
 import dj_database_url
 from decouple import config
 
+from apps.core.branding import PLATFORM_NAME, PLATFORM_NAME_API
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-dev-key-change-in-production')
@@ -189,7 +191,7 @@ SIMPLE_JWT = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Civic Education Platform API',
+    'TITLE': PLATFORM_NAME_API,
     'DESCRIPTION': 'REST API for civic education, quizzes, forum, and analytics.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
@@ -326,7 +328,7 @@ LOGGING = {
     },
 }
 
-MFA_ISSUER_NAME = config('MFA_ISSUER_NAME', default='Civic Education Platform')
+MFA_ISSUER_NAME = config('MFA_ISSUER_NAME', default=PLATFORM_NAME)
 
 # Privileged-role idle timeout (seconds). Enforced server-side via cache.
 SESSION_IDLE_TIMEOUT_SECONDS = config('SESSION_IDLE_TIMEOUT_SECONDS', default=30 * 60, cast=int)

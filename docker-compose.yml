@@ -1,6 +1,6 @@
 version: '3.9'
 
-# ── Civic Education Platform – local dev stack ─────────────────────────────
+# ── Civic Education RSS – local dev stack ─────────────────────────────
 # Starts: PostgreSQL, Redis, Django (Daphne/ASGI), Celery worker, and the
 # Vite dev server.  The frontend proxies /api/ to the Django service.
 #

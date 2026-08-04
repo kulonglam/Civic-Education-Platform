@@ -1,4 +1,4 @@
-"""WSGI config for Civic Education Platform."""
+"""WSGI config for Civic Education RSS."""
 
 import os
 
