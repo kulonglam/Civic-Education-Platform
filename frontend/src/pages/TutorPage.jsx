@@ -97,7 +97,6 @@ export function TutorPage() {
   const articleId = searchParams.get('article') || undefined;
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
-  const [streaming, setStreaming] = useState(false);
   const [streamText, setStreamText] = useState('');
   const streamAbortRef = useRef(null);
   const [viewingHistory, setViewingHistory] = useState(false);
@@ -163,7 +162,6 @@ export function TutorPage() {
 
   const sendMessage = useMutation({
     mutationFn: async (message) => {
-      setStreaming(true);
       setStreamText('');
       streamAbortRef.current?.abort();
       const controller = new AbortController();
@@ -200,7 +198,6 @@ export function TutorPage() {
       setInput('');
     },
     onSuccess: ({ data, streamed, reply }) => {
-      setStreaming(false);
       setStreamText('');
       setMessages((prev) => [
         ...prev,
@@ -225,7 +222,6 @@ export function TutorPage() {
       inputRef.current?.focus();
     },
     onError: (err) => {
-      setStreaming(false);
       setStreamText('');
       setMessages((prev) => {
         const last = prev[prev.length - 1];

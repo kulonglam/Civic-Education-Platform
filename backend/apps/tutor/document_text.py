@@ -8,7 +8,7 @@ import re
 from io import BytesIO
 from pathlib import Path
 from urllib.error import URLError
-from urllib.request import Request, urlopen
+from urllib.request import Request
 
 from django.conf import settings
 from django.core.cache import cache
@@ -88,8 +88,10 @@ def fetch_attachment_bytes(attachment_url: str) -> bytes | None:
         return None
 
     try:
+        from apps.core.safe_http import safe_urlopen
+
         request = Request(url, headers={'User-Agent': 'CivicEducationRSS-Tutor/1.0'})
-        with urlopen(request, timeout=PDF_FETCH_TIMEOUT) as response:
+        with safe_urlopen(request, timeout=PDF_FETCH_TIMEOUT, allow_http=True) as response:
             data = response.read(MAX_PDF_BYTES + 1)
             if len(data) > MAX_PDF_BYTES:
                 logger.warning('Attachment too large for tutor extraction: %s', url)

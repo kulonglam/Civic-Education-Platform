@@ -140,8 +140,8 @@
     "semantic_hash": "df405daee8e6d0ff262deefde497377e"
   },
   "backend/apps/accounts/views.py": {
-    "mtime": 1785826361.929679,
-    "ast_hash": "09fac5e038f584cc04bf40c0312fcbde",
+    "mtime": 1785826502.8381753,
+    "ast_hash": "ce41fb937a424c63c13c55e9117f7153",
     "semantic_hash": ""
   },
   "backend/apps/analytics/__init__.py": {
@@ -1210,9 +1210,9 @@
     "semantic_hash": "a248c30af3cce1bfc45d326a132669b6"
   },
   "backend/tests/test_seed_content.py": {
-    "mtime": 1782330684.6695588,
-    "ast_hash": "6b04e0b35442b0d349dd912d9a312e1e",
-    "semantic_hash": "6b04e0b35442b0d349dd912d9a312e1e"
+    "mtime": 1785827799.473469,
+    "ast_hash": "efe3ebfe29236823838d5149470f4e44",
+    "semantic_hash": ""
   },
   "backend/tests/test_sms.py": {
     "mtime": 1782322986.9552407,
@@ -1675,8 +1675,8 @@
     "semantic_hash": "36e0d152b7e8110f8e4362694623c323"
   },
   "frontend/src/pages/DashboardPage.jsx": {
-    "mtime": 1785016006.0873737,
-    "ast_hash": "8553a8fe6f79bf06232d88c9b750b745",
+    "mtime": 1785827291.777373,
+    "ast_hash": "2ee30d6f578468a5a5889e66b712f005",
     "semantic_hash": ""
   },
   "frontend/src/pages/ForgotPasswordPage.jsx": {
@@ -1695,9 +1695,9 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/HomePage.test.jsx": {
-    "mtime": 1784613425.807272,
-    "ast_hash": "40aa1a8ea6b967b6b5dc0accc4ad82fb",
-    "semantic_hash": "40aa1a8ea6b967b6b5dc0accc4ad82fb"
+    "mtime": 1785827520.3448431,
+    "ast_hash": "dbce10651165087e7e6f45c8af32881b",
+    "semantic_hash": ""
   },
   "frontend/src/pages/LegalPage.jsx": {
     "mtime": 1785016051.098948,
@@ -1815,8 +1815,8 @@
     "semantic_hash": "e844f6394ce31dd6794aba70564b8be5"
   },
   "frontend/src/pages/TutorPage.jsx": {
-    "mtime": 1785016040.8674436,
-    "ast_hash": "5196d458b5e3188a09acb0e187859d85",
+    "mtime": 1785827303.0306277,
+    "ast_hash": "d709ae2abfe53ba3f96208784d77c688",
     "semantic_hash": ""
   },
   "frontend/src/pages/VerifyEmailPage.jsx": {
@@ -1870,8 +1870,8 @@
     "semantic_hash": ""
   },
   "backend/apps/tutor/document_text.py": {
-    "mtime": 1785826407.587152,
-    "ast_hash": "f568aa999604c57254d15ae398fd73f7",
+    "mtime": 1785827700.556198,
+    "ast_hash": "af2dbf0a1a5bda751ec1c6e8a3b556a8",
     "semantic_hash": ""
   },
   "backend/tests/test_learning_progress.py": {
@@ -1900,8 +1900,8 @@
     "semantic_hash": ""
   },
   "backend/requirements.txt": {
-    "mtime": 1785011722.770675,
-    "ast_hash": "a6a486acc6698bc90a3faf2edebebbfd",
+    "mtime": 1785827701.1716473,
+    "ast_hash": "7e9e14eda1071685ac1bc5f027807c26",
     "semantic_hash": ""
   },
   "docker-compose.yml": {

@@ -42,7 +42,7 @@ describe('HomePage', () => {
 
     expect(screen.getByText(/welcome back, amina/i)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /continue learning/i })).toHaveAttribute('href', '/articles');
-    expect(screen.getByRole('link', { name: /go to dashboard/i })).toHaveAttribute('href', '/dashboard');
+    expect(screen.getByRole('link', { name: /my progress/i })).toHaveAttribute('href', '/dashboard');
     expect(screen.queryByRole('link', { name: /^get started$/i })).not.toBeInTheDocument();
   });
 });

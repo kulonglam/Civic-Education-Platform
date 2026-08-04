@@ -2,6 +2,7 @@ import pytest
 from django.core.management import call_command
 from rest_framework import status
 
+from apps.accounts.management.commands.seed_data import DEMO_ARTICLES, resolve_constitution_attachment
 from apps.forum.models import DiscussionTopic
 from apps.learning.models import Article
 from apps.quizzes.models import Quiz
@@ -34,9 +35,13 @@ class TestSeedDataContent:
 
     def test_seed_constitution_article_has_pdf_attachment(self):
         call_command('seed_data')
+        constitution_entry = next(
+            article for article in DEMO_ARTICLES if article['title'] == 'Understanding the Transitional Constitution'
+        )
+        _, expected_name = resolve_constitution_attachment(constitution_entry)
         article = Article.objects.get(
             organization__slug='platform-demo',
             title='Understanding the Transitional Constitution',
         )
         assert article.attachment_url.startswith('http')
-        assert article.attachment_name == 'Transitional Constitution (Sample).pdf'
+        assert article.attachment_name == expected_name
