@@ -20,6 +20,13 @@ PDF_FETCH_TIMEOUT = 30
 MAX_PDF_BYTES = 20 * 1024 * 1024
 
 
+def sanitize_text_for_db(text: str) -> str:
+    """PostgreSQL text fields reject NUL (0x00) bytes; PDF extractors may emit them."""
+    if not text:
+        return ''
+    return text.replace('\x00', '')
+
+
 def extract_pdf_text(data: bytes) -> str:
     """Return plain text from PDF bytes; empty string on failure."""
     if not data or not data.lstrip().startswith(b'%PDF'):
@@ -33,7 +40,7 @@ def extract_pdf_text(data: bytes) -> str:
             text = page.extract_text() or ''
             if text.strip():
                 parts.append(text)
-        return re.sub(r'\s+', ' ', ' '.join(parts)).strip()
+        return sanitize_text_for_db(re.sub(r'\s+', ' ', ' '.join(parts)).strip())
     except Exception as exc:  # noqa: BLE001
         logger.warning('PDF text extraction failed: %s', exc)
         return ''

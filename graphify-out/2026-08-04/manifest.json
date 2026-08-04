@@ -40,8 +40,8 @@
     "semantic_hash": "456f62d70adac3077425ed6899c901c0"
   },
   "backend/apps/accounts/management/commands/seed_data.py": {
-    "mtime": 1785824467.0251377,
-    "ast_hash": "537bdb845ba8faac9f276b496608bde4",
+    "mtime": 1785014517.238383,
+    "ast_hash": "4b3f2250215aa5c18f63a0eb00e6a51a",
     "semantic_hash": ""
   },
   "backend/apps/accounts/mfa.py": {
@@ -335,8 +335,8 @@
     "semantic_hash": "4b1c252bb2cc5a681e7db989af12e2ad"
   },
   "backend/apps/core/checks.py": {
-    "mtime": 1785702747.6704884,
-    "ast_hash": "536abb101afc4ff34bf9698c5476a872",
+    "mtime": 1785015666.5968246,
+    "ast_hash": "6f7b22d07bc2b917ba120e5f71964058",
     "semantic_hash": ""
   },
   "backend/apps/core/constants.py": {
@@ -850,9 +850,9 @@
     "semantic_hash": "1b2c43d80249e3fd548c81f4606cb689"
   },
   "backend/apps/tenants/middleware.py": {
-    "mtime": 1785733319.3925052,
-    "ast_hash": "c01ad028c9db2bc4e1c7a14beffe7740",
-    "semantic_hash": ""
+    "mtime": 1782121682.6858375,
+    "ast_hash": "dba53265ca8ca247f85e81dcd3e1cfc1",
+    "semantic_hash": "dba53265ca8ca247f85e81dcd3e1cfc1"
   },
   "backend/apps/tenants/migrations/0001_initial.py": {
     "mtime": 1782070025.291217,
@@ -1030,8 +1030,8 @@
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "backend/config/settings/base.py": {
-    "mtime": 1785740504.5656054,
-    "ast_hash": "26b00ded1c69b1b2610d5c477ff3a1fc",
+    "mtime": 1785014473.8786926,
+    "ast_hash": "f3d3d9849c927a9746fa175630b97ba9",
     "semantic_hash": ""
   },
   "backend/config/settings/development.py": {
@@ -1040,8 +1040,8 @@
     "semantic_hash": ""
   },
   "backend/config/settings/production.py": {
-    "mtime": 1785740507.2580836,
-    "ast_hash": "5a55cc979a763af73ecd7539cb9b047b",
+    "mtime": 1785683624.147732,
+    "ast_hash": "9ca9d54435141b1f8e44967f76eda1b3",
     "semantic_hash": ""
   },
   "backend/config/settings/test.py": {
@@ -1120,8 +1120,8 @@
     "semantic_hash": "b92ff8cc508a8b1d8c24fd434a125a05"
   },
   "backend/tests/test_deploy.py": {
-    "mtime": 1785707967.7145553,
-    "ast_hash": "2ca980a048cdacde21b97f4462f3681c",
+    "mtime": 1785683644.9694273,
+    "ast_hash": "21ce3a4edbe62572991fcdfc553bf00b",
     "semantic_hash": ""
   },
   "backend/tests/test_enterprise_gaps.py": {
@@ -1230,8 +1230,8 @@
     "semantic_hash": ""
   },
   "backend/tests/test_tutor_retrieval.py": {
-    "mtime": 1785824479.371736,
-    "ast_hash": "5b1e8eed330de318b932c04548ba844b",
+    "mtime": 1785011736.155057,
+    "ast_hash": "82d777d03a1615ab0e98a87e089ef91b",
     "semantic_hash": ""
   },
   "backend/tests/test_user_roles.py": {
@@ -1870,8 +1870,8 @@
     "semantic_hash": ""
   },
   "backend/apps/tutor/document_text.py": {
-    "mtime": 1785824463.3020954,
-    "ast_hash": "72c1dd8c7e19d69924dee5b73b2597b1",
+    "mtime": 1785014452.3880155,
+    "ast_hash": "ada9522175786a9d9e885ad21ddaf211",
     "semantic_hash": ""
   },
   "backend/tests/test_learning_progress.py": {
@@ -1930,8 +1930,8 @@
     "semantic_hash": ""
   },
   "docs/production-env-checklist.md": {
-    "mtime": 1785702467.4762273,
-    "ast_hash": "5cdc3533d95b0c673d899b52beeed75c",
+    "mtime": 1785015683.434455,
+    "ast_hash": "20a5f674f097d688482c7433bfa4ecb4",
     "semantic_hash": ""
   },
   "docs/production-launch.md": {
@@ -1955,8 +1955,8 @@
     "semantic_hash": ""
   },
   "render.yaml": {
-    "mtime": 1785732408.7013662,
-    "ast_hash": "88b901223c382cca92161094d3a5a40b",
+    "mtime": 1784581380.1655927,
+    "ast_hash": "477bb02fe60ea33cb6380e9bf96bef43",
     "semantic_hash": ""
   },
   "backend/apps/accounts/management/commands/seed_assets/transitional-constitution-sample.pdf": {
@@ -2020,8 +2020,8 @@
     "semantic_hash": ""
   },
   "backend/apps/core/integrations.py": {
-    "mtime": 1785702453.136675,
-    "ast_hash": "6b56e7593bdb36cde429b0d24ccb7c9c",
+    "mtime": 1785015712.422248,
+    "ast_hash": "c34f6bc2c8312eab8c9b1089ff699429",
     "semantic_hash": ""
   },
   "backend/apps/core/management/commands/check_integrations.py": {
@@ -2130,8 +2130,8 @@
     "semantic_hash": ""
   },
   "backend/apps/learning/tutor_index.py": {
-    "mtime": 1785824446.4015894,
-    "ast_hash": "2a579503199594fc60885db7fd30ea16",
+    "mtime": 1785014442.1396158,
+    "ast_hash": "207cd80c40e09e95bffa8eb30a2eb1d9",
     "semantic_hash": ""
   },
   "backend/apps/learning/urls/search.py": {
@@ -2200,13 +2200,8 @@
     "semantic_hash": ""
   },
   "backend/apps/core/host_utils.py": {
-    "mtime": 1785707967.192342,
-    "ast_hash": "7cb6a47cf6633eca22f8a8ec5360fe43",
-    "semantic_hash": ""
-  },
-  "backend/start.sh": {
-    "mtime": 1785734793.2410045,
-    "ast_hash": "142764f8830a3e22f78c5836ed46b8bd",
+    "mtime": 1785683630.4856093,
+    "ast_hash": "a7e906da16f62dbc8a961a638ce975fc",
     "semantic_hash": ""
   }
 }

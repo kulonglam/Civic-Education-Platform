@@ -41,10 +41,12 @@ CONSTITUTION_INTRO_AR = (
 
 
 def load_constitution_text() -> str | None:
+    from apps.tutor.document_text import sanitize_text_for_db
+
     path = SEED_ASSETS_DIR / CONSTITUTION_TEXT_FILE
     if not path.is_file():
         return None
-    text = path.read_text(encoding='utf-8').strip()
+    text = sanitize_text_for_db(path.read_text(encoding='utf-8').strip())
     return text or None
 
 

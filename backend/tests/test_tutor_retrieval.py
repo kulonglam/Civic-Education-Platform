@@ -4,7 +4,7 @@ from io import BytesIO
 from reportlab.pdfgen import canvas
 
 from apps.learning.models import Article, Category
-from apps.tutor.document_text import extract_pdf_text, get_attachment_text
+from apps.tutor.document_text import extract_pdf_text, get_attachment_text, sanitize_text_for_db
 from apps.tutor.retrieval import (
     CATEGORY_SLUGS,
     chunk_text,
@@ -156,6 +156,27 @@ class TestDocumentText:
         text = extract_pdf_text(_make_pdf('Article 9. Citizenship and nationality.'))
         assert 'Article 9' in text
         assert 'Citizenship' in text
+
+    def test_sanitize_text_for_db_strips_nul(self):
+        assert sanitize_text_for_db('hello\x00world') == 'helloworld'
+        assert '\x00' not in sanitize_text_for_db('a\x00b\x00c')
+
+    @pytest.mark.django_db
+    def test_tutor_index_strips_nul_from_article_body(self, org, admin_user):
+        from apps.learning.tutor_index import build_tutor_index_text
+
+        category = Category.objects.create(organization=org, name='Gov', slug='governance')
+        article = Article.objects.create(
+            organization=org,
+            title='NUL test',
+            content='Rights\x00and duties',
+            category=category,
+            author=admin_user,
+            status='published',
+        )
+        index = build_tutor_index_text(article)
+        assert '\x00' not in index
+        assert 'Rightsand duties' in index
 
     def test_get_attachment_text_caches_local_pdf(self, settings, tmp_path):
         settings.MEDIA_ROOT = tmp_path
