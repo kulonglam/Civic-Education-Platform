@@ -19,6 +19,8 @@ jobs:
       security-events: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -28,7 +30,7 @@ jobs:
           cache-dependency-path: backend/requirements.txt
 
       - name: Install security tools
-        run: pip install bandit safety
+        run: pip install bandit==1.9.4 safety==3.8.1
 
       - name: SAST – Bandit
         working-directory: backend
@@ -40,10 +42,16 @@ jobs:
         working-directory: backend
         run: safety check -r requirements.txt --full-report
 
+      # gitleaks-action@v2 runs on Node 20, which GitHub-hosted runners reject
+      # as of June 2026. The CLI is free and does not need GITLEAKS_LICENSE.
       - name: Secret scanning – Gitleaks
-        uses: gitleaks/gitleaks-action@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_VERSION: 8.30.1
+        run: |
+          set -euo pipefail
+          curl -sSL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            | tar -xz -C /tmp
+          /tmp/gitleaks detect --source . --verbose --redact --exit-code 1
 
   backend:
     name: Backend (pytest)
@@ -110,7 +118,7 @@ jobs:
         run: npm run build
 
       - name: Install Playwright browser
-        run: npx playwright install chromium
+        run: npx playwright install --with-deps chromium
 
       - name: E2E tests (mocked API)
         run: npm run test:e2e
@@ -185,7 +193,7 @@ jobs:
         run: npm ci
 
       - name: Install Playwright browser
-        run: npx playwright install chromium
+        run: npx playwright install --with-deps chromium
 
       - name: Live E2E tests
         run: npm run test:e2e:live

@@ -1,0 +1,16 @@
+title = "Civic Education RSS"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Generated graph output and documented/test placeholders"
+paths = [
+  '''graphify-out/''',
+]
+regexes = [
+  '''sk-ant-test''',
+  '''sk-ant-\.\.\.''',
+  '''sk_test_xxx''',
+  '''whsec_xxx''',
+]
