@@ -304,6 +304,7 @@ export function Layout() {
     { to: '/courses', label: t('nav.courses') },
     { to: '/news', label: t('nav.news') },
     { to: '/events', label: t('nav.events') },
+    { to: '/map', label: t('nav.map') },
     { to: '/awareness', label: t('nav.awareness') },
     { to: '/media', label: t('nav.media') },
     { to: '/search', label: t('nav.search') },
@@ -313,6 +314,7 @@ export function Layout() {
     { to: '/tutor', label: t('nav.tutor'), auth: true },
     ...(user ? [{ to: '/saved', label: t('nav.saved') }] : []),
     ...(user ? [{ to: '/dashboard', label: t('nav.dashboard') }] : []),
+    ...(user ? [{ to: '/leaderboard', label: t('nav.leaderboard') }] : []),
   ].filter((link) => !link.auth || user);
 
   const learnMenuItems = learnLinks.map(({ to, label }) => ({ to, label }));

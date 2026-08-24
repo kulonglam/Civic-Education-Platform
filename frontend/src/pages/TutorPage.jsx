@@ -10,6 +10,7 @@ import { formatDate } from '../lib/format';
 import { localizedArticle } from '../lib/localizedContent';
 import { streamTutorChat } from '../lib/tutorStream';
 import { articleService, tutorService } from '../lib/services';
+import { VoiceInputButton } from '../components/VoiceInputButton';
 
 function UsageMeter({ usage }) {
   const { t } = useTranslation();
@@ -430,6 +431,10 @@ export function TutorPage() {
                 e.currentTarget.form?.requestSubmit();
               }
             }}
+          />
+          <VoiceInputButton
+            disabled={sendMessage.isPending || atLimit}
+            onTranscript={(text) => setInput((prev) => (prev ? `${prev} ${text}` : text))}
           />
           <button
             type="submit"

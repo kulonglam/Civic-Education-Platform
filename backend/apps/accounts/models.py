@@ -115,6 +115,10 @@ class UserProfile(models.Model):
         default='',
         help_text='Optional age range used only in aggregated poll summaries.',
     )
+    show_on_leaderboard = models.BooleanField(
+        default=True,
+        help_text='If false, the learner is omitted from public XP rankings.',
+    )
 
     class Meta:
         db_table = 'user_profiles'

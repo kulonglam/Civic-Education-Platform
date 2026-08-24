@@ -61,6 +61,8 @@ function AdminPage() {
   const [misinfoReports, setMisinfoReports] = useState([]);
   const [platformMessage, setPlatformMessage] = useState('');
   const [platformSmsBusy, setPlatformSmsBusy] = useState(false);
+  const [platformWhatsApp, setPlatformWhatsApp] = useState('');
+  const [platformWhatsAppBusy, setPlatformWhatsAppBusy] = useState(false);
   const [auditLogs, setAuditLogs] = useState([]);
   const [pushStats, setPushStats] = useState(null);
   const [pushCleanupBusy, setPushCleanupBusy] = useState(false);
@@ -220,6 +222,20 @@ function AdminPage() {
       toast.error(extractError(err));
     } finally {
       setPlatformSmsBusy(false);
+    }
+  };
+
+  const sendPlatformWhatsApp = async (e) => {
+    e.preventDefault();
+    setPlatformWhatsAppBusy(true);
+    try {
+      const { data } = await notifyService.platformWhatsAppBroadcast(platformWhatsApp);
+      setPlatformWhatsApp('');
+      toast.success(data.message || t('admin.civicWhatsAppQueued'));
+    } catch (err) {
+      toast.error(extractError(err));
+    } finally {
+      setPlatformWhatsAppBusy(false);
     }
   };
 
@@ -979,6 +995,21 @@ function AdminPage() {
               />
               <button type="submit" className="btn-primary" disabled={!platformMessage.trim() || platformSmsBusy}>
                 {platformSmsBusy ? t('common.loading') : t('admin.civicSmsSend')}
+              </button>
+            </form>
+            <form onSubmit={sendPlatformWhatsApp} className="mt-8 space-y-3 border-t border-gray-100 pt-6 dark:border-slate-700">
+              <h3 className="text-base font-semibold text-gray-900 dark:text-slate-100">{t('admin.civicWhatsAppTitle')}</h3>
+              <p className="text-sm text-gray-500 dark:text-slate-400">{t('admin.civicWhatsAppSubtitle')}</p>
+              <textarea
+                className="input min-h-[100px]"
+                placeholder={t('admin.civicWhatsAppPlaceholder')}
+                value={platformWhatsApp}
+                onChange={(e) => setPlatformWhatsApp(e.target.value)}
+                required
+                maxLength={1000}
+              />
+              <button type="submit" className="btn-primary" disabled={!platformWhatsApp.trim() || platformWhatsAppBusy}>
+                {platformWhatsAppBusy ? t('common.loading') : t('admin.civicWhatsAppSend')}
               </button>
             </form>
           </div>

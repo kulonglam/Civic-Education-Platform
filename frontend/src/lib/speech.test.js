@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { pickVoice } from './speech';
+import { pickVoice, recognitionLanguage } from './speech';
 
 describe('pickVoice', () => {
   it('prefers an Arabic voice for Arabic read-aloud', () => {
@@ -25,5 +25,15 @@ describe('pickVoice', () => {
       { lang: 'en-US', name: 'US English' },
     ];
     expect(pickVoice('en', voices)?.name).toBe('US English');
+  });
+});
+
+describe('recognitionLanguage', () => {
+  it('uses Egyptian Arabic for Arabic dictation', () => {
+    expect(recognitionLanguage('ar')).toBe('ar-EG');
+  });
+
+  it('uses US English for English dictation', () => {
+    expect(recognitionLanguage('en')).toBe('en-US');
   });
 });

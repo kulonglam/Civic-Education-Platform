@@ -6,6 +6,7 @@ from apps.core.utils import get_preferred_language
 from apps.tenants.context import get_current_organization
 
 from .calendar import google_calendar_url
+from .maps import EVENT_REGION_VALUES
 from .models import (
     Campaign,
     CampaignSignup,
@@ -359,13 +360,21 @@ class CivicEventSerializer(serializers.ModelSerializer):
             'source_name', 'source_url', 'created_at', 'updated_at',
             'created_by_name', 'registered_count', 'spots_left',
             'user_registered', 'user_reminder', 'google_calendar_url',
-            'is_cancelled',
+            'is_cancelled', 'region', 'latitude', 'longitude',
         ]
         read_only_fields = [
             'id', 'created_at', 'updated_at', 'created_by_name',
             'registered_count', 'spots_left', 'user_registered',
             'user_reminder', 'google_calendar_url', 'is_cancelled',
         ]
+
+    def validate_region(self, value):
+        region = value or ''
+        if region not in EVENT_REGION_VALUES:
+            raise serializers.ValidationError(
+                'Choose a mapped South Sudan state, other, or leave nationwide.',
+            )
+        return region
 
     def validate(self, attrs):
         kind = attrs.get('kind', getattr(self.instance, 'kind', None))

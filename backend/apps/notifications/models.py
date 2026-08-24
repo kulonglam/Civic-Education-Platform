@@ -97,6 +97,10 @@ class NotificationPreference(models.Model):
     certificate_push = models.BooleanField(null=True, blank=True, default=None)
     forum_push = models.BooleanField(null=True, blank=True, default=None)
     announcement_sms = models.BooleanField(null=True, blank=True, default=None)
+    whatsapp = models.BooleanField(
+        default=False,
+        help_text='Send civic alerts on WhatsApp (same phone number as SMS).',
+    )
 
     class Meta:
         db_table = 'notification_preferences'
@@ -117,6 +121,61 @@ class NotificationPreference(models.Model):
             'announcement': self.announcement_sms,
         }.get(notification_type)
         return self.sms if override is None else override
+
+    def wants_whatsapp(self, notification_type: str) -> bool:  # noqa: ARG002
+        return bool(self.whatsapp)
+
+
+class WhatsAppMessage(TenantModel):
+    TYPE_ALERT = 'alert'
+    TYPE_BROADCAST = 'broadcast'
+    TYPE_INBOUND = 'inbound'
+    TYPE_CHOICES = [
+        (TYPE_ALERT, 'Alert'),
+        (TYPE_BROADCAST, 'Broadcast'),
+        (TYPE_INBOUND, 'Inbound'),
+    ]
+
+    DIRECTION_OUTBOUND = 'outbound'
+    DIRECTION_INBOUND = 'inbound'
+    DIRECTION_CHOICES = [
+        (DIRECTION_OUTBOUND, 'Outbound'),
+        (DIRECTION_INBOUND, 'Inbound'),
+    ]
+
+    STATUS_PENDING = 'pending'
+    STATUS_SENT = 'sent'
+    STATUS_FAILED = 'failed'
+    STATUS_CHOICES = [
+        (STATUS_PENDING, 'Pending'),
+        (STATUS_SENT, 'Sent'),
+        (STATUS_FAILED, 'Failed'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='whatsapp_messages',
+    )
+    phone = models.CharField(max_length=20, db_index=True)
+    message = models.TextField()
+    message_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default=TYPE_ALERT)
+    direction = models.CharField(max_length=12, choices=DIRECTION_CHOICES, default=DIRECTION_OUTBOUND)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    provider_reference = models.CharField(max_length=255, blank=True)
+    error_detail = models.TextField(blank=True)
+    sent_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'whatsapp_messages'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.phone} ({self.status})'
 
 
 class WebPushSubscription(models.Model):

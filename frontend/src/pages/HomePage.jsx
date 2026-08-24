@@ -12,6 +12,7 @@ import {
   Megaphone,
   ShieldCheck,
 } from '../components/Icons';
+import { RecommendationsSection } from '../components/RecommendationsSection';
 
 function HomePage() {
   const { t } = useTranslation();
@@ -207,6 +208,12 @@ function HomePage() {
           </div>
         </div>
       </section>
+
+      {user && (
+        <section className="prose-panel py-10">
+          <RecommendationsSection />
+        </section>
+      )}
 
       {/* Proof layer: capabilities + topic entry points (below the fold) */}
       <section

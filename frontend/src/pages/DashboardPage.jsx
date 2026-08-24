@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useOrganization } from '../context/OrganizationContext';
 import { GamificationSummary } from '../components/GamificationSummary';
+import { RecommendationsSection } from '../components/RecommendationsSection';
 import { Alert, PageHeader, StatCardSkeleton, StatTile, TableRowSkeleton } from '../components/ui';
 import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
@@ -54,7 +55,8 @@ function LearnerDashboard() {
 
   return (
     <>
-      <GamificationSummary compact className="mb-10" />
+      <GamificationSummary className="mb-10" />
+      <RecommendationsSection className="mb-10" />
 
       <section>
         <h2 className="mb-4 font-display text-xl font-semibold text-ink-900 dark:text-slate-100">

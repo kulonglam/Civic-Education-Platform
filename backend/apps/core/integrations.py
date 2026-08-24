@@ -222,6 +222,30 @@ def check_sms() -> dict[str, Any]:
     return _entry('sms', STATUS_DUMMY, detail='SMS_PROVIDER=dummy — messages logged, not delivered')
 
 
+def check_whatsapp() -> dict[str, Any]:
+    provider = getattr(settings, 'WHATSAPP_PROVIDER', 'dummy')
+    token = getattr(settings, 'WHATSAPP_ACCESS_TOKEN', '') or ''
+    phone_id = getattr(settings, 'WHATSAPP_PHONE_NUMBER_ID', '') or ''
+    if provider == 'meta' and token and phone_id:
+        return _entry(
+            'whatsapp',
+            STATUS_LIVE,
+            detail='WhatsApp Cloud API configured',
+            meta={'phone_number_id': phone_id},
+        )
+    if provider != 'dummy':
+        return _entry(
+            'whatsapp',
+            STATUS_CONFIGURED,
+            detail=f'WHATSAPP_PROVIDER={provider!r} but credentials incomplete — using dummy fallback',
+        )
+    return _entry(
+        'whatsapp',
+        STATUS_DUMMY,
+        detail='WhatsApp messages are logged locally; share-to-WhatsApp links still work',
+    )
+
+
 def check_tutor_provider() -> dict[str, Any]:
     from apps.tutor.providers import resolve_provider_name
 
@@ -323,6 +347,7 @@ def collect_integration_statuses(*, include_infra: bool = True) -> list[dict[str
         check_email(),
         check_sentry(),
         check_sms(),
+        check_whatsapp(),
         check_tutor_provider(),
         check_vapid(),
         check_supabase(),

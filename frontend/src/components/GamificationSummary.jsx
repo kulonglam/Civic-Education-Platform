@@ -5,7 +5,7 @@ import { StatTile } from './ui';
 import { queryKeys } from '../lib/queryKeys';
 import { gamificationService } from '../lib/services';
 
-export function GamificationSummary({ compact = false, className = '' }) {
+export function GamificationSummary({ className = '' }) {
   const { t } = useTranslation();
   const { data: gamification, isLoading } = useQuery({
     queryKey: queryKeys.gamificationMe,
@@ -20,17 +20,10 @@ export function GamificationSummary({ compact = false, className = '' }) {
 
   return (
     <section className={className}>
-      <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="font-display text-xl font-semibold text-ink-900 dark:text-slate-100">
-          {t('gamification.title')}
-        </h2>
-        {!compact && (
-          <Link to="/dashboard" className="text-sm font-semibold text-brand-700 hover:underline dark:text-brand-300">
-            {t('gamification.viewProgress')} →
-          </Link>
-        )}
-      </div>
-      <div className={`grid gap-4 ${compact ? 'sm:grid-cols-3' : 'sm:grid-cols-2 lg:grid-cols-3'}`}>
+      <h2 className="mb-4 font-display text-xl font-semibold text-ink-900 dark:text-slate-100">
+        {t('gamification.title')}
+      </h2>
+      <div className="grid gap-4 sm:grid-cols-3">
         <StatTile label={t('gamification.level')} value={gamification.level} />
         <StatTile label={t('gamification.xp')} value={gamification.xp_points} />
         <StatTile label={t('gamification.nextLevel')} value={gamification.xp_to_next_level} />
@@ -49,6 +42,10 @@ export function GamificationSummary({ compact = false, className = '' }) {
         </ul>
       )}
       <p className="mt-4 text-sm">
+        <Link to="/leaderboard" className="font-semibold text-brand-700 hover:underline dark:text-brand-300">
+          {t('gamification.leaderboardLink')}
+        </Link>
+        {' · '}
         <Link to="/engage" className="font-semibold text-brand-700 hover:underline dark:text-brand-300">
           {t('gamification.engageLink')}
         </Link>

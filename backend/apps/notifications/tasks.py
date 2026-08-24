@@ -113,6 +113,63 @@ def broadcast_sms_task(self, message: str, organization_id: str):
 @shared_task(
     bind=True,
     max_retries=3,
+    default_retry_delay=30,
+    autoretry_for=(Exception,),
+    retry_backoff=True,
+)
+def send_whatsapp_task(self, log_id: str):
+    from .models import WhatsAppMessage
+    from .whatsapp_services import deliver_whatsapp
+
+    log = WhatsAppMessage.objects.filter(id=log_id).first()
+    if log is None:
+        return {'status': 'missing'}
+    deliver_whatsapp(log)
+    return {'status': log.status, 'phone': log.phone}
+
+
+@shared_task(
+    bind=True,
+    max_retries=2,
+    default_retry_delay=120,
+    autoretry_for=(Exception,),
+    retry_backoff=True,
+)
+def broadcast_whatsapp_task(self, message: str, organization_id: str):
+    from apps.tenants.models import Organization
+    from .models import WhatsAppMessage
+    from .whatsapp_services import org_whatsapp_recipients, send_whatsapp_to_phone
+
+    organization = Organization.objects.filter(id=organization_id).first()
+    if organization is None:
+        return {'status': 'missing_org'}
+
+    sent = 0
+    failed = 0
+    for user in org_whatsapp_recipients(organization):
+        log = send_whatsapp_to_phone(
+            user.phone,
+            message,
+            message_type=WhatsAppMessage.TYPE_BROADCAST,
+            user=user,
+            organization=organization,
+        )
+        if log.status == WhatsAppMessage.STATUS_SENT:
+            sent += 1
+        else:
+            failed += 1
+    logger.info(
+        'WhatsApp broadcast for org %s: sent=%d failed=%d',
+        organization.slug,
+        sent,
+        failed,
+    )
+    return {'sent': sent, 'failed': failed}
+
+
+@shared_task(
+    bind=True,
+    max_retries=3,
     default_retry_delay=60,
     autoretry_for=(Exception,),
     retry_backoff=True,

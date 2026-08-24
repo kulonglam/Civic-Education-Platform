@@ -128,6 +128,7 @@
     "courses": "Courses",
     "news": "News",
     "events": "Events",
+    "map": "Map",
     "awareness": "Misinformation",
     "media": "Media",
     "search": "Search",
@@ -142,6 +143,7 @@
     "organization": "Organization",
     "billing": "Billing",
     "dashboard": "Dashboard",
+    "leaderboard": "Leaderboard",
     "tutor": "AI Tutor",
     "engage": "Civic action",
     "manageArticles": "Manage articles",
@@ -446,7 +448,9 @@
       "capacity": "Capacity (optional)",
       "sourceName": "Source name",
       "sourceUrl": "Source URL (optional)",
-      "status": "Status"
+      "status": "Status",
+      "region": "State on the civic map",
+      "regionNationwide": "Nationwide / not mapped"
     },
     "status": {
       "draft": "Draft",
@@ -754,7 +758,7 @@
     "avatarUpload": "Upload photo",
     "avatarUploadHint": "JPEG or PNG, uploaded to secure storage when configured.",
     "phone": "Mobile number",
-    "phoneHint": "South Sudan format, e.g. +211922123456 — used for SMS alerts and password recovery.",
+    "phoneHint": "South Sudan format, e.g. +211922123456 — used for SMS, WhatsApp alerts, and password recovery.",
     "saved": "Profile updated.",
     "memberSince": "Member since",
     "role": "Role",
@@ -797,7 +801,10 @@
     "age_25_34": "25–34",
     "age_35_49": "35–49",
     "age_50_plus": "50 and over",
-    "age_prefer_not": "Prefer not to say"
+    "age_prefer_not": "Prefer not to say",
+    "showOnLeaderboard": "Show my first name on the XP leaderboard",
+    "whatsappAlerts": "Send civic alerts to my WhatsApp",
+    "whatsappHint": "Uses the same South Sudan mobile number as SMS. You can still share pages to WhatsApp without opting in."
   },
   "notifications": {
     "title": "Notifications",
@@ -870,6 +877,11 @@
     "civicSmsPlaceholder": "Write a platform-wide civic alert (max 480 characters)…",
     "civicSmsSend": "Send platform alert",
     "civicSmsQueued": "Platform SMS alert queued.",
+    "civicWhatsAppTitle": "Platform civic WhatsApp alert",
+    "civicWhatsAppSubtitle": "Send a WhatsApp message to every registered user with a phone number across the platform.",
+    "civicWhatsAppPlaceholder": "Write a platform-wide WhatsApp alert…",
+    "civicWhatsAppSend": "Send WhatsApp alert",
+    "civicWhatsAppQueued": "Platform WhatsApp alert queued.",
     "pushTitle": "Web push subscriptions",
     "pushSubscriptions": "Active subscriptions",
     "pushUsers": "Users with push",
@@ -1079,7 +1091,7 @@
     "nextLevel": "XP to next level",
     "badges": "Badges earned",
     "engageLink": "Take polls and sign petitions to earn civic badges →",
-    "viewProgress": "View full progress"
+    "leaderboardLink": "See the XP leaderboard →"
   },
   "engage": {
     "title": "Civic action",
@@ -1340,6 +1352,56 @@
     "otpResetHint": "Use the 6-digit code on the next screen to set a new password.",
     "enterOtpCode": "Enter verification code",
     "otpCode": "Verification code"
+  },
+  "whatsapp": {
+    "share": "Share on WhatsApp",
+    "alertsTitle": "WhatsApp alerts",
+    "alertsSubtitle": "Send civic alerts to members on WhatsApp using their profile phone number (Pro plan). Share buttons work for everyone even without Cloud API credentials.",
+    "messagePlaceholder": "Write your WhatsApp alert…",
+    "broadcast": "Send WhatsApp to all members",
+    "broadcastQueued": "WhatsApp broadcast queued.",
+    "recentDeliveries": "Recent WhatsApp deliveries"
+  },
+  "map": {
+    "title": "Civic map of South Sudan",
+    "subtitle": "Upcoming events by state. Learner counts appear only when enough people in that state have opted to share a region.",
+    "aria": "Interactive map of South Sudan states",
+    "clickHint": "Select a state to see upcoming civic events.",
+    "upcomingCount": "{{count}} upcoming events",
+    "learners": "{{count}} learners",
+    "learnersHidden": "Learner count hidden for privacy",
+    "noEvents": "No mapped events in this state yet.",
+    "privacy": "Region learner totals are hidden when fewer than three people share that state."
+  },
+  "leaderboard": {
+    "title": "XP leaderboard",
+    "subtitle": "Rankings use first name and last initial only. Hide yourself from the list in your profile.",
+    "rank": "Rank",
+    "learner": "Learner",
+    "level": "Level",
+    "xp": "XP",
+    "badges": "Badges",
+    "you": "{{name}} (you)",
+    "yourRank": "You are rank {{rank}} with {{xp}} XP."
+  },
+  "recommendations": {
+    "title": "Recommended for you",
+    "personalized": "Based on your progress, courses, and saved lessons",
+    "popular": "Popular published lessons",
+    "reasons": {
+      "continue_course": "Next lesson in {{course}}",
+      "in_progress": "Continue where you left off",
+      "bookmarked": "Saved for later",
+      "related_category": "Related to topics you completed",
+      "popular": "Popular in this organization",
+      "quiz": "A quiz you have not taken yet",
+      "media": "Audio or video to try next",
+      "new_content": "Recently published"
+    }
+  },
+  "voice": {
+    "start": "Speak",
+    "stop": "Stop listening"
   },
   "pagination": {
     "label": "Pagination",

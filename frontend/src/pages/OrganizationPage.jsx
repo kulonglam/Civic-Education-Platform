@@ -62,6 +62,8 @@ function OrganizationPage() {
   const [extraPhone, setExtraPhone] = useState('');
   const [selectedMemberIds, setSelectedMemberIds] = useState([]);
   const [smsHistory, setSmsHistory] = useState([]);
+  const [whatsappMessage, setWhatsappMessage] = useState('');
+  const [whatsappHistory, setWhatsappHistory] = useState([]);
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -159,6 +161,12 @@ function OrganizationPage() {
       setSmsHistory(data.results ?? []);
     } catch {
       setSmsHistory([]);
+    }
+    try {
+      const { data } = await notifyService.whatsappHistory();
+      setWhatsappHistory(data.results ?? []);
+    } catch {
+      setWhatsappHistory([]);
     }
   };
 
@@ -507,6 +515,24 @@ function OrganizationPage() {
       await notifyService.broadcast(smsMessage);
       setSmsMessage('');
       setSuccess(t('sms.broadcastQueued'));
+      await loadSmsHistory();
+    } catch (err) {
+      if (err?.response?.status === 402) {
+        setError(t('sms.upgradeRequired'));
+      } else {
+        setError(extractError(err));
+      }
+    }
+  };
+
+  const sendWhatsAppBroadcast = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    try {
+      await notifyService.whatsappBroadcast(whatsappMessage);
+      setWhatsappMessage('');
+      setSuccess(t('whatsapp.broadcastQueued'));
       await loadSmsHistory();
     } catch (err) {
       if (err?.response?.status === 402) {
@@ -1132,6 +1158,51 @@ function OrganizationPage() {
                         <p className="line-clamp-1 text-gray-600 dark:text-slate-400">{row.message}</p>
                         <p className="text-xs capitalize text-gray-400 dark:text-slate-500">
                           {row.status} · {row.message_type}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
+        <div className="card mb-8">
+          <h2 className="mb-2 font-display text-xl font-semibold text-ink-900 dark:text-slate-100">{t('whatsapp.alertsTitle')}</h2>
+          <p className="mb-4 text-sm text-ink-700/70 dark:text-slate-400">{t('whatsapp.alertsSubtitle')}</p>
+          {!hasSmsPlan ? (
+            <div className="rounded-lg border border-amber-100 bg-amber-50 p-4 dark:border-amber-900/40 dark:bg-amber-950/30">
+              <Alert kind="warning">{t('sms.upgradeRequired')}</Alert>
+              <Link to="/billing" className="btn-primary mt-4 inline-block">
+                {t('saas.upgradePlan')}
+              </Link>
+            </div>
+          ) : (
+            <>
+              <form onSubmit={sendWhatsAppBroadcast} className="space-y-3">
+                <textarea
+                  className="input min-h-[100px]"
+                  placeholder={t('whatsapp.messagePlaceholder')}
+                  value={whatsappMessage}
+                  onChange={(e) => setWhatsappMessage(e.target.value)}
+                  required
+                  maxLength={1000}
+                />
+                <button type="submit" className="btn-primary" disabled={!whatsappMessage.trim()}>
+                  {t('whatsapp.broadcast')}
+                </button>
+              </form>
+              {whatsappHistory.length > 0 && (
+                <div className="mt-6">
+                  <h3 className="mb-2 font-medium text-gray-900 dark:text-slate-100">{t('whatsapp.recentDeliveries')}</h3>
+                  <ul className="divide-y divide-gray-100 text-sm dark:divide-slate-700">
+                    {whatsappHistory.slice(0, 5).map((row) => (
+                      <li key={row.id} className="py-2">
+                        <p className="font-medium text-gray-900 dark:text-slate-100">{row.phone}</p>
+                        <p className="line-clamp-1 text-gray-600 dark:text-slate-400">{row.message}</p>
+                        <p className="text-xs capitalize text-gray-400 dark:text-slate-500">
+                          {row.status} · {row.direction}
                         </p>
                       </li>
                     ))}

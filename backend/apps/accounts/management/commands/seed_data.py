@@ -853,6 +853,7 @@ DEMO_EVENTS = [
         'kind': 'election',
         'location': 'Juba Civic Centre',
         'location_ar': 'مركز جوبا المدني',
+        'region': 'central_equatoria',
         'starts_at': _event_at(2026, 10, 15, 9, 0),
         'ends_at': _event_at(2026, 10, 15, 13, 0),
         'is_all_day': False,
@@ -875,6 +876,7 @@ DEMO_EVENTS = [
         'kind': 'public_consultation',
         'location': 'Ministry of Local Government hall, Juba',
         'location_ar': 'قاعة وزارة الحكم المحلي، جوبا',
+        'region': 'central_equatoria',
         'starts_at': _event_at(2026, 9, 18, 10, 0),
         'ends_at': _event_at(2026, 9, 18, 12, 30),
         'is_all_day': False,
@@ -897,6 +899,7 @@ DEMO_EVENTS = [
         'kind': 'community_meeting',
         'location': 'Munuki payam compound',
         'location_ar': 'مجمع بايام مونوكي',
+        'region': 'central_equatoria',
         'starts_at': _event_at(2026, 9, 26, 15, 0),
         'ends_at': _event_at(2026, 9, 26, 17, 0),
         'is_all_day': False,
@@ -919,6 +922,7 @@ DEMO_EVENTS = [
         'kind': 'workshop',
         'location': 'University of Juba, civic hall',
         'location_ar': 'جامعة جوبا، القاعة المدنية',
+        'region': 'central_equatoria',
         'starts_at': _event_at(2026, 10, 8, 9, 30),
         'ends_at': _event_at(2026, 10, 8, 16, 0),
         'is_all_day': False,
@@ -941,6 +945,7 @@ DEMO_EVENTS = [
         'kind': 'national_holiday',
         'location': 'Nationwide',
         'location_ar': 'في أنحاء البلاد',
+        'region': '',
         'starts_at': _event_at(2027, 7, 9, 0, 0),
         'ends_at': _event_at(2027, 7, 9, 23, 59),
         'is_all_day': True,
@@ -963,6 +968,7 @@ DEMO_EVENTS = [
         'kind': 'public_hearing',
         'location': 'Central Equatoria County hall',
         'location_ar': 'قاعة مقاطعة الاستوائية الوسطى',
+        'region': 'central_equatoria',
         'starts_at': _event_at(2026, 11, 12, 10, 0),
         'ends_at': _event_at(2026, 11, 12, 14, 0),
         'is_all_day': False,
@@ -977,6 +983,71 @@ DEMO_EVENTS = [
         'description_ar': (
             'جلسة استماع عامة حول مشروع موازنة المقاطعة. يمكن للسكان السؤال عن تخصيص أموال المدارس والصحة '
             'والطرق. يساعد التسجيل المنظمين على ترتيب المقاعد والترجمة.'
+        ),
+    },
+    {
+        'title': 'Jonglei voter registration help desk',
+        'title_ar': 'مكتب مساعدة تسجيل الناخبين في جونقلي',
+        'kind': 'election',
+        'location': 'Bor civic compound',
+        'location_ar': 'مجمع بور المدني',
+        'region': 'jonglei',
+        'starts_at': _event_at(2026, 10, 22, 8, 30),
+        'ends_at': _event_at(2026, 10, 22, 16, 0),
+        'is_all_day': False,
+        'allows_registration': True,
+        'capacity': 70,
+        'source_name': 'Civic Education RSS',
+        'source_url': '',
+        'description': (
+            'Bring identification to check your name on the register and ask how to correct errors before polling day. '
+            'Staff will not campaign for any candidate.'
+        ),
+        'description_ar': (
+            'أحضر إثبات الهوية للتحقق من اسمك في السجل والسؤال عن تصحيح الأخطاء قبل يوم الاقتراع. '
+            'لن يقوم الموظفون بالدعاية لأي مرشح.'
+        ),
+    },
+    {
+        'title': 'Upper Nile community meeting on river services',
+        'title_ar': 'اجتماع مجتمعي في أعالي النيل حول خدمات النهر',
+        'kind': 'community_meeting',
+        'location': 'Malakal public hall',
+        'location_ar': 'قاعة ملكال العامة',
+        'region': 'upper_nile',
+        'starts_at': _event_at(2026, 9, 30, 14, 0),
+        'ends_at': _event_at(2026, 9, 30, 16, 30),
+        'is_all_day': False,
+        'allows_registration': True,
+        'capacity': 55,
+        'source_name': 'Civic Education RSS',
+        'source_url': '',
+        'description': (
+            'Residents meet county officers about river transport, flood notices, and how to file a written complaint.'
+        ),
+        'description_ar': (
+            'يلتقي السكان بمسؤولي المقاطعة حول النقل النهري وإشعارات الفيضانات وكيفية تقديم شكوى مكتوبة.'
+        ),
+    },
+    {
+        'title': 'Western Equatoria constitution workshop',
+        'title_ar': 'ورشة الدستور في الاستوائية الغربية',
+        'kind': 'workshop',
+        'location': 'Yambio civic centre',
+        'location_ar': 'مركز يامبيو المدني',
+        'region': 'western_equatoria',
+        'starts_at': _event_at(2026, 10, 29, 9, 0),
+        'ends_at': _event_at(2026, 10, 29, 13, 0),
+        'is_all_day': False,
+        'allows_registration': True,
+        'capacity': 45,
+        'source_name': 'Civic Education RSS',
+        'source_url': '',
+        'description': (
+            'A civic education workshop on rights, duties, and how public power is limited by the Transitional Constitution.'
+        ),
+        'description_ar': (
+            'ورشة تربية مدنية حول الحقوق والواجبات وكيف يحد الدستور الانتقالي من السلطة العامة.'
         ),
     },
 ]
@@ -1681,10 +1752,15 @@ class Command(BaseCommand):
                     'capacity': spec['capacity'],
                     'source_name': spec['source_name'],
                     'source_url': spec['source_url'],
+                    'region': spec.get('region', ''),
                     'status': CivicEvent.STATUS_PUBLISHED,
                     'created_by': admin,
                 },
             )
+            desired_region = spec.get('region', '')
+            if item.region != desired_region:
+                item.region = desired_region
+                item.save(update_fields=['region'])
             if created:
                 self.stdout.write(f'Civic event: {item.title}')
 

@@ -163,6 +163,12 @@ const CoursesManagePage = lazy(() =>
 const CourseEditorPage = lazy(() =>
   import('./pages/CourseEditorPage').then((m) => ({ default: m.CourseEditorPage })),
 );
+const MapPage = lazy(() =>
+  import('./pages/MapPage').then((m) => ({ default: m.MapPage })),
+);
+const LeaderboardPage = lazy(() =>
+  import('./pages/LeaderboardPage').then((m) => ({ default: m.LeaderboardPage })),
+);
 
 function Lazy({ children }) {
   return <Suspense fallback={<Spinner />}>{children}</Suspense>;
@@ -406,6 +412,14 @@ export default function App() {
                   }
                 />
                 <Route
+                  path="map"
+                  element={
+                    <Lazy>
+                      <MapPage />
+                    </Lazy>
+                  }
+                />
+                <Route
                   path="awareness"
                   element={
                     <Lazy>
@@ -546,6 +560,7 @@ export default function App() {
                 <Route path="tutor" element={guard(<TutorPage />)} />
                 <Route path="engage" element={guard(<EngagementPage />)} />
                 <Route path="dashboard" element={guard(<DashboardPage />)} />
+                <Route path="leaderboard" element={guard(<LeaderboardPage />)} />
                 <Route path="billing" element={guard(<BillingPage />)} />
                 <Route
                   path="admin"

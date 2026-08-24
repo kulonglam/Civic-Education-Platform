@@ -23,7 +23,7 @@ class RoleSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ['bio', 'avatar_url', 'preferred_language', 'region', 'age_band']
+        fields = ['bio', 'avatar_url', 'preferred_language', 'region', 'age_band', 'show_on_leaderboard']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -33,6 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
     mfa_enabled = serializers.SerializerMethodField()
     last_activity_at = serializers.SerializerMethodField()
     impersonator_email = serializers.SerializerMethodField()
+    whatsapp_alerts = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -40,7 +41,7 @@ class UserSerializer(serializers.ModelSerializer):
             'id', 'email', 'phone', 'first_name', 'last_name', 'role',
             'is_active', 'is_suspended', 'email_verified', 'phone_verified',
             'created_at', 'profile', 'mfa_required', 'mfa_enabled',
-            'last_activity_at', 'impersonator_email',
+            'last_activity_at', 'impersonator_email', 'whatsapp_alerts',
         ]
         read_only_fields = fields
 
@@ -65,6 +66,10 @@ class UserSerializer(serializers.ModelSerializer):
             return token.get('impersonator_email') or None
         except (AttributeError, TypeError, KeyError):
             return None
+
+    def get_whatsapp_alerts(self, obj):
+        prefs = getattr(obj, 'notification_preferences', None)
+        return bool(prefs.whatsapp) if prefs else False
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -157,12 +162,15 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
     )
     region = serializers.CharField(required=False, allow_blank=True)
     age_band = serializers.CharField(required=False, allow_blank=True)
+    show_on_leaderboard = serializers.BooleanField(required=False)
+    whatsapp_alerts = serializers.BooleanField(required=False)
 
     class Meta:
         model = User
         fields = [
             'first_name', 'last_name', 'phone', 'bio', 'avatar_url',
             'preferred_language', 'region', 'age_band',
+            'show_on_leaderboard', 'whatsapp_alerts',
         ]
 
     def validate_phone(self, value):
@@ -184,9 +192,10 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         profile_fields = {}
-        for field in ('bio', 'avatar_url', 'preferred_language', 'region', 'age_band'):
+        for field in ('bio', 'avatar_url', 'preferred_language', 'region', 'age_band', 'show_on_leaderboard'):
             if field in validated_data:
                 profile_fields[field] = validated_data.pop(field)
+        whatsapp_alerts = validated_data.pop('whatsapp_alerts', None)
         if 'phone' in validated_data and validated_data['phone'] != instance.phone:
             instance.phone_verified = False
         for attr, value in validated_data.items():
@@ -197,6 +206,12 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             for attr, value in profile_fields.items():
                 setattr(profile, attr, value)
             profile.save()
+        if whatsapp_alerts is not None:
+            from apps.notifications.models import NotificationPreference
+
+            prefs, _ = NotificationPreference.objects.get_or_create(user=instance)
+            prefs.whatsapp = bool(whatsapp_alerts)
+            prefs.save(update_fields=['whatsapp'])
         return instance
 
 

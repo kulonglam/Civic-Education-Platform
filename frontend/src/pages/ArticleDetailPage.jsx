@@ -17,6 +17,7 @@ import { articleService } from '../lib/services';
 import { BookmarkButton } from '../components/BookmarkButton';
 import { GuestSaveCta } from '../components/GuestSaveCta';
 import { ReadAloudButton } from '../components/ReadAloudButton';
+import { WhatsAppShareButton } from '../components/WhatsAppShareButton';
 
 export function ArticleDetailPage() {
   const { t, i18n } = useTranslation();
@@ -97,6 +98,7 @@ export function ArticleDetailPage() {
         ]} />
         <div className="flex flex-wrap items-center gap-2">
           <ReadAloudButton text={`${article.title}. ${toPlainText(article.content)}`} />
+          <WhatsAppShareButton title={article.title} path={`/articles/${article.id}`} />
           <BookmarkButton kind="article" id={article.id} bookmarked={article.is_bookmarked} />
           {canEdit && (
             <Link to={`/articles/${article.id}/edit`} className="btn-secondary text-sm">

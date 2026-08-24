@@ -103,7 +103,7 @@ def send_sms_to_phone(
     return deliver_sms(sms_log)
 
 
-def send_sms_to_user(user, message: str, *, message_type=SmsMessage.TYPE_SMS) -> SmsMessage | None:
+def send_sms_to_user(user, message: str, *, message_type=SmsMessage.TYPE_SMS, organization=None) -> SmsMessage | None:
     if not user.phone:
         return None
     return send_sms_to_phone(
@@ -111,6 +111,7 @@ def send_sms_to_user(user, message: str, *, message_type=SmsMessage.TYPE_SMS) ->
         message,
         message_type=message_type,
         user=user,
+        organization=organization,
     )
 
 

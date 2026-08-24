@@ -8,6 +8,7 @@ import { useOrganization } from '../context/OrganizationContext';
 import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import { engagementService } from '../lib/services';
+import { WhatsAppShareButton } from '../components/WhatsAppShareButton';
 
 function PollCard({ poll, onVote, votingId }) {
   const { t } = useTranslation();
@@ -94,6 +95,9 @@ function PetitionCard({ petition, onSign, signingId }) {
       >
         {petition.user_signed ? t('engage.signed') : t('engage.signPetition')}
       </button>
+      <div className="mt-3">
+        <WhatsAppShareButton title={petition.title} path="/engage" />
+      </div>
     </article>
   );
 }
@@ -127,6 +131,7 @@ function CampaignCard({ campaign, onJoin, joiningId }) {
             {t('engage.learnMore')} →
           </a>
         )}
+        <WhatsAppShareButton title={campaign.title} path="/engage" />
       </div>
     </article>
   );

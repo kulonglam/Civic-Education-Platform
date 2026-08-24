@@ -15,6 +15,7 @@ import { renderMarkdown } from '../lib/markdown';
 import { queryKeys } from '../lib/queryKeys';
 import { eventsService } from '../lib/services';
 import { ReadAloudButton } from '../components/ReadAloudButton';
+import { WhatsAppShareButton } from '../components/WhatsAppShareButton';
 
 async function downloadIcs(id, title) {
   const { data } = await eventsService.calendar(id);
@@ -112,10 +113,11 @@ export function EventsDetailPage() {
       <h1 className="mt-4 font-display text-3xl font-semibold text-ink-900 dark:text-slate-100">
         {item.title}
       </h1>
-      <div className="mt-3">
+      <div className="mt-3 flex flex-wrap gap-2">
         <ReadAloudButton
           text={`${item.title}. ${when}. ${item.location || ''}. ${item.description || ''}`}
         />
+        <WhatsAppShareButton title={item.title} path={`/events/${item.id}`} />
       </div>
       <p className="mt-2 text-sm text-ink-700/70 dark:text-slate-400">
         {when}

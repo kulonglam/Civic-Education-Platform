@@ -219,6 +219,13 @@ const tutorService = {
 };
 const gamificationService = {
   me: () => api.get("/gamification/me/"),
+  leaderboard: (params) => api.get("/gamification/leaderboard/", { params }),
+};
+const recommendationService = {
+  list: () => api.get("/recommendations/"),
+};
+const mapService = {
+  civic: () => api.get("/maps/civic/"),
 };
 const bookmarkService = {
   list: (params) => api.get("/bookmarks/", { params }),
@@ -285,6 +292,10 @@ const notifyService = {
   broadcast: (message) => api.post("/notify/broadcast/", { message }),
   platformBroadcast: (message) => api.post("/notify/broadcast/platform/", { message }),
   history: () => api.get("/notify/history/"),
+  whatsappBroadcast: (message) => api.post("/notify/whatsapp/broadcast/", { message }),
+  platformWhatsAppBroadcast: (message) =>
+    api.post("/notify/whatsapp/broadcast/platform/", { message }),
+  whatsappHistory: () => api.get("/notify/whatsapp/history/"),
 };
 export {
   analyticsService,
@@ -300,12 +311,14 @@ export {
   eventsService,
   forumService,
   gamificationService,
+  mapService,
   mediaService,
   newsService,
   notificationService,
   notifyService,
   organizationService,
   quizService,
+  recommendationService,
   searchService,
   securityService,
   tutorService,

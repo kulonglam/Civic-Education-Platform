@@ -5,6 +5,7 @@ import { EVENT_KINDS } from '../components/EventKindBadge';
 import { Alert, PageHeader, Spinner } from '../components/ui';
 import { extractError } from '../lib/api';
 import { eventsService } from '../lib/services';
+import { REGION_OPTIONS } from '../lib/demographics';
 
 const emptyForm = {
   title: '',
@@ -22,6 +23,7 @@ const emptyForm = {
   source_name: '',
   source_url: '',
   status: 'draft',
+  region: '',
 };
 
 function pad(value) {
@@ -86,6 +88,7 @@ export function EventsEditorPage() {
           source_name: data.source_name ?? '',
           source_url: data.source_url ?? '',
           status: data.status ?? 'draft',
+          region: data.region ?? '',
         });
       } catch (err) {
         if (!cancelled) setError(extractError(err));
@@ -185,6 +188,17 @@ export function EventsEditorPage() {
             <input className="input" value={form.location_ar} onChange={(e) => setField('location_ar', e.target.value)} />
           </label>
         </div>
+        <label className="grid gap-1 text-sm font-medium">
+          {t('events.fields.region')}
+          <select className="input sm:max-w-xs" value={form.region} onChange={(e) => setField('region', e.target.value)}>
+            <option value="">{t('events.fields.regionNationwide')}</option>
+            {REGION_OPTIONS.filter((option) => option.value && option.value !== 'prefer_not').map((option) => (
+              <option key={option.value} value={option.value}>
+                {t(option.labelKey)}
+              </option>
+            ))}
+          </select>
+        </label>
         <label className="grid gap-1 text-sm font-medium">
           {t('events.fields.kind')}
           <select className="input sm:max-w-xs" value={form.kind} onChange={(e) => setField('kind', e.target.value)}>

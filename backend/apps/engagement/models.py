@@ -400,6 +400,15 @@ class CivicEvent(TenantModel):
     capacity = models.PositiveIntegerField(null=True, blank=True)
     source_name = models.CharField(max_length=255, blank=True)
     source_url = models.URLField(blank=True, default='')
+    region = models.CharField(
+        max_length=40,
+        blank=True,
+        default='',
+        db_index=True,
+        help_text='South Sudan state for the civic map. Blank means nationwide.',
+    )
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,

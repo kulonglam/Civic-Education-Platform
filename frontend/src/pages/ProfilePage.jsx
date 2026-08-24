@@ -34,6 +34,8 @@ export function ProfilePage() {
     preferred_language: 'en',
     region: '',
     age_band: '',
+    show_on_leaderboard: true,
+    whatsapp_alerts: false,
   });
   const [loading, setLoading] = useState(false);
   const [avatarUploading, setAvatarUploading] = useState(false);
@@ -78,6 +80,8 @@ export function ProfilePage() {
         preferred_language: user.profile?.preferred_language ?? 'en',
         region: user.profile?.region ?? '',
         age_band: user.profile?.age_band ?? '',
+        show_on_leaderboard: user.profile?.show_on_leaderboard !== false,
+        whatsapp_alerts: Boolean(user.whatsapp_alerts),
       });
     }
   }, [user]);
@@ -326,7 +330,7 @@ export function ProfilePage() {
         </div>
       </div>
       <div className="card mb-6">
-        <GamificationSummary compact />
+        <GamificationSummary />
       </div>
       <form onSubmit={submit} className="card space-y-4">
         <div className="grid grid-cols-2 gap-3">
@@ -458,6 +462,23 @@ export function ProfilePage() {
           </select>
           <p className="mt-1 text-xs text-gray-500">{t('profile.ageHint')}</p>
         </div>
+        <label className="flex items-center gap-2 text-sm font-medium">
+          <input
+            type="checkbox"
+            checked={form.show_on_leaderboard}
+            onChange={(e) => setForm((f) => ({ ...f, show_on_leaderboard: e.target.checked }))}
+          />
+          {t('profile.showOnLeaderboard')}
+        </label>
+        <label className="flex items-center gap-2 text-sm font-medium">
+          <input
+            type="checkbox"
+            checked={form.whatsapp_alerts}
+            onChange={(e) => setForm((f) => ({ ...f, whatsapp_alerts: e.target.checked }))}
+          />
+          {t('profile.whatsappAlerts')}
+        </label>
+        <p className="text-xs text-gray-500">{t('profile.whatsappHint')}</p>
         <button type="submit" className="btn-primary" disabled={loading}>
           {loading ? t('common.loading') : t('common.save')}
         </button>

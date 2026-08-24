@@ -2,6 +2,47 @@ export function isSpeechSupported() {
   return typeof window !== 'undefined' && 'speechSynthesis' in window && typeof SpeechSynthesisUtterance === 'function';
 }
 
+export function isRecognitionSupported() {
+  return (
+    typeof window !== 'undefined' &&
+    Boolean(window.SpeechRecognition || window.webkitSpeechRecognition)
+  );
+}
+
+export function recognitionLanguage(lang = 'en') {
+  return lang === 'ar' ? 'ar-EG' : 'en-US';
+}
+
+export function createSpeechRecognizer({
+  lang = 'en',
+  onResult,
+  onError,
+  onEnd,
+} = {}) {
+  if (!isRecognitionSupported()) return null;
+  const Ctor = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new Ctor();
+  recognition.lang = recognitionLanguage(lang);
+  recognition.interimResults = true;
+  recognition.continuous = false;
+  recognition.onresult = (event) => {
+    let interim = '';
+    let finalText = '';
+    for (let i = event.resultIndex; i < event.results.length; i += 1) {
+      const transcript = event.results[i][0]?.transcript || '';
+      if (event.results[i].isFinal) finalText += transcript;
+      else interim += transcript;
+    }
+    onResult?.({
+      transcript: (finalText || interim).trim(),
+      isFinal: Boolean(finalText.trim()),
+    });
+  };
+  recognition.onerror = (event) => onError?.(event.error || event);
+  recognition.onend = () => onEnd?.();
+  return recognition;
+}
+
 export function stopSpeaking() {
   if (!isSpeechSupported()) return;
   window.speechSynthesis.cancel();

@@ -128,3 +128,67 @@ def build_gamification_summary(user) -> dict:
         'badges_earned': badges,
         'badges_available': available,
     }
+
+
+def _display_name(user) -> str:
+    first = (user.first_name or '').strip()
+    last = (user.last_name or '').strip()
+    if first and last:
+        return f'{first} {last[0]}.'
+    if first:
+        return first
+    if last:
+        return last
+    return 'Learner'
+
+
+def build_leaderboard(user, *, limit: int = 20) -> dict:
+    organization = get_current_organization()
+    if organization is None:
+        return {'entries': [], 'me': None, 'total_ranked': 0}
+
+    from django.contrib.auth import get_user_model
+
+    User = get_user_model()
+    members = list(
+        User.objects.filter(
+            memberships__organization=organization,
+            is_active=True,
+        ).distinct()
+    )
+    profiles = {
+        profile.user_id: profile
+        for profile in UserProfile.objects.filter(user__in=members)
+    }
+
+    ranked = []
+    for member in members:
+        profile = profiles.get(member.id)
+        xp = profile.xp_points if profile else 0
+        badge_count = UserBadge.objects.filter(user=member, organization=organization).count()
+        ranked.append({
+            'user_id': str(member.id),
+            'display_name': _display_name(member),
+            'xp_points': xp,
+            'level': max(1, 1 + xp // 100),
+            'badges_earned': badge_count,
+            'show': bool(profile.show_on_leaderboard) if profile else True,
+            'is_me': member.id == user.id,
+        })
+    ranked.sort(key=lambda row: (-row['xp_points'], row['display_name'].lower()))
+    for index, row in enumerate(ranked, start=1):
+        row['rank'] = index
+
+    me = next((row for row in ranked if row['is_me']), None)
+    public = [row for row in ranked if row['show'] or row['is_me']]
+    entries = []
+    for row in public[: max(1, min(limit, 100))]:
+        entries.append({k: v for k, v in row.items() if k != 'show'})
+    me_payload = None
+    if me:
+        me_payload = {k: v for k, v in me.items() if k != 'show'}
+    return {
+        'entries': entries,
+        'me': me_payload,
+        'total_ranked': len(ranked),
+    }

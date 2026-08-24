@@ -31,7 +31,9 @@ _v1_patterns = [
     path('engagement/', include('apps.engagement.urls')),
     path('news/', include('apps.engagement.urls_news')),
     path('events/', include('apps.engagement.urls_events')),
+    path('maps/', include('apps.engagement.urls_maps')),
     path('awareness/', include('apps.learning.urls.awareness')),
+    path('recommendations/', include('apps.learning.urls.recommendations')),
     path('organization/', include('apps.tenants.urls')),
     path('billing/', include('apps.billing.urls')),
 ]

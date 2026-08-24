@@ -8,6 +8,7 @@ import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import { formatDate } from '../lib/format';
 import { searchService } from '../lib/services';
+import { VoiceInputButton } from '../components/VoiceInputButton';
 
 function ResultSection({ title, children, emptyLabel }) {
   return (
@@ -62,15 +63,18 @@ export function SearchPage() {
         <label className="sr-only" htmlFor="global-search">
           {t('search.placeholder')}
         </label>
-        <input
-          id="global-search"
-          type="search"
-          className="input w-full"
-          placeholder={t('search.placeholder')}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          autoFocus
-        />
+        <div className="flex flex-wrap gap-2">
+          <input
+            id="global-search"
+            type="search"
+            className="input min-w-0 flex-1"
+            placeholder={t('search.placeholder')}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            autoFocus
+          />
+          <VoiceInputButton onTranscript={(text) => setQuery((prev) => (prev ? `${prev} ${text}` : text))} />
+        </div>
         <p className="mt-2 text-xs text-ink-700/55 dark:text-slate-400">{t('search.hint')}</p>
       </form>
 

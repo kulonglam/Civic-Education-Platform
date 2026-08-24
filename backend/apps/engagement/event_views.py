@@ -20,12 +20,13 @@ from .serializers import CivicEventSerializer, EventRegisterSerializer, EventRem
 class CivicEventFilter(filters.FilterSet):
     kind = filters.CharFilter()
     status = filters.CharFilter()
+    region = filters.CharFilter()
     starts_after = filters.IsoDateTimeFilter(field_name='starts_at', lookup_expr='gte')
     starts_before = filters.IsoDateTimeFilter(field_name='starts_at', lookup_expr='lte')
 
     class Meta:
         model = CivicEvent
-        fields = ['kind', 'status']
+        fields = ['kind', 'status', 'region']
 
 
 class CivicEventViewSet(viewsets.ModelViewSet):

@@ -60,6 +60,9 @@ def notify_user(
     if prefs.wants_sms(notification_type):
         _sms_push(user, message, organization)
 
+    if prefs.wants_whatsapp(notification_type):
+        _whatsapp_push(user, message, organization)
+
     return notification
 
 
@@ -109,3 +112,11 @@ def _sms_push(user, message: str, organization) -> None:
         send_sms_to_user(user=user, message=message, organization=organization)
     except Exception as exc:
         logger.debug('SMS fan-out skipped: %s', exc)
+
+
+def _whatsapp_push(user, message: str, organization) -> None:
+    try:
+        from .whatsapp_services import send_whatsapp_to_user
+        send_whatsapp_to_user(user, message, organization=organization)
+    except Exception as exc:
+        logger.debug('WhatsApp fan-out skipped: %s', exc)

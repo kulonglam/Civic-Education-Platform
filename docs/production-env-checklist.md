@@ -16,6 +16,7 @@ Production Django settings **require** Stripe and Celery/Redis. SMS, web push, a
 | **Stripe billing** | Yes | `BILLING_PROVIDER`, `STRIPE_*` | — | No |
 | **Celery + Redis** | Yes | `CELERY_BROKER_URL`, `REDIS_URL`, `CELERY_TASK_ALWAYS_EAGER=False` | — | Yes (worker service) |
 | **SMS alerts** | No (Pro/Enterprise feature) | `SMS_PROVIDER`, `AT_*` | — | Yes (SMS tasks) |
+| **WhatsApp alerts** | No (same Pro/Enterprise messaging feature) | `WHATSAPP_*` | — | Yes (WhatsApp tasks) |
 | **Web push** | No | `VAPID_*` | `VITE_VAPID_PUBLIC_KEY` | Yes (push in notify tasks) |
 | **AI tutor** | No | `TUTOR_PROVIDER`, `ANTHROPIC_*` or `OPENAI_*` | — | No (sync API) |
 | **Enterprise SSO** | No (Enterprise plan) | `OIDC_*`, `API_BASE_URL` | — | Web only |
@@ -167,6 +168,25 @@ AT_SENDER_ID=YOUR_SENDER
 - [ ] Check `GET /api/notify/history/` for `sent` status
 - [ ] Profile → phone verify OTP received
 - [ ] Worker logs show Africa's Talking response (not `[dummy-sms]`)
+
+---
+
+## 3b. WhatsApp Cloud API (optional)
+
+Used for: org WhatsApp broadcasts, inbound webhook auto-replies, notification fan-out when a learner opts in. Share-to-WhatsApp links (`wa.me`) work without credentials.
+
+If unset, `WHATSAPP_PROVIDER` stays `dummy` — outbound messages are logged, not delivered to Meta.
+
+```env
+WHATSAPP_PROVIDER=meta
+WHATSAPP_ACCESS_TOKEN=
+WHATSAPP_PHONE_NUMBER_ID=
+WHATSAPP_VERIFY_TOKEN=
+WHATSAPP_APP_SECRET=
+WHATSAPP_DISPLAY_NUMBER=+211922000000
+```
+
+Point Meta's webhook to `POST /api/notify/whatsapp/webhook/` (and the GET verify handshake). Org admins send from Organization → WhatsApp alerts on a Pro/Enterprise plan (`sms_alerts`).
 
 ---
 

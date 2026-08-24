@@ -42,7 +42,7 @@ vi.mock('../lib/services', () => ({
     pushStats: vi.fn().mockResolvedValue({ data: { total_subscriptions: 0, users_with_push: 0 } }),
   },
   auditService: { logs: vi.fn().mockResolvedValue({ data: { results: [] } }) },
-  notifyService: { platformBroadcast: vi.fn() },
+  notifyService: { platformBroadcast: vi.fn(), platformWhatsAppBroadcast: vi.fn() },
   organizationService: {
     platformOrgs: vi.fn().mockResolvedValue({ data: { results: [] } }),
     platformOrgDetail: vi.fn().mockResolvedValue({ data: {} }),
