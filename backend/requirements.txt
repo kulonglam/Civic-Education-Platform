@@ -6,7 +6,7 @@ psycopg2-binary==2.9.10
 python-decouple==3.8
 django-filter==25.1
 drf-spectacular==0.28.0
-supabase==2.15.2
+supabase==2.31.0
 dj-database-url==3.1.2
 gunicorn==23.0.0
 daphne==4.2.2
