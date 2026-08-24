@@ -1,255 +1,65 @@
-import json
-import logging
-import uuid
-from datetime import timedelta
+"""AI tutor orchestration.
 
-from django.conf import settings
-from django.core.cache import cache
-from django.utils import timezone
-from rest_framework.exceptions import APIException, ValidationError
+Ties together the daily quota (:mod:`budget`), conversation state
+(:mod:`sessions`), prompt construction (:mod:`prompts`) and the configured AI
+backend (:mod:`providers`).
 
-from apps.billing.services import get_active_plan
-from apps.core.branding import PLATFORM_NAME
-from apps.core.constants import normalize_language
+Names that moved into those modules are re-exported here so existing imports of
+``apps.tutor.services`` keep working.
+"""
+
+from rest_framework.exceptions import ValidationError
+
 from apps.learning.models import Article
-from apps.tenants.context import get_current_organization
-from apps.tenants.services import get_user_organization
 
-from .models import TutorChat, TutorDailyUsage
+from .budget import (
+    DEFAULT_DAILY_LIMIT,
+    enforce_budget,
+    get_daily_limit,
+    get_daily_usage,
+    increment_daily_usage,
+)
+from .exceptions import TutorBudgetExceeded, TutorUnavailable
+from .history import get_chat_session_history, list_chat_sessions
+from .prompts import LANGUAGE_NAMES, build_api_messages, build_system_prompt
+from .providers import BaseTutorProvider, get_tutor_provider
+from .sessions import (
+    SESSION_TTL,
+    clear_session,
+    get_active_session_payload,
+    get_session,
+    save_session,
+)
 
-logger = logging.getLogger(__name__)
-
-SESSION_TTL = 60 * 60
-DEFAULT_DAILY_LIMIT = 30
-
-LANGUAGE_NAMES = {
-    'en': 'English',
-    'ar': 'Arabic',
-}
-
-
-class TutorBudgetExceeded(APIException):
-    status_code = 429
-    default_detail = 'Daily AI tutor message limit reached. Upgrade your plan for more messages.'
-    default_code = 'tutor_budget_exceeded'
-
-
-class TutorUnavailable(APIException):
-    status_code = 503
-    default_detail = 'AI tutor is temporarily unavailable.'
-    default_code = 'tutor_unavailable'
-
-
-def _session_cache_key(user_id) -> str:
-    return f'tutor:session:{user_id}'
-
-
-def _daily_cache_key(user_id) -> str:
-    today = timezone.localdate().isoformat()
-    return f'tutor:daily:{user_id}:{today}'
-
-
-def _seconds_until_midnight() -> int:
-    now = timezone.localtime()
-    tomorrow = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
-    return max(int((tomorrow - now).total_seconds()), 60)
-
-
-def get_daily_limit(user) -> int | None:
-    organization = get_current_organization() or get_user_organization(user)
-    plan = get_active_plan(organization) if organization else None
-    if plan is None:
-        return DEFAULT_DAILY_LIMIT
-    limit = (plan.features or {}).get('tutor_daily_messages', DEFAULT_DAILY_LIMIT)
-    if limit in (None, '', 'unlimited'):
-        return None
-    return int(limit)
+__all__ = [
+    'DEFAULT_DAILY_LIMIT',
+    'LANGUAGE_NAMES',
+    'SESSION_TTL',
+    'TutorBudgetExceeded',
+    'TutorService',
+    'TutorUnavailable',
+    'build_api_messages',
+    'build_system_prompt',
+    'clear_session',
+    'enforce_budget',
+    'get_active_session_payload',
+    'get_chat_session_history',
+    'get_daily_limit',
+    'get_daily_usage',
+    'get_session',
+    'get_tutor_service',
+    'increment_daily_usage',
+    'list_chat_sessions',
+    'save_session',
+]
 
 
-def get_daily_usage(user) -> int:
-    """Return today's usage from Redis cache, seeding from DB on cold miss."""
-    key = _daily_cache_key(user.pk)
-    cached = cache.get(key)
-    if cached is not None:
-        return int(cached)
-    # Cold miss: read from DB to avoid double-counting across restarts
-    today = timezone.localdate()
-    row = TutorDailyUsage.objects.filter(user=user, date=today).first()
-    count = row.message_count if row else 0
-    cache.set(key, count, timeout=_seconds_until_midnight())
-    return count
+class TutorService:
+    """Runs a tutor turn against whichever AI provider is configured."""
 
+    def __init__(self, provider: BaseTutorProvider | None = None):
+        self.provider = provider or get_tutor_provider()
 
-def increment_daily_usage(user) -> int:
-    """Increment Redis counter and persist to DB asynchronously."""
-    key = _daily_cache_key(user.pk)
-    try:
-        new_val = cache.incr(key)
-    except ValueError:
-        cache.set(key, 1, timeout=_seconds_until_midnight())
-        new_val = 1
-    # Write-through to DB using upsert so the counter survives cache eviction
-    today = timezone.localdate()
-    TutorDailyUsage.objects.update_or_create(
-        user=user,
-        date=today,
-        defaults={'message_count': new_val},
-    )
-    return new_val
-
-
-def enforce_budget(user) -> None:
-    limit = get_daily_limit(user)
-    if limit is None:
-        return
-    if get_daily_usage(user) >= limit:
-        raise TutorBudgetExceeded(
-            detail=f'Daily limit of {limit} tutor messages reached. Try again tomorrow or upgrade your plan.'
-        )
-
-
-def get_session(user) -> dict:
-    raw = cache.get(_session_cache_key(user.pk))
-    if not raw:
-        return {
-            'session_id': uuid.uuid4().hex,
-            'messages': [],
-            'article_id': None,
-        }
-    if isinstance(raw, str):
-        return json.loads(raw)
-    return raw
-
-
-def save_session(user, session: dict) -> None:
-    cache.set(_session_cache_key(user.pk), json.dumps(session), timeout=SESSION_TTL)
-
-
-def clear_session(user) -> None:
-    cache.delete(_session_cache_key(user.pk))
-
-
-def _user_language(user) -> str:
-    profile = getattr(user, 'profile', None)
-    if profile is not None:
-        return normalize_language(profile.preferred_language)
-    return 'en'
-
-
-def _build_system_prompt(
-    user,
-    article: Article | None,
-    message: str = '',
-    *,
-    chunks: list[dict] | None = None,
-) -> str:
-    lang = _user_language(user)
-    lang_name = LANGUAGE_NAMES.get(lang, 'English')
-    org = get_current_organization() or get_user_organization(user)
-    org_name = org.name if org else PLATFORM_NAME
-
-    prompt = (
-        'You are a civic education tutor for citizens of South Sudan on the '
-        f'"{org_name}" platform. Answer clearly and accurately about democracy, '
-        'constitutional rights, governance, elections, peacebuilding, and civic participation. '
-        'The curriculum is organized in four categories: Constitution, Governance, Elections, '
-        'and Peacebuilding. Prefer published platform materials (article text and PDF '
-        'attachments) when provided below — especially the Transitional Constitution for '
-        'constitutional questions. '
-        'Use age-appropriate language. If unsure, say so rather than invent facts. '
-        f'Reply in {lang_name}.'
-    )
-    if article is not None:
-        prompt += (
-            f'\n\nThe learner is reading this article titled "{article.title}":\n'
-            f'{article.content[:3000]}'
-        )
-
-    from .retrieval import format_retrieved_context, retrieve_article_chunks
-
-    if chunks is None:
-        chunks = retrieve_article_chunks(
-            message,
-            exclude_article_id=article.pk if article is not None else None,
-        )
-    knowledge = format_retrieved_context(chunks)
-    if knowledge:
-        prompt += f'\n\n{knowledge}'
-    return prompt
-
-
-def _build_api_messages(session: dict) -> list[dict]:
-    return [{'role': m['role'], 'content': m['content']} for m in session['messages']]
-
-
-def _call_claude(*, system_prompt: str, messages: list[dict]) -> tuple[str, int]:
-    api_key = getattr(settings, 'ANTHROPIC_API_KEY', '')
-    model = getattr(settings, 'ANTHROPIC_MODEL', 'claude-sonnet-4-20250514')
-
-    if not api_key:
-        last_user = next((m['content'] for m in reversed(messages) if m['role'] == 'user'), '')
-        reply = (
-            'This is a development response (no Anthropic API key configured). '
-            f'You asked: "{last_user[:200]}". '
-            'In production, Claude will provide multilingual civic education guidance here.'
-        )
-        return reply, 0
-
-    try:
-        import anthropic
-
-        client = anthropic.Anthropic(api_key=api_key)
-        response = client.messages.create(
-            model=model,
-            max_tokens=getattr(settings, 'ANTHROPIC_MAX_TOKENS', 1024),
-            system=system_prompt,
-            messages=messages,
-        )
-        text = ''.join(block.text for block in response.content if block.type == 'text')
-        tokens = response.usage.input_tokens + response.usage.output_tokens
-        return text.strip(), tokens
-    except Exception as exc:  # noqa: BLE001
-        logger.exception('Anthropic API call failed: %s', exc)
-        raise TutorUnavailable() from exc
-
-
-def _stream_claude(*, system_prompt: str, messages: list[dict]):
-    """Yield text deltas from Claude; falls back to a single chunk without API key."""
-    api_key = getattr(settings, 'ANTHROPIC_API_KEY', '')
-    model = getattr(settings, 'ANTHROPIC_MODEL', 'claude-sonnet-4-20250514')
-
-    if not api_key:
-        last_user = next((m['content'] for m in reversed(messages) if m['role'] == 'user'), '')
-        reply = (
-            'This is a development response (no Anthropic API key configured). '
-            f'You asked: "{last_user[:200]}". '
-            'In production, Claude will provide multilingual civic education guidance here.'
-        )
-        yield reply, 0
-        return
-
-    try:
-        import anthropic
-
-        client = anthropic.Anthropic(api_key=api_key)
-        with client.messages.stream(
-            model=model,
-            max_tokens=getattr(settings, 'ANTHROPIC_MAX_TOKENS', 1024),
-            system=system_prompt,
-            messages=messages,
-        ) as stream:
-            for event in stream:
-                if event.type == 'content_block_delta' and hasattr(event.delta, 'text'):
-                    yield event.delta.text, 0
-            final = stream.get_final_message()
-            tokens = final.usage.input_tokens + final.usage.output_tokens
-            yield '', tokens
-    except Exception as exc:  # noqa: BLE001
-        logger.exception('Anthropic streaming call failed: %s', exc)
-        raise TutorUnavailable() from exc
-
-
-class ClaudeTutorService:
     def chat(self, user, message: str, article_id=None) -> dict:
         message = message.strip()
         if not message:
@@ -274,10 +84,10 @@ class ClaudeTutorService:
             message,
             exclude_article_id=article.pk if article is not None else None,
         )
-        system_prompt = _build_system_prompt(user, article, message, chunks=chunks)
-        reply, tokens_used = _call_claude(
+        system_prompt = build_system_prompt(user, article, message, chunks=chunks)
+        reply, tokens_used = self.provider.complete(
             system_prompt=system_prompt,
-            messages=_build_api_messages(session),
+            messages=build_api_messages(session),
         )
 
         session['messages'].append({'role': 'assistant', 'content': reply})
@@ -330,14 +140,14 @@ class ClaudeTutorService:
             message,
             exclude_article_id=article.pk if article is not None else None,
         )
-        system_prompt = _build_system_prompt(user, article, message, chunks=chunks)
+        system_prompt = build_system_prompt(user, article, message, chunks=chunks)
 
         reply_parts: list[str] = []
         tokens_used = 0
         try:
-            for piece, token_hint in _stream_claude(
+            for piece, token_hint in self.provider.stream(
                 system_prompt=system_prompt,
-                messages=_build_api_messages(session),
+                messages=build_api_messages(session),
             ):
                 if token_hint:
                     tokens_used = token_hint
@@ -399,71 +209,5 @@ class ClaudeTutorService:
         }
 
 
-def get_tutor_service() -> ClaudeTutorService:
-    return ClaudeTutorService()
-
-
-def list_chat_sessions(user, *, limit: int = 20) -> list[dict]:
-    """Summarize recent tutor conversations persisted for the user."""
-    from django.db.models import Count, Max, Min, Q
-
-    rows = (
-        TutorChat.objects.filter(user=user)
-        .values('session_id')
-        .annotate(
-            started_at=Min('created_at'),
-            last_at=Max('created_at'),
-            turns=Count('id', filter=Q(role=TutorChat.ROLE_USER)),
-        )
-        .filter(turns__gt=0)
-        .order_by('-last_at')[:limit]
-    )
-
-    sessions: list[dict] = []
-    for row in rows:
-        preview_row = (
-            TutorChat.objects.filter(
-                user=user,
-                session_id=row['session_id'],
-                role=TutorChat.ROLE_USER,
-            )
-            .order_by('created_at')
-            .values('message', 'article_id')
-            .first()
-        )
-        sessions.append({
-            'session_id': row['session_id'],
-            'preview': (preview_row['message'] if preview_row else '')[:120],
-            'turns': row['turns'],
-            'started_at': row['started_at'],
-            'last_at': row['last_at'],
-            'article_id': str(preview_row['article_id']) if preview_row and preview_row['article_id'] else None,
-        })
-    return sessions
-
-
-def get_chat_session_history(user, session_id: str) -> dict | None:
-    """Return ordered messages for a persisted session owned by the user."""
-    rows = TutorChat.objects.filter(user=user, session_id=session_id).order_by('created_at')
-    if not rows.exists():
-        return None
-
-    article_id = (
-        rows.filter(article_id__isnull=False)
-        .values_list('article_id', flat=True)
-        .first()
-    )
-    return {
-        'session_id': session_id,
-        'article_id': str(article_id) if article_id else None,
-        'messages': [{'role': row.role, 'content': row.message} for row in rows],
-    }
-
-
-def get_active_session_payload(user) -> dict:
-    session = get_session(user)
-    return {
-        'session_id': session['session_id'],
-        'article_id': session.get('article_id'),
-        'messages': session.get('messages', []),
-    }
+def get_tutor_service() -> TutorService:
+    return TutorService()

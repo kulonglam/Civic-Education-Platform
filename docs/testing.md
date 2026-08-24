@@ -97,7 +97,7 @@ Shared helpers: `frontend/e2e/helpers.js` (`loginLive`, `seedLiveAuth`, `mockSes
 | `E2E_ADMIN_PASSWORD` | `AdminPass123!` |
 | `E2E_ORG_SLUG` | `platform-demo` |
 
-Without `ANTHROPIC_API_KEY`, the tutor returns a **development stub** — live tutor tests accept stub or real replies.
+With no AI provider configured, the tutor returns a **development stub** — live tutor tests accept stub or real replies.
 
 ## Ops smoke (loadtest job)
 

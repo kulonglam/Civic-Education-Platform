@@ -246,10 +246,21 @@ STRIPE_PRICE_IDS = {
     'enterprise': config('STRIPE_PRICE_ENTERPRISE', default=''),
 }
 
-# AI Tutor (Anthropic Claude)
+# AI Tutor
+# 'auto' (default) picks Anthropic, then OpenAI-compatible, then the offline stub,
+# based on which credentials are present. Force one with 'anthropic', 'openai' or 'stub'.
+TUTOR_PROVIDER = config('TUTOR_PROVIDER', default='auto')
+
 ANTHROPIC_API_KEY = config('ANTHROPIC_API_KEY', default='')
 ANTHROPIC_MODEL = config('ANTHROPIC_MODEL', default='claude-sonnet-4-20250514')
 ANTHROPIC_MAX_TOKENS = config('ANTHROPIC_MAX_TOKENS', default=1024, cast=int)
+
+# Any OpenAI-compatible endpoint. Leave OPENAI_BASE_URL blank for OpenAI itself, or
+# point it at a free local runtime (Ollama: http://localhost:11434/v1) or a gateway.
+OPENAI_API_KEY = config('OPENAI_API_KEY', default='')
+OPENAI_BASE_URL = config('OPENAI_BASE_URL', default='')
+OPENAI_MODEL = config('OPENAI_MODEL', default='gpt-4o-mini')
+OPENAI_MAX_TOKENS = config('OPENAI_MAX_TOKENS', default=1024, cast=int)
 
 # SMS (Africa's Talking)
 SMS_PROVIDER = config('SMS_PROVIDER', default='dummy')

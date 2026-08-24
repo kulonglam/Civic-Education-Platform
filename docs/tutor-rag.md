@@ -25,10 +25,11 @@ Implementation:
 
 ## Dependencies
 
-- **`anthropic`** — Claude API (required for production replies)
+- **`anthropic`** — Claude API
+- **`openai`** — any OpenAI-compatible endpoint (OpenAI, OpenRouter, Groq, Ollama)
 - **`pypdf`** — PDF text extraction for attachments
 
-Set `ANTHROPIC_API_KEY` in production. Without it, the tutor returns a development placeholder message.
+The backend is pluggable via `TUTOR_PROVIDER` (`auto`, `anthropic`, `openai`, `stub`), resolved in [backend/apps/tutor/providers.py](../backend/apps/tutor/providers.py). With no credentials configured the tutor returns a development placeholder message. See [production-env-checklist.md](production-env-checklist.md#5-ai-tutor-optional) for the variables and a free local-model recipe.
 
 ## API endpoints
 

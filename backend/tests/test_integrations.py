@@ -8,9 +8,9 @@ from apps.core.integrations import (
     STATUS_EAGER,
     STATUS_LIVE,
     build_integrations_report,
-    check_anthropic,
     check_pypdf,
     check_stripe,
+    check_tutor_provider,
 )
 
 
@@ -21,10 +21,21 @@ class TestIntegrationsModule:
         row = check_stripe()
         assert row['status'] == STATUS_DUMMY
 
-    def test_anthropic_unset_is_dummy(self, settings):
+    def test_tutor_provider_unset_is_dummy(self, settings):
+        settings.TUTOR_PROVIDER = 'auto'
         settings.ANTHROPIC_API_KEY = ''
-        row = check_anthropic()
+        settings.OPENAI_API_KEY = ''
+        settings.OPENAI_BASE_URL = ''
+        row = check_tutor_provider()
         assert row['status'] == STATUS_DUMMY
+        assert row['meta']['provider'] == 'stub'
+
+    def test_tutor_provider_anthropic_key_is_live(self, settings):
+        settings.TUTOR_PROVIDER = 'auto'
+        settings.ANTHROPIC_API_KEY = 'sk-ant-test'
+        row = check_tutor_provider()
+        assert row['status'] == STATUS_LIVE
+        assert row['meta']['provider'] == 'anthropic'
 
     def test_pypdf_installed(self):
         row = check_pypdf()

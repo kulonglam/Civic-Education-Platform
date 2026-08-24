@@ -222,19 +222,33 @@ def check_sms() -> dict[str, Any]:
     return _entry('sms', STATUS_DUMMY, detail='SMS_PROVIDER=dummy — messages logged, not delivered')
 
 
-def check_anthropic() -> dict[str, Any]:
-    api_key = getattr(settings, 'ANTHROPIC_API_KEY', '') or ''
-    if api_key:
+def check_tutor_provider() -> dict[str, Any]:
+    from apps.tutor.providers import resolve_provider_name
+
+    provider = resolve_provider_name()
+    if provider == 'anthropic':
         return _entry(
-            'anthropic',
+            'ai_tutor',
             STATUS_LIVE,
             detail='Anthropic API key configured',
-            meta={'model': getattr(settings, 'ANTHROPIC_MODEL', '')},
+            meta={'provider': provider, 'model': getattr(settings, 'ANTHROPIC_MODEL', '')},
+        )
+    if provider == 'openai':
+        return _entry(
+            'ai_tutor',
+            STATUS_LIVE,
+            detail='OpenAI-compatible endpoint configured',
+            meta={
+                'provider': provider,
+                'model': getattr(settings, 'OPENAI_MODEL', ''),
+                'base_url': getattr(settings, 'OPENAI_BASE_URL', '') or 'https://api.openai.com/v1',
+            },
         )
     return _entry(
-        'anthropic',
+        'ai_tutor',
         STATUS_DUMMY,
-        detail='ANTHROPIC_API_KEY unset — tutor returns development stub responses',
+        detail='No AI provider credentials — tutor returns development stub responses',
+        meta={'provider': provider, 'configured': getattr(settings, 'TUTOR_PROVIDER', 'auto')},
     )
 
 
@@ -309,7 +323,7 @@ def collect_integration_statuses(*, include_infra: bool = True) -> list[dict[str
         check_email(),
         check_sentry(),
         check_sms(),
-        check_anthropic(),
+        check_tutor_provider(),
         check_vapid(),
         check_supabase(),
         check_oidc(),

@@ -5,7 +5,7 @@ Use this alongside [production-launch.md](production-launch.md). Copy templates 
 - Backend: [backend/.env.production.example](../backend/.env.production.example)
 - Frontend: [frontend/.env.production.example](../frontend/.env.production.example)
 
-Production Django settings **require** Stripe and Celery/Redis. SMS, web push, and Anthropic are optional but must be configured for those features to work in production (otherwise they silently fall back to dummy/stub behavior).
+Production Django settings **require** Stripe and Celery/Redis. SMS, web push, and the AI tutor are optional but must be configured for those features to work in production (otherwise they silently fall back to dummy/stub behavior).
 
 ---
 
@@ -17,7 +17,7 @@ Production Django settings **require** Stripe and Celery/Redis. SMS, web push, a
 | **Celery + Redis** | Yes | `CELERY_BROKER_URL`, `REDIS_URL`, `CELERY_TASK_ALWAYS_EAGER=False` | — | Yes (worker service) |
 | **SMS alerts** | No (Pro/Enterprise feature) | `SMS_PROVIDER`, `AT_*` | — | Yes (SMS tasks) |
 | **Web push** | No | `VAPID_*` | `VITE_VAPID_PUBLIC_KEY` | Yes (push in notify tasks) |
-| **AI tutor** | No | `ANTHROPIC_*` | — | No (sync API) |
+| **AI tutor** | No | `TUTOR_PROVIDER`, `ANTHROPIC_*` or `OPENAI_*` | — | No (sync API) |
 | **Enterprise SSO** | No (Enterprise plan) | `OIDC_*`, `API_BASE_URL` | — | Web only |
 
 ---
@@ -214,30 +214,64 @@ Set in `frontend/.env.production` before `npm run build`, or in your static host
 
 ---
 
-## 5. AI tutor — Anthropic (optional)
+## 5. AI tutor (optional)
 
-Used for: `/api/tutor/chat/` Claude responses.
+Used for: `/api/tutor/chat/` replies.
 
-If `ANTHROPIC_API_KEY` is blank, the API returns a **development stub** message — not suitable for production learners.
+`TUTOR_PROVIDER` selects the backend. The default `auto` uses Anthropic when keyed, otherwise an OpenAI-compatible endpoint, otherwise an offline **development stub** — the stub is not suitable for production learners.
+
+| `TUTOR_PROVIDER` | Backend | Needs |
+| --- | --- | --- |
+| `auto` (default) | first configured of the below | — |
+| `anthropic` | Claude | `ANTHROPIC_API_KEY` |
+| `openai` | any OpenAI-compatible endpoint | `OPENAI_API_KEY` or `OPENAI_BASE_URL` |
+| `stub` | offline canned reply | — |
 
 ### Backend environment
 
 ```env
+TUTOR_PROVIDER=auto
+
+# Option A — Anthropic
 ANTHROPIC_API_KEY=sk-ant-...
 ANTHROPIC_MODEL=claude-sonnet-4-20250514
 ANTHROPIC_MAX_TOKENS=1024
+
+# Option B — OpenAI-compatible (OpenAI, OpenRouter, Groq, Together, Ollama)
+OPENAI_API_KEY=sk-...
+OPENAI_BASE_URL=            # blank for OpenAI itself
+OPENAI_MODEL=gpt-4o-mini
+OPENAI_MAX_TOKENS=1024
 ```
+
+### Free option for testing
+
+Run a local model instead of paying for tokens. Install [Ollama](https://ollama.com), then:
+
+```bash
+ollama pull llama3.1
+ollama serve
+```
+
+```env
+TUTOR_PROVIDER=openai
+OPENAI_BASE_URL=http://localhost:11434/v1
+OPENAI_MODEL=llama3.1
+```
+
+No API key is needed — the provider sends a placeholder key that local runtimes ignore. This only works where the backend can reach the Ollama host, so it suits local development rather than Render.
 
 ### Checklist
 
-- [ ] Anthropic API key created with usage limits/budget alerts
+- [ ] Provider key created with usage limits/budget alerts
 - [ ] Key set on **web** service only (tutor runs synchronously in request)
 - [ ] Plan quotas configured (`tutor_daily_messages` in billing plan features)
-- [ ] Monitor token usage via Anthropic dashboard
+- [ ] Monitor token usage in the provider dashboard
 
 ### Verify
 
-- [ ] Tutor page → ask a civic question → real Claude reply (not “development response”)
+- [ ] `GET /api/integrations/status/` shows `ai_tutor` as `live` with the expected `provider`
+- [ ] Tutor page → ask a civic question → real reply (not “development response”)
 - [ ] Daily usage counter increments (`GET /api/tutor/usage/`)
 - [ ] Free-plan limit enforced when quota exceeded
 
@@ -315,7 +349,7 @@ Ensure these vars are identical on **web** and **worker** where noted:
 | `SMS_PROVIDER`, `AT_*` | ✓ | ✓ |
 | `VAPID_*` | ✓ | ✓ |
 | `STRIPE_*` | ✓ | — |
-| `ANTHROPIC_*` | ✓ | — |
+| `TUTOR_PROVIDER`, `ANTHROPIC_*`, `OPENAI_*` | ✓ | — |
 | Email SMTP vars | ✓ | ✓ |
 
 Frontend build (separate static deploy):
