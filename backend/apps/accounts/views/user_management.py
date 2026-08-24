@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.accounts.roles import SUPER_ADMIN, assignable_roles_for, is_super_admin
+from apps.accounts.roles import SUPER_ADMIN, assignable_roles_for, is_platform_admin, is_super_admin
 from apps.audit.services import log_activity
 from apps.core.permissions import IsAdmin, IsModeratorOrAdmin
 from apps.core.serializers import MessageSerializer
@@ -50,6 +50,10 @@ class UserListView(generics.ListAPIView):
         organization = get_current_organization()
         if organization is not None:
             qs = qs.filter(memberships__organization=organization).distinct()
+        elif not is_platform_admin(self.request.user):
+            # Fail closed: a tenant-scoped operator must not list every user
+            # on the platform just because the tenant header was omitted.
+            qs = qs.none()
         return qs.order_by('first_name', 'last_name', 'email')
 
 

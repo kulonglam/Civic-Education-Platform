@@ -1,5 +1,16 @@
 """Platform role names and permission groups.
 
+Two authorization planes (do not mix them):
+
+* **Platform** (``User.role``): ``admin`` and ``super_admin`` operate the
+  product — organizations, subscriptions, platform users, security events,
+  and system-wide analytics. ``super_admin`` additionally manages tenant
+  lifecycle, cross-org usage, and SLO.
+* **Tenant** (``Membership.role``): ``owner`` and ``admin`` operate **one**
+  organization — members, courses, lessons, quizzes, discussions, events,
+  and that org's reports. They have no access to another organization's
+  data; ``X-Tenant-Slug`` for a foreign org is ignored.
+
 Guest is unauthenticated (no Role row). Citizen/Learner is ``citizen``.
 Content Creator is stored as ``editor`` for compatibility. Administrator is
 ``admin``. Super Admin is ``super_admin``.

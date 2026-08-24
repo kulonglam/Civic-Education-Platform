@@ -131,18 +131,30 @@ def build_poll_opinion_summary() -> dict:
     }
 
 
-def build_completion_snapshot() -> dict:
-    """Lesson and media completion rates for the current organization."""
-    published_lessons = Article.objects.filter(status='published').count()
-    published_media = MediaAsset.objects.filter(status='published').count()
-    member_count = org_member_users().count()
+def build_completion_snapshot(*, platform: bool = False) -> dict:
+    """Lesson and media completion rates for the current organization.
 
-    lesson_starts = ArticleProgress.objects.count()
-    lesson_completions = ArticleProgress.objects.filter(completed=True).count()
-    media_starts = MediaProgress.objects.count()
-    media_completions = MediaProgress.objects.filter(completed=True).count()
+    Pass ``platform=True`` for system-wide platform-admin totals.
+    """
+    articles = Article.all_objects if platform else Article.objects
+    media = MediaAsset.all_objects if platform else MediaAsset.objects
+    lesson_progress = ArticleProgress.all_objects if platform else ArticleProgress.objects
+    media_progress = MediaProgress.all_objects if platform else MediaProgress.objects
+
+    published_lessons = articles.filter(status='published').count()
+    published_media = media.filter(status='published').count()
+    member_count = (
+        User.objects.filter(is_active=True, memberships__isnull=False).distinct().count()
+        if platform
+        else org_member_users().count()
+    )
+
+    lesson_starts = lesson_progress.count()
+    lesson_completions = lesson_progress.filter(completed=True).count()
+    media_starts = media_progress.count()
+    media_completions = media_progress.filter(completed=True).count()
     members_completed_lesson = (
-        ArticleProgress.objects.filter(completed=True).values('user').distinct().count()
+        lesson_progress.filter(completed=True).values('user').distinct().count()
     )
 
     return {

@@ -35,7 +35,7 @@ class TestAuditLogTenantScope:
         assert len(results) == 1
         assert results[0]['metadata']['article_id'] == 'a1'
 
-    def test_logs_without_org_context_returns_all(self, api_client, moderator_user, org, citizen_user):
+    def test_logs_without_org_context_are_empty_for_moderator(self, api_client, moderator_user, org, citizen_user):
         other_org = create_organization_with_owner(
             name='Other Org 2',
             owner=citizen_user,
@@ -56,4 +56,4 @@ class TestAuditLogTenantScope:
         response = api_client.get('/api/audit/logs/')
         assert response.status_code == status.HTTP_200_OK
         results = response.data.get('results', response.data)
-        assert len(results) >= 2
+        assert results == []

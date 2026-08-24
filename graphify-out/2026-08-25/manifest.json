@@ -186,9 +186,9 @@
     "semantic_hash": "78df8a49a4f34a88eb836d6511782411"
   },
   "backend/apps/analytics/services.py": {
-    "mtime": 1787606485.0644314,
-    "seen": 1787606604.219485,
-    "ast_hash": "bd6afdb37d893670dc776ee450d3e20a",
+    "mtime": 1787583968.1277134,
+    "seen": 1787584175.4901102,
+    "ast_hash": "8e2f8618a81074439f41ffe4c259624f",
     "semantic_hash": ""
   },
   "backend/apps/analytics/urls.py": {
@@ -198,9 +198,9 @@
     "semantic_hash": ""
   },
   "backend/apps/analytics/views.py": {
-    "mtime": 1787606482.6191742,
-    "seen": 1787606604.2194874,
-    "ast_hash": "0edfe5dcbb8aba6f81824c7bb15f3fa2",
+    "mtime": 1787583982.8968017,
+    "seen": 1787584175.4901142,
+    "ast_hash": "19a662eb0d962e933641b78cb40ac5ee",
     "semantic_hash": ""
   },
   "backend/apps/audit/__init__.py": {
@@ -306,10 +306,10 @@
     "semantic_hash": "0fdd20bdfb9ff7210d7d7f4f0079f0be"
   },
   "backend/apps/audit/views.py": {
-    "mtime": 1787606472.001217,
-    "seen": 1787606604.2195132,
-    "ast_hash": "5db15e78bf20d6af170f5e439876815a",
-    "semantic_hash": ""
+    "mtime": 1784580851.7269216,
+    "seen": 1787306733.3909743,
+    "ast_hash": "40ec645a5ab0c3fc0069119df228a654",
+    "semantic_hash": "40ec645a5ab0c3fc0069119df228a654"
   },
   "backend/apps/billing/__init__.py": {
     "mtime": 1782068801.9045331,
@@ -1308,10 +1308,10 @@
     "semantic_hash": "7fb1baa68f2de6f041cd8cc35f15afd4"
   },
   "backend/tests/test_audit_tenant_scope.py": {
-    "mtime": 1787606485.0644314,
-    "seen": 1787606604.2198517,
-    "ast_hash": "371f91525c3964324b528ca23a9fa020",
-    "semantic_hash": ""
+    "mtime": 1782231430.835837,
+    "seen": 1787306733.3912861,
+    "ast_hash": "d7c64c7689b6d072de2a987a49e05ac5",
+    "semantic_hash": "d7c64c7689b6d072de2a987a49e05ac5"
   },
   "backend/tests/test_auth_flows.py": {
     "mtime": 1782060618.5404067,
@@ -2682,9 +2682,9 @@
     "semantic_hash": ""
   },
   "backend/apps/accounts/views/user_management.py": {
-    "mtime": 1787606466.3702774,
-    "seen": 1787606604.2194784,
-    "ast_hash": "814b948f4fd4a589927aab3d20fd1ad9",
+    "mtime": 1787585407.1361287,
+    "seen": 1787585486.1643267,
+    "ast_hash": "2698976340d6ccb29613dd808af90cd8",
     "semantic_hash": ""
   },
   "backend/apps/accounts/views/verification.py": {
@@ -3192,9 +3192,9 @@
     "semantic_hash": ""
   },
   "backend/apps/accounts/roles.py": {
-    "mtime": 1787606507.0546665,
-    "seen": 1787606604.219454,
-    "ast_hash": "ecdae1f6cb4d3a0487db27c48dfbf09d",
+    "mtime": 1787585187.9144804,
+    "seen": 1787585486.1642773,
+    "ast_hash": "1c78ede67abecff6805ea6bcea5f9305",
     "semantic_hash": ""
   },
   "frontend/src/lib/roles.js": {
@@ -3483,12 +3483,6 @@
     "mtime": 1787590794.0315986,
     "seen": 1787591276.9961042,
     "ast_hash": "6e2b3b6af8e65b7df3d0c333981cea89",
-    "semantic_hash": ""
-  },
-  "backend/tests/test_org_admin_isolation.py": {
-    "mtime": 1787606528.8172975,
-    "seen": 1787606604.2198844,
-    "ast_hash": "77f04535b9d41ece8215d2fcebb80abd",
     "semantic_hash": ""
   }
 }

@@ -34,31 +34,24 @@ from .services import (
 User = get_user_model()
 
 
-def org_users():
-    """Users scoped to the current organization (all users if no tenant)."""
-    organization = get_current_organization()
-    qs = User.objects.all()
-    if organization is not None:
-        qs = qs.filter(memberships__organization=organization).distinct()
-    return qs
-
-
 @extend_schema(responses=OpenApiTypes.OBJECT)
 class AnalyticsOverviewView(APIView):
+    """System-wide KPIs for platform administrators (not tenant-scoped)."""
+
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def get(self, request):
         thirty_days_ago = timezone.now() - timedelta(days=30)
-        users = org_users()
+        users = User.objects.filter(is_active=True)
         active_users = users.filter(
             activity_logs__timestamp__gte=thirty_days_ago
         ).distinct().count()
-        completion = build_completion_snapshot()
+        completion = build_completion_snapshot(platform=True)
         return Response({
             'total_users': users.count(),
             'active_users_30d': active_users,
-            'articles_published': Article.objects.filter(status='published').count(),
-            'quiz_completions': QuizAttempt.objects.count(),
+            'articles_published': Article.all_objects.filter(status='published').count(),
+            'quiz_completions': QuizAttempt.all_objects.count(),
             'lesson_completion_rate': completion['lesson_completion_rate'],
             'media_completion_rate': completion['media_completion_rate'],
             'member_completion_rate': completion['member_completion_rate'],
@@ -71,8 +64,8 @@ class AnalyticsQuizzesView(APIView):
 
     def get(self, request):
         data = []
-        for quiz in Quiz.objects.all():
-            attempts = QuizAttempt.objects.filter(quiz=quiz)
+        for quiz in Quiz.all_objects.all():
+            attempts = QuizAttempt.all_objects.filter(quiz=quiz)
             total = attempts.count()
             passed = attempts.filter(passed=True).count()
             data.append({
@@ -91,10 +84,10 @@ class AnalyticsForumView(APIView):
 
     def get(self, request):
         return Response({
-            'total_topics': DiscussionTopic.objects.count(),
-            'total_comments': DiscussionComment.objects.count(),
-            'pending_topics': DiscussionTopic.objects.filter(is_approved=False).count(),
-            'pending_comments': DiscussionComment.objects.filter(is_approved=False).count(),
+            'total_topics': DiscussionTopic.all_objects.count(),
+            'total_comments': DiscussionComment.all_objects.count(),
+            'pending_topics': DiscussionTopic.all_objects.filter(is_approved=False).count(),
+            'pending_comments': DiscussionComment.all_objects.filter(is_approved=False).count(),
         })
 
 

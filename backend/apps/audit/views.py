@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.audit.services import log_activity
+from apps.accounts.roles import is_platform_admin
 from apps.core.permissions import IsModeratorOrAdmin
 from apps.tenants.context import get_current_organization
 from apps.tenants.permissions import IsOrgOwnerOrAdmin
@@ -27,6 +28,10 @@ class ActivityLogListView(generics.ListAPIView):
         organization = get_current_organization()
         if organization is not None:
             qs = qs.filter(organization=organization)
+        elif not is_platform_admin(self.request.user):
+            # Fail closed: org/moderator operators never see another tenant's
+            # logs just because no X-Tenant-Slug was sent.
+            qs = qs.none()
         activity_type = self.request.query_params.get('type')
         if activity_type:
             qs = qs.filter(activity_type=activity_type)
