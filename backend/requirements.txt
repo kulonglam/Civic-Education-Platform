@@ -29,7 +29,7 @@ pytest-django==4.11.1
 pytest-cov==6.2.1
 factory-boy==3.3.3
 # --- load testing ---
-locust==2.32.4
+locust==2.46.3
 # --- integrations ---
 stripe==12.5.0
 sentry-sdk==2.25.1
