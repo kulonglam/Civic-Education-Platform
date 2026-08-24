@@ -216,9 +216,18 @@ Set in `frontend/.env.production` before `npm run build`, or in your static host
 
 ## 5. AI tutor (optional)
 
-Used for: `/api/tutor/chat/` replies.
+Used for: `/api/tutor/chat/` replies and automatic English/Arabic article translation on save.
 
-`TUTOR_PROVIDER` selects the backend. The default `auto` uses Anthropic when keyed, otherwise an OpenAI-compatible endpoint, otherwise an offline **development stub** — the stub is not suitable for production learners.
+`TUTOR_PROVIDER` selects the backend. The default `auto` uses Anthropic when keyed, otherwise an OpenAI-compatible endpoint, otherwise an offline **development stub** — the stub is not suitable for production learners. Article translation skips entirely when the stub is active (it never writes the canned reply into article fields).
+
+| `TUTOR_PROVIDER` | Backend | Needs |
+| --- | --- | --- |
+| `auto` (default) | first configured of the below | — |
+| `anthropic` | Claude | `ANTHROPIC_API_KEY` |
+| `openai` | any OpenAI-compatible endpoint | `OPENAI_API_KEY` or `OPENAI_BASE_URL` |
+| `stub` | offline canned reply | — |
+
+Optional translation knobs (defaults are fine): `TRANSLATION_ENABLED`, `TRANSLATION_MAX_TOKENS` (4096), `TRANSLATION_CHUNK_CHARS` (3000). Backfill existing articles with `python manage.py translate_missing`.
 
 | `TUTOR_PROVIDER` | Backend | Needs |
 | --- | --- | --- |

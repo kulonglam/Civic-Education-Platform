@@ -207,6 +207,8 @@ class ArticleSerializer(serializers.ModelSerializer):
         model = Article
         fields = [
             'id', 'title', 'title_ar', 'content', 'content_ar',
+            'source_language', 'translation_status', 'translated_at',
+            'translation_fingerprint',
             'category', 'category_id', 'author', 'author_name',
             'tags', 'featured_image_url', 'attachment_url', 'attachment_name',
             'attachment_version', 'document_label', 'is_controlled_document',
@@ -217,6 +219,8 @@ class ArticleSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             'id', 'author', 'published_at', 'reviewed_by', 'reviewed_at',
+            'source_language', 'translation_status', 'translated_at',
+            'translation_fingerprint',
             'created_at', 'updated_at',
         ]
 

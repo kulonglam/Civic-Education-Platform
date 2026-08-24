@@ -51,6 +51,14 @@ class TestPhoneVerification:
         assert confirm.status_code == status.HTTP_200_OK
         citizen_user.refresh_from_db()
         assert citizen_user.phone_verified is True
+        assert ActivityLog.objects.filter(
+            user=citizen_user,
+            activity_type='phone_verified',
+        ).exists()
+        assert not ActivityLog.objects.filter(
+            user=citizen_user,
+            activity_type='admin_action',
+        ).exists()
 
 
 @pytest.mark.django_db
@@ -73,6 +81,32 @@ class TestUnsuspendUser:
 
         response = api_client.post(f'/api/users/{editor_user.id}/unsuspend/')
         assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+class TestAvatarUpload:
+    def test_returns_error_when_upload_fails(self, api_client, citizen_user):
+        from unittest.mock import patch
+
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        profile = citizen_user.profile
+        profile.avatar_url = 'https://example.com/old.png'
+        profile.save(update_fields=['avatar_url'])
+        api_client.force_authenticate(user=citizen_user)
+        image = SimpleUploadedFile('avatar.png', b'\x89PNG\r\n\x1a\n', content_type='image/png')
+
+        with patch('apps.accounts.views.profile.upload_file', return_value=None):
+            response = api_client.patch(
+                '/api/users/profile/avatar/',
+                {'avatar': image},
+                format='multipart',
+            )
+
+        assert response.status_code == status.HTTP_503_SERVICE_UNAVAILABLE
+        assert 'not available' in response.data['detail'].lower()
+        profile.refresh_from_db()
+        assert profile.avatar_url == 'https://example.com/old.png'
 
 
 @pytest.mark.django_db

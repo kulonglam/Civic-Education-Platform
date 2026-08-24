@@ -50,6 +50,9 @@ class StubTutorProvider(BaseTutorProvider):
 
     name = 'stub'
 
+    def __init__(self, *, api_key=None, model=None, max_tokens=None, **kwargs):
+        pass
+
     def _reply(self, messages: list[dict]) -> str:
         return (
             'This is a development response (no AI provider configured). '
@@ -216,5 +219,8 @@ def resolve_provider_name() -> str:
     return configured
 
 
-def get_tutor_provider() -> BaseTutorProvider:
-    return PROVIDERS[resolve_provider_name()]()
+def get_tutor_provider(*, max_tokens=None) -> BaseTutorProvider:
+    cls = PROVIDERS[resolve_provider_name()]
+    if max_tokens is None:
+        return cls()
+    return cls(max_tokens=max_tokens)

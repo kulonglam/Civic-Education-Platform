@@ -69,3 +69,44 @@ class TestUserRoleUpdate:
             format='json',
         )
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.django_db
+class TestUserSuspendIsolation:
+    def test_moderator_can_suspend_org_member(self, api_client, moderator_user, org, citizen_user):
+        bind_client_to_org(api_client, moderator_user, org)
+
+        response = api_client.post(f'/api/users/{citizen_user.id}/suspend/')
+        assert response.status_code == status.HTTP_200_OK
+        citizen_user.refresh_from_db()
+        assert citizen_user.is_suspended is True
+
+    def test_cannot_suspend_user_outside_org(self, api_client, moderator_user, org, django_user_model):
+        outsider = django_user_model.objects.create_user(
+            email='outsider@suspend.test',
+            password='TestPass123!',
+            first_name='Out',
+            last_name='Side',
+        )
+        bind_client_to_org(api_client, moderator_user, org)
+
+        response = api_client.post(f'/api/users/{outsider.id}/suspend/')
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        outsider.refresh_from_db()
+        assert outsider.is_suspended is False
+
+    def test_cannot_unsuspend_user_outside_org(self, api_client, moderator_user, org, django_user_model):
+        outsider = django_user_model.objects.create_user(
+            email='outsider@unsuspend.test',
+            password='TestPass123!',
+            first_name='Out',
+            last_name='Side',
+        )
+        outsider.is_suspended = True
+        outsider.save(update_fields=['is_suspended'])
+        bind_client_to_org(api_client, moderator_user, org)
+
+        response = api_client.post(f'/api/users/{outsider.id}/unsuspend/')
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        outsider.refresh_from_db()
+        assert outsider.is_suspended is True

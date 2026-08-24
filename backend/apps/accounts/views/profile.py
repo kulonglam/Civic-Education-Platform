@@ -54,12 +54,16 @@ class AvatarUploadView(APIView):
         if not file:
             return Response({'detail': 'No file provided.'}, status=status.HTTP_400_BAD_REQUEST)
         path = f'avatars/{request.user.id}/{file.name}'
-        url = upload_file(path, file.read(), file.content_type)
-        if url:
-            profile = request.user.profile
-            profile.avatar_url = url
-            profile.save(update_fields=['avatar_url'])
-        return Response({'avatar_url': request.user.profile.avatar_url})
+        url = upload_file(path, file.read(), file.content_type, request=request)
+        if not url:
+            return Response(
+                {'detail': 'File upload is not available. Configure Supabase storage or local media.'},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+        profile = request.user.profile
+        profile.avatar_url = url
+        profile.save(update_fields=['avatar_url'])
+        return Response({'avatar_url': url})
 
 
 class MyDataExportView(APIView):

@@ -97,5 +97,5 @@ class PhoneVerifyConfirmView(APIView):
         user = request.user
         user.phone_verified = True
         user.save(update_fields=['phone_verified'])
-        log_activity(user, 'admin_action', {'action': 'phone_verified'})
+        log_activity(user, 'phone_verified', {})
         return Response({'message': 'Phone number verified successfully.'})

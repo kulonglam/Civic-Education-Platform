@@ -3,6 +3,7 @@ import uuid
 from django.conf import settings
 from django.db import models
 
+from apps.core.constants import LANGUAGE_CHOICES
 from apps.tenants.models import TenantModel
 
 
@@ -105,6 +106,14 @@ class Article(TenantModel):
         ('published', 'Published'),
         ('archived', 'Archived'),
     ]
+    TRANSLATION_NONE = 'none'
+    TRANSLATION_MACHINE = 'machine'
+    TRANSLATION_FAILED = 'failed'
+    TRANSLATION_STATUS_CHOICES = [
+        (TRANSLATION_NONE, 'None'),
+        (TRANSLATION_MACHINE, 'Machine'),
+        (TRANSLATION_FAILED, 'Failed'),
+    ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
@@ -161,6 +170,26 @@ class Article(TenantModel):
         blank=True,
         default='',
         help_text='Pre-indexed body + PDF text for AI tutor retrieval.',
+    )
+    source_language = models.CharField(
+        max_length=2,
+        choices=LANGUAGE_CHOICES,
+        blank=True,
+        default='',
+        help_text='Detected language of the author-written side.',
+    )
+    translation_status = models.CharField(
+        max_length=16,
+        choices=TRANSLATION_STATUS_CHOICES,
+        default=TRANSLATION_NONE,
+        db_index=True,
+    )
+    translated_at = models.DateTimeField(null=True, blank=True)
+    translation_fingerprint = models.CharField(
+        max_length=64,
+        blank=True,
+        default='',
+        help_text='SHA-256 of the source title+body that produced the current translation.',
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

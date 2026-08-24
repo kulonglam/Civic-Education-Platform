@@ -262,6 +262,11 @@ OPENAI_BASE_URL = config('OPENAI_BASE_URL', default='')
 OPENAI_MODEL = config('OPENAI_MODEL', default='gpt-4o-mini')
 OPENAI_MAX_TOKENS = config('OPENAI_MAX_TOKENS', default=1024, cast=int)
 
+# Article auto-translation (reuses TUTOR_PROVIDER). Stub provider never writes into articles.
+TRANSLATION_ENABLED = config('TRANSLATION_ENABLED', default=True, cast=bool)
+TRANSLATION_MAX_TOKENS = config('TRANSLATION_MAX_TOKENS', default=4096, cast=int)
+TRANSLATION_CHUNK_CHARS = config('TRANSLATION_CHUNK_CHARS', default=3000, cast=int)
+
 # SMS (Africa's Talking)
 SMS_PROVIDER = config('SMS_PROVIDER', default='dummy')
 AT_USERNAME = config('AT_USERNAME', default='')

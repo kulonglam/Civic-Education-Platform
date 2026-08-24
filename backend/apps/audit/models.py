@@ -11,6 +11,7 @@ class ActivityLog(models.Model):
         ('user_logout', 'User Logout'),
         ('user_login_failed', 'User Login Failed'),
         ('email_verified', 'Email Verified'),
+        ('phone_verified', 'Phone Verified'),
         ('password_reset', 'Password Reset'),
         ('user_suspended', 'User Suspended'),
         ('user_unsuspended', 'User Unsuspended'),

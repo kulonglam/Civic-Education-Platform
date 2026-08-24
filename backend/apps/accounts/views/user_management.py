@@ -54,9 +54,8 @@ class SuspendUserView(APIView):
 
     @extend_schema(request=None, responses=MessageSerializer)
     def post(self, request, user_id):
-        try:
-            user = User.objects.get(pk=user_id)
-        except User.DoesNotExist:
+        user = _get_managed_user(request, user_id)
+        if user is None:
             return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
         user.is_suspended = True
         user.save(update_fields=['is_suspended'])
@@ -72,9 +71,8 @@ class UnsuspendUserView(APIView):
 
     @extend_schema(request=None, responses=MessageSerializer)
     def post(self, request, user_id):
-        try:
-            user = User.objects.get(pk=user_id)
-        except User.DoesNotExist:
+        user = _get_managed_user(request, user_id)
+        if user is None:
             return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
         user.is_suspended = False
         user.save(update_fields=['is_suspended'])
