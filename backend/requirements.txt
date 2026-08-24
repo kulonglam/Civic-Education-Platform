@@ -15,7 +15,7 @@ channels==4.2.0
 channels-redis==4.2.1
 reportlab==4.4.1
 celery==5.5.3
-redis==5.2.1
+redis==8.0.1
 # --- auth / crypto ---
 bcrypt==4.3.0
 cryptography==48.0.1
