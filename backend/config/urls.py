@@ -17,6 +17,8 @@ _v1_patterns = [
     path('media/', include('apps.learning.urls.media')),
     path('content-bundle/', include('apps.learning.urls.bundle')),
     path('search/', include('apps.learning.urls.search')),
+    path('bookmarks/', include('apps.learning.urls.bookmarks')),
+    path('courses/', include('apps.learning.urls.courses')),
     path('quizzes/', include('apps.quizzes.urls')),
     path('topics/', include('apps.forum.urls.topics')),
     path('comments/', include('apps.forum.urls.comments')),
@@ -27,6 +29,9 @@ _v1_patterns = [
     path('tutor/', include('apps.tutor.urls')),
     path('gamification/', include('apps.gamification.urls')),
     path('engagement/', include('apps.engagement.urls')),
+    path('news/', include('apps.engagement.urls_news')),
+    path('events/', include('apps.engagement.urls_events')),
+    path('awareness/', include('apps.learning.urls.awareness')),
     path('organization/', include('apps.tenants.urls')),
     path('billing/', include('apps.billing.urls')),
 ]

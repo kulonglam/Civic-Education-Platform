@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.core.permissions import IsAdmin
+from apps.core.permissions import IsSuperAdmin
 
 from .models import SecurityEvent
 from .serializers import HealthSerializer
@@ -88,7 +88,7 @@ class ReadinessCheckView(APIView):
 class IntegrationsStatusView(APIView):
     """Platform admin: full integration status (Stripe, Celery, SMS, tutor, etc.)."""
 
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, IsSuperAdmin]
 
     @extend_schema(responses=dict)
     def get(self, request):
@@ -99,7 +99,7 @@ class IntegrationsStatusView(APIView):
 class SecurityEventListView(APIView):
     """Platform admin: recent security events (failed logins, MFA, etc.)."""
 
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, IsSuperAdmin]
 
     def get(self, request):
         qs = SecurityEvent.objects.all()

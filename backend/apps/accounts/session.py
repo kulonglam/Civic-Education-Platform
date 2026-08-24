@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.cache import cache
 from rest_framework.exceptions import AuthenticationFailed
 
-PRIVILEGED_PLATFORM_ROLES = frozenset({'admin', 'editor', 'moderator'})
+PRIVILEGED_PLATFORM_ROLES = frozenset({'admin', 'super_admin', 'editor', 'moderator'})
 PRIVILEGED_ORG_ROLES = frozenset({'owner', 'admin'})
 
 ACTIVITY_CACHE_KEY = 'session:activity:{user_id}'

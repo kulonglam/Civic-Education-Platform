@@ -60,4 +60,29 @@ describe('QuizTakePage', () => {
     await userEvent.click(screen.getByLabelText('True'));
     expect(submit).not.toBeDisabled();
   });
+
+  it('shows a check-answer control when feedback is per question', () => {
+    mockQuiz.feedback_mode = 'per_question';
+    mockQuiz.kind = 'practice';
+    renderWithProviders(<QuizTakePage />);
+    expect(screen.getAllByRole('button', { name: /check answer/i })).toHaveLength(2);
+    mockQuiz.feedback_mode = 'end';
+    mockQuiz.kind = 'assessment';
+  });
+
+  it('renders a scenario as a civic situation', () => {
+    const previous = mockQuiz.questions;
+    mockQuiz.questions = [
+      {
+        id: 's1',
+        question_text: 'You witness corruption in a public institution. What are your legal and civic options?',
+        question_type: 'scenario',
+        options: ['Report through official channels', 'Stay silent'],
+      },
+    ];
+    renderWithProviders(<QuizTakePage />);
+    expect(screen.getByText(/situation/i)).toBeInTheDocument();
+    expect(screen.getByText(/witness corruption/i)).toBeInTheDocument();
+    mockQuiz.questions = previous;
+  });
 });

@@ -76,6 +76,25 @@ export function localizedArticle(article, lang = i18n.language) {
   };
 }
 
+export function localizedNews(item, lang = i18n.language) {
+  if (!item) return item;
+  return {
+    ...item,
+    title: localizedField(item, 'title', lang),
+    body: localizedField(item, 'body', lang),
+  };
+}
+
+export function localizedEvent(item, lang = i18n.language) {
+  if (!item) return item;
+  return {
+    ...item,
+    title: localizedField(item, 'title', lang),
+    description: localizedField(item, 'description', lang),
+    location: localizedField(item, 'location', lang),
+  };
+}
+
 /** True/false answers stay English for API grading; labels are localized. */
 export function trueFalseOptions(lang = i18n.language) {
   if (contentLanguage(lang) === 'ar') {

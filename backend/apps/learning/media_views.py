@@ -22,6 +22,7 @@ from apps.tenants.permissions import (
     get_membership,
 )
 
+from .bookmarks import BookmarkError, annotate_is_bookmarked, toggle_media_bookmark
 from .models import MediaAsset
 from .progress import record_media_progress
 from .serializers import MediaAssetSerializer
@@ -48,7 +49,7 @@ def _can_see_unpublished(user) -> bool:
     if not user or not user.is_authenticated:
         return False
     role = getattr(user, 'role', None)
-    if role and role.name in ('editor', 'admin', 'moderator'):
+    if role and role.name in ('editor', 'admin', 'super_admin', 'moderator'):
         return True
     membership = get_membership(user)
     return membership is not None and membership.role in (
@@ -80,12 +81,12 @@ class MediaAssetViewSet(viewsets.ModelViewSet):
         qs = MediaAsset.objects.select_related('category', 'author').all()
         if not _can_see_unpublished(self.request.user):
             qs = qs.filter(status='published')
-        return qs
+        return annotate_is_bookmarked(qs, self.request.user, target='media_id')
 
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
             return [AllowAny()]
-        if self.action == 'progress':
+        if self.action in ('progress', 'bookmark'):
             return [IsAuthenticated(), IsOrgMember()]
         if self.action == 'destroy':
             return [IsAuthenticated(), IsOrgMember(), CanDeleteOrgContent()]
@@ -144,6 +145,28 @@ class MediaAssetViewSet(viewsets.ModelViewSet):
             'completed_at': row.completed_at,
             'last_viewed_at': row.last_viewed_at,
         })
+
+    @extend_schema(
+        request=None,
+        responses=inline_serializer(
+            name='MediaBookmarkToggleResponse',
+            fields={'bookmarked': serializers.BooleanField()},
+        ),
+    )
+    @action(detail=True, methods=['post'])
+    def bookmark(self, request, id=None):
+        media = self.get_object()
+        try:
+            bookmarked = toggle_media_bookmark(request.user, media)
+        except BookmarkError as exc:
+            return Response({'detail': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        log_activity(
+            request.user,
+            'bookmark_added' if bookmarked else 'bookmark_removed',
+            {'media_id': str(media.id)},
+            request=request,
+        )
+        return Response({'bookmarked': bookmarked})
 
 
 def _upload_media_file(

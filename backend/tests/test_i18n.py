@@ -117,3 +117,5 @@ class TestQuizOptionsI18n:
         assert question['options'] == ['Alpha', 'Beta']
         assert question['options_ar'] == ['ألفا', 'بيتا']
         assert question['question_text'] == 'اختر واحداً'
+        assert 'correct_answer' not in question
+        assert 'explanation' not in question

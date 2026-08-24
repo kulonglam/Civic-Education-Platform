@@ -4,6 +4,7 @@ import { Layout } from './components/Layout';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
+import { AccessibilityProvider } from './context/AccessibilityContext';
 import { OrganizationProvider } from './context/OrganizationContext';
 import { Spinner } from './components/ui';
 import { startOfflineSync } from './lib/offline/sync';
@@ -114,6 +115,54 @@ const SearchPage = lazy(() =>
 const EngagementPage = lazy(() =>
   import('./pages/EngagementPage').then((m) => ({ default: m.EngagementPage })),
 );
+const SavedPage = lazy(() =>
+  import('./pages/SavedPage').then((m) => ({ default: m.SavedPage })),
+);
+const NewsPage = lazy(() =>
+  import('./pages/NewsPage').then((m) => ({ default: m.NewsPage })),
+);
+const NewsDetailPage = lazy(() =>
+  import('./pages/NewsDetailPage').then((m) => ({ default: m.NewsDetailPage })),
+);
+const NewsManagePage = lazy(() =>
+  import('./pages/NewsManagePage').then((m) => ({ default: m.NewsManagePage })),
+);
+const NewsEditorPage = lazy(() =>
+  import('./pages/NewsEditorPage').then((m) => ({ default: m.NewsEditorPage })),
+);
+const EventsPage = lazy(() =>
+  import('./pages/EventsPage').then((m) => ({ default: m.EventsPage })),
+);
+const EventsDetailPage = lazy(() =>
+  import('./pages/EventsDetailPage').then((m) => ({ default: m.EventsDetailPage })),
+);
+const EventsManagePage = lazy(() =>
+  import('./pages/EventsManagePage').then((m) => ({ default: m.EventsManagePage })),
+);
+const EventsEditorPage = lazy(() =>
+  import('./pages/EventsEditorPage').then((m) => ({ default: m.EventsEditorPage })),
+);
+const AwarenessPage = lazy(() =>
+  import('./pages/AwarenessPage').then((m) => ({ default: m.AwarenessPage })),
+);
+const EngagementManagePage = lazy(() =>
+  import('./pages/EngagementManagePage').then((m) => ({ default: m.EngagementManagePage })),
+);
+const EngagementEditorPage = lazy(() =>
+  import('./pages/EngagementEditorPage').then((m) => ({ default: m.EngagementEditorPage })),
+);
+const CoursesPage = lazy(() =>
+  import('./pages/CoursesPage').then((m) => ({ default: m.CoursesPage })),
+);
+const CourseDetailPage = lazy(() =>
+  import('./pages/CourseDetailPage').then((m) => ({ default: m.CourseDetailPage })),
+);
+const CoursesManagePage = lazy(() =>
+  import('./pages/CoursesManagePage').then((m) => ({ default: m.CoursesManagePage })),
+);
+const CourseEditorPage = lazy(() =>
+  import('./pages/CourseEditorPage').then((m) => ({ default: m.CourseEditorPage })),
+);
 
 function Lazy({ children }) {
   return <Suspense fallback={<Spinner />}>{children}</Suspense>;
@@ -134,6 +183,7 @@ export default function App() {
     <ErrorBoundary>
       <AuthProvider>
         <OrganizationProvider>
+          <AccessibilityProvider>
           <BrowserRouter>
             <Routes>
               <Route element={<Layout />}>
@@ -244,6 +294,127 @@ export default function App() {
                 />
 
                 <Route
+                  path="courses"
+                  element={
+                    <Lazy>
+                      <CoursesPage />
+                    </Lazy>
+                  }
+                />
+                <Route
+                  path="courses/manage"
+                  element={guard(<CoursesManagePage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
+                />
+                <Route
+                  path="courses/new"
+                  element={guard(<CourseEditorPage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
+                />
+                <Route
+                  path="courses/:id/edit"
+                  element={guard(<CourseEditorPage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
+                />
+                <Route
+                  path="courses/:id"
+                  element={
+                    <Lazy>
+                      <CourseDetailPage />
+                    </Lazy>
+                  }
+                />
+
+                <Route
+                  path="news"
+                  element={
+                    <Lazy>
+                      <NewsPage />
+                    </Lazy>
+                  }
+                />
+                <Route
+                  path="news/manage"
+                  element={guard(<NewsManagePage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
+                />
+                <Route
+                  path="news/new"
+                  element={guard(<NewsEditorPage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
+                />
+                <Route
+                  path="news/:id/edit"
+                  element={guard(<NewsEditorPage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
+                />
+                <Route
+                  path="news/:id"
+                  element={
+                    <Lazy>
+                      <NewsDetailPage />
+                    </Lazy>
+                  }
+                />
+                <Route
+                  path="events"
+                  element={
+                    <Lazy>
+                      <EventsPage />
+                    </Lazy>
+                  }
+                />
+                <Route
+                  path="events/manage"
+                  element={guard(<EventsManagePage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
+                />
+                <Route
+                  path="events/new"
+                  element={guard(<EventsEditorPage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
+                />
+                <Route
+                  path="events/:id/edit"
+                  element={guard(<EventsEditorPage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
+                />
+                <Route
+                  path="events/:id"
+                  element={
+                    <Lazy>
+                      <EventsDetailPage />
+                    </Lazy>
+                  }
+                />
+                <Route
+                  path="awareness"
+                  element={
+                    <Lazy>
+                      <AwarenessPage />
+                    </Lazy>
+                  }
+                />
+
+                <Route
                   path="search"
                   element={
                     <Lazy>
@@ -307,7 +478,14 @@ export default function App() {
                   }
                 />
 
-                <Route path="quizzes" element={guard(<QuizzesPage />)} />
+                <Route
+                  path="quizzes"
+                  element={
+                    <Lazy>
+                      <QuizzesPage />
+                    </Lazy>
+                  }
+                />
                 <Route
                   path="quizzes/manage"
                   element={guard(<QuizzesManagePage />, {
@@ -333,10 +511,38 @@ export default function App() {
                 <Route path="quizzes/certificates" element={guard(<CertificatesPage />)} />
                 <Route path="quizzes/:id" element={guard(<QuizTakePage />)} />
 
-                <Route path="categories/manage" element={guard(<CategoriesManagePage />)} />
+                <Route
+                  path="categories/manage"
+                  element={guard(<CategoriesManagePage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
+                />
                 <Route path="profile" element={guard(<ProfilePage />)} />
+                <Route path="saved" element={guard(<SavedPage />)} />
                 <Route path="notifications" element={guard(<NotificationsPage />)} />
                 <Route path="organization" element={guard(<OrganizationPage />)} />
+                <Route
+                  path="engage/manage"
+                  element={guard(<EngagementManagePage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
+                />
+                <Route
+                  path="engage/:kind/new"
+                  element={guard(<EngagementEditorPage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
+                />
+                <Route
+                  path="engage/:kind/:id/edit"
+                  element={guard(<EngagementEditorPage />, {
+                    roles: ['admin', 'editor'],
+                    orgRoles: ['owner', 'admin', 'content_manager'],
+                  })}
+                />
                 <Route path="tutor" element={guard(<TutorPage />)} />
                 <Route path="engage" element={guard(<EngagementPage />)} />
                 <Route path="dashboard" element={guard(<DashboardPage />)} />
@@ -344,8 +550,8 @@ export default function App() {
                 <Route
                   path="admin"
                   element={guard(<AdminPage />, {
-                    roles: ['admin', 'moderator'],
-                    orgRoles: ['owner', 'admin', 'moderator'],
+                    roles: ['admin', 'moderator', 'editor'],
+                    orgRoles: ['owner', 'admin', 'moderator', 'content_manager'],
                   })}
                 />
 
@@ -353,6 +559,7 @@ export default function App() {
               </Route>
             </Routes>
           </BrowserRouter>
+          </AccessibilityProvider>
         </OrganizationProvider>
       </AuthProvider>
     </ErrorBoundary>

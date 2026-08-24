@@ -7,7 +7,9 @@ from apps.tenants.context import get_current_organization
 from apps.tenants.models import Membership
 from apps.tenants.permissions import get_membership
 
-from .models import Article, Category, MediaAsset
+from apps.accounts.roles import is_platform_admin
+
+from .models import Article, Bookmark, Category, Course, CourseLesson, MediaAsset
 
 
 def validate_http_url(value: str, *, field_name: str = 'URL') -> str:
@@ -23,7 +25,7 @@ def _can_publish_directly(request) -> bool:
     user = request.user
     if not user or not user.is_authenticated:
         return False
-    if getattr(user, 'role', None) and user.role.name == 'admin':
+    if is_platform_admin(user):
         return True
     membership = get_membership(user)
     return membership is not None and membership.role in (Membership.OWNER, Membership.ADMIN)
@@ -46,11 +48,7 @@ class CategorySerializer(serializers.ModelSerializer):
                 Membership.OWNER,
                 Membership.ADMIN,
             )
-            platform_admin = (
-                user
-                and getattr(user, 'role', None)
-                and user.role.name == 'admin'
-            )
+            platform_admin = is_platform_admin(user)
             if not (is_owner_admin or platform_admin):
                 for field in ('name', 'slug'):
                     if field in attrs and attrs[field] != getattr(instance, field):
@@ -84,10 +82,17 @@ class MediaAssetSerializer(serializers.ModelSerializer):
             'mime_type', 'duration_seconds', 'thumbnail_url', 'captions_url',
             'category', 'category_id', 'status',
             'author', 'author_name', 'published_at', 'created_at', 'updated_at',
+            'is_bookmarked',
         ]
         read_only_fields = [
             'id', 'author', 'published_at', 'created_at', 'updated_at', 'playback_url',
+            'is_bookmarked',
         ]
+
+    is_bookmarked = serializers.SerializerMethodField()
+
+    def get_is_bookmarked(self, obj):
+        return bool(getattr(obj, 'is_bookmarked', False))
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -216,13 +221,20 @@ class ArticleSerializer(serializers.ModelSerializer):
             'status', 'reviewed_by', 'reviewed_by_name',
             'reviewed_at', 'published_at',
             'created_at', 'updated_at',
+            'is_bookmarked',
         ]
         read_only_fields = [
             'id', 'author', 'published_at', 'reviewed_by', 'reviewed_at',
             'source_language', 'translation_status', 'translated_at',
             'translation_fingerprint',
             'created_at', 'updated_at',
+            'is_bookmarked',
         ]
+
+    is_bookmarked = serializers.SerializerMethodField()
+
+    def get_is_bookmarked(self, obj):
+        return bool(getattr(obj, 'is_bookmarked', False))
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -340,3 +352,144 @@ class ArticleSerializer(serializers.ModelSerializer):
             validated_data['video_media_id'] = validated_data.pop('video_media_id')
         validated_data = self._normalize_publish_status(validated_data)
         return super().update(instance, validated_data)
+
+
+class BookmarkArticleSummarySerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.name', read_only=True)
+
+    class Meta:
+        model = Article
+        fields = [
+            'id', 'title', 'title_ar', 'featured_image_url',
+            'category_name', 'published_at',
+        ]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        request = self.context.get('request')
+        if request and get_preferred_language(request) == 'ar':
+            if data.get('title_ar'):
+                data['title'] = data['title_ar']
+            category = instance.category
+            if category and category.name_ar:
+                data['category_name'] = category.name_ar
+        return data
+
+
+class BookmarkSerializer(serializers.ModelSerializer):
+    kind = serializers.SerializerMethodField()
+    article = BookmarkArticleSummarySerializer(read_only=True)
+    media = MediaAssetSummarySerializer(read_only=True)
+
+    class Meta:
+        model = Bookmark
+        fields = ['id', 'kind', 'article', 'media', 'created_at']
+        read_only_fields = fields
+
+    def get_kind(self, obj):
+        return 'article' if obj.article_id else 'media'
+
+
+class CourseLessonSerializer(serializers.ModelSerializer):
+    article_id = serializers.UUIDField(source='article.id', read_only=True)
+    title = serializers.CharField(source='article.title', read_only=True)
+    title_ar = serializers.CharField(source='article.title_ar', read_only=True)
+    completed = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CourseLesson
+        fields = ['id', 'article_id', 'title', 'title_ar', 'sort_order', 'completed']
+
+    def get_completed(self, obj) -> bool:
+        completed_ids = self.context.get('completed_article_ids') or set()
+        return obj.article_id in completed_ids
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        request = self.context.get('request')
+        if request and get_preferred_language(request) == 'ar' and data.get('title_ar'):
+            data['title'] = data['title_ar']
+        return data
+
+
+class CourseSerializer(serializers.ModelSerializer):
+    lessons = CourseLessonSerializer(many=True, read_only=True)
+    lesson_count = serializers.SerializerMethodField()
+    completed_count = serializers.SerializerMethodField()
+    lesson_ids = serializers.ListField(
+        child=serializers.UUIDField(),
+        write_only=True,
+        required=False,
+    )
+
+    class Meta:
+        model = Course
+        fields = [
+            'id', 'title', 'title_ar', 'slug', 'description', 'description_ar',
+            'status', 'created_at', 'updated_at', 'lessons', 'lesson_count',
+            'completed_count', 'lesson_ids',
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def get_lesson_count(self, obj) -> int:
+        lessons = getattr(obj, '_prefetched_objects_cache', {}).get('lessons')
+        if lessons is not None:
+            return len(lessons)
+        return obj.lessons.count()
+
+    def get_completed_count(self, obj) -> int:
+        completed_ids = self.context.get('completed_article_ids') or set()
+        return sum(1 for lesson in obj.lessons.all() if lesson.article_id in completed_ids)
+
+    def validate_slug(self, value):
+        return (value or '').strip().lower()
+
+    def _sync_lessons(self, course, lesson_ids):
+        organization = course.organization or get_current_organization()
+        CourseLesson.objects.filter(course=course).delete()
+        articles = {
+            str(article.id): article
+            for article in Article.objects.filter(id__in=lesson_ids, status='published')
+        }
+        for idx, article_id in enumerate(lesson_ids):
+            article = articles.get(str(article_id))
+            if article is None:
+                continue
+            CourseLesson.objects.create(
+                organization=organization,
+                course=course,
+                article=article,
+                sort_order=idx,
+            )
+
+    def create(self, validated_data):
+        lesson_ids = validated_data.pop('lesson_ids', [])
+        organization = get_current_organization()
+        course = Course.objects.create(
+            organization=organization,
+            created_by=self.context['request'].user,
+            **validated_data,
+        )
+        if lesson_ids:
+            self._sync_lessons(course, lesson_ids)
+        return course
+
+    def update(self, instance, validated_data):
+        lesson_ids = validated_data.pop('lesson_ids', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        if lesson_ids is not None:
+            self._sync_lessons(instance, lesson_ids)
+        return instance
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        request = self.context.get('request')
+        manage = request and request.query_params.get('manage') in ('1', 'true', 'yes')
+        if request and get_preferred_language(request) == 'ar' and not manage:
+            if data.get('title_ar'):
+                data['title'] = data['title_ar']
+            if data.get('description_ar'):
+                data['description'] = data['description_ar']
+        return data

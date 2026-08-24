@@ -7,12 +7,36 @@ from apps.tenants.models import TenantModel
 
 
 class Quiz(TenantModel):
+    KIND_PRACTICE = 'practice'
+    KIND_ASSESSMENT = 'assessment'
+    KIND_CHOICES = [
+        (KIND_PRACTICE, 'Practice'),
+        (KIND_ASSESSMENT, 'Final assessment'),
+    ]
+    FEEDBACK_END = 'end'
+    FEEDBACK_PER_QUESTION = 'per_question'
+    FEEDBACK_CHOICES = [
+        (FEEDBACK_END, 'After submit'),
+        (FEEDBACK_PER_QUESTION, 'After each question'),
+    ]
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     title_ar = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
     description_ar = models.TextField(blank=True)
     passing_score = models.PositiveIntegerField(default=70)
+    kind = models.CharField(max_length=20, choices=KIND_CHOICES, default=KIND_ASSESSMENT)
+    feedback_mode = models.CharField(
+        max_length=20,
+        choices=FEEDBACK_CHOICES,
+        default=FEEDBACK_END,
+    )
+    max_attempts = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        help_text='Blank means unlimited attempts.',
+    )
     is_active = models.BooleanField(default=True)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -28,6 +52,10 @@ class Quiz(TenantModel):
         verbose_name_plural = 'quizzes'
         ordering = ['-created_at']
 
+    @property
+    def issues_certificate(self):
+        return self.kind == self.KIND_ASSESSMENT
+
     def __str__(self):
         return self.title
 
@@ -35,9 +63,11 @@ class Quiz(TenantModel):
 class Question(models.Model):
     MCQ = 'mcq'
     TRUE_FALSE = 'true_false'
+    SCENARIO = 'scenario'
     TYPE_CHOICES = [
         (MCQ, 'Multiple Choice'),
         (TRUE_FALSE, 'True/False'),
+        (SCENARIO, 'Scenario'),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -48,6 +78,13 @@ class Question(models.Model):
     options = models.JSONField(default=list, blank=True)
     options_ar = models.JSONField(default=list, blank=True)
     correct_answer = models.CharField(max_length=255)
+    explanation = models.TextField(blank=True)
+    explanation_ar = models.TextField(blank=True)
+    option_feedback = models.JSONField(
+        default=list,
+        blank=True,
+        help_text='Per-option teaching notes: list of {en, ar} aligned with options.',
+    )
     points = models.PositiveIntegerField(default=1)
     order = models.PositiveIntegerField(default=0)
 

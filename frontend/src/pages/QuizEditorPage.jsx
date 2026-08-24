@@ -14,6 +14,10 @@ function emptyQuestion(order = 0) {
     optionsText: 'Option A, Option B, Option C, Option D',
     optionsTextAr: '',
     correct_answer: '',
+    explanation: '',
+    explanation_ar: '',
+    optionFeedback: ['', '', '', ''],
+    optionFeedbackAr: ['', '', '', ''],
     points: 1,
     order,
   };
@@ -36,6 +40,14 @@ function questionFromApi(q, index) {
     optionsText: options.join(', '),
     optionsTextAr: optionsAr.join(', '),
     correct_answer: q.correct_answer ?? '',
+    explanation: q.explanation ?? '',
+    explanation_ar: q.explanation_ar ?? '',
+    optionFeedback: Array.isArray(q.option_feedback)
+      ? q.option_feedback.map((entry) => (typeof entry === 'string' ? entry : entry?.en ?? ''))
+      : [],
+    optionFeedbackAr: Array.isArray(q.option_feedback)
+      ? q.option_feedback.map((entry) => (typeof entry === 'string' ? '' : entry?.ar ?? ''))
+      : [],
     points: q.points ?? 1,
     order: q.order ?? index,
   };
@@ -48,6 +60,11 @@ function buildPayload(form) {
     description: form.description,
     description_ar: form.description_ar,
     passing_score: Number(form.passing_score) || 70,
+    kind: form.kind || 'assessment',
+    feedback_mode: form.kind === 'practice' ? form.feedback_mode : 'end',
+    max_attempts: form.max_attempts === '' || form.max_attempts == null
+      ? null
+      : Number(form.max_attempts),
     is_active: form.is_active,
     questions: form.questions.map((q, index) => {
       const options =
@@ -58,6 +75,13 @@ function buildPayload(form) {
             ? optionsFromText(q.optionsTextAr)
             : ['صحيح', 'خطأ']
           : optionsFromText(q.optionsTextAr);
+      const option_feedback =
+        q.question_type === 'true_false'
+          ? []
+          : options.map((_, i) => ({
+              en: (q.optionFeedback ?? [])[i] || '',
+              ar: (q.optionFeedbackAr ?? [])[i] || '',
+            }));
       return {
         question_text: q.question_text,
         question_text_ar: q.question_text_ar,
@@ -65,6 +89,9 @@ function buildPayload(form) {
         options,
         options_ar,
         correct_answer: q.correct_answer,
+        explanation: q.explanation,
+        explanation_ar: q.explanation_ar,
+        option_feedback,
         points: Number(q.points) || 1,
         order: index,
       };
@@ -73,7 +100,7 @@ function buildPayload(form) {
 }
 
 function optionsArMismatch(q) {
-  if (q.question_type !== 'mcq') return false;
+  if (q.question_type === 'true_false') return false;
   const en = optionsFromText(q.optionsText);
   const ar = optionsFromText(q.optionsTextAr);
   return ar.length > 0 && ar.length !== en.length;
@@ -90,6 +117,9 @@ export function QuizEditorPage() {
     description: '',
     description_ar: '',
     passing_score: 70,
+    kind: 'assessment',
+    feedback_mode: 'end',
+    max_attempts: '',
     is_active: true,
     questions: [emptyQuestion()],
   });
@@ -113,6 +143,9 @@ export function QuizEditorPage() {
           description: quiz.description ?? '',
           description_ar: quiz.description_ar ?? '',
           passing_score: quiz.passing_score ?? 70,
+          kind: quiz.kind ?? 'assessment',
+          feedback_mode: quiz.feedback_mode ?? 'end',
+          max_attempts: quiz.max_attempts ?? '',
           is_active: quiz.is_active ?? true,
           questions:
             quiz.questions?.length > 0
@@ -221,6 +254,43 @@ export function QuizEditorPage() {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
+              <label className="label">{t('quizzes.fieldKind')}</label>
+              <select
+                className="input"
+                value={form.kind}
+                onChange={(e) => setForm({
+                  ...form,
+                  kind: e.target.value,
+                  feedback_mode: e.target.value === 'assessment' ? 'end' : form.feedback_mode,
+                })}
+              >
+                <option value="assessment">{t('quizzes.kindAssessment')}</option>
+                <option value="practice">{t('quizzes.kindPractice')}</option>
+              </select>
+              {form.kind === 'practice' && (
+                <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">
+                  {t('quizzes.kindHintPractice')}
+                </p>
+              )}
+            </div>
+            <div>
+              <label className="label">{t('quizzes.fieldFeedbackMode')}</label>
+              <select
+                className="input"
+                value={form.kind === 'practice' ? form.feedback_mode : 'end'}
+                disabled={form.kind !== 'practice'}
+                onChange={(e) => setForm({ ...form, feedback_mode: e.target.value })}
+              >
+                <option value="end">{t('quizzes.feedbackEnd')}</option>
+                <option value="per_question">{t('quizzes.feedbackPerQuestion')}</option>
+              </select>
+              <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">
+                {t('quizzes.feedbackHint')}
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
               <label className="label">{t('quizzes.passingScore')}</label>
               <input
                 type="number"
@@ -231,16 +301,30 @@ export function QuizEditorPage() {
                 onChange={(e) => setForm({ ...form, passing_score: e.target.value })}
               />
             </div>
-            <div className="flex items-end">
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={form.is_active}
-                  onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
-                />
-                {t('quizzes.fieldActive')}
-              </label>
+            <div>
+              <label className="label">{t('quizzes.fieldMaxAttempts')}</label>
+              <input
+                type="number"
+                min={1}
+                className="input"
+                placeholder={t('quizzes.maxAttemptsUnlimited')}
+                value={form.max_attempts}
+                onChange={(e) => setForm({ ...form, max_attempts: e.target.value })}
+              />
+              <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">
+                {t('quizzes.maxAttemptsHint')}
+              </p>
             </div>
+          </div>
+          <div className="flex items-end">
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={form.is_active}
+                onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
+              />
+              {t('quizzes.fieldActive')}
+            </label>
           </div>
         </div>
 
@@ -272,9 +356,11 @@ export function QuizEditorPage() {
                   )}
                 </div>
                 <div>
-                  <label className="label">{t('quizzes.fieldQuestion')}</label>
+                  <label className="label">
+                    {q.question_type === 'scenario' ? t('quizzes.fieldSituation') : t('quizzes.fieldQuestion')}
+                  </label>
                   <textarea
-                    className="input min-h-[60px]"
+                    className={`input ${q.question_type === 'scenario' ? 'min-h-[120px]' : 'min-h-[60px]'}`}
                     value={q.question_text}
                     onChange={(e) => updateQuestion(index, { question_text: e.target.value })}
                     required
@@ -299,6 +385,7 @@ export function QuizEditorPage() {
                     >
                       <option value="mcq">{t('quizzes.typeMcq')}</option>
                       <option value="true_false">{t('quizzes.typeTrueFalse')}</option>
+                      <option value="scenario">{t('quizzes.typeScenario')}</option>
                     </select>
                   </div>
                   <div>
@@ -312,7 +399,7 @@ export function QuizEditorPage() {
                     />
                   </div>
                 </div>
-                {q.question_type === 'mcq' && (
+                {(q.question_type === 'mcq' || q.question_type === 'scenario') && (
                   <>
                     <div>
                       <label className="label">{t('quizzes.fieldOptions')}</label>
@@ -366,7 +453,18 @@ export function QuizEditorPage() {
                 </div>
                 <div>
                   <label className="label">{t('quizzes.fieldCorrectAnswer')}</label>
-                  {q.question_type === 'mcq' ? (
+                  {q.question_type === 'true_false' ? (
+                    <select
+                      className="input"
+                      value={q.correct_answer}
+                      onChange={(e) => updateQuestion(index, { correct_answer: e.target.value })}
+                      required
+                    >
+                      <option value="">{t('quizzes.selectAnswer')}</option>
+                      <option value="True">True</option>
+                      <option value="False">False</option>
+                    </select>
+                  ) : (
                     <select
                       className="input"
                       value={q.correct_answer}
@@ -380,19 +478,61 @@ export function QuizEditorPage() {
                         </option>
                       ))}
                     </select>
-                  ) : (
-                    <select
-                      className="input"
-                      value={q.correct_answer}
-                      onChange={(e) => updateQuestion(index, { correct_answer: e.target.value })}
-                      required
-                    >
-                      <option value="">{t('quizzes.selectAnswer')}</option>
-                      <option value="True">True</option>
-                      <option value="False">False</option>
-                    </select>
                   )}
                 </div>
+                {q.question_type === 'scenario' ? (
+                  <div className="space-y-3">
+                    <p className="text-sm font-medium text-ink-800 dark:text-slate-200">
+                      {t('quizzes.optionFeedbackHint')}
+                    </p>
+                    {options.map((opt, optIndex) => (
+                      <div key={`${opt}-${optIndex}`} className="space-y-2 rounded-xl border border-ink-100 p-3 dark:border-slate-700">
+                        <p className="text-xs font-semibold text-ink-700/70 dark:text-slate-400">{opt || t('quizzes.optionN', { n: optIndex + 1 })}</p>
+                        <textarea
+                          className="input min-h-[72px]"
+                          placeholder={t('quizzes.optionFeedbackEn')}
+                          value={(q.optionFeedback ?? [])[optIndex] || ''}
+                          onChange={(e) => {
+                            const next = [...(q.optionFeedback ?? [])];
+                            next[optIndex] = e.target.value;
+                            updateQuestion(index, { optionFeedback: next });
+                          }}
+                        />
+                        <textarea
+                          className="input min-h-[72px]"
+                          dir="rtl"
+                          placeholder={t('quizzes.optionFeedbackAr')}
+                          value={(q.optionFeedbackAr ?? [])[optIndex] || ''}
+                          onChange={(e) => {
+                            const next = [...(q.optionFeedbackAr ?? [])];
+                            next[optIndex] = e.target.value;
+                            updateQuestion(index, { optionFeedbackAr: next });
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <>
+                    <div>
+                      <label className="label">{t('quizzes.fieldExplanation')}</label>
+                      <textarea
+                        className="input min-h-[60px]"
+                        value={q.explanation}
+                        onChange={(e) => updateQuestion(index, { explanation: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="label">{t('quizzes.fieldExplanationAr')}</label>
+                      <textarea
+                        className="input min-h-[60px]"
+                        dir="rtl"
+                        value={q.explanation_ar}
+                        onChange={(e) => updateQuestion(index, { explanation_ar: e.target.value })}
+                      />
+                    </div>
+                  </>
+                )}
               </div>
             );
           })}

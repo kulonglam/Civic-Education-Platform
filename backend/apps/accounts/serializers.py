@@ -5,6 +5,7 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
 
+from apps.accounts.demographics import AGE_BAND_VALUES, REGION_VALUES
 from apps.core.constants import LANGUAGE_CHOICES
 
 from .mfa import user_has_mfa_enabled, user_requires_mfa
@@ -22,7 +23,7 @@ class RoleSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ['bio', 'avatar_url', 'preferred_language']
+        fields = ['bio', 'avatar_url', 'preferred_language', 'region', 'age_band']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -30,6 +31,8 @@ class UserSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer(read_only=True)
     mfa_required = serializers.SerializerMethodField()
     mfa_enabled = serializers.SerializerMethodField()
+    last_activity_at = serializers.SerializerMethodField()
+    impersonator_email = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -37,6 +40,7 @@ class UserSerializer(serializers.ModelSerializer):
             'id', 'email', 'phone', 'first_name', 'last_name', 'role',
             'is_active', 'is_suspended', 'email_verified', 'phone_verified',
             'created_at', 'profile', 'mfa_required', 'mfa_enabled',
+            'last_activity_at', 'impersonator_email',
         ]
         read_only_fields = fields
 
@@ -45,6 +49,22 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_mfa_enabled(self, obj):
         return user_has_mfa_enabled(obj)
+
+    def get_last_activity_at(self, obj):
+        if hasattr(obj, 'last_activity_at'):
+            return obj.last_activity_at
+        log = obj.activity_logs.order_by('-timestamp').values_list('timestamp', flat=True).first()
+        return log
+
+    def get_impersonator_email(self, obj):
+        request = self.context.get('request')
+        token = getattr(request, 'auth', None) if request else None
+        if token is None:
+            return None
+        try:
+            return token.get('impersonator_email') or None
+        except (AttributeError, TypeError, KeyError):
+            return None
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -135,10 +155,15 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
     preferred_language = serializers.ChoiceField(
         choices=LANGUAGE_CHOICES, required=False
     )
+    region = serializers.CharField(required=False, allow_blank=True)
+    age_band = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'phone', 'bio', 'avatar_url', 'preferred_language']
+        fields = [
+            'first_name', 'last_name', 'phone', 'bio', 'avatar_url',
+            'preferred_language', 'region', 'age_band',
+        ]
 
     def validate_phone(self, value):
         if value in (None, ''):
@@ -147,9 +172,19 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 
         return normalize_phone(value)
 
+    def validate_region(self, value):
+        if value not in REGION_VALUES:
+            raise serializers.ValidationError('Choose a listed region or leave it blank.')
+        return value
+
+    def validate_age_band(self, value):
+        if value not in AGE_BAND_VALUES:
+            raise serializers.ValidationError('Choose a listed age range or leave it blank.')
+        return value
+
     def update(self, instance, validated_data):
         profile_fields = {}
-        for field in ('bio', 'avatar_url', 'preferred_language'):
+        for field in ('bio', 'avatar_url', 'preferred_language', 'region', 'age_band'):
             if field in validated_data:
                 profile_fields[field] = validated_data.pop(field)
         if 'phone' in validated_data and validated_data['phone'] != instance.phone:

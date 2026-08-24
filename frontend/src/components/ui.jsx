@@ -81,6 +81,7 @@ function StatTile({ label, value }) {
 }
 const ROLE_STYLES = {
   admin: 'bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-200',
+  super_admin: 'bg-ink-900 text-white dark:bg-slate-100 dark:text-ink-900',
   editor: 'bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300',
   moderator: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200',
   citizen: 'bg-ink-100 text-ink-700 dark:bg-slate-700 dark:text-slate-200',

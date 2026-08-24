@@ -251,3 +251,117 @@ class MediaProgress(TenantModel):
 
     def __str__(self):
         return f'{self.user_id} · {self.media_id}'
+
+
+class Bookmark(TenantModel):
+    """Saved lesson for a learner — exactly one of article or media."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='bookmarks',
+    )
+    article = models.ForeignKey(
+        Article,
+        on_delete=models.CASCADE,
+        related_name='bookmarks',
+        null=True,
+        blank=True,
+    )
+    media = models.ForeignKey(
+        MediaAsset,
+        on_delete=models.CASCADE,
+        related_name='bookmarks',
+        null=True,
+        blank=True,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'bookmarks'
+        ordering = ['-created_at']
+        constraints = [
+            models.CheckConstraint(
+                condition=(
+                    models.Q(article__isnull=False, media__isnull=True)
+                    | models.Q(article__isnull=True, media__isnull=False)
+                ),
+                name='bookmark_one_target',
+            ),
+            models.UniqueConstraint(
+                fields=['organization', 'user', 'article'],
+                condition=models.Q(article__isnull=False),
+                name='uniq_bookmark_article',
+            ),
+            models.UniqueConstraint(
+                fields=['organization', 'user', 'media'],
+                condition=models.Q(media__isnull=False),
+                name='uniq_bookmark_media',
+            ),
+        ]
+
+    def __str__(self):
+        target = self.article_id or self.media_id
+        return f'{self.user_id} · {target}'
+
+
+class Course(TenantModel):
+    """Ordered sequence of published lessons (articles) for a learning path."""
+
+    STATUS_DRAFT = 'draft'
+    STATUS_PUBLISHED = 'published'
+    STATUS_ARCHIVED = 'archived'
+    STATUS_CHOICES = [
+        (STATUS_DRAFT, 'Draft'),
+        (STATUS_PUBLISHED, 'Published'),
+        (STATUS_ARCHIVED, 'Archived'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    title = models.CharField(max_length=255)
+    title_ar = models.CharField(max_length=255, blank=True)
+    slug = models.SlugField(max_length=120)
+    description = models.TextField(blank=True)
+    description_ar = models.TextField(blank=True)
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=STATUS_DRAFT,
+        db_index=True,
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='courses_created',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'courses'
+        ordering = ['title']
+        unique_together = [('organization', 'slug')]
+
+    def __str__(self):
+        return self.title
+
+
+class CourseLesson(TenantModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='lessons')
+    article = models.ForeignKey(
+        Article,
+        on_delete=models.CASCADE,
+        related_name='course_lessons',
+    )
+    sort_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        db_table = 'course_lessons'
+        ordering = ['sort_order', 'id']
+        unique_together = [('organization', 'course', 'article')]
+
+    def __str__(self):
+        return f'{self.course_id} · {self.sort_order}'

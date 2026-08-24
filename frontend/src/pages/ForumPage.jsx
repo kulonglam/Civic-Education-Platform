@@ -7,7 +7,7 @@ import { Alert, EmptyState, PageHeader, Spinner } from '../components/ui';
 import { useAuth } from '../context/AuthContext';
 import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
-import { forumService } from '../lib/services';
+import { engagementService, forumService } from '../lib/services';
 import { formatDate } from '../lib/format';
 
 const PAGE_SIZE = 20;
@@ -18,6 +18,9 @@ const SORT_OPTIONS = [
   { value: '-comment_count', labelKey: 'forum.sortMostReplies' },
 ];
 
+const KIND_FILTERS = ['', 'discussion', 'question'];
+const BOARD_FILTERS = ['', 'general', 'constitution', 'elections', 'rights', 'governance', 'media', 'peace'];
+
 export function ForumPage() {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -26,17 +29,30 @@ export function ForumPage() {
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [ordering, setOrdering] = useState('-created_at');
+  const [kind, setKind] = useState('');
+  const [board, setBoard] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ title: '', content: '' });
+  const [form, setForm] = useState({ title: '', content: '', kind: 'discussion', board: 'general' });
   const [error, setError] = useState('');
 
   const { data, isLoading } = useQuery({
-    queryKey: queryKeys.forumTopics({ page, search, ordering }),
+    queryKey: queryKeys.forumTopics({ page, search, ordering, kind, board }),
     queryFn: async () => {
       const params = { page: String(page), ordering };
       if (search) params.search = search;
+      if (kind) params.kind = kind;
+      if (board) params.board = board;
       const { data: res } = await forumService.listTopics(params);
       return res;
+    },
+  });
+
+  const { data: polls = [] } = useQuery({
+    queryKey: queryKeys.engagementPolls(),
+    enabled: Boolean(user),
+    queryFn: async () => {
+      const { data: res } = await engagementService.polls();
+      return res.results ?? res ?? [];
     },
   });
 
@@ -46,7 +62,7 @@ export function ForumPage() {
   const createTopic = useMutation({
     mutationFn: (payload) => forumService.createTopic(payload),
     onSuccess: () => {
-      setForm({ title: '', content: '' });
+      setForm({ title: '', content: '', kind: 'discussion', board: 'general' });
       setShowForm(false);
       setError('');
       queryClient.invalidateQueries({ queryKey: ['forum', 'topics'] });
@@ -84,6 +100,35 @@ export function ForumPage() {
         }
       />
 
+      <div className="card mb-6 border-amber-200 bg-amber-50 dark:border-amber-900/40 dark:bg-amber-950/20">
+        <h2 className="font-display text-base font-semibold text-ink-900 dark:text-slate-100">
+          {t('forum.guidelinesTitle')}
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-ink-700 dark:text-slate-300">
+          {t('forum.guidelinesBody')}
+        </p>
+      </div>
+
+      {user && polls.length > 0 && (
+        <section className="card mb-6">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h2 className="font-display text-base font-semibold text-ink-900 dark:text-slate-100">
+              {t('forum.communityPolls')}
+            </h2>
+            <Link to="/engage" className="text-sm font-semibold text-brand-700 hover:underline dark:text-brand-300">
+              {t('forum.voteOnEngage')}
+            </Link>
+          </div>
+          <ul className="space-y-2">
+            {polls.slice(0, 2).map((poll) => (
+              <li key={poll.id} className="text-sm text-ink-800 dark:text-slate-200">
+                {poll.question}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <div className="filter-bar flex flex-wrap gap-3">
         <form onSubmit={handleSearch} className="flex min-w-0 flex-1 gap-2">
           <input
@@ -108,6 +153,30 @@ export function ForumPage() {
         </form>
         <select
           className="input w-auto"
+          value={kind}
+          onChange={(e) => { setKind(e.target.value); setPage(1); }}
+          aria-label={t('forum.kind')}
+        >
+          {KIND_FILTERS.map((value) => (
+            <option key={value || 'all'} value={value}>
+              {value ? t(`forum.kind_${value}`) : t('forum.allKinds')}
+            </option>
+          ))}
+        </select>
+        <select
+          className="input w-auto"
+          value={board}
+          onChange={(e) => { setBoard(e.target.value); setPage(1); }}
+          aria-label={t('forum.board')}
+        >
+          {BOARD_FILTERS.map((value) => (
+            <option key={value || 'all'} value={value}>
+              {value ? t(`forum.board_${value}`) : t('forum.allBoards')}
+            </option>
+          ))}
+        </select>
+        <select
+          className="input w-auto"
           value={ordering}
           onChange={(e) => handleSort(e.target.value)}
           aria-label={t('forum.sortBy')}
@@ -121,6 +190,32 @@ export function ForumPage() {
       {showForm && (
         <form onSubmit={submit} className="card space-y-4">
           {error && <Alert>{error}</Alert>}
+          <p className="text-sm text-ink-700/80 dark:text-slate-400">{t('forum.preModerationNote')}</p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="label">{t('forum.kind')}</label>
+              <select
+                className="input"
+                value={form.kind}
+                onChange={(e) => setForm((f) => ({ ...f, kind: e.target.value }))}
+              >
+                <option value="discussion">{t('forum.kind_discussion')}</option>
+                <option value="question">{t('forum.kind_question')}</option>
+              </select>
+            </div>
+            <div>
+              <label className="label">{t('forum.board')}</label>
+              <select
+                className="input"
+                value={form.board}
+                onChange={(e) => setForm((f) => ({ ...f, board: e.target.value }))}
+              >
+                {BOARD_FILTERS.filter(Boolean).map((value) => (
+                  <option key={value} value={value}>{t(`forum.board_${value}`)}</option>
+                ))}
+              </select>
+            </div>
+          </div>
           <div>
             <label className="label">{t('forum.topicTitle')}</label>
             <input
@@ -153,7 +248,7 @@ export function ForumPage() {
       {isLoading ? (
         <Spinner />
       ) : topics.length === 0 ? (
-        <EmptyState title={search ? t('common.noResults') : t('forum.noTopics')}>
+        <EmptyState title={search || kind || board ? t('common.noResults') : t('forum.noTopics')}>
           {t('common.noResults')}
         </EmptyState>
       ) : (
@@ -166,6 +261,19 @@ export function ForumPage() {
                 className="content-row flex items-center justify-between gap-4"
               >
                 <div className="min-w-0">
+                  <div className="mb-1 flex flex-wrap gap-2">
+                    <span className="badge bg-ink-100 text-ink-700 dark:bg-slate-700 dark:text-slate-300">
+                      {t(`forum.kind_${topic.kind || 'discussion'}`)}
+                    </span>
+                    <span className="badge bg-brand-50 text-brand-800 dark:bg-brand-900/30 dark:text-brand-200">
+                      {t(`forum.board_${topic.board || 'general'}`)}
+                    </span>
+                    {topic.is_locked && (
+                      <span className="badge bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300">
+                        {t('forum.locked')}
+                      </span>
+                    )}
+                  </div>
                   <h3 className="font-display text-base font-semibold text-ink-900 dark:text-slate-100">
                     {topic.title}
                   </h3>

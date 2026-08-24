@@ -66,3 +66,25 @@ def enqueue_article_translation(sender, instance, created, **kwargs):
     from .tasks import translate_article_task
 
     translate_article_task.delay(str(instance.pk))
+
+
+def enqueue_record_translation(instance):
+    if not getattr(settings, 'TRANSLATION_ENABLED', True):
+        return
+    from .tasks import translate_record_task
+
+    translate_record_task.delay(
+        instance._meta.app_label,
+        instance._meta.model_name,
+        str(instance.pk),
+    )
+
+
+@receiver(post_save, sender='learning.MediaAsset')
+def enqueue_media_translation(sender, instance, **kwargs):
+    enqueue_record_translation(instance)
+
+
+@receiver(post_save, sender='learning.Course')
+def enqueue_course_translation(sender, instance, **kwargs):
+    enqueue_record_translation(instance)

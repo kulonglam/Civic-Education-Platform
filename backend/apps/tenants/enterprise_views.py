@@ -2,6 +2,7 @@
 
 from datetime import timedelta
 
+from django.contrib.auth import get_user_model
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -12,10 +13,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.accounts.roles import SUPER_ADMIN, is_super_admin
+from apps.accounts.tokens import issue_tokens_for_user
 from apps.audit.services import log_activity
 from apps.billing.models import Subscription
 from apps.billing.services import require_sso
-from apps.core.permissions import IsAdmin
+from apps.core.permissions import IsSuperAdmin
 from apps.learning.models import Article
 from apps.quizzes.models import Certificate, QuizAttempt
 from apps.tenants.context import get_current_organization
@@ -29,14 +32,33 @@ from apps.tenants.serializers import (
 from apps.tenants.services import bulk_provision_members
 
 
+IMPERSONATION_LIFETIME = timedelta(minutes=30)
+User = get_user_model()
+
+
 def _org_support_snapshot(organization):
-    """Read-only metrics for platform support (no impersonation)."""
+    """Support metrics plus members available for audited impersonation."""
     sub = (
         Subscription.objects.filter(organization=organization)
         .select_related('plan')
         .first()
     )
     thirty_days_ago = timezone.now() - timedelta(days=30)
+    members = []
+    for membership in (
+        organization.memberships.select_related('user', 'user__role')
+        .order_by('user__email')[:50]
+    ):
+        member = membership.user
+        platform_role = getattr(getattr(member, 'role', None), 'name', None)
+        members.append({
+            'user_id': str(member.id),
+            'email': member.email,
+            'full_name': getattr(member, 'full_name', None) or member.email,
+            'membership_role': membership.role,
+            'platform_role': platform_role,
+            'can_impersonate': platform_role != SUPER_ADMIN,
+        })
     return {
         'id': str(organization.id),
         'name': organization.name,
@@ -69,6 +91,7 @@ def _org_support_snapshot(organization):
             .distinct()
             .count()
         ),
+        'members': members,
         'created_at': organization.created_at,
     }
 
@@ -162,7 +185,7 @@ class BulkMemberImportView(APIView):
 class PlatformOrganizationListView(APIView):
     """Platform admin: list/search all tenants."""
 
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, IsSuperAdmin]
 
     def get(self, request):
         qs = Organization.objects.annotate(member_count=Count('memberships'))
@@ -198,7 +221,7 @@ class PlatformOrganizationListView(APIView):
 class PlatformOrganizationDetailView(APIView):
     """Platform admin: activate/deactivate or view read-only support metrics."""
 
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, IsSuperAdmin]
 
     def get(self, request, org_id):
         organization = get_object_or_404(Organization, id=org_id)
@@ -221,10 +244,123 @@ class PlatformOrganizationDetailView(APIView):
         return Response(_org_support_snapshot(organization))
 
 
+def _impersonator_id(request):
+    token = getattr(request, 'auth', None)
+    if token is None:
+        return None
+    try:
+        return token.get('impersonator_id')
+    except (AttributeError, TypeError, KeyError):
+        return None
+
+
+class PlatformImpersonateView(APIView):
+    """Start a short-lived, audited session as a member of the target org."""
+
+    permission_classes = [IsAuthenticated, IsSuperAdmin]
+
+    def post(self, request, org_id):
+        if _impersonator_id(request):
+            return Response(
+                {'detail': 'Exit the current impersonation session first.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        organization = get_object_or_404(Organization, id=org_id)
+        user_id = request.data.get('user_id')
+        if not user_id:
+            return Response({'detail': 'user_id is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        target = User.objects.select_related('role').filter(id=user_id).first()
+        if target is None:
+            return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+        if is_super_admin(target):
+            return Response(
+                {'detail': 'Super Admin accounts cannot be impersonated.'},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        membership = Membership.objects.filter(organization=organization, user=target).first()
+        if membership is None:
+            return Response(
+                {'detail': 'User is not a member of this organization.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        tokens = issue_tokens_for_user(
+            target,
+            organization=organization,
+            lifetime=IMPERSONATION_LIFETIME,
+            extra_claims={
+                'impersonator_id': str(request.user.id),
+                'impersonator_email': request.user.email,
+            },
+        )
+        log_activity(
+            request.user,
+            'impersonation_started',
+            {
+                'org_slug': organization.slug,
+                'org_id': str(organization.id),
+                'target_user_id': str(target.id),
+                'target_email': target.email,
+            },
+            organization=organization,
+            request=request,
+        )
+        return Response({
+            **tokens,
+            'target': {
+                'id': str(target.id),
+                'email': target.email,
+                'full_name': getattr(target, 'full_name', None) or target.email,
+            },
+            'actor': {
+                'id': str(request.user.id),
+                'email': request.user.email,
+            },
+            'expires_in_seconds': int(IMPERSONATION_LIFETIME.total_seconds()),
+        })
+
+
+class PlatformImpersonateExitView(APIView):
+    """Restore the Super Admin session that started impersonation."""
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        impersonator_id = _impersonator_id(request)
+        if not impersonator_id:
+            return Response(
+                {'detail': 'This session is not an impersonation session.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        actor = User.objects.select_related('role').filter(id=impersonator_id).first()
+        if actor is None or not is_super_admin(actor):
+            return Response(
+                {'detail': 'Original Super Admin session could not be restored.'},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        tokens = issue_tokens_for_user(actor)
+        log_activity(
+            actor,
+            'impersonation_ended',
+            {
+                'target_user_id': str(request.user.id),
+                'target_email': request.user.email,
+            },
+            request=request,
+        )
+        return Response({
+            **tokens,
+            'actor': {
+                'id': str(actor.id),
+                'email': actor.email,
+            },
+        })
+
+
 class PlatformUsageSummaryView(APIView):
     """Cross-org usage rollup for ministry-of-education style operators."""
 
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, IsSuperAdmin]
 
     def get(self, request):
         thirty_days_ago = timezone.now() - timedelta(days=30)

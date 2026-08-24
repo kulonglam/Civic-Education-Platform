@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.billing.services import require_sms
-from apps.core.permissions import IsAdmin
+from apps.core.permissions import IsSuperAdmin
 from apps.core.serializers import MessageSerializer
 from apps.tenants.context import get_current_organization
 from apps.tenants.permissions import IsOrgOwnerOrAdmin
@@ -90,7 +90,7 @@ class BroadcastSmsView(APIView):
 class PlatformBroadcastSmsView(APIView):
     """Platform admin: broadcast SMS to all users with phone numbers."""
 
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, IsSuperAdmin]
 
     @extend_schema(request=BroadcastSmsSerializer, responses=MessageSerializer)
     def post(self, request):

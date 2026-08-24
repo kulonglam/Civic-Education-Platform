@@ -8,9 +8,11 @@ vi.mock('../lib/services', () => ({
 }));
 
 describe('ProfilePage push copy', () => {
-  it('includes enable and disable strings for profile settings', () => {
+    it('includes enable and disable strings for profile settings', () => {
     expect(en.push.profileTitle).toBeTruthy();
     expect(en.push.disable).toMatch(/disable/i);
     expect(en.push.enabled).toBeTruthy();
+    expect(en.profile.regionHint).toMatch(/grouped poll summaries/i);
+    expect(en.admin.pollOpinion).toMatch(/public opinion/i);
   });
 });

@@ -81,7 +81,7 @@ class TestTutorRetrieval:
         formatted = format_retrieved_context(chunks)
         assert 'Source:' in formatted
         assert 'Equality' in formatted or 'equality' in formatted.lower()
-        assert 'four categories' in formatted
+        assert 'curriculum modules' in formatted
 
     def test_retrieves_pdf_attachment_when_body_is_short(self, org, admin_user, settings, tmp_path):
         set_current_organization(org)
@@ -146,8 +146,8 @@ class TestTutorRetrieval:
         assert chunks
         assert chunks[0]['category_slug'] == 'peacebuilding'
 
-    def test_all_four_categories_defined(self):
-        assert len(CATEGORY_SLUGS) == 4
+    def test_all_curriculum_categories_defined(self):
+        assert len(CATEGORY_SLUGS) == 15
 
 
 @pytest.mark.django_db

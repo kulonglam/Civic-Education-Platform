@@ -45,7 +45,7 @@ class IsOrgContentEditor(BasePermission):
         user = request.user
         if not user or not user.is_authenticated:
             return False
-        if _platform_role_name(user) in ('editor', 'admin'):
+        if _platform_role_name(user) in ('editor', 'admin', 'super_admin'):
             check_mfa_enrolled(user)
             return True
         membership = get_membership(user)
@@ -93,7 +93,7 @@ class CanDeleteOrgContent(BasePermission):
         user = request.user
         if not user or not user.is_authenticated:
             return False
-        if _platform_role_name(user) == 'admin':
+        if _platform_role_name(user) in ('admin', 'super_admin'):
             check_mfa_enrolled(user)
             return True
         membership = get_membership(user)

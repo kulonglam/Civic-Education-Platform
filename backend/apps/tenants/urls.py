@@ -5,6 +5,8 @@ from .enterprise_views import (
     DepartmentDetailView,
     DepartmentListCreateView,
     OrganizationSsoConfigView,
+    PlatformImpersonateExitView,
+    PlatformImpersonateView,
     PlatformOrganizationDetailView,
     PlatformOrganizationListView,
     PlatformUsageSummaryView,
@@ -58,6 +60,16 @@ urlpatterns = [
     path('leave/', LeaveOrganizationView.as_view(), name='organization-leave'),
     path('platform/orgs/', PlatformOrganizationListView.as_view(), name='platform-orgs'),
     path('platform/orgs/<uuid:org_id>/', PlatformOrganizationDetailView.as_view(), name='platform-org-detail'),
+    path(
+        'platform/orgs/<uuid:org_id>/impersonate/',
+        PlatformImpersonateView.as_view(),
+        name='platform-org-impersonate',
+    ),
+    path(
+        'platform/impersonate/exit/',
+        PlatformImpersonateExitView.as_view(),
+        name='platform-impersonate-exit',
+    ),
     path('platform/usage/', PlatformUsageSummaryView.as_view(), name='platform-usage'),
     path('platform/support/cases/', PlatformSupportCaseListView.as_view(), name='platform-support-cases'),
     path(

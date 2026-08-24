@@ -8,6 +8,7 @@ import { extractError } from '../lib/api';
 import { GamificationSummary } from '../components/GamificationSummary';
 import { ConfirmDialog, OrgRoleBadge, PageHeader, PasswordInput, PasswordStrengthBar, RoleBadge } from '../components/ui';
 import { CloudArrowDown } from '../components/Icons';
+import { AGE_BAND_OPTIONS, REGION_OPTIONS } from '../lib/demographics';
 import { formatDate } from '../lib/format';
 import { downloadContentBundle, getContentBundleMeta } from '../lib/offline/contentBundle';
 
@@ -31,6 +32,8 @@ export function ProfilePage() {
     bio: '',
     avatar_url: '',
     preferred_language: 'en',
+    region: '',
+    age_band: '',
   });
   const [loading, setLoading] = useState(false);
   const [avatarUploading, setAvatarUploading] = useState(false);
@@ -73,6 +76,8 @@ export function ProfilePage() {
         bio: user.profile?.bio ?? '',
         avatar_url: user.profile?.avatar_url ?? '',
         preferred_language: user.profile?.preferred_language ?? 'en',
+        region: user.profile?.region ?? '',
+        age_band: user.profile?.age_band ?? '',
       });
     }
   }, [user]);
@@ -426,6 +431,32 @@ export function ProfilePage() {
             <option value="en">English</option>
             <option value="ar">العربية</option>
           </select>
+        </div>
+        <div>
+          <label className="label">{t('profile.region')}</label>
+          <select
+            className="input"
+            value={form.region}
+            onChange={(e) => setForm((f) => ({ ...f, region: e.target.value }))}
+          >
+            {REGION_OPTIONS.map((option) => (
+              <option key={option.value || 'unset'} value={option.value}>{t(option.labelKey)}</option>
+            ))}
+          </select>
+          <p className="mt-1 text-xs text-gray-500">{t('profile.regionHint')}</p>
+        </div>
+        <div>
+          <label className="label">{t('profile.ageBand')}</label>
+          <select
+            className="input"
+            value={form.age_band}
+            onChange={(e) => setForm((f) => ({ ...f, age_band: e.target.value }))}
+          >
+            {AGE_BAND_OPTIONS.map((option) => (
+              <option key={option.value || 'unset'} value={option.value}>{t(option.labelKey)}</option>
+            ))}
+          </select>
+          <p className="mt-1 text-xs text-gray-500">{t('profile.ageHint')}</p>
         </div>
         <button type="submit" className="btn-primary" disabled={loading}>
           {loading ? t('common.loading') : t('common.save')}

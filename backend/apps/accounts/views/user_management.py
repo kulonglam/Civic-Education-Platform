@@ -1,12 +1,14 @@
 """Moderator and admin actions on other users."""
 
 from django.contrib.auth import get_user_model
+from django.db.models import Max
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.accounts.roles import SUPER_ADMIN, assignable_roles_for, is_super_admin
 from apps.audit.services import log_activity
 from apps.core.permissions import IsAdmin, IsModeratorOrAdmin
 from apps.core.serializers import MessageSerializer
@@ -42,11 +44,13 @@ class UserListView(generics.ListAPIView):
     def get_queryset(self):
         from apps.tenants.context import get_current_organization
 
-        qs = User.objects.select_related('role', 'profile')
+        qs = User.objects.select_related('role', 'profile').annotate(
+            last_activity_at=Max('activity_logs__timestamp'),
+        )
         organization = get_current_organization()
         if organization is not None:
             qs = qs.filter(memberships__organization=organization).distinct()
-        return qs
+        return qs.order_by('first_name', 'last_name', 'email')
 
 
 class SuspendUserView(APIView):
@@ -98,6 +102,17 @@ class UpdateUserRoleView(APIView):
         serializer = UserRoleUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         role_name = serializer.validated_data['role']
+        allowed = assignable_roles_for(request.user)
+        if role_name not in allowed:
+            return Response(
+                {'detail': 'You cannot assign that role.'},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        if user.role.name == SUPER_ADMIN and not is_super_admin(request.user):
+            return Response(
+                {'detail': 'Only a Super Admin can change a Super Admin account.'},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         if user.role.name == role_name:
             return Response(UserSerializer(user).data)
 

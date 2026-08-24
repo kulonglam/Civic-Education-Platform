@@ -6,6 +6,9 @@ import {
   BookOpen,
   ChatBubble,
   CloudArrowDown,
+  FileText,
+  Calendar,
+  Eye,
   Megaphone,
   ShieldCheck,
 } from '../components/Icons';
@@ -19,6 +22,21 @@ function HomePage() {
       title: t('home.featureLearnTitle'),
       text: t('home.featureLearnText'),
       Icon: BookOpen,
+    },
+    {
+      title: t('home.featureNewsTitle'),
+      text: t('home.featureNewsText'),
+      Icon: FileText,
+    },
+    {
+      title: t('home.featureEventsTitle'),
+      text: t('home.featureEventsText'),
+      Icon: Calendar,
+    },
+    {
+      title: t('home.featureAwarenessTitle'),
+      text: t('home.featureAwarenessText'),
+      Icon: Eye,
     },
     {
       title: t('home.featureQuizTitle'),
@@ -40,6 +58,11 @@ function HomePage() {
       text: t('home.featureForumText'),
       Icon: ShieldCheck,
     },
+    {
+      title: t('home.featureAccessTitle'),
+      text: t('home.featureAccessText'),
+      Icon: Eye,
+    },
   ];
 
   const steps = [
@@ -50,6 +73,9 @@ function HomePage() {
 
   const trustItems = [
     t('home.trustArticles'),
+    t('home.trustNews'),
+    t('home.trustEvents'),
+    t('home.trustAwareness'),
     t('home.trustQuizzes'),
     t('home.trustTutor'),
     t('home.trustEngage'),
@@ -59,9 +85,20 @@ function HomePage() {
 
   const topics = [
     { label: t('home.topicConstitution'), to: '/articles?category=constitution' },
+    { label: t('home.topicHumanRights'), to: '/articles?category=human-rights' },
+    { label: t('home.topicCitizenResponsibilities'), to: '/articles?category=citizen-responsibilities' },
+    { label: t('home.topicGovernmentStructure'), to: '/articles?category=government-structure' },
     { label: t('home.topicGovernance'), to: '/articles?category=governance' },
     { label: t('home.topicElections'), to: '/articles?category=elections' },
+    { label: t('home.topicRuleOfLaw'), to: '/articles?category=rule-of-law' },
     { label: t('home.topicPeacebuilding'), to: '/articles?category=peacebuilding' },
+    { label: t('home.topicGenderEquality'), to: '/articles?category=gender-equality' },
+    { label: t('home.topicAntiCorruption'), to: '/articles?category=anti-corruption' },
+    { label: t('home.topicPublicParticipation'), to: '/articles?category=public-participation' },
+    { label: t('home.topicMediaMisinformation'), to: '/articles?category=media-misinformation' },
+    { label: t('home.topicDigitalCitizenship'), to: '/articles?category=digital-citizenship' },
+    { label: t('home.topicCommunityLeadership'), to: '/articles?category=community-leadership' },
+    { label: t('home.topicConflictResolution'), to: '/articles?category=conflict-resolution' },
   ];
 
   return (
@@ -145,6 +182,24 @@ function HomePage() {
                     className="btn border border-white/35 bg-white/5 text-white backdrop-blur hover:bg-white/10"
                   >
                     {t('home.setupOrganization')}
+                  </Link>
+                  <Link
+                    to="/news"
+                    className="btn border border-white/35 bg-white/5 text-white backdrop-blur hover:bg-white/10"
+                  >
+                    {t('home.browseNews')}
+                  </Link>
+                  <Link
+                    to="/events"
+                    className="btn border border-white/35 bg-white/5 text-white backdrop-blur hover:bg-white/10"
+                  >
+                    {t('home.browseEvents')}
+                  </Link>
+                  <Link
+                    to="/awareness"
+                    className="btn border border-white/35 bg-white/5 text-white backdrop-blur hover:bg-white/10"
+                  >
+                    {t('home.browseAwareness')}
                   </Link>
                 </>
               )}

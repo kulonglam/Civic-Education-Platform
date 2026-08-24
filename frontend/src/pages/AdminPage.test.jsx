@@ -11,6 +11,7 @@ vi.mock('../context/AuthContext', () => ({
     user: { id: '1', role: { name: 'moderator' }, first_name: 'Mod' },
     hasRole: (...roles) => mockHasRole(...roles),
     isPlatformAdmin: () => mockIsPlatformAdmin(),
+    isSuperAdmin: () => false,
   }),
 }));
 
@@ -26,13 +27,15 @@ vi.mock('../context/OrganizationContext', () => ({
 
 vi.mock('../lib/services', () => ({
   forumService: {
-    pending: vi.fn().mockResolvedValue({ data: { topics: [], comments: [] } }),
+    pending: vi.fn().mockResolvedValue({ data: { topics: [], comments: [], reports: [] } }),
+    reviewReport: vi.fn(),
   },
   userService: { list: vi.fn().mockResolvedValue({ data: { results: [] } }) },
   analyticsService: {
     overview: vi.fn().mockResolvedValue({ data: { total_users: 1 } }),
     quizzes: vi.fn().mockResolvedValue({ data: [] }),
     forum: vi.fn().mockResolvedValue({ data: {} }),
+    polls: vi.fn().mockResolvedValue({ data: { total_polls: 0, total_responses: 0, polls: [] } }),
     learning: vi.fn().mockResolvedValue({ data: {} }),
   },
   notificationService: {
@@ -51,6 +54,10 @@ vi.mock('../lib/services', () => ({
   securityService: {
     events: vi.fn().mockResolvedValue({ data: { results: [] } }),
   },
+  awarenessService: {
+    listReports: vi.fn().mockResolvedValue({ data: [] }),
+    reviewReport: vi.fn(),
+  },
 }));
 
 describe('AdminPage', () => {
@@ -61,7 +68,7 @@ describe('AdminPage', () => {
 
   it('shows moderation guidance for non-platform admins', async () => {
     renderWithProviders(<AdminPage />);
-    expect(await screen.findByText(/two layers of access/i)).toBeInTheDocument();
+    expect(await screen.findByText(/recommended user roles/i)).toBeInTheDocument();
     expect(screen.getByText(/platform analytics and role assignment/i)).toBeInTheDocument();
   });
 
@@ -70,5 +77,14 @@ describe('AdminPage', () => {
     mockHasRole.mockImplementation((...roles) => roles.includes('admin'));
     renderWithProviders(<AdminPage />);
     expect(await screen.findByRole('heading', { name: /platform administration/i })).toBeInTheDocument();
+  });
+
+  it('shows content management links for editors', async () => {
+    mockHasRole.mockImplementation((...roles) => roles.includes('editor'));
+    renderWithProviders(<AdminPage />);
+    expect(await screen.findByRole('heading', { name: /content administration/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /create a lesson/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /create a quiz/i })).toBeInTheDocument();
+    expect(screen.queryByText(/moderation queue/i)).not.toBeInTheDocument();
   });
 });

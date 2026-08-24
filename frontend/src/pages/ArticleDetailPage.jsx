@@ -11,9 +11,12 @@ import { queryKeys } from '../lib/queryKeys';
 import { loadArticle } from '../lib/offline/articles';
 import { formatDate, readingTime } from '../lib/format';
 import { localizedArticle } from '../lib/localizedContent';
-import { renderMarkdown } from '../lib/markdown';
+import { renderMarkdown, toPlainText } from '../lib/markdown';
 import { resolveMediaUrl } from '../lib/media';
 import { articleService } from '../lib/services';
+import { BookmarkButton } from '../components/BookmarkButton';
+import { GuestSaveCta } from '../components/GuestSaveCta';
+import { ReadAloudButton } from '../components/ReadAloudButton';
 
 export function ArticleDetailPage() {
   const { t, i18n } = useTranslation();
@@ -85,18 +88,24 @@ export function ArticleDetailPage() {
       <div
         className="fixed left-0 top-0 z-50 h-0.5 bg-brand-500 transition-all duration-100"
         style={{ width: `${readProgress}%` }}
+        aria-hidden="true"
       />
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <Breadcrumb items={[
           { to: '/articles', label: t('articles.title') },
           { label: article.title },
         ]} />
-        {canEdit && (
-          <Link to={`/articles/${article.id}/edit`} className="btn-secondary text-sm">
-            {t('common.edit')}
-          </Link>
-        )}
+        <div className="flex flex-wrap items-center gap-2">
+          <ReadAloudButton text={`${article.title}. ${toPlainText(article.content)}`} />
+          <BookmarkButton kind="article" id={article.id} bookmarked={article.is_bookmarked} />
+          {canEdit && (
+            <Link to={`/articles/${article.id}/edit`} className="btn-secondary text-sm">
+              {t('common.edit')}
+            </Link>
+          )}
+        </div>
       </div>
+      {!user && <GuestSaveCta className="mb-6" />}
       {fromCache && (
         <div className="mb-4">
           <Alert kind="warning">{t('offline.cachedArticle')}</Alert>

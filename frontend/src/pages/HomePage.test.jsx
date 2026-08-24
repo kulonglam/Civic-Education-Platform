@@ -26,11 +26,17 @@ describe('HomePage', () => {
       'href',
       '/articles?category=peacebuilding',
     );
+    expect(screen.getByRole('link', { name: /human rights/i })).toHaveAttribute(
+      'href',
+      '/articles?category=human-rights',
+    );
     expect(screen.getAllByRole('link', { name: /get started/i })[0]).toHaveAttribute('href', '/register');
     expect(screen.getByRole('link', { name: /set up your organization/i })).toHaveAttribute(
       'href',
       '/register?type=organization',
     );
+    expect(screen.getByRole('link', { name: /civic information/i })).toHaveAttribute('href', '/news');
+    expect(screen.getByRole('link', { name: /spot misinformation/i })).toHaveAttribute('href', '/awareness');
   });
 
   it('shows personalized CTAs when logged in', () => {

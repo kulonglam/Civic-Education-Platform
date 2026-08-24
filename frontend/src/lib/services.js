@@ -96,6 +96,8 @@ const quizService = {
   update: (id, payload) => api.patch(`/quizzes/${id}/`, payload),
   remove: (id) => api.delete(`/quizzes/${id}/`),
   attempt: (id, answers) => api.post(`/quizzes/${id}/attempt/`, { answers }),
+  checkAnswer: (id, questionId, answer) =>
+    api.post(`/quizzes/${id}/check-answer/`, { question_id: questionId, answer }),
   results: (params) => api.get("/quizzes/results/", { params }),
   certificates: (params) => api.get("/quizzes/certificates/", { params }),
   downloadCertificate: (id) => api.get(`/quizzes/certificates/${id}/download/`)
@@ -107,6 +109,11 @@ const forumService = {
   addComment: (topicId, comment) => api.post(`/topics/${topicId}/comments/`, { comment }),
   moderateTopic: (id, is_approved) => api.patch(`/topics/${id}/moderate/`, { is_approved }),
   moderateComment: (id, is_approved) => api.patch(`/comments/${id}/moderate/`, { is_approved }),
+  lockTopic: (id, is_locked) => api.patch(`/topics/${id}/lock/`, { is_locked }),
+  acceptAnswer: (id, comment_id) => api.post(`/topics/${id}/accept-answer/`, { comment_id }),
+  reportTopic: (id, payload) => api.post(`/topics/${id}/report/`, payload),
+  reportComment: (id, payload) => api.post(`/comments/${id}/report/`, payload),
+  reviewReport: (id, payload) => api.patch(`/topics/reports/${id}/`, payload),
   pending: () => api.get("/topics/pending/")
 };
 const notificationService = {
@@ -131,6 +138,7 @@ const analyticsService = {
   overview: () => api.get("/analytics/overview/"),
   quizzes: () => api.get("/analytics/quizzes/"),
   forum: () => api.get("/analytics/forum/"),
+  polls: () => api.get("/analytics/polls/"),
   learning: () => api.get("/analytics/learning/"),
   dashboard: (params) => api.get("/analytics/dashboard/", { params }),
   progress: (params) => api.get("/analytics/progress/", { params }),
@@ -187,6 +195,9 @@ const organizationService = {
   updatePlatformSupportCase: (id, payload) =>
     api.patch(`/organization/platform/support/cases/${id}/`, payload),
   platformSlo: () => api.get("/organization/platform/slo/"),
+  impersonate: (orgId, userId) =>
+    api.post(`/organization/platform/orgs/${orgId}/impersonate/`, { user_id: userId }),
+  exitImpersonation: () => api.post("/organization/platform/impersonate/exit/"),
 };
 const billingService = {
   plans: () => api.get("/billing/plans/"),
@@ -209,13 +220,62 @@ const tutorService = {
 const gamificationService = {
   me: () => api.get("/gamification/me/"),
 };
+const bookmarkService = {
+  list: (params) => api.get("/bookmarks/", { params }),
+  toggleArticle: (id) => api.post(`/articles/${id}/bookmark/`),
+  toggleMedia: (id) => api.post(`/media/${id}/bookmark/`),
+  remove: (id) => api.delete(`/bookmarks/${id}/`),
+};
 const engagementService = {
-  polls: () => api.get("/engagement/polls/"),
+  polls: (params) => api.get("/engagement/polls/", { params }),
+  getPoll: (id) => api.get(`/engagement/polls/${id}/`, { params: { manage: '1' } }),
+  createPoll: (payload) => api.post("/engagement/polls/", payload),
+  updatePoll: (id, payload) => api.patch(`/engagement/polls/${id}/`, payload),
+  removePoll: (id) => api.delete(`/engagement/polls/${id}/`),
   votePoll: (pollId, optionId) =>
     api.post(`/engagement/polls/${pollId}/vote/`, { option_id: optionId }),
-  petitions: () => api.get("/engagement/petitions/"),
+  petitions: (params) => api.get("/engagement/petitions/", { params }),
+  getPetition: (id) => api.get(`/engagement/petitions/${id}/`, { params: { manage: '1' } }),
+  createPetition: (payload) => api.post("/engagement/petitions/", payload),
+  updatePetition: (id, payload) => api.patch(`/engagement/petitions/${id}/`, payload),
+  removePetition: (id) => api.delete(`/engagement/petitions/${id}/`),
   signPetition: (petitionId) => api.post(`/engagement/petitions/${petitionId}/sign/`),
-  campaigns: () => api.get("/engagement/campaigns/"),
+  campaigns: (params) => api.get("/engagement/campaigns/", { params }),
+  getCampaign: (id) => api.get(`/engagement/campaigns/${id}/`, { params: { manage: '1' } }),
+  createCampaign: (payload) => api.post("/engagement/campaigns/", payload),
+  updateCampaign: (id, payload) => api.patch(`/engagement/campaigns/${id}/`, payload),
+  removeCampaign: (id) => api.delete(`/engagement/campaigns/${id}/`),
+  joinCampaign: (campaignId) => api.post(`/engagement/campaigns/${campaignId}/join/`),
+};
+const courseService = {
+  list: (params) => api.get("/courses/", { params }),
+  get: (id, params) => api.get(`/courses/${id}/`, { params }),
+  create: (payload) => api.post("/courses/", payload),
+  update: (id, payload) => api.patch(`/courses/${id}/`, payload),
+  remove: (id) => api.delete(`/courses/${id}/`),
+};
+const newsService = {
+  list: (params) => api.get("/news/", { params }),
+  get: (id) => api.get(`/news/${id}/`),
+  create: (payload) => api.post("/news/", payload),
+  update: (id, payload) => api.patch(`/news/${id}/`, payload),
+  remove: (id) => api.delete(`/news/${id}/`),
+};
+const eventsService = {
+  list: (params) => api.get("/events/", { params }),
+  get: (id) => api.get(`/events/${id}/`),
+  create: (payload) => api.post("/events/", payload),
+  update: (id, payload) => api.patch(`/events/${id}/`, payload),
+  remove: (id) => api.delete(`/events/${id}/`),
+  register: (id, registered) => api.post(`/events/${id}/register/`, { registered }),
+  reminder: (id, reminder) => api.post(`/events/${id}/reminder/`, { reminder }),
+  calendar: (id) => api.get(`/events/${id}/calendar/`, { responseType: "blob" }),
+};
+const awarenessService = {
+  overview: () => api.get("/awareness/"),
+  report: (payload) => api.post("/awareness/reports/", payload),
+  listReports: (params) => api.get("/awareness/reports/", { params }),
+  reviewReport: (id, payload) => api.patch(`/awareness/reports/${id}/`, payload),
 };
 const searchService = {
   query: (q, limit = 8) => api.get("/search/", { params: { q, limit } }),
@@ -231,12 +291,17 @@ export {
   articleService,
   auditService,
   authService,
+  awarenessService,
   billingService,
+  bookmarkService,
   categoryService,
+  courseService,
   engagementService,
+  eventsService,
   forumService,
   gamificationService,
   mediaService,
+  newsService,
   notificationService,
   notifyService,
   organizationService,

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { analyticsService, auditService, forumService, notificationService, notifyService, organizationService, securityService, userService } from '../lib/services';
+import { analyticsService, auditService, awarenessService, forumService, notificationService, notifyService, organizationService, securityService, userService } from '../lib/services';
+import { ADMIN, EDITOR, MODERATOR, CITIZEN, SUPER_ADMIN, RECOMMENDED_ROLES } from '../lib/roles';
 import { useAuth } from '../context/AuthContext';
 import { useOrganization } from '../context/OrganizationContext';
 import { extractError } from '../lib/api';
@@ -17,22 +19,46 @@ function StatCard({ label, value }) {
   );
 }
 
+const CONTENT_LINKS = [
+  { to: '/articles/new', titleKey: 'admin.createLesson', hintKey: 'admin.createLessonHint' },
+  { to: '/articles/manage', titleKey: 'admin.editLessons', hintKey: 'admin.editLessonsHint' },
+  { to: '/categories/manage', titleKey: 'categories.manageTitle', hintKey: 'admin.manageCategoriesHint' },
+  { to: '/media/new', titleKey: 'admin.uploadVideo', hintKey: 'admin.uploadVideoHint' },
+  { to: '/media/manage', titleKey: 'admin.uploadDocuments', hintKey: 'admin.uploadDocumentsHint' },
+  { to: '/quizzes/new', titleKey: 'admin.createQuiz', hintKey: 'admin.createQuizHint' },
+  { to: '/courses/manage', titleKey: 'admin.manageCourses', hintKey: 'admin.manageCoursesHint' },
+  { to: '/engage/manage', titleKey: 'admin.manageEngage', hintKey: 'admin.manageEngageHint' },
+];
+
+function pct(value) {
+  if (value === null || value === undefined || value === '') return '—';
+  return `${value}%`;
+}
+
 function AdminPage() {
   const { t } = useTranslation();
-  const { user: currentUser, hasRole, isPlatformAdmin } = useAuth();
-  const { isOrgModerator } = useOrganization();
+  const navigate = useNavigate();
+  const { user: currentUser, hasRole, isPlatformAdmin, isSuperAdmin, startImpersonation } = useAuth();
+  const { isOrgAdmin, isOrgContentManager, isOrgModerator } = useOrganization();
   const isAdmin = isPlatformAdmin();
-  const canModerateUsers = hasRole('admin', 'moderator') || isOrgModerator;
+  const superAdmin = isSuperAdmin();
+  const canManageContent = hasRole('admin', 'editor') || isOrgContentManager;
+  const canModerate = hasRole('admin', 'moderator') || isOrgModerator;
   const canManagePlatformUsers = hasRole('admin', 'moderator');
-  const ASSIGNABLE_ROLES = ['citizen', 'editor', 'moderator', 'admin'];
+  const ASSIGNABLE_ROLES = superAdmin
+    ? [CITIZEN, EDITOR, MODERATOR, ADMIN, SUPER_ADMIN]
+    : [CITIZEN, EDITOR, MODERATOR];
   const [overview, setOverview] = useState(null);
   const [quizStats, setQuizStats] = useState([]);
   const [forumStats, setForumStats] = useState(null);
+  const [pollOpinion, setPollOpinion] = useState(null);
   const [learningStats, setLearningStats] = useState(null);
   const [users, setUsers] = useState([]);
   const [userActionError, setUserActionError] = useState('');
   const [pendingTopics, setPendingTopics] = useState([]);
   const [pendingComments, setPendingComments] = useState([]);
+  const [forumReports, setForumReports] = useState([]);
+  const [misinfoReports, setMisinfoReports] = useState([]);
   const [platformMessage, setPlatformMessage] = useState('');
   const [platformSmsBusy, setPlatformSmsBusy] = useState(false);
   const [auditLogs, setAuditLogs] = useState([]);
@@ -45,28 +71,44 @@ function AdminPage() {
   const [usageSummary, setUsageSummary] = useState(null);
   const [securityEvents, setSecurityEvents] = useState([]);
   const [supportOrg, setSupportOrg] = useState(null);
+  const [impersonateBusy, setImpersonateBusy] = useState(null);
   const [supportBusy, setSupportBusy] = useState(false);
   const [sloMetrics, setSloMetrics] = useState(null);
   const [platformCases, setPlatformCases] = useState([]);
 
   const loadModeration = () =>
-    forumService
-      .pending()
-      .then((r) => {
-        setPendingTopics(r.data.topics);
-        setPendingComments(r.data.comments);
-      })
-      .catch(() => {});
+    Promise.all([
+      forumService
+        .pending()
+        .then((r) => {
+          setPendingTopics(r.data.topics);
+          setPendingComments(r.data.comments);
+          setForumReports(r.data.reports ?? []);
+        })
+        .catch(() => {}),
+      awarenessService
+        .listReports({ status: 'pending' })
+        .then((r) => setMisinfoReports(r.data.results ?? r.data ?? []))
+        .catch(() => setMisinfoReports([])),
+    ]);
 
   useEffect(() => {
-    const tasks = [loadModeration()];
+    const tasks = [];
+    if (canModerate) {
+      tasks.push(loadModeration());
+    }
     if (isAdmin) {
       tasks.push(
         analyticsService.overview().then((r) => setOverview(r.data)),
         analyticsService.quizzes().then((r) => setQuizStats(r.data)),
         analyticsService.forum().then((r) => setForumStats(r.data)),
+        analyticsService.polls().then((r) => setPollOpinion(r.data)),
         analyticsService.learning().then((r) => setLearningStats(r.data)),
         notificationService.pushStats().then((r) => setPushStats(r.data)),
+      );
+    }
+    if (superAdmin) {
+      tasks.push(
         organizationService.platformOrgs().then((r) => setPlatformOrgs(r.data.results ?? r.data)),
         organizationService.platformUsage().then((r) => setUsageSummary(r.data)),
         securityService.events({ page_size: 40 }).then((r) => setSecurityEvents(r.data.results ?? [])),
@@ -81,7 +123,7 @@ function AdminPage() {
       );
     }
     Promise.allSettled(tasks).finally(() => setLoading(false));
-  }, [isAdmin, canModerateUsers, canManagePlatformUsers]);
+  }, [isAdmin, superAdmin, canModerate, canManagePlatformUsers]);
 
   const viewOrgSupport = async (orgId) => {
     setSupportBusy(true);
@@ -95,6 +137,18 @@ function AdminPage() {
     }
   };
 
+  const impersonateMember = async (orgId, userId) => {
+    setImpersonateBusy(userId);
+    try {
+      await startImpersonation(orgId, userId);
+      navigate('/');
+    } catch (err) {
+      toast.error(extractError(err));
+    } finally {
+      setImpersonateBusy(null);
+    }
+  };
+
   const moderateTopic = async (id, approve) => {
     await forumService.moderateTopic(id, approve);
     loadModeration();
@@ -103,6 +157,24 @@ function AdminPage() {
   const moderateComment = async (id, approve) => {
     await forumService.moderateComment(id, approve);
     loadModeration();
+  };
+
+  const reviewForumReport = async (id, status) => {
+    try {
+      await forumService.reviewReport(id, { status });
+      await loadModeration();
+    } catch (err) {
+      toast.error(extractError(err));
+    }
+  };
+
+  const reviewMisinfoReport = async (id, status) => {
+    try {
+      await awarenessService.reviewReport(id, { status });
+      await loadModeration();
+    } catch (err) {
+      toast.error(extractError(err));
+    }
   };
 
   const suspendUser = async (userId) => {
@@ -191,20 +263,84 @@ function AdminPage() {
   return (
     <div className="space-y-10">
       <PageHeader
-        title={isAdmin ? t('admin.platformTitle') : t('admin.moderationTitle')}
-        subtitle={isAdmin ? t('admin.platformSubtitle') : t('admin.moderationSubtitle')}
+        title={
+          isAdmin
+            ? t('admin.platformTitle')
+            : canManageContent && !canModerate
+              ? t('admin.contentTitle')
+              : t('admin.moderationTitle')
+        }
+        subtitle={
+          isAdmin
+            ? t('admin.platformSubtitle')
+            : canManageContent && !canModerate
+              ? t('admin.contentSubtitle')
+              : t('admin.moderationSubtitle')
+        }
       />
 
       <div className="card border-brand-100 bg-brand-50/60 dark:border-brand-900/40 dark:bg-brand-950/30">
         <h2 className="text-sm font-semibold text-brand-900 dark:text-brand-200">{t('roles.modelTitle')}</h2>
-        <ul className="mt-2 space-y-1 text-sm text-gray-700 dark:text-slate-300">
-          <li><strong>{t('roles.platformRole')}:</strong> {t('roles.platformRoleDesc')}</li>
-          <li><strong>{t('roles.orgRole')}:</strong> {t('roles.orgRoleDesc')}</li>
-        </ul>
-        {!isAdmin && (
+        <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">{t('roles.modelHint')}</p>
+        <div className="mt-3 overflow-hidden rounded-lg border border-brand-100 dark:border-brand-900/40">
+          <table className="w-full text-sm">
+            <thead className="bg-white/70 text-left text-gray-500 dark:bg-slate-900/40 dark:text-slate-400">
+              <tr>
+                <th className="px-3 py-2 font-medium">{t('roles.roleColumn')}</th>
+                <th className="px-3 py-2 font-medium">{t('roles.permissionsColumn')}</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-brand-100/80 bg-white/50 dark:divide-slate-700 dark:bg-slate-900/20">
+              {RECOMMENDED_ROLES.map((row) => (
+                <tr key={row.key}>
+                  <td className="px-3 py-2 font-medium text-gray-900 dark:text-slate-100">
+                    {t(`admin.roles.${row.key}`)}
+                  </td>
+                  <td className="px-3 py-2 text-gray-700 dark:text-slate-300">{t(`roles.${row.permKey}`)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-3 text-sm text-gray-600 dark:text-slate-400">
+          <strong>{t('roles.orgRole')}:</strong> {t('roles.orgRoleDesc')}
+        </p>
+        {!isAdmin && canModerate && (
           <p className="mt-3 text-sm text-gray-600 dark:text-slate-400">{t('admin.moderationPanelDesc')}</p>
         )}
+        {!isAdmin && canManageContent && (
+          <p className="mt-3 text-sm text-gray-600 dark:text-slate-400">{t('admin.contentPanelDesc')}</p>
+        )}
       </div>
+
+      {canManageContent && (
+        <section>
+          <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.contentManagement')}</h2>
+          <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('admin.contentManagementHint')}</p>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {CONTENT_LINKS.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                className="card block transition hover:-translate-y-0.5 hover:shadow-lift dark:border-slate-700 dark:bg-slate-800"
+              >
+                <h3 className="font-semibold text-gray-900 dark:text-slate-100">{t(item.titleKey)}</h3>
+                <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">{t(item.hintKey)}</p>
+              </Link>
+            ))}
+          </div>
+          <p className="mt-3 text-sm text-gray-500 dark:text-slate-400">{t('admin.translateHint')}</p>
+          {isOrgAdmin && !isAdmin && (
+            <p className="mt-2 text-sm text-gray-500 dark:text-slate-400">
+              <Link to="/dashboard" className="font-semibold text-brand-700 hover:underline dark:text-brand-400">
+                {t('nav.dashboard')}
+              </Link>
+              {' — '}
+              {t('admin.orgAnalyticsHint')}
+            </p>
+          )}
+        </section>
+      )}
 
       {isAdmin && overview && (
         <section>
@@ -214,11 +350,14 @@ function AdminPage() {
             <StatCard label={t('admin.activeUsers')} value={overview.active_users_30d} />
             <StatCard label={t('admin.articlesPublished')} value={overview.articles_published} />
             <StatCard label={t('admin.quizCompletions')} value={overview.quiz_completions} />
+            <StatCard label={t('admin.lessonCompletionRate')} value={pct(overview.lesson_completion_rate)} />
+            <StatCard label={t('admin.mediaCompletionRate')} value={pct(overview.media_completion_rate)} />
+            <StatCard label={t('admin.memberCompletionRate')} value={pct(overview.member_completion_rate)} />
           </div>
         </section>
       )}
 
-      {isAdmin && (
+      {superAdmin && (
         <section>
           <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.platformOrgs')}</h2>
           <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('admin.platformOrgsSubtitle')}</p>
@@ -294,7 +433,7 @@ function AdminPage() {
         </section>
       )}
 
-      {isAdmin && supportOrg && (
+      {superAdmin && supportOrg && (
         <section className="card">
           <div className="mb-3 flex items-center justify-between gap-2">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">
@@ -315,10 +454,42 @@ function AdminPage() {
             <StatCard label={t('saas.departments')} value={supportOrg.department_count} />
             <StatCard label={t('admin.controlledDocs')} value={supportOrg.controlled_documents} />
           </div>
+          {supportOrg.members?.length > 0 && (
+            <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 dark:border-slate-700">
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50 text-left text-gray-500 dark:bg-slate-700/50 dark:text-slate-400">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">{t('saas.members')}</th>
+                    <th className="px-4 py-3 font-medium">{t('admin.actions')}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+                  {supportOrg.members.map((member) => (
+                    <tr key={member.user_id}>
+                      <td className="px-4 py-3">
+                        <p className="font-medium text-gray-900 dark:text-slate-100">{member.full_name}</p>
+                        <p className="text-xs text-gray-500 dark:text-slate-400">{member.email}</p>
+                      </td>
+                      <td className="px-4 py-3">
+                        <button
+                          type="button"
+                          className="btn-secondary text-xs"
+                          disabled={!member.can_impersonate || impersonateBusy === member.user_id}
+                          onClick={() => impersonateMember(supportOrg.id, member.user_id)}
+                        >
+                          {t('admin.impersonate')}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </section>
       )}
 
-      {isAdmin && usageSummary?.totals && (
+      {superAdmin && usageSummary?.totals && (
         <section>
           <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.usageSummary')}</h2>
           <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('admin.usageSummarySubtitle')}</p>
@@ -331,7 +502,7 @@ function AdminPage() {
         </section>
       )}
 
-      {isAdmin && sloMetrics && (
+      {superAdmin && sloMetrics && (
         <section>
           <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">SLO status</h2>
           <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">
@@ -384,7 +555,7 @@ function AdminPage() {
         </section>
       )}
 
-      {isAdmin && securityEvents.length > 0 && (
+      {superAdmin && securityEvents.length > 0 && (
         <section>
           <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.securityEvents')}</h2>
           <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('admin.securityEventsSubtitle')}</p>
@@ -447,6 +618,77 @@ function AdminPage() {
         </section>
       )}
 
+      {isAdmin && pollOpinion && (
+        <section>
+          <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.pollOpinion')}</h2>
+          <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('admin.pollOpinionHint')}</p>
+          <div className="mb-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard label={t('admin.totalPolls')} value={pollOpinion.total_polls} />
+            <StatCard label={t('admin.totalPollResponses')} value={pollOpinion.total_responses} />
+          </div>
+          <div className="space-y-4">
+            {(pollOpinion.polls ?? []).map((poll) => (
+              <div key={poll.id} className="card space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="badge bg-brand-50 text-brand-800 dark:bg-brand-900/30 dark:text-brand-200">
+                    {t(`engage.kind_${poll.kind || 'community'}`)}
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-slate-400">
+                    {t('engage.totalResponses', { count: poll.total_votes })}
+                  </span>
+                </div>
+                <h3 className="font-semibold text-gray-900 dark:text-slate-100">{poll.question}</h3>
+                <ul className="space-y-2">
+                  {(poll.options ?? []).map((option) => (
+                    <li key={option.id}>
+                      <div className="mb-1 flex justify-between text-sm text-gray-700 dark:text-slate-300">
+                        <span>{option.label}</span>
+                        <span>{option.percent}%</span>
+                      </div>
+                      <div className="h-1.5 overflow-hidden rounded-full bg-gray-100 dark:bg-slate-700">
+                        <div className="h-full bg-brand-600" style={{ width: `${option.percent || 0}%` }} />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                {poll.demographics_available ? (
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+                        {t('admin.regionalTrends')}
+                      </h4>
+                      <ul className="mt-2 space-y-1 text-sm text-gray-700 dark:text-slate-300">
+                        {(poll.regions ?? []).map((row) => (
+                          <li key={row.key} className="flex justify-between gap-3">
+                            <span>{t(`admin.demo_${row.key}`, { defaultValue: t(`profile.region_${row.key}`, { defaultValue: row.key }) })}</span>
+                            <span>{row.count}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+                        {t('admin.demographicSummary')}
+                      </h4>
+                      <ul className="mt-2 space-y-1 text-sm text-gray-700 dark:text-slate-300">
+                        {(poll.age_bands ?? []).map((row) => (
+                          <li key={row.key} className="flex justify-between gap-3">
+                            <span>{t(`admin.demo_${row.key}`, { defaultValue: t(`profile.age_${row.key}`, { defaultValue: row.key }) })}</span>
+                            <span>{row.count}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500 dark:text-slate-400">{t('admin.pollDemographicsHidden')}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {isAdmin && quizStats.length > 0 && (
         <section>
           <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.quizPerformance')}</h2>
@@ -491,12 +733,83 @@ function AdminPage() {
               </ul>
             </div>
             <div className="card">
+              <h3 className="mb-3 font-medium text-gray-900 dark:text-slate-100">{t('admin.popularLessons')}</h3>
+              {(learningStats.popular_lessons ?? []).length === 0 ? (
+                <p className="text-sm text-gray-500 dark:text-slate-400">{t('admin.noPopularLessons')}</p>
+              ) : (
+                <ul className="divide-y divide-gray-100 text-sm dark:divide-slate-700">
+                  {(learningStats.popular_lessons ?? []).map((row) => (
+                    <li key={row.id} className="flex justify-between gap-3 py-2 dark:text-slate-300">
+                      <Link to={`/articles/${row.id}`} className="font-medium text-brand-700 hover:underline dark:text-brand-400">
+                        {row.title}
+                      </Link>
+                      <span className="shrink-0 text-gray-500 dark:text-slate-400">
+                        {t('admin.lessonStats', { completions: row.completions, views: row.views })}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <div className="card">
+              <h3 className="mb-3 font-medium text-gray-900 dark:text-slate-100">{t('admin.languagesUsed')}</h3>
+              <ul className="divide-y divide-gray-100 text-sm dark:divide-slate-700">
+                {(learningStats.languages ?? []).map((row) => (
+                  <li key={row.key} className="flex justify-between py-2 dark:text-slate-300">
+                    <span>{t(`admin.lang_${row.key}`, { defaultValue: row.key })}</span>
+                    <span className="font-medium">{row.count}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="card">
+              <h3 className="mb-3 font-medium text-gray-900 dark:text-slate-100">{t('admin.regionalEngagement')}</h3>
+              {learningStats.regional_engagement?.demographics_available ? (
+                <ul className="divide-y divide-gray-100 text-sm dark:divide-slate-700">
+                  {(learningStats.regional_engagement.regions ?? []).map((row) => (
+                    <li key={row.key} className="flex justify-between py-2 dark:text-slate-300">
+                      <span>
+                        {t(`admin.demo_${row.key}`, {
+                          defaultValue: t(`profile.region_${row.key}`, { defaultValue: row.key }),
+                        })}
+                      </span>
+                      <span className="font-medium">{row.count}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-gray-500 dark:text-slate-400">{t('admin.pollDemographicsHidden')}</p>
+              )}
+            </div>
+            <div className="card">
               <h3 className="mb-3 font-medium text-gray-900 dark:text-slate-100">{t('admin.topTags')}</h3>
               <ul className="divide-y divide-gray-100 text-sm dark:divide-slate-700">
                 {(learningStats.top_tags ?? []).map((row) => (
                   <li key={row.tag} className="flex justify-between py-2 dark:text-slate-300">
                     <span>#{row.tag}</span>
                     <span className="font-medium">{row.count}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="card">
+              <h3 className="mb-3 font-medium text-gray-900 dark:text-slate-100">{t('admin.translationCompleteness')}</h3>
+              <p className="mb-3 text-sm text-gray-500 dark:text-slate-400">
+                {t('admin.translationOverall', {
+                  pct: learningStats.translation?.overall_pct ?? 0,
+                  done: learningStats.translation?.overall_translated ?? 0,
+                  total: learningStats.translation?.overall_total ?? 0,
+                })}
+              </p>
+              <ul className="divide-y divide-gray-100 text-sm dark:divide-slate-700">
+                {(learningStats.translation?.rows ?? []).map((row) => (
+                  <li key={`${row.model}-${row.field}`} className="flex justify-between gap-3 py-2 dark:text-slate-300">
+                    <span>
+                      {t(`admin.i18n.${row.model.replace('.', '_')}_${row.field}`, {
+                        defaultValue: `${row.model} · ${row.field}`,
+                      })}
+                    </span>
+                    <span className="shrink-0 font-medium">{row.completeness_pct}%</span>
                   </li>
                 ))}
               </ul>
@@ -508,10 +821,19 @@ function AdminPage() {
       {canManagePlatformUsers && users.length > 0 && (
         <section>
           <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.userManagement')}</h2>
+          <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">
+            {isAdmin ? t('admin.platformRolesHint') : t('admin.rolesHint')}
+          </p>
           {isAdmin && (
-            <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">
-              {isAdmin ? t('admin.platformRolesHint') : t('admin.rolesHint')}
-            </p>
+            <div className="card mb-4 border-brand-100 bg-brand-50/50 dark:border-brand-900/40 dark:bg-brand-950/20">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-slate-100">{t('admin.manageModerators')}</h3>
+              <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">{t('admin.manageModeratorsHint')}</p>
+              {isOrgAdmin && (
+                <Link to="/organization" className="mt-2 inline-block text-sm font-semibold text-brand-700 hover:underline dark:text-brand-400">
+                  {t('admin.manageOrgRoles')}
+                </Link>
+              )}
+            </div>
           )}
           {userActionError && (
             <div className="mb-4">
@@ -525,6 +847,7 @@ function AdminPage() {
                   <th className="px-4 py-3 font-medium">{t('auth.email')}</th>
                   <th className="px-4 py-3 font-medium">{t('profile.role')}</th>
                   <th className="px-4 py-3 font-medium">{t('admin.accountStatus')}</th>
+                  <th className="px-4 py-3 font-medium">{t('admin.lastActivity')}</th>
                   {canManagePlatformUsers && (
                     <th className="px-4 py-3 font-medium">{t('admin.actions')}</th>
                   )}
@@ -538,7 +861,9 @@ function AdminPage() {
                       <p className="text-xs text-gray-500 dark:text-slate-400">{u.email}</p>
                     </td>
                     <td className="px-4 py-3 dark:text-slate-300">
-                      {isAdmin && u.id !== currentUser?.id ? (
+                      {isAdmin &&
+                      u.id !== currentUser?.id &&
+                      (superAdmin || !['admin', 'super_admin'].includes(u.role?.name)) ? (
                         <select
                           className="input w-auto text-sm capitalize"
                           value={u.role?.name ?? 'citizen'}
@@ -562,6 +887,9 @@ function AdminPage() {
                       ) : (
                         <span className="badge bg-gray-100 text-gray-600">{t('admin.inactive')}</span>
                       )}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-gray-500 dark:text-slate-400">
+                      {u.last_activity_at ? formatDate(u.last_activity_at) : '—'}
                     </td>
                     {canManagePlatformUsers && (
                       <td className="px-4 py-3">
@@ -635,7 +963,7 @@ function AdminPage() {
         </section>
       )}
 
-      {isAdmin && (
+      {superAdmin && (
         <section>
           <div className="card">
             <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.civicSmsTitle')}</h2>
@@ -657,9 +985,11 @@ function AdminPage() {
         </section>
       )}
 
+      {canModerate && (
       <section>
-        <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.moderation')}</h2>
-        {pendingTopics.length === 0 && pendingComments.length === 0 ? (
+        <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.moderation')}</h2>
+        <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('admin.moderationHint')}</p>
+        {pendingTopics.length === 0 && pendingComments.length === 0 && forumReports.length === 0 && misinfoReports.length === 0 ? (
           <div className="rounded-xl border border-dashed border-gray-300 bg-white py-8 text-center text-gray-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
             {t('admin.nothingPending')}
           </div>
@@ -700,9 +1030,59 @@ function AdminPage() {
                 </div>
               </div>
             ))}
+            {forumReports.map((report) => (
+              <div key={report.id} className="card flex items-start justify-between gap-4">
+                <div>
+                  <span className="badge mb-1 bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
+                    {t('admin.forumReports')}
+                  </span>
+                  <p className="text-sm font-medium text-gray-900 dark:text-slate-100">
+                    {t(`forum.reason_${report.reason}`)} · {report.topic_title}
+                  </p>
+                  {report.comment_excerpt && (
+                    <p className="mt-1 text-sm text-gray-700 dark:text-slate-300">{report.comment_excerpt}</p>
+                  )}
+                  {report.details && (
+                    <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">{report.details}</p>
+                  )}
+                  <p className="mt-1 text-xs text-gray-400 dark:text-slate-500">{report.reporter_name}</p>
+                </div>
+                <div className="flex shrink-0 flex-col gap-2">
+                  <button className="btn-primary" onClick={() => reviewForumReport(report.id, 'reviewed')}>
+                    {t('admin.hideAndReview')}
+                  </button>
+                  <button className="btn-danger" onClick={() => reviewForumReport(report.id, 'dismissed')}>
+                    {t('admin.dismissReport')}
+                  </button>
+                </div>
+              </div>
+            ))}
+            {misinfoReports.map((report) => (
+              <div key={report.id} className="card flex items-start justify-between gap-4">
+                <div>
+                  <span className="badge mb-1 bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
+                    {t('admin.misinfoReports')}
+                  </span>
+                  <p className="text-sm font-medium text-gray-900 dark:text-slate-100">{report.channel}</p>
+                  <p className="mt-1 text-sm text-gray-700 dark:text-slate-300">{report.description}</p>
+                  {report.source_url && (
+                    <p className="mt-1 break-all text-xs text-gray-400 dark:text-slate-500">{report.source_url}</p>
+                  )}
+                </div>
+                <div className="flex shrink-0 flex-col gap-2">
+                  <button className="btn-primary" onClick={() => reviewMisinfoReport(report.id, 'reviewed')}>
+                    {t('admin.reviewReport')}
+                  </button>
+                  <button className="btn-danger" onClick={() => reviewMisinfoReport(report.id, 'dismissed')}>
+                    {t('admin.dismissReport')}
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </section>
+      )}
     </div>
   );
 }

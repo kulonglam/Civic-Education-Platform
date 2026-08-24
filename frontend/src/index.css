@@ -17,6 +17,9 @@
   html {
     scroll-behavior: smooth;
   }
+  html[data-font-size='lg'] { font-size: 112.5%; }
+  html[data-font-size='xl'] { font-size: 125%; }
+  html[data-font-size='xxl'] { font-size: 150%; }
   :focus-visible {
     @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-ink-50 dark:ring-offset-ink-950;
   }
@@ -239,4 +242,60 @@
   .empty-state {
     @apply surface px-6 py-16 text-center;
   }
+}
+
+html[data-contrast='high'] body {
+  background: #fff !important;
+  background-image: none !important;
+  color: #000 !important;
+}
+html[data-contrast='high'] a {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+html[data-contrast='high'] .card,
+html[data-contrast='high'] .surface,
+html[data-contrast='high'] .glass-nav,
+html[data-contrast='high'] .input,
+html[data-contrast='high'] .btn-secondary {
+  background: #fff !important;
+  border: 2px solid #000 !important;
+  box-shadow: none !important;
+  color: #000 !important;
+}
+html[data-contrast='high'] .btn-primary {
+  background: #000 !important;
+  color: #fff !important;
+  border: 2px solid #000 !important;
+}
+html[data-contrast='high'] :focus-visible {
+  outline: 3px solid #000 !important;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px #ff0 !important;
+}
+html.dark[data-contrast='high'] body,
+html.dark[data-contrast='high'] .card,
+html.dark[data-contrast='high'] .surface,
+html.dark[data-contrast='high'] .glass-nav,
+html.dark[data-contrast='high'] .input {
+  background: #000 !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+html.dark[data-contrast='high'] a {
+  color: #ffe600 !important;
+}
+html.dark[data-contrast='high'] .btn-primary {
+  background: #ffe600 !important;
+  color: #000 !important;
+  border-color: #ffe600 !important;
+}
+html.dark[data-contrast='high'] .btn-secondary {
+  background: #000 !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+html.dark[data-contrast='high'] :focus-visible {
+  outline: 3px solid #ffe600 !important;
+  box-shadow: 0 0 0 4px #000 !important;
 }

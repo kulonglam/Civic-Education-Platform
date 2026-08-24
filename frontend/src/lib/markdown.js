@@ -17,10 +17,8 @@ export function renderMarkdown(text) {
   return DOMPurify.sanitize(html, SANITIZE_OPTIONS);
 }
 
-/** Plain-text preview for list cards (strips markdown syntax). */
-export function plainTextExcerpt(text, maxLength = 160) {
-  if (!text) return '';
-  const stripped = text
+function stripMarkdown(text) {
+  return text
     .replace(/```[\s\S]*?```/g, ' ')
     .replace(/`[^`]*`/g, ' ')
     .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
@@ -30,6 +28,17 @@ export function plainTextExcerpt(text, maxLength = 160) {
     .replace(/<[^>]+>/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+export function toPlainText(text) {
+  if (!text) return '';
+  return stripMarkdown(text);
+}
+
+/** Plain-text preview for list cards (strips markdown syntax). */
+export function plainTextExcerpt(text, maxLength = 160) {
+  if (!text) return '';
+  const stripped = stripMarkdown(text);
   if (stripped.length <= maxLength) return stripped;
   return `${stripped.slice(0, maxLength).trimEnd()}…`;
 }

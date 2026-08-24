@@ -18,7 +18,7 @@ from apps.audit.models import ActivityLog
 from apps.audit.services import log_activity, verify_audit_chain
 from apps.billing.models import Subscription
 from apps.core.models import SecurityEvent
-from apps.core.permissions import IsAdmin
+from apps.core.permissions import IsSuperAdmin
 from django.conf import settings
 from apps.tenants.context import get_current_organization
 from apps.tenants.models import OrganizationScimToken, OrganizationSsoConfig, SupportCase
@@ -300,7 +300,7 @@ class SupportCaseDetailView(APIView):
 
 
 class PlatformSupportCaseListView(APIView):
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, IsSuperAdmin]
 
     def get(self, request):
         status_filter = request.query_params.get('status')
@@ -311,7 +311,7 @@ class PlatformSupportCaseListView(APIView):
 
 
 class PlatformSupportCaseUpdateView(APIView):
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, IsSuperAdmin]
 
     def patch(self, request, case_id):
         case = get_object_or_404(SupportCase, pk=case_id)
@@ -331,7 +331,7 @@ class PlatformSupportCaseUpdateView(APIView):
 class SloMetricsView(APIView):
     """Service-level objective snapshot for ops / enterprise reporting."""
 
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, IsSuperAdmin]
 
     def get(self, request):
         now = timezone.now()

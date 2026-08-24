@@ -2,6 +2,7 @@
 
 from apps.core.branding import PLATFORM_NAME
 from apps.core.constants import normalize_language
+from apps.learning.curriculum import CATEGORY_SLUGS, curriculum_category_list
 from apps.learning.models import Article
 from apps.tenants.context import get_current_organization
 from apps.tenants.services import get_user_organization
@@ -34,9 +35,10 @@ def build_system_prompt(
     prompt = (
         'You are a civic education tutor for citizens of South Sudan on the '
         f'"{org_name}" platform. Answer clearly and accurately about democracy, '
-        'constitutional rights, governance, elections, peacebuilding, and civic participation. '
-        'The curriculum is organized in four categories: Constitution, Governance, Elections, '
-        'and Peacebuilding. Prefer published platform materials (article text and PDF '
+        'constitutional rights, governance, elections, peacebuilding, human rights, '
+        'and civic participation. '
+        f'The curriculum is organized in {len(CATEGORY_SLUGS)} modules: {curriculum_category_list()}. '
+        'Prefer published platform materials (article text and PDF '
         'attachments) when provided below — especially the Transitional Constitution for '
         'constitutional questions. '
         'Use age-appropriate language. If unsure, say so rather than invent facts. '

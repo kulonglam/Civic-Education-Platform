@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { AccessibilityProvider } from '../context/AccessibilityContext';
 
 export function createTestQueryClient() {
   return new QueryClient({
@@ -14,7 +15,9 @@ export function createTestQueryClient() {
 export function renderWithProviders(ui, { route = '/', queryClient = createTestQueryClient() } = {}) {
   return render(
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
+      <AccessibilityProvider>
+        <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
+      </AccessibilityProvider>
     </QueryClientProvider>
   );
 }

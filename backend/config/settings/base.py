@@ -2,6 +2,7 @@ from datetime import timedelta
 from pathlib import Path
 
 import dj_database_url
+from celery.schedules import crontab
 from decouple import config
 
 from apps.core.branding import PLATFORM_NAME, PLATFORM_NAME_API
@@ -174,6 +175,8 @@ REST_FRAMEWORK = {
         'auth': '5/min',
         'ai_tutor': '10/min',
         'content_bundle': '4/hour',
+        'awareness_report': '8/hour',
+        'forum_report': '8/hour',
     },
     'EXCEPTION_HANDLER': 'apps.core.exceptions.custom_exception_handler',
 }
@@ -234,6 +237,12 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_BEAT_SCHEDULE = {
+    'send-due-event-reminders': {
+        'task': 'apps.engagement.tasks.send_due_event_reminders',
+        'schedule': crontab(minute='*/15'),
+    },
+}
 
 # Billing
 # 'dummy' (default) needs no external service; checkout activates instantly.

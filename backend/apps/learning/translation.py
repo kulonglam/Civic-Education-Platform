@@ -42,7 +42,7 @@ _ARABIC_RANGES = (
 
 _SYSTEM_PROMPT = (
     'You are a professional translator for civic education materials about '
-    'South Sudan (constitution, governance, elections, and peacebuilding). '
+    'South Sudan (constitution, rights, governance, elections, peacebuilding, digital citizenship, and civic participation). '
     'Translate the following markdown from {source} into {target}. '
     'Preserve markdown structure, headings, lists, links, URLs, and proper nouns. '
     'Return only the translated text — no preamble, no quotes, no commentary.'
@@ -255,3 +255,87 @@ def _build_updates(job: TranslationJob, provider) -> dict:
             ),
         }
     raise ValueError(f'Unknown translation job kind: {job.kind}')
+
+
+RECORD_FIELD_PAIRS = {
+    'quizzes.Quiz': [('title', 'title_ar'), ('description', 'description_ar')],
+    'quizzes.Question': [('question_text', 'question_text_ar'), ('explanation', 'explanation_ar')],
+    'engagement.CivicNews': [('title', 'title_ar'), ('body', 'body_ar')],
+    'engagement.CivicEvent': [('title', 'title_ar'), ('description', 'description_ar')],
+    'learning.MediaAsset': [('title', 'title_ar'), ('description', 'description_ar')],
+    'engagement.Poll': [('question', 'question_ar'), ('description', 'description_ar')],
+    'engagement.PollOption': [('label', 'label_ar')],
+    'engagement.Petition': [('title', 'title_ar'), ('description', 'description_ar')],
+    'engagement.Campaign': [('title', 'title_ar'), ('description', 'description_ar')],
+    'learning.Course': [('title', 'title_ar'), ('description', 'description_ar')],
+}
+
+RECORD_LIST_PAIRS = {
+    'quizzes.Question': [('options', 'options_ar')],
+}
+
+
+def _cap_field(instance, field_name: str, value: str) -> str:
+    field = instance._meta.get_field(field_name)
+    max_length = getattr(field, 'max_length', None)
+    text = value or ''
+    if max_length:
+        return text[:max_length]
+    return text
+
+
+def apply_record_translation(instance, *, provider=None) -> bool:
+    """Fill empty English or Arabic fields on a bilingual content record."""
+    if not getattr(settings, 'TRANSLATION_ENABLED', True):
+        return False
+    label = instance._meta.label
+    pairs = RECORD_FIELD_PAIRS.get(label)
+    if not pairs:
+        return False
+    if provider is None and resolve_provider_name() == 'stub':
+        logger.info('Skipping %s translation for %s — stub provider', label, instance.pk)
+        return False
+
+    updates: dict = {}
+    active_provider = _translation_provider(provider)
+
+    for en_field, ar_field in pairs:
+        en_value = getattr(instance, en_field, '') or ''
+        ar_value = getattr(instance, ar_field, '') or ''
+        if en_value.strip() and not ar_value.strip():
+            updates[ar_field] = _cap_field(
+                instance,
+                ar_field,
+                translate_markdown(en_value, source='en', target='ar', provider=active_provider),
+            )
+        elif ar_value.strip() and not en_value.strip():
+            updates[en_field] = _cap_field(
+                instance,
+                en_field,
+                translate_markdown(ar_value, source='ar', target='en', provider=active_provider),
+            )
+
+    for en_field, ar_field in RECORD_LIST_PAIRS.get(label, []):
+        en_list = list(getattr(instance, en_field, None) or [])
+        ar_list = list(getattr(instance, ar_field, None) or [])
+        ar_filled = any(str(item).strip() for item in ar_list)
+        en_filled = any(str(item).strip() for item in en_list)
+        if en_filled and not ar_filled:
+            updates[ar_field] = [
+                translate_markdown(str(item), source='en', target='ar', provider=active_provider)
+                for item in en_list
+            ]
+        elif ar_filled and not en_filled:
+            updates[en_field] = [
+                translate_markdown(str(item), source='ar', target='en', provider=active_provider)
+                for item in ar_list
+            ]
+
+    if not updates:
+        return False
+
+    for field, value in updates.items():
+        setattr(instance, field, value)
+    manager = getattr(instance.__class__, 'all_objects', instance.__class__.objects)
+    manager.filter(pk=instance.pk).update(**updates)
+    return True

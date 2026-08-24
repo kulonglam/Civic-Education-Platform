@@ -7,11 +7,14 @@ import { CardSkeleton, EmptyState, PageHeader } from '../components/ui';
 import { queryKeys } from '../lib/queryKeys';
 import { localizedQuiz } from '../lib/localizedContent';
 import { quizService } from '../lib/services';
+import { useAuth } from '../context/AuthContext';
+import { GuestSaveCta } from '../components/GuestSaveCta';
 
 const PAGE_SIZE = 20;
 
 export function QuizzesPage() {
   const { t, i18n } = useTranslation();
+  const { user } = useAuth();
   const [page, setPage] = useState(1);
 
   const { data, isLoading } = useQuery({
@@ -32,16 +35,20 @@ export function QuizzesPage() {
         title={t('quizzes.title')}
         subtitle={t('quizzes.subtitle')}
         action={
-          <div className="flex gap-2">
-            <Link to="/quizzes/results" className="btn-secondary">
-              {t('quizzes.results')}
-            </Link>
-            <Link to="/quizzes/certificates" className="btn-secondary">
-              {t('quizzes.certificates')}
-            </Link>
-          </div>
+          user ? (
+            <div className="flex gap-2">
+              <Link to="/quizzes/results" className="btn-secondary">
+                {t('quizzes.results')}
+              </Link>
+              <Link to="/quizzes/certificates" className="btn-secondary">
+                {t('quizzes.certificates')}
+              </Link>
+            </div>
+          ) : null
         }
       />
+
+      {!user && <GuestSaveCta className="mb-6" />}
 
       {isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -64,16 +71,30 @@ export function QuizzesPage() {
                   </p>
                   <div className="content-meta">
                     <span>
-                      {quiz.questions.length} {t('quizzes.questions')}
+                      {quiz.kind === 'practice' ? t('quizzes.kindPractice') : t('quizzes.kindAssessment')}
+                    </span>
+                    <span aria-hidden="true">·</span>
+                    <span>
+                      {quiz.question_count ?? quiz.questions?.length ?? 0} {t('quizzes.questions')}
                     </span>
                     <span aria-hidden="true">·</span>
                     <span>
                       {t('quizzes.passingScore')}: {quiz.passing_score}%
                     </span>
                   </div>
-                  <Link to={`/quizzes/${quiz.id}`} className="btn-primary mt-5 w-full">
-                    {t('quizzes.start')}
-                  </Link>
+                  {user ? (
+                    <Link to={`/quizzes/${quiz.id}`} className="btn-primary mt-5 w-full">
+                      {t('quizzes.start')}
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/register"
+                      state={{ from: `/quizzes/${quiz.id}` }}
+                      className="btn-primary mt-5 w-full"
+                    >
+                      {t('guest.createAccountToStart')}
+                    </Link>
+                  )}
                 </div>
               );
             })}

@@ -71,10 +71,10 @@ class TestIntegrationsStatusEndpoint:
         response = api_client.get('/api/integrations/status/')
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
-    def test_admin_gets_report(self, api_client, org, admin_user):
+    def test_admin_gets_report(self, api_client, org, super_admin_user):
         from tests.conftest import bind_client_to_org
 
-        bind_client_to_org(api_client, admin_user, org)
+        bind_client_to_org(api_client, super_admin_user, org)
         response = api_client.get('/api/integrations/status/')
         assert response.status_code == status.HTTP_200_OK
         assert 'integrations' in response.data

@@ -1,12 +1,16 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { tokenStore, tenantStore } from '../lib/api';
-import { authService, userService } from '../lib/services';
+import { authService, organizationService, userService } from '../lib/services';
+import i18n from '../i18n';
+import { normalizeLanguage } from '../i18n/languages';
+import { isPlatformAdminRole, isSuperAdminRole, platformRoleAllowed } from '../lib/roles';
 
 const AuthContext = createContext(undefined);
 
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [impersonation, setImpersonation] = useState(null);
 
   useEffect(() => {
     if (tokenStore.access) {
@@ -23,31 +27,38 @@ function AuthProvider({ children }) {
     try {
       const { data } = await userService.profile();
       setUser(data);
+      if (data?.impersonator_email) {
+        setImpersonation({
+          actorEmail: data.impersonator_email,
+          targetEmail: data.email,
+          targetName: `${data.first_name || ''} ${data.last_name || ''}`.trim(),
+        });
+      } else {
+        setImpersonation(null);
+      }
       if (!tokenStore.hasSession) {
         sessionStorage.setItem('cep_session', '1');
       }
     } catch {
       tokenStore.clear();
+      setImpersonation(null);
       setUser(null);
     }
   }, []);
 
   useEffect(() => {
     (async () => {
-      // After reload, memory is empty but httpOnly cookies may still authenticate.
       if (!tokenStore.access && sessionStorage.getItem('cep_session')) {
         try {
-          const { data } = await userService.profile();
-          setUser(data);
+          await refreshUser();
         } catch {
-          // Attempt cookie-based refresh then profile again.
           try {
             const { data: tokens } = await authService.refreshSession();
             if (tokens?.access) tokenStore.set(tokens.access, tokens.refresh);
-            const { data } = await userService.profile();
-            setUser(data);
+            await refreshUser();
           } catch {
             tokenStore.clear();
+            setImpersonation(null);
             setUser(null);
           }
         }
@@ -61,15 +72,25 @@ function AuthProvider({ children }) {
   useEffect(() => {
     const handler = () => {
       setUser(null);
+      setImpersonation(null);
       tokenStore.clear();
     };
     window.addEventListener('cep:logout', handler);
     return () => window.removeEventListener('cep:logout', handler);
   }, []);
 
+  useEffect(() => {
+    const preferred = user?.profile?.preferred_language;
+    if (!preferred) return;
+    const lang = normalizeLanguage(preferred);
+    if (normalizeLanguage(i18n.language) !== lang) {
+      i18n.changeLanguage(lang);
+    }
+  }, [user?.id, user?.profile?.preferred_language]);
+
   // Idle session timeout for privileged roles (complements server-side idle checks).
   useEffect(() => {
-    if (!user) return;
+    if (!user || impersonation) return;
     const privileged =
       ['admin', 'editor', 'moderator'].includes(user.role?.name) || Boolean(user.mfa_required);
     if (!privileged) return;
@@ -89,7 +110,7 @@ function AuthProvider({ children }) {
       if (timer) window.clearTimeout(timer);
       events.forEach((evt) => window.removeEventListener(evt, bump));
     };
-  }, [user]);
+  }, [user, impersonation]);
 
   const login = useCallback(
     async (email, password) => {
@@ -126,27 +147,69 @@ function AuthProvider({ children }) {
       /* ignore logout errors */
     }
     tokenStore.clear();
+    setImpersonation(null);
     setUser(null);
   }, []);
 
+  const startImpersonation = useCallback(
+    async (orgId, userId) => {
+      const { data } = await organizationService.impersonate(orgId, userId);
+      tokenStore.set(data.access, data.refresh);
+      setImpersonation({
+        actorEmail: data.actor?.email,
+        targetEmail: data.target?.email,
+        targetName: data.target?.full_name,
+      });
+      await refreshUser();
+      return data;
+    },
+    [refreshUser],
+  );
+
+  const exitImpersonation = useCallback(async () => {
+    const { data } = await organizationService.exitImpersonation();
+    tokenStore.set(data.access, data.refresh);
+    setImpersonation(null);
+    await refreshUser();
+    return data;
+  }, [refreshUser]);
+
   const hasRole = useCallback(
-    (...roles) => (user ? roles.includes(user.role.name) : false),
+    (...roles) => (user ? platformRoleAllowed(user.role.name, roles) : false),
     [user],
   );
-  const isPlatformAdmin = useCallback(() => user?.role?.name === 'admin', [user]);
+  const isPlatformAdmin = useCallback(() => isPlatformAdminRole(user?.role?.name), [user]);
+  const isSuperAdmin = useCallback(() => isSuperAdminRole(user?.role?.name), [user]);
 
   const value = useMemo(
     () => ({
       user,
       loading,
+      impersonation,
       login,
       verifyMfaLogin,
       logout,
       refreshUser,
+      startImpersonation,
+      exitImpersonation,
       hasRole,
       isPlatformAdmin,
+      isSuperAdmin,
     }),
-    [user, loading, login, verifyMfaLogin, logout, refreshUser, hasRole, isPlatformAdmin],
+    [
+      user,
+      loading,
+      impersonation,
+      login,
+      verifyMfaLogin,
+      logout,
+      refreshUser,
+      startImpersonation,
+      exitImpersonation,
+      hasRole,
+      isPlatformAdmin,
+      isSuperAdmin,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

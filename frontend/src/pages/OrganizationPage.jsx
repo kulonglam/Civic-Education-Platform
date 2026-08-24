@@ -685,6 +685,7 @@ function OrganizationPage() {
               {t('saas.compliancePack')}
             </button>
           </div>
+          <p className="text-xs text-gray-500 dark:text-slate-400">{t('saas.complianceDisclaimer')}</p>
         </form>
         </TabPanel>
       )}

@@ -9,6 +9,17 @@ function formatDate(iso) {
   });
 }
 
+function formatDateTime(iso) {
+  if (!iso) return '';
+  return new Date(iso).toLocaleString(i18n.language === 'ar' ? 'ar-EG' : 'en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+}
+
 function readingTime(content) {
   if (!content) return 1;
   const text = content.replace(/<[^>]+>/g, ' ');
@@ -16,5 +27,4 @@ function readingTime(content) {
   return Math.max(1, Math.ceil(words / 200));
 }
 
-export { formatDate, readingTime };
-
+export { formatDate, formatDateTime, readingTime };

@@ -48,6 +48,8 @@ class ActivityLog(models.Model):
         ('support_case_opened', 'Support Case Opened'),
         ('support_case_updated', 'Support Case Updated'),
         ('compliance_pack_exported', 'Compliance Pack Exported'),
+        ('impersonation_started', 'Impersonation Started'),
+        ('impersonation_ended', 'Impersonation Ended'),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { plainTextExcerpt } from './markdown';
+import { plainTextExcerpt, toPlainText } from './markdown';
 
 describe('plainTextExcerpt', () => {
   it('strips markdown syntax for card previews', () => {
@@ -12,5 +12,9 @@ describe('plainTextExcerpt', () => {
     const excerpt = plainTextExcerpt(text, 20);
     expect(excerpt.length).toBeLessThanOrEqual(21);
     expect(excerpt.endsWith('…')).toBe(true);
+  });
+
+  it('returns full plain text for read-aloud', () => {
+    expect(toPlainText('## Heading\n\n**Bold** text.')).toBe('Heading Bold text.');
   });
 });

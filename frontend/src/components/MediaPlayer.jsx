@@ -1,9 +1,11 @@
+import { useTranslation } from 'react-i18next';
 import { resolveMediaUrl } from '../lib/media';
 import { getEmbedInfo } from '../lib/mediaEmbed';
 
 /**
  * Plays audio or video from a MediaAsset-like object or raw URL.
- * YouTube/Vimeo URLs render as iframes; other URLs use native media elements.
+ * YouTube/Vimeo URLs render as iframes with captions requested;
+ * other URLs use native media elements and an optional WebVTT track.
  */
 export function MediaPlayer({
   mediaType = 'video',
@@ -13,13 +15,25 @@ export function MediaPlayer({
   className = '',
   onEnded,
 }) {
+  const { t, i18n } = useTranslation();
   const playback = resolveMediaUrl(url || '');
   const captions = resolveMediaUrl(captionsUrl || '');
+  const captionsLang = i18n.language === 'ar' ? 'ar' : 'en';
   if (!playback) return null;
 
   const track = captions ? (
-    <track kind="captions" src={captions} srcLang="en" label="Captions" default />
+    <track
+      kind="captions"
+      src={captions}
+      srcLang={captionsLang}
+      label={t('a11y.captions')}
+      default={true}
+    />
   ) : null;
+
+  const captionStatus = captions
+    ? t('a11y.captionsAvailable')
+    : t('a11y.captionsMissing');
 
   if (mediaType === 'audio') {
     return (
@@ -31,26 +45,33 @@ export function MediaPlayer({
           src={playback}
           title={title || undefined}
           onEnded={onEnded}
+          crossOrigin={captions ? 'anonymous' : undefined}
         >
           {track}
         </audio>
+        <p className="mt-2 text-xs text-ink-700/70 dark:text-slate-400">{captionStatus}</p>
       </div>
     );
   }
 
-  const embed = getEmbedInfo(playback);
+  const embed = getEmbedInfo(playback, { lang: captionsLang });
   if (embed) {
     return (
-      <div className={`aspect-video overflow-hidden rounded-xl bg-ink-950 ${className}`}>
-        <iframe
-          title={title || 'Video'}
-          src={embed.src}
-          className="h-full w-full"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          loading="lazy"
-          referrerPolicy="strict-origin-when-cross-origin"
-        />
+      <div className={className}>
+        <div className="aspect-video overflow-hidden rounded-xl bg-ink-950">
+          <iframe
+            title={title || t('media.typeVideo')}
+            src={embed.src}
+            className="h-full w-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
+        </div>
+        <p className="mt-2 text-xs text-ink-700/70 dark:text-slate-400">
+          {captions ? t('a11y.captionsAvailable') : t('a11y.captionsOnPlayer')}
+        </p>
       </div>
     );
   }
@@ -65,9 +86,11 @@ export function MediaPlayer({
         src={playback}
         title={title || undefined}
         onEnded={onEnded}
+        crossOrigin={captions ? 'anonymous' : undefined}
       >
         {track}
       </video>
+      <p className="mt-2 text-xs text-ink-700/70 dark:text-slate-400">{captionStatus}</p>
     </div>
   );
 }

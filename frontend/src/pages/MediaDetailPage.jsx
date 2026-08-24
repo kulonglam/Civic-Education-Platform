@@ -8,6 +8,9 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { useAuth } from '../context/AuthContext';
 import { queryKeys } from '../lib/queryKeys';
 import { mediaService } from '../lib/services';
+import { BookmarkButton } from '../components/BookmarkButton';
+import { GuestSaveCta } from '../components/GuestSaveCta';
+import { ReadAloudButton } from '../components/ReadAloudButton';
 import { formatDate } from '../lib/format';
 
 export function MediaDetailPage() {
@@ -49,12 +52,17 @@ export function MediaDetailPage() {
             { label: data.title },
           ]}
         />
-        {canEdit && (
-          <Link to={`/media/${data.id}/edit`} className="btn-secondary text-sm">
-            {t('common.edit')}
-          </Link>
-        )}
+        <div className="flex flex-wrap items-center gap-2">
+          <BookmarkButton kind="media" id={data.id} bookmarked={data.is_bookmarked} />
+          <ReadAloudButton text={`${data.title}. ${data.description || ''}`} />
+          {canEdit && (
+            <Link to={`/media/${data.id}/edit`} className="btn-secondary text-sm">
+              {t('common.edit')}
+            </Link>
+          )}
+        </div>
       </div>
+      {!user && <GuestSaveCta className="mb-6" />}
 
       <span className="badge mb-3 bg-brand-50 text-brand-700">
         {data.media_type === 'audio' ? t('media.typeAudio') : t('media.typeVideo')}

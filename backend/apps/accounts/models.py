@@ -3,6 +3,7 @@ import uuid
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 
+from apps.accounts.demographics import AGE_BAND_CHOICES, REGION_CHOICES
 from apps.core.constants import DEFAULT_LANGUAGE, LANGUAGE_CHOICES
 
 
@@ -11,12 +12,14 @@ class Role(models.Model):
     MODERATOR = 'moderator'
     EDITOR = 'editor'
     ADMIN = 'admin'
+    SUPER_ADMIN = 'super_admin'
 
     ROLE_CHOICES = [
-        (CITIZEN, 'Citizen'),
+        (CITIZEN, 'Citizen / Learner'),
         (MODERATOR, 'Moderator'),
-        (EDITOR, 'Editor'),
-        (ADMIN, 'Admin'),
+        (EDITOR, 'Content Creator'),
+        (ADMIN, 'Administrator'),
+        (SUPER_ADMIN, 'Super Admin'),
     ]
 
     name = models.CharField(max_length=20, choices=ROLE_CHOICES, unique=True)
@@ -44,7 +47,7 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        role, _ = Role.objects.get_or_create(name=Role.ADMIN)
+        role, _ = Role.objects.get_or_create(name=Role.SUPER_ADMIN)
         extra_fields['role'] = role
         return self.create_user(email, password, **extra_fields)
 
@@ -98,6 +101,20 @@ class UserProfile(models.Model):
         help_text='Incremented to revoke all outstanding JWTs for this user.',
     )
     xp_points = models.PositiveIntegerField(default=0)
+    region = models.CharField(
+        max_length=40,
+        choices=REGION_CHOICES,
+        blank=True,
+        default='',
+        help_text='Optional state or area used only in aggregated poll summaries.',
+    )
+    age_band = models.CharField(
+        max_length=20,
+        choices=AGE_BAND_CHOICES,
+        blank=True,
+        default='',
+        help_text='Optional age range used only in aggregated poll summaries.',
+    )
 
     class Meta:
         db_table = 'user_profiles'

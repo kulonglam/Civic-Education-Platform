@@ -25,6 +25,7 @@ from apps.tenants.permissions import (
 from apps.quizzes.models import Quiz
 from apps.quizzes.serializers import QuizSerializer
 
+from .bookmarks import BookmarkError, annotate_is_bookmarked, toggle_article_bookmark
 from .models import Article, Category, MediaAsset
 from .progress import record_article_progress
 from .serializers import ArticleSerializer, CategorySerializer, MediaAssetSerializer
@@ -49,7 +50,7 @@ def _can_see_unpublished(user) -> bool:
     if not user or not user.is_authenticated:
         return False
     role = getattr(user, 'role', None)
-    if role and role.name in ('editor', 'admin', 'moderator'):
+    if role and role.name in ('editor', 'admin', 'super_admin', 'moderator'):
         return True
     membership = get_membership(user)
     return membership is not None and membership.role in (
@@ -110,12 +111,12 @@ class ArticleViewSet(viewsets.ModelViewSet):
         ).all()
         if not _can_see_unpublished(self.request.user):
             qs = qs.filter(status='published')
-        return qs
+        return annotate_is_bookmarked(qs, self.request.user, target='article_id')
 
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
             return [AllowAny()]
-        if self.action == 'progress':
+        if self.action in ('progress', 'bookmark'):
             return [IsAuthenticated(), IsOrgMember()]
         if self.action == 'destroy':
             return [IsAuthenticated(), IsOrgMember(), CanDeleteOrgContent()]
@@ -220,6 +221,28 @@ class ArticleViewSet(viewsets.ModelViewSet):
             'completed_at': row.completed_at,
             'last_viewed_at': row.last_viewed_at,
         })
+
+    @extend_schema(
+        request=None,
+        responses=inline_serializer(
+            name='ArticleBookmarkToggleResponse',
+            fields={'bookmarked': serializers.BooleanField()},
+        ),
+    )
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated, IsOrgMember])
+    def bookmark(self, request, id=None):
+        article = self.get_object()
+        try:
+            bookmarked = toggle_article_bookmark(request.user, article)
+        except BookmarkError as exc:
+            return Response({'detail': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        log_activity(
+            request.user,
+            'bookmark_added' if bookmarked else 'bookmark_removed',
+            {'article_id': str(article.id)},
+            request=request,
+        )
+        return Response({'bookmarked': bookmarked})
 
 
 class ArticleAttachmentUploadView(APIView):

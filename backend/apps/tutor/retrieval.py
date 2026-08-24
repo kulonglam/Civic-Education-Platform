@@ -2,13 +2,14 @@
 
 Uses keyword overlap scoring over article body text and PDF attachments — no
 external vector DB — so the tutor can ground answers in long documents such as
-the Transitional Constitution across all four civic categories.
+the Transitional Constitution across the civic curriculum.
 """
 
 from __future__ import annotations
 
 import re
 
+from apps.learning.curriculum import CATEGORY_KEYWORDS, CATEGORY_LABELS, CATEGORY_SLUGS, curriculum_category_list
 from apps.learning.models import Article
 
 from .document_text import get_attachment_text
@@ -18,44 +19,6 @@ CHUNK_OVERLAP = 200
 MAX_CHUNKS = 6
 MAX_CONTEXT_CHARS = 9000
 MIN_SEARCHABLE_CHARS = 40
-
-# Official curriculum categories seeded for the platform.
-CATEGORY_SLUGS = ('constitution', 'governance', 'elections', 'peacebuilding')
-
-CATEGORY_LABELS = {
-    'constitution': 'Constitution',
-    'governance': 'Governance',
-    'elections': 'Elections',
-    'peacebuilding': 'Peacebuilding',
-}
-
-# Keywords (EN + AR fragments) used to infer which category a question targets.
-CATEGORY_KEYWORDS: dict[str, set[str]] = {
-    'constitution': {
-        'constitution', 'constitutional', 'article', 'articles', 'rights', 'bill',
-        'fundamental', 'law', 'laws', 'court', 'courts', 'judiciary', 'legal',
-        'transitional', 'amendment', 'chapter', 'part', 'equality', 'freedom',
-        'دستور', 'حق', 'حقوق', 'مادة', 'قانون',
-    },
-    'governance': {
-        'governance', 'government', 'govern', 'local', 'state', 'states', 'county',
-        'counties', 'institution', 'institutions', 'minister', 'ministry',
-        'parliament', 'legislature', 'legislative', 'executive', 'cabinet',
-        'administration', 'public', 'service', 'services', 'decentral',
-        'حكم', 'حكومة', 'محلي', 'ولاية', 'مجلس',
-    },
-    'elections': {
-        'election', 'elections', 'elect', 'vote', 'voting', 'voter', 'voters',
-        'ballot', 'ballots', 'candidate', 'candidates', 'campaign', 'poll',
-        'polls', 'referendum', 'turnout', 'register', 'registration', 'nomination',
-        'انتخاب', 'انتخابات', 'تصويت', 'ناخب',
-    },
-    'peacebuilding': {
-        'peace', 'peacebuilding', 'reconciliation', 'conflict', 'unity', 'dialogue',
-        'security', 'violence', 'disarm', 'community', 'trust', 'mediation',
-        'tolerance', 'coexist', 'national', 'healing', 'سلام', 'مصالحة', 'نزاع',
-    },
-}
 
 _TOKEN_RE = re.compile(r"[a-zA-Z\u0600-\u06FF0-9']{3,}")
 
@@ -168,7 +131,7 @@ def retrieve_article_chunks(
     """Return top-scoring chunks from published tenant articles (text + PDF).
 
     Controlled documents and category-matched articles are boosted so answers
-    stay accurate across Constitution, Governance, Elections, and Peacebuilding.
+    stay accurate across the civic curriculum.
     """
     query_tokens = _tokenize(query)
     if not query_tokens:
@@ -296,8 +259,8 @@ def format_retrieved_context(chunks: list[dict]) -> str:
         return ''
     parts = [
         'Use the following excerpts from platform learning materials when relevant. '
-        'Materials are organized in four categories: Constitution, Governance, Elections, '
-        'and Peacebuilding. Excerpts may come from article text and/or PDF attachments. '
+        f'Materials are organized in {len(CATEGORY_SLUGS)} curriculum modules: '
+        f'{curriculum_category_list()}. Excerpts may come from article text and/or PDF attachments. '
         'Cite the source document and category when you rely on them. '
         'If the excerpts do not cover the question, say what is missing rather than inventing text.'
     ]

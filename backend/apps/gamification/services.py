@@ -13,6 +13,7 @@ XP_QUIZ_ATTEMPT = 10
 XP_QUIZ_PASS = 50
 XP_POLL_VOTE = 5
 XP_PETITION_SIGN = 10
+XP_CAMPAIGN_JOIN = 5
 
 
 def award_xp(user, amount: int, *, reason: str = '') -> int:

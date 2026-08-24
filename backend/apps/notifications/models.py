@@ -13,6 +13,8 @@ class Notification(TenantModel):
         ('certificate', 'Certificate'),
         ('announcement', 'Announcement'),
         ('forum', 'Forum'),
+        ('event_reminder', 'Event reminder'),
+        ('event_registration', 'Event registration'),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

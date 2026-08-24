@@ -99,8 +99,8 @@ class TestContentPacks:
 
 @pytest.mark.django_db
 class TestPlatformSupportAndSecurity:
-    def test_platform_usage_and_support_view(self, api_client, admin_user, org):
-        bind_client_to_org(api_client, admin_user, org)
+    def test_platform_usage_and_support_view(self, api_client, super_admin_user, org):
+        bind_client_to_org(api_client, super_admin_user, org)
         usage = api_client.get('/api/organization/platform/usage/')
         assert usage.status_code == status.HTTP_200_OK
         assert 'totals' in usage.data
@@ -109,10 +109,15 @@ class TestPlatformSupportAndSecurity:
         assert detail.data['slug'] == org.slug
         assert 'member_count' in detail.data
 
-    def test_security_events_persist_and_list(self, api_client, admin_user, org):
-        bind_client_to_org(api_client, admin_user, org)
-        log_security_event('login_failed', user=admin_user, detail={'reason': 'bad_password'})
+    def test_security_events_persist_and_list(self, api_client, super_admin_user, org):
+        bind_client_to_org(api_client, super_admin_user, org)
+        log_security_event('login_failed', user=super_admin_user, detail={'reason': 'bad_password'})
         assert SecurityEvent.objects.filter(event_type='login_failed').exists()
         response = api_client.get('/api/security/events/')
         assert response.status_code == status.HTTP_200_OK
         assert response.data['count'] >= 1
+
+    def test_administrator_cannot_list_security_events(self, api_client, admin_user, org):
+        bind_client_to_org(api_client, admin_user, org)
+        response = api_client.get('/api/security/events/')
+        assert response.status_code == status.HTTP_403_FORBIDDEN

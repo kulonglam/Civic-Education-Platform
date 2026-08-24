@@ -1,6 +1,14 @@
 from rest_framework.permissions import BasePermission
 
 from apps.accounts.permissions import check_mfa_enrolled
+from apps.accounts.roles import (
+    CONTENT_ROLES,
+    CONFIG_ROLES,
+    LEARNER_ROLES,
+    MODERATION_ROLES,
+    PLATFORM_ADMIN_ROLES,
+    is_platform_admin,
+)
 
 
 class RolePermission(BasePermission):
@@ -21,35 +29,40 @@ class RolePermission(BasePermission):
 
 
 class IsAdmin(RolePermission):
-    """Platform administrator — cross-tenant ops, analytics, role assignment."""
+    """Administrator or Super Admin — operational control of the civic platform."""
 
-    allowed_roles = ('admin',)
+    allowed_roles = tuple(PLATFORM_ADMIN_ROLES)
+
+
+class IsSuperAdmin(RolePermission):
+    """Super Admin — system configuration and security."""
+
+    allowed_roles = tuple(CONFIG_ROLES)
 
 
 class IsEditor(RolePermission):
-    allowed_roles = ('editor', 'admin')
+    allowed_roles = tuple(CONTENT_ROLES)
 
 
 class IsModerator(RolePermission):
-    allowed_roles = ('moderator', 'admin')
+    allowed_roles = tuple(MODERATION_ROLES)
 
 
 class IsEditorOrAdmin(RolePermission):
-    allowed_roles = ('editor', 'admin')
+    allowed_roles = tuple(CONTENT_ROLES)
 
 
 class IsModeratorOrAdmin(RolePermission):
-    allowed_roles = ('moderator', 'admin')
+    allowed_roles = tuple(MODERATION_ROLES)
 
 
 class IsCitizenOrAbove(RolePermission):
-    allowed_roles = ('citizen', 'moderator', 'editor', 'admin')
+    allowed_roles = tuple(LEARNER_ROLES)
 
 
 class IsOwnerOrAdmin(BasePermission):
     def has_object_permission(self, request, view, obj):
-        role = getattr(request.user, 'role', None)
-        if getattr(role, 'name', None) == 'admin':
+        if is_platform_admin(request.user):
             return True
         owner = getattr(obj, 'author', None) or getattr(obj, 'user', None)
         return owner == request.user

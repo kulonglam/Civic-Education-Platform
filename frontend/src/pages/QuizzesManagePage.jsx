@@ -85,7 +85,7 @@ export function QuizzesManagePage() {
                 <tr key={quiz.id} className="dark:hover:bg-slate-700/30">
                   <td className="px-4 py-3 font-medium text-gray-900 dark:text-slate-100">{quiz.title}</td>
                   <td className="px-4 py-3 dark:text-slate-300">{quiz.passing_score}%</td>
-                  <td className="px-4 py-3 dark:text-slate-300">{quiz.questions?.length ?? 0}</td>
+                  <td className="px-4 py-3 dark:text-slate-300">{quiz.question_count ?? quiz.questions?.length ?? 0}</td>
                   <td className="px-4 py-3 dark:text-slate-300">{quiz.is_active ? t('common.approved') : t('common.pending')}</td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-2">

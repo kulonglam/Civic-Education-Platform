@@ -70,6 +70,27 @@ class TestUserRoleUpdate:
         )
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
+    def test_admin_cannot_assign_administrator(self, api_client, admin_user, citizen_user, org):
+        Membership.objects.get_or_create(organization=org, user=citizen_user, defaults={'role': Membership.MEMBER})
+        bind_client_to_org(api_client, admin_user, org)
+        response = api_client.patch(
+            f'/api/users/{citizen_user.id}/role/',
+            {'role': 'admin'},
+            format='json',
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_super_admin_can_assign_administrator(self, api_client, super_admin_user, citizen_user, org):
+        Membership.objects.get_or_create(organization=org, user=citizen_user, defaults={'role': Membership.MEMBER})
+        bind_client_to_org(api_client, super_admin_user, org)
+        response = api_client.patch(
+            f'/api/users/{citizen_user.id}/role/',
+            {'role': 'admin'},
+            format='json',
+        )
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['role']['name'] == 'admin'
+
 
 @pytest.mark.django_db
 class TestUserSuspendIsolation:
@@ -110,3 +131,17 @@ class TestUserSuspendIsolation:
         assert response.status_code == status.HTTP_404_NOT_FOUND
         outsider.refresh_from_db()
         assert outsider.is_suspended is True
+
+
+@pytest.mark.django_db
+class TestUserList:
+    def test_list_includes_last_activity(self, api_client, admin_user, citizen_user, org):
+        from apps.audit.services import log_activity
+
+        bind_client_to_org(api_client, admin_user, org)
+        log_activity(citizen_user, 'user_login', {}, organization=org)
+        response = api_client.get('/api/users/')
+        assert response.status_code == status.HTTP_200_OK
+        rows = response.data['results'] if isinstance(response.data, dict) else response.data
+        citizen = next(row for row in rows if row['email'] == citizen_user.email)
+        assert citizen['last_activity_at']

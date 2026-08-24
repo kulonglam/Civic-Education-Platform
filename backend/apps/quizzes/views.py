@@ -1,26 +1,35 @@
+from django.db.models import Count
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import generics, serializers, status, viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.audit.services import log_activity
 from apps.billing.services import check_quota
 from apps.core.storage import get_signed_url
+from apps.core.utils import get_preferred_language
 from apps.notifications.services import notify_user
 from apps.tenants.context import get_current_organization
 from apps.tenants.models import Membership
 from apps.tenants.permissions import IsOrgContentEditor, IsOrgMember, get_membership
 
-from .models import Certificate, Quiz, QuizAttempt
+from .models import Certificate, Question, Quiz, QuizAttempt
 from .serializers import (
     CertificateSerializer,
     QuizAttemptSerializer,
     QuizAttemptSubmitSerializer,
+    QuizCheckAnswerSerializer,
+    QuizListSerializer,
+    QuizReviewItemSerializer,
     QuizSerializer,
     QuizWriteSerializer,
 )
-from .services import generate_certificate_number
+from .services import (
+    build_review_item,
+    generate_certificate_number,
+    score_quiz,
+)
 from .tasks import generate_certificate_pdf_task
 
 
@@ -29,7 +38,9 @@ class QuizViewSet(viewsets.ModelViewSet):
     lookup_field = 'id'
 
     def get_queryset(self):
-        qs = Quiz.objects.prefetch_related('questions')
+        qs = Quiz.objects.prefetch_related('questions').annotate(
+            question_count=Count('questions'),
+        )
         user = self.request.user
         if user.is_authenticated:
             role = getattr(user.role, 'name', None)
@@ -47,9 +58,13 @@ class QuizViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update'):
             return QuizWriteSerializer
+        if self.action == 'list':
+            return QuizListSerializer
         return QuizSerializer
 
     def get_permissions(self):
+        if self.action == 'list':
+            return [AllowAny()]
         if self.action in ('create', 'update', 'partial_update', 'destroy'):
             return [IsAuthenticated(), IsOrgMember(), IsOrgContentEditor()]
         return [IsAuthenticated(), IsOrgMember()]
@@ -91,6 +106,7 @@ class QuizAttemptView(APIView):
             fields={
                 'attempt': QuizAttemptSerializer(),
                 'certificate': CertificateSerializer(allow_null=True),
+                'review': QuizReviewItemSerializer(many=True),
             },
         ),
     )
@@ -100,20 +116,21 @@ class QuizAttemptView(APIView):
         except Quiz.DoesNotExist:
             return Response({'detail': 'Quiz not found.'}, status=status.HTTP_404_NOT_FOUND)
 
+        if quiz.max_attempts:
+            used = QuizAttempt.objects.filter(quiz=quiz, user=request.user).count()
+            if used >= quiz.max_attempts:
+                return Response(
+                    {'detail': 'Maximum attempts reached for this quiz.'},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
         serializer = QuizAttemptSubmitSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         answers = serializer.validated_data['answers']
-
-        score = 0
-        max_score = 0
-        for question in quiz.questions.all():
-            max_score += question.points
-            user_answer = answers.get(str(question.id), '')
-            if user_answer == question.correct_answer:
-                score += question.points
-
-        percentage = int((score / max_score * 100)) if max_score > 0 else 0
-        passed = percentage >= quiz.passing_score
+        lang = get_preferred_language(request)
+        scored = score_quiz(quiz, answers, lang=lang)
+        percentage = scored['percentage']
+        passed = scored['passed']
 
         attempt = QuizAttempt.objects.create(
             quiz=quiz,
@@ -143,7 +160,7 @@ class QuizAttemptView(APIView):
         )
 
         certificate_data = None
-        if passed:
+        if passed and quiz.issues_certificate:
             cert_number = generate_certificate_number()
             certificate = Certificate.objects.create(
                 certificate_number=cert_number,
@@ -168,7 +185,42 @@ class QuizAttemptView(APIView):
         return Response({
             'attempt': QuizAttemptSerializer(attempt).data,
             'certificate': certificate_data,
+            'review': scored['review'],
         })
+
+
+class QuizCheckAnswerView(APIView):
+    permission_classes = [IsAuthenticated, IsOrgMember]
+    serializer_class = QuizCheckAnswerSerializer
+
+    @extend_schema(
+        request=QuizCheckAnswerSerializer,
+        responses=QuizReviewItemSerializer,
+    )
+    def post(self, request, id):
+        try:
+            quiz = Quiz.objects.prefetch_related('questions').get(id=id, is_active=True)
+        except Quiz.DoesNotExist:
+            return Response({'detail': 'Quiz not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if quiz.feedback_mode != Quiz.FEEDBACK_PER_QUESTION:
+            return Response(
+                {'detail': 'This quiz only reveals answers after you submit.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = QuizCheckAnswerSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        question_id = serializer.validated_data['question_id']
+        try:
+            question = quiz.questions.get(id=question_id)
+        except Question.DoesNotExist:
+            return Response({'detail': 'Question not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        lang = get_preferred_language(request)
+        return Response(
+            build_review_item(question, serializer.validated_data['answer'], lang=lang)
+        )
 
 
 class QuizResultsView(generics.ListAPIView):

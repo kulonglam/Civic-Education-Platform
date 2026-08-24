@@ -66,6 +66,54 @@ function QuizProgress({ current, total, answeredCount }) {
   );
 }
 
+function formatAnswerLabel(value, questionType, t) {
+  if (!value) return t('quizzes.blankAnswer');
+  if (questionType === 'true_false') {
+    if (value === 'True') return t('quizzes.trueLabel');
+    if (value === 'False') return t('quizzes.falseLabel');
+  }
+  return value;
+}
+
+function ReviewList({ items, t }) {
+  if (!items?.length) return null;
+  return (
+    <div className="mt-8 space-y-3 text-left">
+      <h2 className="font-display text-lg font-semibold dark:text-slate-100">
+        {t('quizzes.reviewTitle')}
+      </h2>
+      {items.map((item, idx) => (
+        <div
+          key={item.question_id}
+          className={`rounded-xl border p-4 text-sm ${
+            item.is_correct
+              ? 'border-emerald-200 bg-emerald-50/80 dark:border-emerald-800 dark:bg-emerald-900/20'
+              : 'border-amber-200 bg-amber-50/80 dark:border-amber-800 dark:bg-amber-900/20'
+          }`}
+        >
+          <p className="font-semibold text-ink-900 dark:text-slate-100">
+            {idx + 1}. {item.question_text}
+          </p>
+          <p className="mt-2 text-ink-700/80 dark:text-slate-300">
+            {item.is_correct ? t('quizzes.correct') : t('quizzes.incorrect')}
+          </p>
+          <p className="mt-1 text-ink-700/70 dark:text-slate-400">
+            {t('quizzes.yourAnswer')}: {formatAnswerLabel(item.learner_answer, item.question_type, t)}
+          </p>
+          {!item.is_correct && (
+            <p className="mt-1 text-ink-700/70 dark:text-slate-400">
+              {t('quizzes.correctAnswer')}: {formatAnswerLabel(item.correct_answer, item.question_type, t)}
+            </p>
+          )}
+          {item.explanation && (
+            <p className="mt-2 whitespace-pre-line text-ink-800 dark:text-slate-200">{item.explanation}</p>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function QuizTakePage() {
   const { t, i18n } = useTranslation();
   const online = useOnlineStatus();
@@ -75,6 +123,7 @@ export function QuizTakePage() {
   const [queued, setQueued] = useState(false);
   const [error, setError] = useState('');
   const [currentQIdx, setCurrentQIdx] = useState(0);
+  const [checks, setChecks] = useState({});
 
   const { data: quizResult, isLoading } = useQuery({
     queryKey: queryKeys.quiz(id),
@@ -107,6 +156,17 @@ export function QuizTakePage() {
     onError: (err) => setError(extractError(err)),
   });
 
+  const checkAnswer = useMutation({
+    mutationFn: async ({ questionId, answer }) => {
+      const { data } = await quizService.checkAnswer(id, questionId, answer);
+      return { questionId, data };
+    },
+    onSuccess: ({ questionId, data }) => {
+      setChecks((prev) => ({ ...prev, [questionId]: data }));
+    },
+    onError: (err) => setError(extractError(err)),
+  });
+
   const setAnswer = (questionId, value) =>
     setAnswers((a) => ({ ...a, [questionId]: value }));
 
@@ -131,9 +191,9 @@ export function QuizTakePage() {
   }
 
   if (result) {
-    const { attempt, certificate } = result;
+    const { attempt, certificate, review } = result;
     return (
-      <div className="mx-auto max-w-lg">
+      <div className="mx-auto max-w-2xl">
         <div className={`quiz-stage text-center ${attempt.passed ? 'ring-1 ring-emerald-300/80' : 'ring-1 ring-amber-300/80'}`}>
           <div className={`mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-2xl ${attempt.passed ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400'}`}>
             {attempt.passed ? <Trophy className="h-7 w-7" /> : <AcademicCap className="h-7 w-7" />}
@@ -153,6 +213,13 @@ export function QuizTakePage() {
               {t('quizzes.certificateNo')}: <strong>{certificate.certificate_number}</strong>
             </div>
           )}
+          {attempt.passed && !certificate && (
+            <p className="mt-4 text-sm text-ink-700/70 dark:text-slate-400">
+              {t('quizzes.practiceNoCertificate')}
+            </p>
+          )}
+
+          <ReviewList items={review} t={t} />
 
           <div className="mt-6 flex justify-center gap-3">
             <Link to="/quizzes" className="btn-secondary">
@@ -169,6 +236,7 @@ export function QuizTakePage() {
                 onClick={() => {
                   setResult(null);
                   setAnswers({});
+                  setChecks({});
                   setCurrentQIdx(0);
                 }}
               >
@@ -184,6 +252,7 @@ export function QuizTakePage() {
   const total = quiz.questions.length;
   const answeredCount = Object.keys(answers).length;
   const allAnswered = quiz.questions.every((q) => answers[q.id]);
+  const perQuestion = quiz.feedback_mode === 'per_question';
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -208,6 +277,10 @@ export function QuizTakePage() {
 
       <h1 className="font-display text-3xl font-semibold dark:text-slate-100">{quiz.title}</h1>
       <p className="mt-2 text-ink-700/75 dark:text-slate-400">{quiz.description}</p>
+      <p className="mt-2 text-sm font-medium text-brand-700 dark:text-brand-400">
+        {quiz.kind === 'practice' ? t('quizzes.kindPractice') : t('quizzes.kindAssessment')}
+        {quiz.feedback_mode === 'per_question' ? ` · ${t('quizzes.feedbackPerQuestion')}` : ''}
+      </p>
 
       {error && (
         <div className="mt-4">
@@ -224,8 +297,11 @@ export function QuizTakePage() {
               className="quiz-stage"
               onClick={() => setCurrentQIdx(idx)}
             >
-              <p className="font-display text-base font-semibold text-ink-900 dark:text-slate-100">
-                {idx + 1}. {q.question_text}
+              <p className="text-xs font-semibold uppercase tracking-wide text-brand-700 dark:text-brand-400">
+                {q.question_type === 'scenario' ? t('quizzes.situation') : t('quizzes.questionNumber', { n: idx + 1 })}
+              </p>
+              <p className={`mt-2 font-display text-base font-semibold text-ink-900 dark:text-slate-100 ${q.question_type === 'scenario' ? 'whitespace-pre-line' : ''}`}>
+                {q.question_type === 'scenario' ? q.question_text : `${idx + 1}. ${q.question_text}`}
               </p>
               <div className="mt-4 space-y-2">
                 {(q.displayOptions ?? []).map((opt) => (
@@ -249,6 +325,31 @@ export function QuizTakePage() {
                   </label>
                 ))}
               </div>
+              {perQuestion && (
+                <div className="mt-3">
+                  <button
+                    type="button"
+                    className="btn-secondary text-sm"
+                    disabled={!answers[q.id] || !online || checkAnswer.isPending}
+                    onClick={() => {
+                      setError('');
+                      checkAnswer.mutate({ questionId: q.id, answer: answers[q.id] });
+                    }}
+                  >
+                    {t('quizzes.checkAnswer')}
+                  </button>
+                  {checks[q.id] && (
+                    <div className={`mt-3 rounded-xl border p-3 text-sm ${checks[q.id].is_correct ? 'border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-200' : 'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-200'}`}>
+                      <p className="font-semibold">
+                        {checks[q.id].is_correct ? t('quizzes.correct') : t('quizzes.incorrect')}
+                      </p>
+                      {checks[q.id].explanation && (
+                        <p className="mt-2 whitespace-pre-line">{checks[q.id].explanation}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>

@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Toaster } from 'react-hot-toast';
-import { useQuery } from '@tanstack/react-query';
+import toast, { Toaster } from 'react-hot-toast';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useOrganization } from '../context/OrganizationContext';
 import { useDarkMode } from '../hooks/useDarkMode';
+import { AccessibilityMenu } from './AccessibilityMenu';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { OrgSwitcher } from './OrgSwitcher';
 import { QuotaBanner } from './QuotaBanner';
@@ -16,7 +17,10 @@ import { PushNotificationPrompt } from './PushNotificationPrompt';
 import { ArrowUp, Moon, Sun } from './Icons';
 import { notificationService } from '../lib/services';
 import { queryKeys } from '../lib/queryKeys';
+import { extractError, tokenStore } from '../lib/api';
+import { stopSpeaking } from '../lib/speech';
 import { PlatformLogo } from './PlatformLogo';
+import { useNotificationSocket } from '../hooks/useNotificationSocket';
 
 function navLinkClass({ isActive }) {
   return `nav-link ${isActive ? 'nav-link-active' : 'nav-link-idle'}`;
@@ -69,6 +73,7 @@ function HeaderSearchLink() {
 }
 
 function NavDropdown({ label, avatar, badge, items, align = 'left', active = false }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -81,11 +86,51 @@ function NavDropdown({ label, avatar, badge, items, align = 'left', active = fal
     return () => document.removeEventListener('mousedown', close);
   }, [open]);
 
+  const focusItem = (index) => {
+    const nodes = ref.current?.querySelectorAll('[role="menuitem"]');
+    if (!nodes?.length) return;
+    const next = (index + nodes.length) % nodes.length;
+    nodes[next].focus();
+  };
+
   const handleKeyDown = (e) => {
-    if (e.key === 'Escape') setOpen(false);
+    if (e.key === 'Escape') {
+      setOpen(false);
+      e.currentTarget.querySelector('button')?.focus();
+      return;
+    }
+    if (!open && (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ')) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setOpen(true);
+        window.setTimeout(() => focusItem(0), 0);
+      }
+      return;
+    }
+    if (!open) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const nodes = [...(ref.current?.querySelectorAll('[role="menuitem"]') ?? [])];
+      const index = nodes.indexOf(document.activeElement);
+      focusItem(index + 1);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const nodes = [...(ref.current?.querySelectorAll('[role="menuitem"]') ?? [])];
+      const index = nodes.indexOf(document.activeElement);
+      focusItem(index <= 0 ? nodes.length - 1 : index - 1);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      focusItem(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      const nodes = ref.current?.querySelectorAll('[role="menuitem"]');
+      if (nodes?.length) focusItem(nodes.length - 1);
+    }
   };
 
   if (items.length === 0) return null;
+
+  const triggerLabel = badge > 0 ? `${label}, ${t('a11y.unreadCount', { count: badge })}` : label;
 
   return (
     <div ref={ref} className="relative" onKeyDown={handleKeyDown}>
@@ -98,6 +143,7 @@ function NavDropdown({ label, avatar, badge, items, align = 'left', active = fal
         }`}
         aria-expanded={open}
         aria-haspopup="menu"
+        aria-label={triggerLabel}
         onClick={() => setOpen((v) => !v)}
       >
         {avatar && (
@@ -111,7 +157,7 @@ function NavDropdown({ label, avatar, badge, items, align = 'left', active = fal
             {badge > 9 ? '9+' : badge}
           </span>
         )}
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
           <path d="M6 9l6 6 6-6" />
         </svg>
       </button>
@@ -185,10 +231,11 @@ function MobileSection({ title, children }) {
 
 export function Layout() {
   const { t } = useTranslation();
-  const { user, logout, hasRole, isPlatformAdmin } = useAuth();
+  const { user, logout, hasRole, isPlatformAdmin, impersonation, exitImpersonation } = useAuth();
   const { organization, isOrgAdmin, isOrgContentManager, isOrgModerator } = useOrganization();
   const navigate = useNavigate();
   const location = useLocation();
+  const queryClient = useQueryClient();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showTop, setShowTop] = useState(false);
   const [routeLoading, setRouteLoading] = useState(false);
@@ -211,7 +258,17 @@ export function Layout() {
   // Close mobile menu on navigation
   useEffect(() => {
     setMenuOpen(false);
+    stopSpeaking();
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const onKey = (event) => {
+      if (event.key === 'Escape') setMenuOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
 
   const handleLogout = async () => {
     await logout();
@@ -219,6 +276,18 @@ export function Layout() {
   };
 
   // Unread notifications count (only when logged in, refreshed every 3 min)
+  const onLiveNotification = useCallback((payload) => {
+    toast(payload.title || payload.message || t('notifications.title'));
+    queryClient.invalidateQueries({ queryKey: queryKeys.notificationsUnread });
+    queryClient.invalidateQueries({ queryKey: ['notifications'] });
+  }, [queryClient, t]);
+
+  const liveNotifications = useNotificationSocket({
+    enabled: Boolean(user),
+    token: tokenStore.access,
+    onNotification: onLiveNotification,
+  });
+
   const { data: unreadCount = 0 } = useQuery({
     queryKey: queryKeys.notificationsUnread,
     queryFn: async () => {
@@ -227,17 +296,22 @@ export function Layout() {
     },
     enabled: !!user,
     staleTime: 3 * 60 * 1000,
-    refetchInterval: 3 * 60 * 1000,
+    refetchInterval: liveNotifications ? false : 3 * 60 * 1000,
   });
 
   const learnLinks = [
     { to: '/articles', label: t('nav.articles') },
+    { to: '/courses', label: t('nav.courses') },
+    { to: '/news', label: t('nav.news') },
+    { to: '/events', label: t('nav.events') },
+    { to: '/awareness', label: t('nav.awareness') },
     { to: '/media', label: t('nav.media') },
     { to: '/search', label: t('nav.search') },
-    { to: '/quizzes', label: t('nav.quizzes'), auth: true },
+    { to: '/quizzes', label: t('nav.quizzes') },
     { to: '/forum', label: t('nav.forum') },
     { to: '/engage', label: t('nav.engage'), auth: true },
     { to: '/tutor', label: t('nav.tutor'), auth: true },
+    ...(user ? [{ to: '/saved', label: t('nav.saved') }] : []),
     ...(user ? [{ to: '/dashboard', label: t('nav.dashboard') }] : []),
   ].filter((link) => !link.auth || user);
 
@@ -249,13 +323,17 @@ export function Layout() {
   const manageItems = [];
   if (hasRole('admin', 'editor') || isOrgContentManager) {
     manageItems.push({ to: '/articles/manage', label: t('nav.manageArticles') });
+    manageItems.push({ to: '/news/manage', label: t('nav.manageNews') });
+    manageItems.push({ to: '/events/manage', label: t('nav.manageEvents') });
     manageItems.push({ to: '/media/manage', label: t('nav.manageMedia') });
     manageItems.push({ to: '/quizzes/manage', label: t('nav.manageQuizzes') });
+    manageItems.push({ to: '/courses/manage', label: t('nav.manageCourses') });
+    manageItems.push({ to: '/engage/manage', label: t('nav.manageEngage') });
   }
-  if (hasRole('admin', 'moderator') || isOrgModerator) {
+  if (hasRole('admin', 'moderator', 'editor') || isOrgModerator || isOrgContentManager || isOrgAdmin) {
     manageItems.push({
       to: '/admin',
-      label: isPlatformAdmin() ? t('nav.platformAdmin') : t('nav.moderation'),
+      label: isPlatformAdmin() ? t('nav.platformAdmin') : t('nav.admin'),
     });
   }
 
@@ -299,6 +377,30 @@ export function Layout() {
       <InstallPrompt />
       <PushNotificationPrompt />
       <QuotaBanner />
+      {impersonation && (
+        <div className="bg-amber-500 px-4 py-2 text-center text-sm text-ink-900">
+          <span>
+            {t('admin.impersonationBanner', {
+              name: impersonation.targetName || impersonation.targetEmail,
+              actor: impersonation.actorEmail,
+            })}
+          </span>
+          <button
+            type="button"
+            className="ml-3 font-semibold underline"
+            onClick={async () => {
+              try {
+                await exitImpersonation();
+                navigate('/admin');
+              } catch (err) {
+                toast.error(extractError(err));
+              }
+            }}
+          >
+            {t('admin.exitImpersonation')}
+          </button>
+        </div>
+      )}
 
       <header className="glass-nav" role="banner">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3.5">
@@ -325,7 +427,7 @@ export function Layout() {
           </Link>
 
           {!isAuthSurface && (
-            <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
+            <nav className="hidden items-center gap-0.5 lg:flex" aria-label={t('a11y.primaryNav')}>
               <NavLink to="/articles" className={navLinkClass}>
                 {t('nav.articles')}
               </NavLink>
@@ -349,15 +451,15 @@ export function Layout() {
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             {user && !isAuthSurface && <OrgSwitcher />}
             <LanguageSwitcher />
+            <AccessibilityMenu />
 
-            {/* Dark mode toggle */}
             <button
               type="button"
-              aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+              aria-label={dark ? t('a11y.switchToLight') : t('a11y.switchToDark')}
               className="rounded-xl border border-ink-200 p-2 text-ink-700 hover:bg-ink-100/70 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
               onClick={() => setDark((d) => !d)}
             >
-              {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              {dark ? <Sun className="h-4 w-4" aria-hidden="true" /> : <Moon className="h-4 w-4" aria-hidden="true" />}
             </button>
 
             {user ? (
@@ -384,8 +486,9 @@ export function Layout() {
               type="button"
               className="rounded-xl border border-ink-200 p-2 text-ink-700 dark:border-slate-600 dark:text-slate-300 lg:hidden"
               onClick={() => setMenuOpen((v) => !v)}
-              aria-label="Menu"
+              aria-label={t('a11y.menu')}
               aria-expanded={menuOpen}
+              aria-controls="mobile-nav"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 {menuOpen ? (
@@ -400,7 +503,10 @@ export function Layout() {
         </div>
 
         {menuOpen && !isAuthSurface && (
-          <div className="border-t border-ink-100/80 bg-white/95 px-4 py-4 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95 lg:hidden">
+          <div
+            id="mobile-nav"
+            className="border-t border-ink-100/80 bg-white/95 px-4 py-4 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95 lg:hidden"
+          >
             <div className="flex flex-col gap-2">
               <MobileSection title={t('nav.learn')}>
                 {learnLinks.map((link) => (
@@ -520,6 +626,15 @@ export function Layout() {
             >
               <Link to="/articles" className="transition-colors hover:text-brand-700 dark:hover:text-brand-300">
                 {t('footer.articles')}
+              </Link>
+              <Link to="/news" className="transition-colors hover:text-brand-700 dark:hover:text-brand-300">
+                {t('footer.news')}
+              </Link>
+              <Link to="/events" className="transition-colors hover:text-brand-700 dark:hover:text-brand-300">
+                {t('footer.events')}
+              </Link>
+              <Link to="/awareness" className="transition-colors hover:text-brand-700 dark:hover:text-brand-300">
+                {t('footer.awareness')}
               </Link>
               <Link to="/engage" className="transition-colors hover:text-brand-700 dark:hover:text-brand-300">
                 {t('footer.engage')}

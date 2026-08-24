@@ -5,12 +5,14 @@ from __future__ import annotations
 import secrets
 
 import pyotp
-from apps.core.branding import PLATFORM_NAME
+from django.conf import settings
 from django.core.cache import cache
+
+from apps.core.branding import PLATFORM_NAME
 
 from apps.tenants.models import Membership
 
-from .models import Role
+from .roles import is_platform_admin
 
 MFA_PENDING_TTL = 300  # 5 minutes
 
@@ -19,7 +21,7 @@ def user_requires_mfa(user) -> bool:
     """Platform admins and organization owners/admins must use MFA when org requires it."""
     if not user or not user.is_authenticated:
         return False
-    if getattr(user, 'role', None) and user.role.name == Role.ADMIN:
+    if is_platform_admin(user):
         return True
     privileged = Membership.objects.filter(
         user=user,

@@ -19,7 +19,7 @@ export function Pagination({ page, totalCount, pageSize = 20, onPageChange }) {
       >
         {t('pagination.previous')}
       </button>
-      <span className="text-sm text-gray-600 dark:text-slate-400">
+      <span className="text-sm text-gray-600 dark:text-slate-400" aria-current="page">
         {t('pagination.pageOf', { page, total: totalPages })}
       </span>
       <button

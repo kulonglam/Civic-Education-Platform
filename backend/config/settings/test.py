@@ -35,5 +35,7 @@ REST_FRAMEWORK = {  # noqa: F405
         'user': '10000/min',
         'ai_tutor': '10000/min',
         'content_bundle': '10000/min',
+        'awareness_report': '10000/min',
+        'forum_report': '10000/min',
     },
 }

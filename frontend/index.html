@@ -31,6 +31,22 @@
     <meta name="twitter:image" content="/civic-education-logo.png" />
 
     <title>Civic Education RSS</title>
+    <script>
+      (function () {
+        try {
+          var raw = localStorage.getItem('cep_a11y');
+          if (!raw) return;
+          var settings = JSON.parse(raw);
+          var root = document.documentElement;
+          if (settings.fontScale && settings.fontScale !== 'md') {
+            root.setAttribute('data-font-size', settings.fontScale);
+          }
+          if (settings.highContrast) {
+            root.setAttribute('data-contrast', 'high');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

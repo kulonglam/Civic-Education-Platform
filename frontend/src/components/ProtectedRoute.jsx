@@ -2,6 +2,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useOrganization } from '../context/OrganizationContext';
 import { Spinner } from './ui';
+import { platformRoleAllowed } from '../lib/roles';
 
 /**
  * Gate by platform roles and/or org membership roles (OR logic).
@@ -18,7 +19,7 @@ function ProtectedRoute({ children, roles, orgRoles }) {
   }
 
   if (roles || orgRoles) {
-    const platformOk = roles ? roles.includes(user.role?.name) : false;
+    const platformOk = roles ? platformRoleAllowed(user.role?.name, roles) : false;
     const orgOk = orgRoles ? orgRoles.includes(membership?.role) : false;
     if (!platformOk && !orgOk) {
       return <Navigate to="/" replace />;

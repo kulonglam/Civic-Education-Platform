@@ -26,13 +26,13 @@ class ProfileView(generics.RetrieveUpdateAPIView):
         return UserSerializer
 
     def retrieve(self, request, *args, **kwargs):
-        return Response(UserSerializer(request.user).data)
+        return Response(UserSerializer(request.user, context={'request': request}).data)
 
     def update(self, request, *args, **kwargs):
         serializer = ProfileUpdateSerializer(request.user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(UserSerializer(request.user).data)
+        return Response(UserSerializer(request.user, context={'request': request}).data)
 
 
 class AvatarUploadView(APIView):
@@ -72,6 +72,7 @@ class MyDataExportView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        from apps.learning.models import Bookmark
         from apps.quizzes.models import Certificate, QuizAttempt
         from apps.tenants.models import Membership
 
@@ -98,6 +99,19 @@ class MyDataExportView(APIView):
             .select_related('quiz')
             .values('quiz__title', 'issued_at', 'certificate_id')
         )
+        bookmarks = list(
+            Bookmark.objects.filter(user=user)
+            .select_related('article', 'media')
+            .order_by('-created_at')[:200]
+            .values(
+                'id',
+                'created_at',
+                'article__id',
+                'article__title',
+                'media__id',
+                'media__title',
+            )
+        )
         log_activity(
             user,
             'data_exported',
@@ -109,6 +123,7 @@ class MyDataExportView(APIView):
             'memberships': memberships,
             'quiz_attempts': attempts,
             'certificates': certificates,
+            'bookmarks': bookmarks,
             'exported_at': timezone.now().isoformat(),
         })
 
@@ -120,7 +135,9 @@ class DeactivateAccountView(APIView):
 
     def post(self, request):
         user = request.user
-        if user.is_superuser or user.role.name == 'admin':
+        from apps.accounts.roles import is_platform_admin
+
+        if user.is_superuser or is_platform_admin(user):
             return Response(
                 {'detail': 'Platform admin accounts cannot self-deactivate. Contact support.'},
                 status=status.HTTP_400_BAD_REQUEST,

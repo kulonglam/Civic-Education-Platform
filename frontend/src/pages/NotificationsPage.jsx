@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pagination } from '../components/Pagination';
 import { EmptyState, PageHeader, Spinner } from '../components/ui';
-import { Bell, ChatBubble, FileText, Medal, Megaphone, Target } from '../components/Icons';
+import { Bell, Calendar, ChatBubble, FileText, Medal, Megaphone, Target } from '../components/Icons';
 import { queryKeys } from '../lib/queryKeys';
 import { notificationService } from '../lib/services';
 import { formatDate } from '../lib/format';
@@ -16,6 +16,8 @@ const TYPE_ICON_MAP = {
   certificate: Medal,
   announcement: Megaphone,
   forum: ChatBubble,
+  event_reminder: Calendar,
+  event_registration: Calendar,
 };
 
 function NotificationIcon({ type }) {

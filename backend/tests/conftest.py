@@ -44,7 +44,7 @@ def api_client():
 
 @pytest.fixture
 def roles(db):
-    for name in ('citizen', 'moderator', 'editor', 'admin'):
+    for name in ('citizen', 'moderator', 'editor', 'admin', 'super_admin'):
         Role.objects.get_or_create(name=name)
     return Role.objects.all()
 
@@ -124,5 +124,20 @@ def admin_user(roles, django_user_model):
         last_name='User',
         role=role,
         is_staff=True,
+    )
+    return enable_mfa(user)
+
+
+@pytest.fixture
+def super_admin_user(roles, django_user_model):
+    role = Role.objects.get(name='super_admin')
+    user = django_user_model.objects.create_user(
+        email='superadmin@test.com',
+        password='TestPass123!',
+        first_name='Super',
+        last_name='Admin',
+        role=role,
+        is_staff=True,
+        is_superuser=True,
     )
     return enable_mfa(user)

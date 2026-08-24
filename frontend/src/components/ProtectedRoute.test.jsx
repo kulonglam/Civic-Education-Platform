@@ -117,4 +117,31 @@ describe('ProtectedRoute', () => {
     );
     expect(screen.getByText('Home')).toBeInTheDocument();
   });
+
+  it('allows Super Admin on Administrator-only routes', () => {
+    mockedUseAuth.mockReturnValue({
+      user: { ...mockUser, role: { id: 2, name: 'super_admin' } },
+      loading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+      refreshUser: vi.fn(),
+      hasRole: () => true,
+    });
+    render(
+      <MemoryRouter initialEntries={['/admin-only']}>
+        <Routes>
+          <Route
+            path="/admin-only"
+            element={
+              <ProtectedRoute roles={['admin']}>
+                <div>Admin panel</div>
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/" element={<div>Home</div>} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    expect(screen.getByText('Admin panel')).toBeInTheDocument();
+  });
 });

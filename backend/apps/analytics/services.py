@@ -6,7 +6,10 @@ from django.contrib.auth import get_user_model
 from django.db.models import Avg, Count, Max, Q
 from django.utils import timezone
 
+from apps.accounts.models import UserProfile
 from apps.core.branding import PLATFORM_NAME
+from apps.core.i18n_report import build_translation_completeness
+from apps.engagement.models import Poll
 from apps.learning.models import Article, ArticleProgress, Category, MediaAsset, MediaProgress
 from apps.quizzes.models import Certificate, QuizAttempt
 from apps.tenants.context import get_current_organization
@@ -61,6 +64,183 @@ def build_dashboard_summary(*, date_from=None, date_to=None) -> dict:
         'quiz_pass_rate': round(passed_attempts / total_attempts * 100, 1) if total_attempts else 0,
         'certificates_issued': Certificate.objects.count(),
         'published_articles': Article.objects.filter(status='published').count(),
+    }
+
+
+MIN_DEMOGRAPHIC_RESPONSES = 5
+MIN_BUCKET_COUNT = 3
+
+
+def _bucket_counts(values) -> list[dict]:
+    """Aggregate labels, hiding buckets too small to publish safely."""
+    counts = {}
+    for raw in values:
+        key = (raw or '').strip() or 'unspecified'
+        counts[key] = counts.get(key, 0) + 1
+    visible = []
+    suppressed = 0
+    for key, count in sorted(counts.items(), key=lambda item: (-item[1], item[0])):
+        if count < MIN_BUCKET_COUNT:
+            suppressed += count
+            continue
+        visible.append({'key': key, 'count': count})
+    if suppressed:
+        visible.append({'key': 'suppressed', 'count': suppressed})
+    return visible
+
+
+def build_poll_opinion_summary() -> dict:
+    """Totals, option results, and coarse demographic summaries for admins."""
+    polls = (
+        Poll.objects.filter(status__in=[Poll.STATUS_OPEN, Poll.STATUS_CLOSED])
+        .prefetch_related('options', 'votes')
+        .order_by('-created_at')
+    )
+    payload = []
+    total_responses = 0
+    for poll in polls:
+        options = list(poll.options.all())
+        votes = list(poll.votes.all())
+        total = sum(option.vote_count for option in options)
+        total_responses += total
+        demographics_available = total >= MIN_DEMOGRAPHIC_RESPONSES
+        payload.append({
+            'id': str(poll.id),
+            'question': poll.question,
+            'kind': poll.kind,
+            'status': poll.status,
+            'is_open': poll.is_open,
+            'total_votes': total,
+            'options': [
+                {
+                    'id': str(option.id),
+                    'label': option.label,
+                    'vote_count': option.vote_count,
+                    'percent': round(option.vote_count / total * 100, 1) if total else 0,
+                }
+                for option in options
+            ],
+            'demographics_available': demographics_available,
+            'regions': _bucket_counts(vote.region for vote in votes) if demographics_available else [],
+            'age_bands': _bucket_counts(vote.age_band for vote in votes) if demographics_available else [],
+        })
+    return {
+        'total_polls': len(payload),
+        'total_responses': total_responses,
+        'polls': payload,
+    }
+
+
+def build_completion_snapshot() -> dict:
+    """Lesson and media completion rates for the current organization."""
+    published_lessons = Article.objects.filter(status='published').count()
+    published_media = MediaAsset.objects.filter(status='published').count()
+    member_count = org_member_users().count()
+
+    lesson_starts = ArticleProgress.objects.count()
+    lesson_completions = ArticleProgress.objects.filter(completed=True).count()
+    media_starts = MediaProgress.objects.count()
+    media_completions = MediaProgress.objects.filter(completed=True).count()
+    members_completed_lesson = (
+        ArticleProgress.objects.filter(completed=True).values('user').distinct().count()
+    )
+
+    return {
+        'published_lessons': published_lessons,
+        'lesson_starts': lesson_starts,
+        'lesson_completions': lesson_completions,
+        'lesson_completion_rate': (
+            round(lesson_completions / lesson_starts * 100, 1) if lesson_starts else 0
+        ),
+        'published_media': published_media,
+        'media_starts': media_starts,
+        'media_completions': media_completions,
+        'media_completion_rate': (
+            round(media_completions / media_starts * 100, 1) if media_starts else 0
+        ),
+        'members': member_count,
+        'members_completed_lesson': members_completed_lesson,
+        'member_completion_rate': (
+            round(members_completed_lesson / member_count * 100, 1) if member_count else 0
+        ),
+    }
+
+
+def build_popular_lessons(*, limit: int = 10) -> list[dict]:
+    rows = (
+        Article.objects.filter(status='published')
+        .annotate(
+            completions=Count('progress_records', filter=Q(progress_records__completed=True)),
+            views=Count('progress_records'),
+        )
+        .order_by('-completions', '-views', 'title')[:limit]
+    )
+    return [
+        {
+            'id': str(article.id),
+            'title': article.title,
+            'completions': article.completions,
+            'views': article.views,
+        }
+        for article in rows
+    ]
+
+
+def build_language_usage() -> list[dict]:
+    member_ids = org_member_users().values_list('id', flat=True)
+    values = UserProfile.objects.filter(user_id__in=member_ids).values_list(
+        'preferred_language',
+        flat=True,
+    )
+    counts: dict[str, int] = {}
+    for raw in values:
+        key = (raw or '').strip() or 'unspecified'
+        counts[key] = counts.get(key, 0) + 1
+    return [
+        {'key': key, 'count': count}
+        for key, count in sorted(counts.items(), key=lambda item: (-item[1], item[0]))
+    ]
+
+
+def build_regional_engagement() -> dict:
+    """Profile regions for org members, with the same k-anonymity as poll demographics."""
+    member_ids = list(org_member_users().values_list('id', flat=True))
+    values = list(
+        UserProfile.objects.filter(user_id__in=member_ids).values_list('region', flat=True)
+    )
+    stated = [value for value in values if (value or '').strip()]
+    available = len(stated) >= MIN_DEMOGRAPHIC_RESPONSES
+    return {
+        'demographics_available': available,
+        'regions': _bucket_counts(values) if available else [],
+        'stated_count': len(stated),
+        'member_count': len(member_ids),
+    }
+
+
+def build_learning_insights() -> dict:
+    by_category = []
+    for cat in Category.objects.annotate(article_count=Count('articles')):
+        by_category.append({
+            'category': cat.name,
+            'slug': cat.slug,
+            'article_count': cat.article_count,
+        })
+
+    tag_counts: dict[str, int] = {}
+    for article in Article.objects.filter(status='published').only('tags'):
+        for tag in (article.tags or []):
+            tag_counts[tag] = tag_counts.get(tag, 0) + 1
+    top_tags = sorted(tag_counts.items(), key=lambda item: item[1], reverse=True)[:10]
+
+    return {
+        'articles_by_category': by_category,
+        'top_tags': [{'tag': tag, 'count': count} for tag, count in top_tags],
+        'completion': build_completion_snapshot(),
+        'popular_lessons': build_popular_lessons(),
+        'languages': build_language_usage(),
+        'regional_engagement': build_regional_engagement(),
+        'translation': build_translation_completeness(),
     }
 
 
