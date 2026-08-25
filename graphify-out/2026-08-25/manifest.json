@@ -1242,9 +1242,9 @@
     "semantic_hash": ""
   },
   "backend/config/settings/production.py": {
-    "mtime": 1785740507.2580836,
-    "seen": 1787306733.3912673,
-    "ast_hash": "5a55cc979a763af73ecd7539cb9b047b",
+    "mtime": 1787645802.6840425,
+    "seen": 1787645866.6709182,
+    "ast_hash": "bc8985c0a112cb2025376d0934328214",
     "semantic_hash": ""
   },
   "backend/config/settings/test.py": {
@@ -1338,9 +1338,9 @@
     "semantic_hash": "b92ff8cc508a8b1d8c24fd434a125a05"
   },
   "backend/tests/test_deploy.py": {
-    "mtime": 1785707967.7145553,
-    "seen": 1787306733.3912945,
-    "ast_hash": "2ca980a048cdacde21b97f4462f3681c",
+    "mtime": 1787645822.984298,
+    "seen": 1787645866.6709502,
+    "ast_hash": "ac6814adc01b0bb0d9f4626649f5278f",
     "semantic_hash": ""
   },
   "backend/tests/test_enterprise_gaps.py": {
@@ -2316,9 +2316,9 @@
     "semantic_hash": ""
   },
   "docs/production-launch.md": {
-    "mtime": 1787644840.8271582,
-    "seen": 1787644934.57771,
-    "ast_hash": "f90fb9575c3b3ab170e7cb2ecfcfcb6c",
+    "mtime": 1787645735.6173284,
+    "seen": 1787645866.6712806,
+    "ast_hash": "fb0e476ba32e8908f36ffd369621a435",
     "semantic_hash": ""
   },
   "docs/scaling.md": {
@@ -2340,9 +2340,9 @@
     "semantic_hash": ""
   },
   "render.yaml": {
-    "mtime": 1787644783.933479,
-    "seen": 1787644934.5777304,
-    "ast_hash": "8590b57771cac0f33dab181fbc76b88e",
+    "mtime": 1787645803.7980785,
+    "seen": 1787645866.6712885,
+    "ast_hash": "5ed311ce4a08494db41115981856db49",
     "semantic_hash": ""
   },
   "backend/apps/accounts/management/commands/seed_assets/transitional-constitution-sample.pdf": {
@@ -2634,9 +2634,9 @@
     "semantic_hash": ""
   },
   "backend/apps/core/host_utils.py": {
-    "mtime": 1785707967.192342,
-    "seen": 1787306733.3910058,
-    "ast_hash": "7cb6a47cf6633eca22f8a8ec5360fe43",
+    "mtime": 1787645720.2112586,
+    "seen": 1787645866.6705692,
+    "ast_hash": "1ab3c9f90c2339693df42af6d647db4e",
     "semantic_hash": ""
   },
   "backend/start.sh": {
@@ -3528,9 +3528,9 @@
     "semantic_hash": ""
   },
   "docs/production-credentials.md": {
-    "mtime": 1787644825.2332556,
-    "seen": 1787644934.577702,
-    "ast_hash": "9ae28820dc9f3aebb90bd5bfbd0d2a73",
+    "mtime": 1787645823.9803162,
+    "seen": 1787645866.671278,
+    "ast_hash": "6e8454c61b2f9a9b34c3ad89d3e64a59",
     "semantic_hash": ""
   }
 }

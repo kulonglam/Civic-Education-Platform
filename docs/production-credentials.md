@@ -59,6 +59,37 @@ VITE_DEFAULT_TENANT_SLUG=platform-demo
 
 Vite bakes this in at **build** time. Changing it later without a rebuild leaves the SPA talking to the old API URL.
 
+### Your current Render URLs (no custom domain)
+
+| Role | URL |
+|------|-----|
+| API | `https://civic-education-platform-66rb.onrender.com` |
+| Frontend | `https://civic-education-platform-1.onrender.com` |
+
+**API service env** (then Manual Deploy):
+
+```env
+FRONTEND_URL=https://civic-education-platform-1.onrender.com
+EMAIL_HOST=
+EMAIL_HOST_USER=
+EMAIL_HOST_PASSWORD=
+DEFAULT_FROM_EMAIL=
+REQUIRE_SENTRY=False
+```
+
+Leave `ALLOWED_HOSTS` empty. Do not set `FRONTEND_URL` to the API host.
+
+**Frontend** build env (then Clear build cache & deploy). Vite needs this at **image/build** time:
+
+```env
+VITE_API_BASE_URL=https://civic-education-platform-66rb.onrender.com/api
+VITE_DEFAULT_TENANT_SLUG=platform-demo
+```
+
+On a Docker frontend, mark `VITE_API_BASE_URL` as available at build time.
+
+If the API Docker build fails on `collectstatic`, you need a `FRONTEND_URL` dummy in the image build (`https://example.com` is enough for collectstatic). That is already in this repo’s Dockerfiles — redeploy from this commit.
+
 ### Free / starter limits
 
 - Web services **sleep** after idle; the first request can take a minute.

@@ -33,6 +33,7 @@ RUN DJANGO_SETTINGS_MODULE=config.settings.production \
     REQUIRE_SENTRY=False \
     EMAIL_HOST=smtp.example.com \
     CORS_ALLOWED_ORIGINS=https://example.com \
+    FRONTEND_URL=https://example.com \
     ALLOWED_HOSTS=localhost \
     python manage.py collectstatic --noinput
 

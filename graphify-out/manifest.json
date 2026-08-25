@@ -2640,9 +2640,9 @@
     "semantic_hash": ""
   },
   "backend/start.sh": {
-    "mtime": 1785734793.2410045,
-    "seen": 1787306733.3912804,
-    "ast_hash": "142764f8830a3e22f78c5836ed46b8bd",
+    "mtime": 1787647194.1324258,
+    "seen": 1787647272.1196897,
+    "ast_hash": "8754a45a4061bfad06491aa2f8651d8b",
     "semantic_hash": ""
   },
   "backend/apps/core/branding.py": {
@@ -3528,9 +3528,9 @@
     "semantic_hash": ""
   },
   "docs/production-credentials.md": {
-    "mtime": 1787645823.9803162,
-    "seen": 1787645866.671278,
-    "ast_hash": "6e8454c61b2f9a9b34c3ad89d3e64a59",
+    "mtime": 1787647207.100937,
+    "seen": 1787647272.120011,
+    "ast_hash": "47849c04d50fd402fb3f3ce78a20002b",
     "semantic_hash": ""
   }
 }
