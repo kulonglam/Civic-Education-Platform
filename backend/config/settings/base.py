@@ -283,6 +283,8 @@ SMS_PROVIDER = config('SMS_PROVIDER', default='dummy')
 AT_USERNAME = config('AT_USERNAME', default='')
 AT_API_KEY = config('AT_API_KEY', default='')
 AT_SENDER_ID = config('AT_SENDER_ID', default='')
+# Production sets this True so dummy SMS cannot pretend an OTP was delivered.
+REQUIRE_LIVE_SMS = False
 
 # WhatsApp Cloud API (optional — dummy logger when unset)
 WHATSAPP_PROVIDER = config('WHATSAPP_PROVIDER', default='dummy')

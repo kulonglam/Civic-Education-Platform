@@ -60,6 +60,18 @@ class TestPhoneVerification:
             activity_type='admin_action',
         ).exists()
 
+    def test_phone_verify_rejected_when_sms_dummy_in_production(self, api_client, citizen_user, settings):
+        settings.REQUIRE_LIVE_SMS = True
+        settings.SMS_PROVIDER = 'dummy'
+        settings.AT_USERNAME = ''
+        settings.AT_API_KEY = ''
+        citizen_user.phone = '+211922333444'
+        citizen_user.save(update_fields=['phone'])
+        api_client.force_authenticate(user=citizen_user)
+        send = api_client.post('/api/auth/phone/verify/send/')
+        assert send.status_code == status.HTTP_503_SERVICE_UNAVAILABLE
+        assert 'SMS_PROVIDER' in send.data['detail']
+
 
 @pytest.mark.django_db
 class TestUnsuspendUser:

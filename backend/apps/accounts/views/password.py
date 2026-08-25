@@ -1,5 +1,7 @@
 """Password reset and self-service password change."""
 
+import logging
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from drf_spectacular.utils import extend_schema, inline_serializer
@@ -10,7 +12,7 @@ from rest_framework.views import APIView
 
 from apps.audit.services import log_activity
 from apps.core.serializers import MessageSerializer
-from apps.core.tasks import send_email_task
+from apps.core.tasks import send_transactional_email
 from apps.core.throttling import AuthRateThrottle
 
 from ..serializers import (
@@ -21,6 +23,7 @@ from ..serializers import (
 )
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 class PasswordResetRequestView(APIView):
@@ -42,11 +45,14 @@ class PasswordResetRequestView(APIView):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
             reset_url = f'{settings.FRONTEND_URL}/reset-password?uid={uid}&token={token}'
-            send_email_task.delay(
-                'Reset your password',
-                f'Click to reset your password: {reset_url}',
-                [user.email],
-            )
+            try:
+                send_transactional_email(
+                    'Reset your password',
+                    f'Click to reset your password: {reset_url}',
+                    [user.email],
+                )
+            except Exception:
+                logger.exception('Password reset email failed for %s', user.email)
             from apps.notifications.sms_services import send_password_reset_otp
 
             send_password_reset_otp(user)

@@ -1,5 +1,6 @@
 """Registration, login and logout."""
 
+import logging
 import secrets
 from datetime import timedelta
 
@@ -18,13 +19,15 @@ from apps.audit.services import log_activity
 from apps.core.branding import PLATFORM_NAME
 from apps.core.security import log_security_event
 from apps.core.serializers import MessageSerializer
-from apps.core.tasks import send_email_task
+from apps.core.tasks import send_transactional_email
 from apps.core.throttling import AuthRateThrottle
 
 from ..mfa import issue_mfa_challenge, user_has_mfa_enabled, user_requires_mfa
 from ..models import EmailVerificationToken
 from ..serializers import RegisterSerializer
 from ..tokens import EmailTokenObtainPairSerializer
+
+logger = logging.getLogger(__name__)
 
 
 class RegisterView(generics.CreateAPIView):
@@ -45,7 +48,7 @@ class RegisterView(generics.CreateAPIView):
             expires_at=timezone.now() + timedelta(hours=24),
         )
         verify_url = f'{settings.FRONTEND_URL}/verify-email/{token}'
-        send_email_task.delay(
+        send_transactional_email(
             f'Verify your {PLATFORM_NAME} account',
             f'Click to verify your email: {verify_url}',
             [user.email],
@@ -54,9 +57,26 @@ class RegisterView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        email_sent = True
+        try:
+            self.perform_create(serializer)
+        except Exception:
+            logger.exception('Verification email failed after registration')
+            email_sent = False
+            if serializer.instance is None:
+                raise
+        message = (
+            'Registration successful. Please verify your email.'
+            if email_sent
+            else (
+                'Registration succeeded, but the verification email could not be sent. '
+                'The operator must set a real SMTP host (not a placeholder), '
+                'EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, and DEFAULT_FROM_EMAIL that the '
+                'provider allows (Gmail needs an App Password; Brevo/Resend need a verified sender).'
+            )
+        )
         return Response(
-            {'message': 'Registration successful. Please verify your email.'},
+            {'message': message, 'email_sent': email_sent},
             status=status.HTTP_201_CREATED,
         )
 

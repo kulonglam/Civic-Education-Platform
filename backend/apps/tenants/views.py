@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+import logging
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -10,7 +11,7 @@ from apps.audit.services import log_activity
 from apps.billing.services import check_quota
 from apps.core.branding import PLATFORM_NAME
 from apps.core.serializers import MessageSerializer
-from apps.core.tasks import send_email_task
+from apps.core.tasks import send_transactional_email
 
 from .context import get_current_organization
 from .models import Membership, Organization, OrganizationInvite
@@ -32,6 +33,7 @@ from .services import (
 )
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 class MyOrganizationsView(APIView):
@@ -136,11 +138,14 @@ class MemberInviteView(APIView):
                 role=role,
                 department=department,
             )
-            send_email_task.delay(
-                f'You were added to {organization.name}',
-                f'You now have access to "{organization.name}" on {PLATFORM_NAME}.',
-                [email],
-            )
+            try:
+                send_transactional_email(
+                    f'You were added to {organization.name}',
+                    f'You now have access to "{organization.name}" on {PLATFORM_NAME}.',
+                    [email],
+                )
+            except Exception:
+                logger.exception('Member-added email failed for %s', email)
             log_activity(
                 request.user,
                 'member_invited',

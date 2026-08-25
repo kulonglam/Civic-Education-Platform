@@ -1,4 +1,5 @@
 from datetime import timedelta
+import logging
 
 from django.conf import settings
 from django.db import transaction
@@ -6,9 +7,11 @@ from django.utils import timezone
 from django.utils.text import slugify
 
 from apps.core.branding import PLATFORM_NAME
-from apps.core.tasks import send_email_task
+from apps.core.tasks import send_transactional_email
 
 from .models import Membership, Organization, OrganizationInvite
+
+logger = logging.getLogger(__name__)
 
 
 def generate_unique_slug(name: str) -> str:
@@ -102,16 +105,19 @@ def create_organization_invite(
         expires_at=timezone.now() + timedelta(days=INVITE_TTL_DAYS),
     )
     invite_url = f'{settings.FRONTEND_URL}/invite/{invite.token}'
-    send_email_task.delay(
-        f'You are invited to join {organization.name}',
-        (
-            f'{invited_by.full_name if invited_by else "An administrator"} invited you to join '
-            f'"{organization.name}" on {PLATFORM_NAME}.\n\n'
-            f'Accept your invitation: {invite_url}\n\n'
-            f'This link expires in {INVITE_TTL_DAYS} days.'
-        ),
-        [email],
-    )
+    try:
+        send_transactional_email(
+            f'You are invited to join {organization.name}',
+            (
+                f'{invited_by.full_name if invited_by else "An administrator"} invited you to join '
+                f'"{organization.name}" on {PLATFORM_NAME}.\n\n'
+                f'Accept your invitation: {invite_url}\n\n'
+                f'This link expires in {INVITE_TTL_DAYS} days.'
+            ),
+            [email],
+        )
+    except Exception:
+        logger.exception('Invite email failed for %s', email)
     return invite
 
 

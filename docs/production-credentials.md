@@ -88,13 +88,40 @@ VITE_DEFAULT_TENANT_SLUG=platform-demo
 
 On a Docker frontend, mark `VITE_API_BASE_URL` as available at build time.
 
-If the API Docker build fails on `collectstatic`, you need a `FRONTEND_URL` dummy in the image build (`https://example.com` is enough for collectstatic). That is already in this repo’s Dockerfiles — redeploy from this commit.
+### Verification email and SMS (why Gmail never arrived)
+
+Signing up with a Gmail address is not enough. The **API** must send mail through SMTP. Phone OTP is a separate Africa's Talking account. Your Docker API process does not run a Celery worker; verification mail now sends during the HTTP request, but SMTP and SMS credentials still have to be real.
+
+**Email — set all of these on the API** (then Manual Deploy). A value only in `EMAIL_HOST` (for example `smtp.example.com`) will not deliver:
+
+```env
+EMAIL_HOST=smtp-relay.brevo.com
+EMAIL_PORT=587
+EMAIL_HOST_USER=your-brevo-login
+EMAIL_HOST_PASSWORD=your-brevo-smtp-key
+DEFAULT_FROM_EMAIL=the-verified-sender@your-brevo-domain
+```
+
+[Brevo](https://www.brevo.com/) and [Resend](https://resend.com/) have free tiers. Gmail SMTP (`smtp.gmail.com`) only works with a Google **App Password**, and `DEFAULT_FROM_EMAIL` must be that same Gmail address. Check Promotions/Spam after you deploy.
+
+Then click **Resend verification** on the site. The message should arrive within a minute.
+
+**Phone — not wired until Africa's Talking is set.** Default `SMS_PROVIDER=dummy` only logs OTPs; it never texts a handset. Numbers must be South Sudan `+211…`.
+
+```env
+SMS_PROVIDER=africastalking
+AT_USERNAME=
+AT_API_KEY=
+AT_SENDER_ID=
+```
+
+If the Docker collectstatic fails on `FRONTEND_URL`, you need a dummy in the image build (`https://example.com` is enough for collectstatic). That is already in this repo’s Dockerfiles — redeploy from this commit.
 
 ### Free / starter limits
 
 - Web services **sleep** after idle; the first request can take a minute.
 - `render.yaml` Postgres, Redis, and the worker use **starter** plans. Confirm in the Render dashboard whether those are billed; a sleeping API plus no worker means email/SMS/certificates will queue and never send.
-- Keep the worker running if you want verification emails and certificate PDFs.
+- Keep the worker running if you want bulk SMS, certificate PDFs, and queued jobs. Verification email and phone OTP no longer wait on Celery.
 
 Then continue from Step 1 below for Redis/Celery (already wired in `render.yaml` if those services exist) and optional SMS, WhatsApp, tutor, and push.
 

@@ -29,6 +29,7 @@ export function RegisterPage() {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -65,7 +66,8 @@ export function RegisterPage() {
       } else if (accountType === 'citizen') {
         delete payload.organization_name;
       }
-      await authService.register(payload);
+      const { data } = await authService.register(payload);
+      setSuccessMessage(data?.email_sent === false ? (data.message || '') : '');
       setSuccess(true);
     } catch (err) {
       setError(extractError(err));
@@ -84,13 +86,14 @@ export function RegisterPage() {
       : t('auth.registerCitizenTitle');
 
   if (success) {
+    const copy = successMessage || t('auth.registerSuccess');
     return (
-      <AuthShell title={t('auth.registerSuccessTitle')} subtitle={t('auth.registerSuccess')}>
+      <AuthShell title={t('auth.registerSuccessTitle')} subtitle={copy}>
         <div className="mb-6 flex items-center gap-3 lg:hidden">
           <PlatformLogo className="h-10 w-10" />
           <p className="font-display text-lg font-semibold text-ink-900 dark:text-slate-100">{t('app.name')}</p>
         </div>
-        <Alert kind="success">{t('auth.registerSuccess')}</Alert>
+        <Alert kind={successMessage ? 'warning' : 'success'}>{copy}</Alert>
         <Link to="/login" className="btn-primary mt-6 w-full">
           {t('nav.login')}
         </Link>

@@ -4,7 +4,7 @@ import pytest
 from django.core import mail
 from rest_framework import status
 
-from apps.core.tasks import send_email_task
+from apps.core.tasks import send_email_task, send_transactional_email
 from apps.notifications.models import Notification
 from apps.notifications.tasks import broadcast_notification_task
 from apps.quizzes.models import Certificate, Question, Quiz
@@ -18,6 +18,11 @@ class TestEmailTask:
         assert len(mail.outbox) == 1
         assert mail.outbox[0].subject == 'Subject'
         assert mail.outbox[0].to == ['someone@test.com']
+
+    def test_send_transactional_email_delivers_without_worker(self, db):
+        send_transactional_email('Verify', 'Click here', ['someone@test.com'])
+        assert len(mail.outbox) == 1
+        assert mail.outbox[0].subject == 'Verify'
 
 
 @pytest.mark.django_db

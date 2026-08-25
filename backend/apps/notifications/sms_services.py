@@ -136,7 +136,7 @@ def send_password_reset_otp(user) -> SmsMessage | None:
         f'Your {PLATFORM_NAME} password reset code is {otp.code}. '
         f'It expires in {OTP_TTL_MINUTES} minutes.'
     )
-    return queue_sms_to_phone(
+    return send_sms_to_phone(
         otp.phone,
         message,
         message_type=SmsMessage.TYPE_OTP,
@@ -152,7 +152,7 @@ def send_phone_verify_otp(user) -> SmsMessage | None:
         f'Your {PLATFORM_NAME} verification code is {otp.code}. '
         f'It expires in {OTP_TTL_MINUTES} minutes.'
     )
-    return queue_sms_to_phone(
+    return send_sms_to_phone(
         otp.phone,
         message,
         message_type=SmsMessage.TYPE_OTP,

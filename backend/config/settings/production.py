@@ -177,3 +177,5 @@ if config('REQUIRE_SENTRY', default=True, cast=bool) and not SENTRY_DSN:  # noqa
     raise ImproperlyConfigured(
         'SENTRY_DSN is required in production (set REQUIRE_SENTRY=False only for constrained staging).'
     )
+
+REQUIRE_LIVE_SMS = True  # noqa: F405

@@ -170,12 +170,21 @@ def check_email() -> dict[str, Any]:
             detail='EMAIL_HOST is not set',
         )
     backend = getattr(settings, 'EMAIL_BACKEND', '')
+    from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', '') or ''
+    detail = f'SMTP configured ({host})'
+    if 'example.com' in host or host in {'localhost', 'smtp.example.com'}:
+        detail += ' — EMAIL_HOST looks like a placeholder; mail will not reach Gmail'
+    if from_email.endswith('civic-education.ss') or 'noreply@civic-education' in from_email:
+        detail += (
+            ' — DEFAULT_FROM_EMAIL is still the placeholder; '
+            'set it to a sender your SMTP provider has verified'
+        )
     return _entry(
         'email',
         STATUS_CONFIGURED,
         required_in_production=True,
-        detail=f'SMTP configured ({host})',
-        meta={'backend': backend},
+        detail=detail,
+        meta={'backend': backend, 'from_email': from_email},
     )
 
 

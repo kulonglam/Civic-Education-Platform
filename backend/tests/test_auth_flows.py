@@ -80,7 +80,8 @@ class TestEmailVerification:
             'password_confirm': 'SecurePass123!',
         })
         assert response.status_code == status.HTTP_201_CREATED
-        # send_email_task runs eagerly in tests -> locmem outbox.
+        assert response.data.get('email_sent') is True
+        # send_transactional_email uses locmem in tests.
         assert len(mail.outbox) == 1
         assert 'verify@test.com' in mail.outbox[0].to
 
