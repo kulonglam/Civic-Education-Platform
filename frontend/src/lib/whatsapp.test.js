@@ -12,6 +12,6 @@ describe('whatsappShareUrl', () => {
 
 describe('whatsappClickToChatUrl', () => {
   it('strips plus and spaces from a display number', () => {
-    expect(whatsappClickToChatUrl('+211 922 000 000')).toBe('https://wa.me/211922000000');
+    expect(whatsappClickToChatUrl('+256 772 000 000')).toBe('https://wa.me/256772000000');
   });
 });

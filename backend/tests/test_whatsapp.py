@@ -39,7 +39,7 @@ class TestWhatsAppChannel:
         bind_client_to_org(api_client, citizen_user, org, membership_role=Membership.OWNER)
         response = api_client.post(
             '/api/notify/whatsapp/',
-            {'message': 'Hello', 'phones': ['+211922123456']},
+            {'message': 'Hello', 'phones': ['+256772123456']},
             format='json',
         )
         assert response.status_code == status.HTTP_402_PAYMENT_REQUIRED
@@ -49,11 +49,11 @@ class TestWhatsAppChannel:
         bind_client_to_org(api_client, citizen_user, org, membership_role=Membership.OWNER)
         response = api_client.post(
             '/api/notify/whatsapp/',
-            {'message': 'Civic alert', 'phones': ['+211922123456']},
+            {'message': 'Civic alert', 'phones': ['+256772123456']},
             format='json',
         )
         assert response.status_code == status.HTTP_202_ACCEPTED
-        assert WhatsAppMessage.all_objects.filter(organization=org, phone='+211922123456').exists()
+        assert WhatsAppMessage.all_objects.filter(organization=org, phone='+256772123456').exists()
 
     def test_webhook_verify_rejects_bad_token(self, api_client, settings):
         settings.WHATSAPP_VERIFY_TOKEN = 'secret-token'
@@ -79,7 +79,7 @@ def test_meta_payload_uses_approved_template(settings):
     settings.WHATSAPP_TEMPLATE_NAME = 'civic_alert'
     settings.WHATSAPP_TEMPLATE_LANG = 'en'
     settings.WHATSAPP_TEMPLATE_BODY_VARS = 1
-    payload = build_meta_message_payload('+211922123456', 'Town hall tonight')
+    payload = build_meta_message_payload('+256772123456', 'Town hall tonight')
     assert payload['type'] == 'template'
     assert payload['template']['name'] == 'civic_alert'
     assert payload['template']['components'][0]['parameters'][0]['text'] == 'Town hall tonight'

@@ -278,11 +278,21 @@ TRANSLATION_ENABLED = config('TRANSLATION_ENABLED', default=True, cast=bool)
 TRANSLATION_MAX_TOKENS = config('TRANSLATION_MAX_TOKENS', default=4096, cast=int)
 TRANSLATION_CHUNK_CHARS = config('TRANSLATION_CHUNK_CHARS', default=3000, cast=int)
 
-# SMS (Africa's Talking)
+def _env_first(*names: str) -> str:
+    for name in names:
+        value = config(name, default='')
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return ''
+
+
+# SMS (Africa's Talking). AFRICASTALKING_* aliases match the dashboard copy.
 SMS_PROVIDER = config('SMS_PROVIDER', default='dummy')
-AT_USERNAME = config('AT_USERNAME', default='')
-AT_API_KEY = config('AT_API_KEY', default='')
-AT_SENDER_ID = config('AT_SENDER_ID', default='')
+AT_USERNAME = _env_first('AT_USERNAME', 'AFRICASTALKING_USERNAME')
+AT_API_KEY = _env_first('AT_API_KEY', 'AFRICASTALKING_API_KEY')
+AT_SENDER_ID = _env_first('AT_SENDER_ID', 'AFRICASTALKING_SENDER_ID')
+if AT_USERNAME and AT_API_KEY and SMS_PROVIDER == 'dummy':
+    SMS_PROVIDER = 'africastalking'
 # Production sets this True so dummy SMS cannot pretend an OTP was delivered.
 REQUIRE_LIVE_SMS = False
 

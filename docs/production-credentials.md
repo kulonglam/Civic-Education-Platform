@@ -106,7 +106,7 @@ DEFAULT_FROM_EMAIL=the-verified-sender@your-brevo-domain
 
 Then click **Resend verification** on the site. The message should arrive within a minute.
 
-**Phone — not wired until Africa's Talking is set.** Default `SMS_PROVIDER=dummy` only logs OTPs; it never texts a handset. Numbers must be South Sudan `+211…`.
+**Phone — not wired until Africa's Talking is set.** Default `SMS_PROVIDER=dummy` only logs OTPs; it never texts a handset. Numbers must be Uganda `+256…`.
 
 ```env
 SMS_PROVIDER=africastalking
@@ -245,7 +245,7 @@ WHATSAPP_ACCESS_TOKEN=
 WHATSAPP_PHONE_NUMBER_ID=
 WHATSAPP_VERIFY_TOKEN=
 WHATSAPP_APP_SECRET=
-WHATSAPP_DISPLAY_NUMBER=+2119...
+WHATSAPP_DISPLAY_NUMBER=+2567...
 WHATSAPP_TEMPLATE_NAME=civic_alert
 WHATSAPP_TEMPLATE_LANG=en
 WHATSAPP_TEMPLATE_BODY_VARS=1

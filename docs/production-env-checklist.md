@@ -160,7 +160,7 @@ AT_SENDER_ID=YOUR_SENDER
 - [ ] Sender ID approved (production) or sandbox tested
 - [ ] Vars set on **web** and **Celery worker** (SMS sends via `send_sms_task`)
 - [ ] Org on **Pro or Enterprise** plan (`sms_alerts` feature flag)
-- [ ] Member phone numbers in E.164 South Sudan format (`+211…`)
+- [ ] Member phone numbers in E.164 Uganda format (`+256…`)
 
 ### Verify
 
@@ -183,7 +183,7 @@ WHATSAPP_ACCESS_TOKEN=
 WHATSAPP_PHONE_NUMBER_ID=
 WHATSAPP_VERIFY_TOKEN=
 WHATSAPP_APP_SECRET=
-WHATSAPP_DISPLAY_NUMBER=+211922000000
+WHATSAPP_DISPLAY_NUMBER=+256772000000
 WHATSAPP_TEMPLATE_NAME=civic_alert
 WHATSAPP_TEMPLATE_LANG=en
 WHATSAPP_TEMPLATE_BODY_VARS=1

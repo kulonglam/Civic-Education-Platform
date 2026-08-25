@@ -67,7 +67,7 @@ def get_sms_provider() -> BaseSmsProvider:
 
 
 def normalize_phone(raw: str) -> str:
-    """Normalize to E.164 for South Sudan (+211)."""
+    """Normalize to E.164 for Uganda (+256)."""
     if not raw:
         raise ValueError('Phone number is required.')
     cleaned = re.sub(r'[\s\-()]', '', raw.strip())
@@ -76,12 +76,14 @@ def normalize_phone(raw: str) -> str:
     else:
         digits = cleaned
     digits = re.sub(r'\D', '', digits)
-    if digits.startswith('211'):
+    if digits.startswith('256'):
         national = digits[3:]
     elif digits.startswith('0'):
         national = digits[1:]
     else:
         national = digits
-    if not national.isdigit() or len(national) != 9 or national[0] not in '19':
-        raise ValueError('Enter a valid South Sudan mobile number (e.g. +211922123456).')
-    return f'+211{national}'
+    if national.startswith('0'):
+        national = national[1:]
+    if not national.isdigit() or len(national) != 9 or national[0] not in '37':
+        raise ValueError('Enter a valid Uganda mobile number (e.g. +256772123456).')
+    return f'+256{national}'

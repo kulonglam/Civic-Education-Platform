@@ -356,7 +356,7 @@ export function ProfilePage() {
           <input
             type="tel"
             className="input"
-            placeholder="+211922123456"
+            placeholder="+256772123456"
             value={form.phone}
             onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
           />

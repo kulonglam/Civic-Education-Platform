@@ -846,10 +846,10 @@
     "semantic_hash": "ea83718d85bbe487f118200b117e328c"
   },
   "backend/apps/notifications/sms_providers.py": {
-    "mtime": 1782192665.1191301,
-    "seen": 1787306733.3911657,
-    "ast_hash": "e833de63be561d22e626466015ef8c9a",
-    "semantic_hash": "e833de63be561d22e626466015ef8c9a"
+    "mtime": 1787689518.567875,
+    "seen": 1787689883.6270962,
+    "ast_hash": "5e7db239ffb52912ef902eb964bc0b45",
+    "semantic_hash": ""
   },
   "backend/apps/notifications/sms_serializers.py": {
     "mtime": 1782192703.4046807,
@@ -1230,9 +1230,9 @@
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "backend/config/settings/base.py": {
-    "mtime": 1787649727.7290616,
-    "seen": 1787649901.8462179,
-    "ast_hash": "a7acdef05bba23985df71c8880f1520b",
+    "mtime": 1787689613.197543,
+    "seen": 1787689883.6272583,
+    "ast_hash": "56ddfa09c2bdcfd1025fbe0546d73613",
     "semantic_hash": ""
   },
   "backend/config/settings/development.py": {
@@ -1410,9 +1410,9 @@
     "semantic_hash": "cfc1c575e3a5b83d6a1d4a2471360056"
   },
   "backend/tests/test_product_features.py": {
-    "mtime": 1787649736.487712,
-    "seen": 1787649901.8469207,
-    "ast_hash": "c5db556512ddb954f780e45522995bc6",
+    "mtime": 1787689630.389351,
+    "seen": 1787689883.6273296,
+    "ast_hash": "d2a6b43e69a9b22d915bf5231206fb88",
     "semantic_hash": ""
   },
   "backend/tests/test_quizzes_forum.py": {
@@ -1452,10 +1452,10 @@
     "semantic_hash": ""
   },
   "backend/tests/test_sms.py": {
-    "mtime": 1782322986.9552407,
-    "seen": 1787306733.3913302,
-    "ast_hash": "a7662e4573ac0d3a8020b1d3d8c51a44",
-    "semantic_hash": "a7662e4573ac0d3a8020b1d3d8c51a44"
+    "mtime": 1787689625.0250492,
+    "seen": 1787689883.6273417,
+    "ast_hash": "a902a282c10d038a7cf99085592c981a",
+    "semantic_hash": ""
   },
   "backend/tests/test_tasks.py": {
     "mtime": 1787649573.171703,
@@ -1740,15 +1740,15 @@
     "semantic_hash": "8f158a1aeb80418205bdf225babba6f4"
   },
   "frontend/src/i18n/ar.json": {
-    "mtime": 1787644761.2913885,
-    "seen": 1787644934.5765674,
-    "ast_hash": "879697b74b04e1af72210fcd8fb96afd",
+    "mtime": 1787689521.5978703,
+    "seen": 1787689883.6274548,
+    "ast_hash": "15ef442db3153724725529bc1b952093",
     "semantic_hash": ""
   },
   "frontend/src/i18n/en.json": {
-    "mtime": 1787644732.7295942,
-    "seen": 1787644934.5765712,
-    "ast_hash": "202bcb1160321a5aa175db673dd7cf87",
+    "mtime": 1787689537.0265553,
+    "seen": 1787689883.627456,
+    "ast_hash": "3a06b0f040bd454fb84edff383e739cb",
     "semantic_hash": ""
   },
   "frontend/src/i18n/index.js": {
@@ -2010,10 +2010,10 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/ForgotPasswordPage.jsx": {
-    "mtime": 1782313449.1317837,
-    "seen": 1787306733.3914783,
-    "ast_hash": "8895832039bcff15c56047aea8a12b23",
-    "semantic_hash": "8895832039bcff15c56047aea8a12b23"
+    "mtime": 1787689522.4762473,
+    "seen": 1787689883.627557,
+    "ast_hash": "122cb02dab827501104dbb531083b85a",
+    "semantic_hash": ""
   },
   "frontend/src/pages/ForumPage.jsx": {
     "mtime": 1787582054.2493143,
@@ -2088,15 +2088,15 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/OrganizationPage.jsx": {
-    "mtime": 1787590925.2553918,
-    "seen": 1787591276.9961536,
-    "ast_hash": "9ee010be61b8c0ee4ad24766c4f5f84d",
+    "mtime": 1787689526.301321,
+    "seen": 1787689883.6275866,
+    "ast_hash": "25c4fd71a8ba93c3804cc1fcc18f7f86",
     "semantic_hash": ""
   },
   "frontend/src/pages/ProfilePage.jsx": {
-    "mtime": 1787591724.3127944,
-    "seen": 1787591821.1509674,
-    "ast_hash": "25c9cc6f86544a6a430f6016742b088e",
+    "mtime": 1787689521.7054677,
+    "seen": 1787689883.6275876,
+    "ast_hash": "3e834665274ca019c3e8fa02667845f3",
     "semantic_hash": ""
   },
   "frontend/src/pages/ProfilePage.test.jsx": {
@@ -2310,9 +2310,9 @@
     "semantic_hash": ""
   },
   "docs/production-env-checklist.md": {
-    "mtime": 1787644844.1417189,
-    "seen": 1787644934.577706,
-    "ast_hash": "0fd640b9f4212d110a5bbc651c59b9f7",
+    "mtime": 1787689616.2622893,
+    "seen": 1787689883.6276424,
+    "ast_hash": "594a455734190472a6ed0d474d8e6b2e",
     "semantic_hash": ""
   },
   "docs/production-launch.md": {
@@ -2688,9 +2688,9 @@
     "semantic_hash": ""
   },
   "backend/apps/accounts/views/verification.py": {
-    "mtime": 1787649733.4991844,
-    "seen": 1787649901.8444324,
-    "ast_hash": "7e4554ad8764a6a82403cf6a24d6d759",
+    "mtime": 1787689613.482261,
+    "seen": 1787689883.6264396,
+    "ast_hash": "9df5eefcfad23ec5866e114b1d78f05b",
     "semantic_hash": ""
   },
   "backend/apps/tutor/budget.py": {
@@ -3420,9 +3420,9 @@
     "semantic_hash": ""
   },
   "backend/tests/test_whatsapp.py": {
-    "mtime": 1787644824.5672085,
-    "seen": 1787644934.5761833,
-    "ast_hash": "706839d769856c2b72b0ce439e979353",
+    "mtime": 1787689557.0152202,
+    "seen": 1787689883.6273506,
+    "ast_hash": "536e5100b1a289f32c116d9a8ea217e1",
     "semantic_hash": ""
   },
   "frontend/src/components/CivicMap.jsx": {
@@ -3468,9 +3468,9 @@
     "semantic_hash": ""
   },
   "frontend/src/lib/whatsapp.test.js": {
-    "mtime": 1787591031.0493727,
-    "seen": 1787591276.9959395,
-    "ast_hash": "cb10a760185db90679100faafd365a9f",
+    "mtime": 1787689557.0177515,
+    "seen": 1787689883.6275132,
+    "ast_hash": "f81c9bda8c98e39543a43c33874e8974",
     "semantic_hash": ""
   },
   "frontend/src/pages/LeaderboardPage.jsx": {
@@ -3528,9 +3528,9 @@
     "semantic_hash": ""
   },
   "docs/production-credentials.md": {
-    "mtime": 1787649596.1867971,
-    "seen": 1787649901.8519332,
-    "ast_hash": "4d583c45984d66f587bfc7a1f49df80f",
+    "mtime": 1787689615.8203413,
+    "seen": 1787689883.6276407,
+    "ast_hash": "1ff1f8e0843df740c16f4f298cc7645d",
     "semantic_hash": ""
   }
 }

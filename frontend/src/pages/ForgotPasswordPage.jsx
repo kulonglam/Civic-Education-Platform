@@ -119,7 +119,7 @@ export function ForgotPasswordPage() {
                     <input
                       type="tel"
                       className="input"
-                      placeholder="+211922123456"
+                      placeholder="+256772123456"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       required

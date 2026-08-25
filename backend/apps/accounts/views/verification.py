@@ -104,9 +104,10 @@ class PhoneVerifySendView(APIView):
             return Response(
                 {
                     'detail': (
-                        'SMS is not configured on this server, so no code was delivered. '
-                        "Set SMS_PROVIDER=africastalking with AT_USERNAME and AT_API_KEY "
-                        "(Africa's Talking). Phone numbers must be South Sudan (+211)."
+                        "SMS is not configured on this server. On the API service set "
+                        "SMS_PROVIDER=africastalking, AT_USERNAME (or AFRICASTALKING_USERNAME), "
+                        "and AT_API_KEY (or AFRICASTALKING_API_KEY), then redeploy. "
+                        "Profile numbers must be Uganda format (+256772123456 or 0772123456)."
                     )
                 },
                 status=status.HTTP_503_SERVICE_UNAVAILABLE,

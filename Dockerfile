@@ -37,7 +37,7 @@ RUN DJANGO_SETTINGS_MODULE=config.settings.production \
     CORS_ALLOWED_ORIGINS=https://example.com \
     FRONTEND_URL=https://example.com \
     ALLOWED_HOSTS=localhost \
-    python manage.py collectstatic --noinput
+    python manage.py collectstatic --noinput --skip-checks
 
 EXPOSE 8000
 

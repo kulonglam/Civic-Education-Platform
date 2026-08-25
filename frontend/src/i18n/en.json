@@ -759,7 +759,7 @@
     "avatarUpload": "Upload photo",
     "avatarUploadHint": "JPEG or PNG, uploaded to secure storage when configured.",
     "phone": "Mobile number",
-    "phoneHint": "South Sudan format, e.g. +211922123456 — used for SMS, WhatsApp alerts, and password recovery.",
+    "phoneHint": "Uganda format, e.g. +256772123456 or 0772123456 — used for SMS, WhatsApp alerts, and password recovery.",
     "saved": "Profile updated.",
     "memberSince": "Member since",
     "role": "Role",
@@ -805,7 +805,7 @@
     "age_prefer_not": "Prefer not to say",
     "showOnLeaderboard": "Show my first name on the XP leaderboard",
     "whatsappAlerts": "Send civic alerts to my WhatsApp",
-    "whatsappHint": "Uses the same South Sudan mobile number as SMS. You can still share pages to WhatsApp without opting in."
+    "whatsappHint": "Uses the same Uganda mobile number as SMS. You can still share pages to WhatsApp without opting in."
   },
   "notifications": {
     "title": "Notifications",

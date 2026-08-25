@@ -1119,7 +1119,7 @@ function OrganizationPage() {
                     <label className="label">{t('sms.extraPhone')}</label>
                     <input
                       className="input"
-                      placeholder="+211922123456"
+                      placeholder="+256772123456"
                       value={extraPhone}
                       onChange={(e) => setExtraPhone(e.target.value)}
                     />
