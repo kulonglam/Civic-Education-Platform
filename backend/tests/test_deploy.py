@@ -37,11 +37,32 @@ def test_render_hostname_from_url(monkeypatch):
     assert render_hostname() == 'civic-education-platform-66rb.onrender.com'
 
 
+def test_production_public_origin_rejects_localhost():
+    from apps.core.host_utils import production_public_origin
+
+    assert production_public_origin('') == ''
+    assert production_public_origin('http://localhost:5173') == ''
+    assert production_public_origin('http://127.0.0.1:5173/') == ''
+    assert (
+        production_public_origin('https://civic-education-web-xxxx.onrender.com/')
+        == 'https://civic-education-web-xxxx.onrender.com'
+    )
+
+
+def test_render_hostname_empty_without_env(monkeypatch):
+    from apps.core.host_utils import render_hostname
+
+    monkeypatch.delenv('RENDER_EXTERNAL_HOSTNAME', raising=False)
+    monkeypatch.delenv('RENDER_EXTERNAL_URL', raising=False)
+    assert render_hostname() == ''
+
+
 def test_redis_url_points_to_localhost():
     from apps.core.host_utils import redis_url_points_to_localhost
 
     assert redis_url_points_to_localhost('redis://localhost:6379/0')
     assert redis_url_points_to_localhost('redis://127.0.0.1:6379/0')
+    assert not redis_url_points_to_localhost('')
     assert not redis_url_points_to_localhost('redis://red-abc123:6379')
 
 

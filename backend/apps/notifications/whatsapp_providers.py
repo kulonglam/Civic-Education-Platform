@@ -13,29 +13,58 @@ GRAPH_VERSION = 'v21.0'
 
 
 class BaseWhatsAppProvider:
-    def send(self, phone: str, message: str) -> SmsSendResult:
+    def send(self, phone: str, message: str, **kwargs) -> SmsSendResult:
         raise NotImplementedError
 
 
 class DummyWhatsAppProvider(BaseWhatsAppProvider):
     """Log WhatsApp messages in development; always succeeds."""
 
-    def send(self, phone: str, message: str) -> SmsSendResult:
+    def send(self, phone: str, message: str, **kwargs) -> SmsSendResult:
         logger.info('[dummy-whatsapp] to=%s message=%s', phone, message[:120])
         return SmsSendResult(success=True, reference='dummy-whatsapp-id')
 
 
-class MetaCloudWhatsAppProvider(BaseWhatsAppProvider):
-    def send(self, phone: str, message: str) -> SmsSendResult:
-        token = settings.WHATSAPP_ACCESS_TOKEN
-        phone_id = settings.WHATSAPP_PHONE_NUMBER_ID
-        url = f'https://graph.facebook.com/{GRAPH_VERSION}/{phone_id}/messages'
-        payload = {
+def build_meta_message_payload(phone: str, message: str) -> dict:
+    """Graph API payload: template when configured, otherwise session text."""
+    to = phone.lstrip('+')
+    template_name = (getattr(settings, 'WHATSAPP_TEMPLATE_NAME', '') or '').strip()
+    if not template_name:
+        return {
             'messaging_product': 'whatsapp',
-            'to': phone.lstrip('+'),
+            'to': to,
             'type': 'text',
             'text': {'preview_url': True, 'body': message},
         }
+
+    lang = (getattr(settings, 'WHATSAPP_TEMPLATE_LANG', '') or 'en').strip() or 'en'
+    payload = {
+        'messaging_product': 'whatsapp',
+        'to': to,
+        'type': 'template',
+        'template': {
+            'name': template_name,
+            'language': {'code': lang},
+        },
+    }
+    body_vars = int(getattr(settings, 'WHATSAPP_TEMPLATE_BODY_VARS', 1) or 0)
+    if body_vars > 0:
+        truncated = (message or '')[:1024]
+        payload['template']['components'] = [
+            {
+                'type': 'body',
+                'parameters': [{'type': 'text', 'text': truncated or '-'}] * body_vars,
+            },
+        ]
+    return payload
+
+
+class MetaCloudWhatsAppProvider(BaseWhatsAppProvider):
+    def send(self, phone: str, message: str, **kwargs) -> SmsSendResult:
+        token = settings.WHATSAPP_ACCESS_TOKEN
+        phone_id = settings.WHATSAPP_PHONE_NUMBER_ID
+        url = f'https://graph.facebook.com/{GRAPH_VERSION}/{phone_id}/messages'
+        payload = build_meta_message_payload(phone, message)
         request = urllib.request.Request(
             url,
             data=json.dumps(payload).encode('utf-8'),
@@ -62,6 +91,10 @@ class MetaCloudWhatsAppProvider(BaseWhatsAppProvider):
 
 def whatsapp_cloud_configured() -> bool:
     return bool(settings.WHATSAPP_ACCESS_TOKEN and settings.WHATSAPP_PHONE_NUMBER_ID)
+
+
+def whatsapp_templates_configured() -> bool:
+    return bool((getattr(settings, 'WHATSAPP_TEMPLATE_NAME', '') or '').strip())
 
 
 def get_whatsapp_provider() -> BaseWhatsAppProvider:

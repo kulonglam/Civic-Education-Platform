@@ -10,6 +10,7 @@ from contextlib import contextmanager
 from contextvars import ContextVar
 
 _current_organization: ContextVar = ContextVar('current_organization', default=None)
+_fail_closed: ContextVar[bool] = ContextVar('tenant_fail_closed', default=False)
 
 
 def set_current_organization(organization):
@@ -25,6 +26,19 @@ def clear_current_organization(token=None):
         _current_organization.reset(token)
     else:
         _current_organization.set(None)
+
+
+def set_tenant_fail_closed(enabled: bool):
+    return _fail_closed.set(enabled)
+
+
+def reset_tenant_fail_closed(token):
+    _fail_closed.reset(token)
+
+
+def tenant_queries_fail_closed() -> bool:
+    """When True, TenantManager returns no rows unless an org is in context."""
+    return bool(_fail_closed.get())
 
 
 @contextmanager

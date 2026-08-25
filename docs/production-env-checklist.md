@@ -1,11 +1,11 @@
 # Production environment checklist — integrations
 
-Use this alongside [production-launch.md](production-launch.md). Copy templates from:
+Use this alongside [production-launch.md](production-launch.md) and the ordered walkthrough [production-credentials.md](production-credentials.md). Copy templates from:
 
 - Backend: [backend/.env.production.example](../backend/.env.production.example)
 - Frontend: [frontend/.env.production.example](../frontend/.env.production.example)
 
-Production Django settings **require** Stripe and Celery/Redis. SMS, web push, and the AI tutor are optional but must be configured for those features to work in production (otherwise they silently fall back to dummy/stub behavior).
+Production Django settings require Celery/Redis. Billing in East Africa is **invoice / card upgrade** (`BILLING_PROVIDER=dummy`); Stripe is optional and unused when dummy billing is allowed. SMS, WhatsApp, and the AI tutor are optional but must be configured for those features to work in production (otherwise they silently fall back to dummy/stub behavior).
 
 ---
 
@@ -13,7 +13,7 @@ Production Django settings **require** Stripe and Celery/Redis. SMS, web push, a
 
 | Feature | Required in prod? | Backend vars | Frontend vars | Worker needs same vars? |
 |---------|-------------------|--------------|---------------|-------------------------|
-| **Stripe billing** | Yes | `BILLING_PROVIDER`, `STRIPE_*` | — | No |
+| **Billing (invoice / dummy)** | Yes (this region) | `BILLING_PROVIDER=dummy`, `ALLOW_DUMMY_BILLING_IN_PRODUCTION` | — | No |
 | **Celery + Redis** | Yes | `CELERY_BROKER_URL`, `REDIS_URL`, `CELERY_TASK_ALWAYS_EAGER=False` | — | Yes (worker service) |
 | **SMS alerts** | No (Pro/Enterprise feature) | `SMS_PROVIDER`, `AT_*` | — | Yes (SMS tasks) |
 | **WhatsApp alerts** | No (same Pro/Enterprise messaging feature) | `WHATSAPP_*` | — | Yes (WhatsApp tasks) |
@@ -117,9 +117,9 @@ ALLOW_DUMMY_BILLING_IN_PRODUCTION=True
 ```
 
 - No `STRIPE_*` variables required — the API will boot without them.
-- Checkout in the app **instantly activates** the chosen plan (no real payment).
-- Manage plans manually via Django admin (`/admin/billing/subscription/`) or assign Enterprise in admin for pilot orgs.
-- For real payments later, consider **Flutterwave** or **Pesapal** (East Africa) — would need a new billing provider in code.
+- Checkout of **paid** plans returns **403**. Super Admins assign Pro/Enterprise in Admin → Organizations (or `POST /api/organization/platform/orgs/<uuid>/plan/`) after invoice or card upgrade.
+- Free (zero-price) plans can still be selected in-app.
+- Do **not** expect instant self-upgrade to Pro on dummy billing — that path is locked so public sign-ups cannot grant themselves paid entitlements.
 
 **Africa payment providers (future integration, not built yet):**
 
@@ -129,7 +129,7 @@ ALLOW_DUMMY_BILLING_IN_PRODUCTION=True
 | Pesapal | Yes | East Africa focus |
 | Paystack | Limited | Mainly NG/GH/SA |
 
-Do **not** use dummy billing on a public multi-tenant SaaS where strangers can self-upgrade to Pro/Enterprise without paying.
+Paid self-serve checkout is locked on dummy billing. Assign paid plans only after invoice or card upgrade. Flutterwave / Pesapal would be a future `BILLING_PROVIDER`, not a reason to re-enable dummy self-upgrade.
 
 ---
 
@@ -184,9 +184,12 @@ WHATSAPP_PHONE_NUMBER_ID=
 WHATSAPP_VERIFY_TOKEN=
 WHATSAPP_APP_SECRET=
 WHATSAPP_DISPLAY_NUMBER=+211922000000
+WHATSAPP_TEMPLATE_NAME=civic_alert
+WHATSAPP_TEMPLATE_LANG=en
+WHATSAPP_TEMPLATE_BODY_VARS=1
 ```
 
-Point Meta's webhook to `POST /api/notify/whatsapp/webhook/` (and the GET verify handshake). Org admins send from Organization → WhatsApp alerts on a Pro/Enterprise plan (`sms_alerts`).
+Approve a Meta template whose body has `{{1}}` (the alert text). Without `WHATSAPP_TEMPLATE_NAME`, sends are session text only (24-hour window). Point Meta's webhook to `POST /api/notify/whatsapp/webhook/` (and the GET verify handshake). Org admins send from Organization → WhatsApp alerts on a Pro/Enterprise plan (`sms_alerts`).
 
 ---
 
@@ -308,7 +311,7 @@ No API key is needed — the provider sends a placeholder key that local runtime
 
 ## 6. Enterprise SSO — OpenID Connect (optional)
 
-Requires **Enterprise** plan (`sso` feature flag). Without OIDC env vars, status endpoints report `configured: false`.
+Requires **Enterprise** plan (`sso` feature flag). Configure Entra ID, Okta, or Keycloak as an **OIDC** IdP. SAML assertion consumer (xmlsec) is not in this codebase. Without OIDC settings, status endpoints report `configured: false`.
 
 ### Backend environment
 
@@ -331,6 +334,21 @@ OIDC_SCOPES=openid email profile
 
 ---
 
+## 6b. Tenant RLS and audit replica (optional, production Postgres)
+
+```env
+AUDIT_WORM_PATH=/var/data/backups/audit-worm.jsonl
+```
+
+- [ ] Backup cron disk mounted; worm file path is on that disk or object storage with object lock
+- [ ] App `DATABASE_URL` uses a **non-superuser** role if you enable RLS
+- [ ] Dry-run then apply: `python manage.py enable_tenant_rls --dry-run` then `python manage.py enable_tenant_rls`
+- [ ] Confirm seed/migrate still work (empty GUC allows unscoped command access)
+
+Do **not** enable FORCE RLS while Django connects as a Postgres superuser — the owner bypasses policies.
+
+---
+
 ## 7. Pre-flight validation
 
 ```bash
@@ -342,15 +360,15 @@ Expected failures if misconfigured:
 
 | Error | Fix |
 |-------|-----|
-| `BILLING_PROVIDER must be "stripe"` | Set `BILLING_PROVIDER=stripe` |
+| `BILLING_PROVIDER must be "stripe"` | For East Africa set `BILLING_PROVIDER=dummy` **and** `ALLOW_DUMMY_BILLING_IN_PRODUCTION=True` |
 | `CELERY_BROKER_URL is required` | Set Redis URL |
 | Insecure `SECRET_KEY` | Generate new secret |
 
 ### Full smoke test (integrations)
 
 - [ ] **Celery**: registration email arrives (worker processing)
-- [ ] **Stripe**: checkout + webhook updates plan
-- [ ] **SMS**: org broadcast queues and delivers (Pro plan)
+- [ ] **Billing**: paid checkout returns 403; Super Admin can assign a plan
+- [ ] **SMS**: org broadcast queues and delivers (Pro plan; live AT credentials)
 - [ ] **Push**: announcement triggers browser notification
 - [ ] **Tutor**: non-stub AI response
 

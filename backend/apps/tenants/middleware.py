@@ -15,8 +15,14 @@ import logging
 
 from django.db.utils import DatabaseError, OperationalError
 
-from .context import clear_current_organization, set_current_organization
+from .context import (
+    clear_current_organization,
+    reset_tenant_fail_closed,
+    set_current_organization,
+    set_tenant_fail_closed,
+)
 from .models import Membership, Organization
+from .rls import apply_rls_session
 
 logger = logging.getLogger(__name__)
 
@@ -29,18 +35,45 @@ _SKIP_TENANT_PREFIXES = (
     '/api/v1/ready/',
 )
 
+_FAIL_CLOSED_PREFIXES = ('/api/',)
+_FAIL_CLOSED_EXEMPT = (
+    '/api/health/',
+    '/api/v1/health/',
+    '/api/ready/',
+    '/api/v1/ready/',
+    '/api/docs/',
+    '/api/schema/',
+    '/api/redoc/',
+    '/api/branding/',
+    '/api/v1/branding/',
+)
+
 
 class TenantMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        token = set_current_organization(self._resolve(request))
+        fail_token = None
+        if self._should_fail_closed(request):
+            fail_token = set_tenant_fail_closed(True)
+        organization = self._resolve(request)
+        org_token = set_current_organization(organization)
+        apply_rls_session(organization)
         try:
-            response = self.get_response(request)
+            return self.get_response(request)
         finally:
-            clear_current_organization(token)
-        return response
+            apply_rls_session(None)
+            clear_current_organization(org_token)
+            if fail_token is not None:
+                reset_tenant_fail_closed(fail_token)
+
+    @staticmethod
+    def _should_fail_closed(request) -> bool:
+        path = request.path if request.path.endswith('/') else f'{request.path}/'
+        if any(path.startswith(prefix) for prefix in _FAIL_CLOSED_EXEMPT):
+            return False
+        return any(path.startswith(prefix) for prefix in _FAIL_CLOSED_PREFIXES)
 
     def _resolve(self, request):
         path = request.path if request.path.endswith('/') else f'{request.path}/'

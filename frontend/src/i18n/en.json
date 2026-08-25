@@ -22,7 +22,8 @@
       "orgTitle": "Organizations & partnerships",
       "orgBody": "Schools, NGOs, and civic groups can request onboarding help, billing questions, or enterprise features such as SSO and audit exports through your organization workspace or by email.",
       "legalTitle": "Privacy & terms",
-      "legalBody": "For data protection requests or questions about our policies, see the documents below or email us."
+      "legalBody": "For data protection requests or questions about our policies, see the documents below or email us.",
+      "noEmail": "No public support mailbox is configured. Use in-app Organization support if you belong to a workspace, or ask your platform operator."
     },
     "privacy": {
       "title": "Privacy Policy",
@@ -51,7 +52,7 @@
         },
         {
           "title": "Contact",
-          "body": "Questions about this policy can be sent to support@civiced.org."
+          "body": "Questions about this policy can be sent using the Contact page."
         }
       ]
     },
@@ -82,7 +83,7 @@
         },
         {
           "title": "Contact",
-          "body": "For questions about these terms, contact support@civiced.org."
+          "body": "For questions about these terms, use the Contact page."
         }
       ]
     }
@@ -816,12 +817,14 @@
     "title": "Admin Dashboard",
     "platformTitle": "Platform administration",
     "platformOrgs": "Organizations",
-    "platformOrgsSubtitle": "Activate or deactivate tenant workspaces across the platform.",
+    "platformOrgsSubtitle": "Activate, deactivate, or assign invoice/card-upgrade plans for tenant workspaces.",
     "searchOrgs": "Search organizations…",
     "activate": "Activate",
     "deactivate": "Deactivate",
     "membersCount": "Members",
     "plan": "Plan",
+    "assignPlan": "Assign plan",
+    "planAssigned": "Plan updated.",
     "viewSupport": "View as support",
     "supportView": "Support view",
     "supportViewHint": "Org metrics plus audited, time-limited impersonation of a member. Super Admin sessions cannot be impersonated.",
@@ -1265,6 +1268,7 @@
     "currentPlanBadge": "Current plan",
     "mostPopular": "Most Popular",
     "manageBilling": "Manage billing",
+    "invoiceOnly": "Paid plans are assigned by the platform operator (invoice or card upgrade). Self-serve checkout is not available in this region.",
     "checkoutSuccess": "Plan upgraded successfully.",
     "billingUnavailable": "Billing is not available yet. Contact your administrator.",
     "quotaExceeded": "You have reached your plan limit.",

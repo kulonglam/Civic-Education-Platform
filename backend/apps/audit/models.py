@@ -80,5 +80,12 @@ class ActivityLog(models.Model):
         db_table = 'activity_logs'
         ordering = ['-timestamp']
 
+    def save(self, *args, **kwargs):
+        if not self._state.adding and self.integrity_hash:
+            update_fields = kwargs.get('update_fields')
+            if update_fields != ['integrity_hash']:
+                raise ValueError('Activity logs are append-only.')
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f'{self.activity_type} at {self.timestamp}'

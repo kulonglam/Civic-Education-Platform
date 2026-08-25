@@ -9,7 +9,7 @@ from apps.billing.services import (
 )
 from apps.tenants.models import Membership, Organization
 from apps.tenants.services import create_organization_with_owner
-from tests.conftest import login_user
+from tests.conftest import bind_client_to_org, login_user
 
 
 @pytest.mark.django_db
@@ -231,17 +231,56 @@ class TestBilling:
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data['results']) >= 1
 
-    def test_checkout_upgrades_plan(self, api_client, org, citizen_user):
+    def test_dummy_paid_checkout_is_forbidden(self, api_client, org, citizen_user):
         free = Plan.objects.create(code='free', name='Free', price_cents=0, sort_order=0, max_articles=1)
-        pro = Plan.objects.create(code='pro', name='Pro', price_cents=2900, sort_order=1, max_articles=100)
+        Plan.objects.create(code='pro', name='Pro', price_cents=2900, sort_order=1, max_articles=100)
         Subscription.objects.create(organization=org, plan=free, status=Subscription.ACTIVE)
 
         api_client.force_authenticate(user=citizen_user)
         api_client.credentials(HTTP_X_TENANT_SLUG='test-org')
         response = api_client.post('/api/billing/checkout/', {'plan_code': 'pro'}, format='json')
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        sub = Subscription.objects.get(organization=org)
+        assert sub.plan.code == 'free'
+
+    def test_dummy_free_checkout_still_activates(self, api_client, org, citizen_user):
+        free = Plan.objects.create(code='free', name='Free', price_cents=0, sort_order=0)
+        Plan.objects.create(code='starter', name='Starter', price_cents=0, sort_order=1)
+        Subscription.objects.create(organization=org, plan=free, status=Subscription.ACTIVE)
+
+        api_client.force_authenticate(user=citizen_user)
+        api_client.credentials(HTTP_X_TENANT_SLUG='test-org')
+        response = api_client.post('/api/billing/checkout/', {'plan_code': 'starter'}, format='json')
         assert response.status_code == status.HTTP_200_OK
         sub = Subscription.objects.get(organization=org)
+        assert sub.plan.code == 'starter'
+
+    def test_super_admin_assigns_paid_plan(self, api_client, org, super_admin_user):
+        free = Plan.objects.create(code='free', name='Free', price_cents=0, sort_order=0)
+        Plan.objects.create(code='pro', name='Pro', price_cents=2900, sort_order=1)
+        Subscription.objects.create(organization=org, plan=free, status=Subscription.ACTIVE)
+
+        bind_client_to_org(api_client, super_admin_user, org, membership_role=Membership.ADMIN)
+        response = api_client.post(
+            f'/api/organization/platform/orgs/{org.id}/plan/',
+            {'plan_code': 'pro'},
+            format='json',
+        )
+        assert response.status_code == status.HTTP_200_OK, response.data
+        assert response.data['plan_code'] == 'pro'
+        sub = Subscription.objects.get(organization=org)
         assert sub.plan.code == 'pro'
+        assert sub.status == Subscription.ACTIVE
+
+    def test_org_owner_cannot_assign_plan(self, api_client, org, citizen_user):
+        Plan.objects.create(code='pro', name='Pro', price_cents=2900, sort_order=1)
+        bind_client_to_org(api_client, citizen_user, org, membership_role=Membership.OWNER)
+        response = api_client.post(
+            f'/api/organization/platform/orgs/{org.id}/plan/',
+            {'plan_code': 'pro'},
+            format='json',
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_stripe_checkout_does_not_upgrade_before_webhook(self, api_client, org, citizen_user, settings):
         free = Plan.objects.create(code='free', name='Free', price_cents=0, sort_order=0)
@@ -286,6 +325,7 @@ class TestBilling:
         response = api_client.get('/api/billing/subscription/')
         assert response.status_code == status.HTTP_200_OK
         assert Subscription.objects.filter(organization=org, plan__code='free').exists()
+        assert response.data['self_serve_checkout'] is False
 
 
 @pytest.mark.django_db

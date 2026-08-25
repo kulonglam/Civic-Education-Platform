@@ -245,7 +245,7 @@ jobs:
 
       - name: Start API server
         run: |
-          python manage.py runserver 127.0.0.1:8000 &
+          gunicorn config.wsgi:application --bind 127.0.0.1:8000 --workers 2 --timeout 60 &
           for i in $(seq 1 30); do
             curl -sf http://127.0.0.1:8000/api/health/ && break
             sleep 1
@@ -261,11 +261,11 @@ jobs:
         run: >
           python loadtest/ci_gate.py
           --host http://127.0.0.1:8000
-          --users 8
-          --spawn-rate 2
-          --run-time 20s
+          --users 20
+          --spawn-rate 4
+          --run-time 30s
           --max-fail-ratio 0.05
-          --max-p95-ms 2500
+          --max-p95-ms 3000
 
   disaster-recovery:
     name: Disaster recovery drill

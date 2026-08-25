@@ -15,6 +15,11 @@ Schedule weekly (or daily) via cron / Render cron. Env vars:
 |----------|---------|
 | `BACKUP_DIR` | Output directory |
 | `BACKUP_RETAIN_DAYS` | Prune age (default 14) |
+| `AUDIT_WORM_PATH` | JSONL append replica of the audit hash chain (optional) |
+
+On Render, the backup cron uses a **persistent disk** at `/var/data/backups`. When storage credentials are configured, `backup_database` also copies the dump to object storage under `backups/`.
+
+The JSONL worm file is **application-level** append-only. True WORM (S3 Object Lock, Azure immutable blob, or a WORM appliance) is a hosting choice.
 
 ## Restore drill (required before audits)
 

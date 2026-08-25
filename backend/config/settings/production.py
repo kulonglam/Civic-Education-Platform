@@ -2,8 +2,14 @@ from decouple import config
 from corsheaders.defaults import default_headers
 from django.core.exceptions import ImproperlyConfigured
 import dj_database_url
+import os
 
-from apps.core.host_utils import unique_hosts, render_hostname, redis_url_points_to_localhost
+from apps.core.host_utils import (
+    unique_hosts,
+    render_hostname,
+    redis_url_points_to_localhost,
+    production_public_origin,
+)
 
 from .base import *  # noqa: F403
 
@@ -36,17 +42,39 @@ ALLOWED_HOSTS = unique_hosts(
     config('ALLOWED_HOSTS', default=''),
     render_hostname(),
 )
+# Workers and cron jobs on Render have no RENDER_EXTERNAL_HOSTNAME.
+if not ALLOWED_HOSTS and os.environ.get('RENDER'):
+    ALLOWED_HOSTS = ['.onrender.com']
 
 CORS_ALLOWED_ORIGINS = [
-    origin.strip()
-    for origin in config('CORS_ALLOWED_ORIGINS', default='').split(',')
-    if origin.strip()
+    origin
+    for origin in (
+        production_public_origin(part)
+        for part in config('CORS_ALLOWED_ORIGINS', default='').split(',')
+    )
+    if origin
 ]
+_frontend = production_public_origin(FRONTEND_URL)  # noqa: F405
+if not _frontend:
+    raise ImproperlyConfigured(
+        'FRONTEND_URL must be your public SPA HTTPS URL. A custom domain is not required — '
+        'use the Render static site, e.g. https://civic-education-web-xxxx.onrender.com'
+    )
+if _frontend not in CORS_ALLOWED_ORIGINS:
+    CORS_ALLOWED_ORIGINS.append(_frontend)
+
+# SSO / email links: prefer explicit API_BASE_URL, else this Render service URL.
+_render_url = (os.environ.get('RENDER_EXTERNAL_URL') or '').strip().rstrip('/')
+if _render_url and (
+    not API_BASE_URL or API_BASE_URL.rstrip('/') in ('http://127.0.0.1:8000', 'http://localhost:8000')  # noqa: F405
+):
+    API_BASE_URL = _render_url  # noqa: F405
 
 # Trust HTTPS origins for Django CSRF (admin, session cookie flows).
 CSRF_TRUSTED_ORIGINS = unique_hosts(
     config('CSRF_TRUSTED_ORIGINS', default=''),
     *[f'https://{host}' for host in ALLOWED_HOSTS if host and not host.startswith('.')],
+    _frontend,
 )
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
@@ -110,7 +138,11 @@ if not ALLOWED_HOSTS:
         '(or rely on RENDER_EXTERNAL_HOSTNAME on Render).'
     )
 if not CORS_ALLOWED_ORIGINS:
-    raise ImproperlyConfigured('CORS_ALLOWED_ORIGINS must be set in production.')
+    raise ImproperlyConfigured(
+        'Set FRONTEND_URL to your Render static site HTTPS URL '
+        '(e.g. https://civic-education-web-xxxx.onrender.com), '
+        'or set CORS_ALLOWED_ORIGINS to the same value.'
+    )
 if SECRET_KEY.startswith('django-insecure') or SECRET_KEY.startswith('change-me'):  # noqa: F405
     raise ImproperlyConfigured('SECRET_KEY must be a secure random value in production.')
 ALLOW_DUMMY_BILLING_IN_PRODUCTION = config('ALLOW_DUMMY_BILLING_IN_PRODUCTION', default=False, cast=bool)  # noqa: F405

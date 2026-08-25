@@ -28,6 +28,17 @@ def render_hostname() -> str:
     return (urlparse(url).hostname or '').strip()
 
 
+def production_public_origin(url: str) -> str:
+    """Return a public origin, or empty if missing or still a local-dev default."""
+    origin = (url or '').strip().rstrip('/')
+    if not origin:
+        return ''
+    host = (urlparse(origin).hostname or '').lower()
+    if host in {'localhost', '127.0.0.1', '::1'}:
+        return ''
+    return origin
+
+
 def redis_url_points_to_localhost(url: str) -> bool:
     """True when a Redis URL targets this machine (dev default, invalid on Render)."""
     if not url:

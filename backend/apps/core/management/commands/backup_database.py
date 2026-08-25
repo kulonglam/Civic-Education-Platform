@@ -60,6 +60,7 @@ class Command(BaseCommand):
 
         size_mb = outfile.stat().st_size / (1024 * 1024)
         self.stdout.write(self.style.SUCCESS(f'Backup complete ({size_mb:.2f} MB): {outfile}'))
+        self._offsite_copy(outfile)
 
         retain = options['retain']
         if retain > 0:
@@ -86,3 +87,21 @@ class Command(BaseCommand):
                 removed += 1
         if removed:
             self.stdout.write(f'Pruned {removed} backup(s) older than {retain_days} days.')
+
+    def _offsite_copy(self, outfile: Path):
+        try:
+            from apps.core.storage import upload_file
+        except Exception:  # noqa: BLE001
+            return
+        try:
+            remote = upload_file(
+                f'backups/{outfile.name}',
+                outfile.read_bytes(),
+                'application/gzip',
+            )
+        except Exception as exc:  # noqa: BLE001
+            self.stderr.write(f'Off-site backup copy skipped: {exc}')
+            return
+        if remote:
+            self.stdout.write(f'Off-site copy: {remote}')
+

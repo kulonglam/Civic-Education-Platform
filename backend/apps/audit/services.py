@@ -70,7 +70,37 @@ def log_activity(user, activity_type, metadata=None, organization=None, request=
         ip_address=entry.ip_address,
     )
     entry.save(update_fields=['integrity_hash'])
+    _append_worm_record(entry)
     return entry
+
+
+def _append_worm_record(entry: ActivityLog) -> None:
+    """Append-only replica of the hash chain for off-box retention."""
+    from django.conf import settings
+
+    path = getattr(settings, 'AUDIT_WORM_PATH', '') or ''
+    if not path:
+        return
+    try:
+        from pathlib import Path
+
+        target = Path(path)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        line = json.dumps(
+            {
+                'id': str(entry.id),
+                'organization_id': str(entry.organization_id) if entry.organization_id else None,
+                'activity_type': entry.activity_type,
+                'integrity_hash': entry.integrity_hash,
+                'prev_hash': entry.prev_hash,
+                'timestamp': entry.timestamp.isoformat(),
+            },
+            sort_keys=True,
+        )
+        with target.open('a', encoding='utf-8') as handle:
+            handle.write(line + '\n')
+    except OSError:
+        pass
 
 
 def verify_audit_chain(organization=None, limit: int = 500) -> dict:

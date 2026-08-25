@@ -21,6 +21,7 @@ from .services import (
     apply_subscription_updated,
     ensure_subscription,
     get_subscription,
+    self_serve_checkout_enabled,
     usage_summary,
 )
 
@@ -48,6 +49,7 @@ class CurrentSubscriptionView(APIView):
         return Response({
             'subscription': SubscriptionSerializer(subscription).data,
             'usage': usage_summary(organization),
+            'self_serve_checkout': self_serve_checkout_enabled(),
         })
 
 
@@ -85,6 +87,17 @@ class CheckoutView(APIView):
             subscription.status = Subscription.ACTIVE
             subscription.save(update_fields=['plan', 'status'])
             return Response({'checkout_url': f'{settings.FRONTEND_URL}/billing?status=success'})
+
+        if not self_serve_checkout_enabled():
+            return Response(
+                {
+                    'detail': (
+                        'Paid plans are assigned by the platform operator '
+                        '(invoice or card upgrade). Self-serve checkout is disabled.'
+                    ),
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         provider = get_billing_provider()
         if not subscription.provider_customer_id:

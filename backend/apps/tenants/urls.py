@@ -9,6 +9,7 @@ from .enterprise_views import (
     PlatformImpersonateView,
     PlatformOrganizationDetailView,
     PlatformOrganizationListView,
+    PlatformOrganizationPlanView,
     PlatformUsageSummaryView,
 )
 from .grade_a_views import (
@@ -60,6 +61,11 @@ urlpatterns = [
     path('leave/', LeaveOrganizationView.as_view(), name='organization-leave'),
     path('platform/orgs/', PlatformOrganizationListView.as_view(), name='platform-orgs'),
     path('platform/orgs/<uuid:org_id>/', PlatformOrganizationDetailView.as_view(), name='platform-org-detail'),
+    path(
+        'platform/orgs/<uuid:org_id>/plan/',
+        PlatformOrganizationPlanView.as_view(),
+        name='platform-org-plan',
+    ),
     path(
         'platform/orgs/<uuid:org_id>/impersonate/',
         PlatformImpersonateView.as_view(),

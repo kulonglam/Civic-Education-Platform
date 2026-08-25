@@ -16,8 +16,8 @@ from rest_framework.views import APIView
 from apps.accounts.roles import SUPER_ADMIN, is_super_admin
 from apps.accounts.tokens import issue_tokens_for_user
 from apps.audit.services import log_activity
-from apps.billing.models import Subscription
-from apps.billing.services import require_sso
+from apps.billing.models import Plan, Subscription
+from apps.billing.services import assign_organization_plan, require_sso
 from apps.core.permissions import IsSuperAdmin
 from apps.learning.models import Article
 from apps.quizzes.models import Certificate, QuizAttempt
@@ -242,6 +242,31 @@ class PlatformOrganizationDetailView(APIView):
             request=request,
         )
         return Response(_org_support_snapshot(organization))
+
+
+class PlatformOrganizationPlanView(APIView):
+    """Assign a subscription plan without Stripe (invoice / card upgrade)."""
+
+    permission_classes = [IsAuthenticated, IsSuperAdmin]
+
+    def post(self, request, org_id):
+        organization = get_object_or_404(Organization, id=org_id)
+        plan_code = (request.data.get('plan_code') or '').strip()
+        plan = Plan.objects.filter(code=plan_code, is_active=True).first()
+        if plan is None:
+            return Response({'detail': 'Unknown plan.'}, status=status.HTTP_404_NOT_FOUND)
+        subscription = assign_organization_plan(organization, plan)
+        log_activity(
+            request.user,
+            'org_settings_changed',
+            {'fields': ['plan'], 'plan_code': plan.code},
+            organization=organization,
+            request=request,
+        )
+        return Response({
+            **_org_support_snapshot(organization),
+            'plan_code': subscription.plan.code,
+        })
 
 
 def _impersonator_id(request):

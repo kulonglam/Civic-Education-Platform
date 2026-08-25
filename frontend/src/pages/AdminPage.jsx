@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { analyticsService, auditService, awarenessService, forumService, notificationService, notifyService, organizationService, securityService, userService } from '../lib/services';
+import { analyticsService, auditService, awarenessService, billingService, forumService, notificationService, notifyService, organizationService, securityService, userService } from '../lib/services';
 import { ADMIN, EDITOR, MODERATOR, CITIZEN, SUPER_ADMIN, RECOMMENDED_ROLES } from '../lib/roles';
 import { useAuth } from '../context/AuthContext';
 import { useOrganization } from '../context/OrganizationContext';
@@ -77,6 +77,8 @@ function AdminPage() {
   const [supportBusy, setSupportBusy] = useState(false);
   const [sloMetrics, setSloMetrics] = useState(null);
   const [platformCases, setPlatformCases] = useState([]);
+  const [platformPlans, setPlatformPlans] = useState([]);
+  const [planBusyId, setPlanBusyId] = useState(null);
 
   const loadModeration = () =>
     Promise.all([
@@ -116,6 +118,7 @@ function AdminPage() {
         securityService.events({ page_size: 40 }).then((r) => setSecurityEvents(r.data.results ?? [])),
         organizationService.platformSlo().then((r) => setSloMetrics(r.data)),
         organizationService.platformSupportCases().then((r) => setPlatformCases(r.data.results ?? r.data)),
+        billingService.plans().then((r) => setPlatformPlans(r.data.results ?? r.data ?? [])),
       );
     }
     if (canManagePlatformUsers) {
@@ -271,6 +274,20 @@ function AdminPage() {
       toast.error(extractError(err));
     } finally {
       setOrgBusyId(null);
+    }
+  };
+
+  const assignOrgPlan = async (org, planCode) => {
+    if (!planCode || planCode === org.plan_code) return;
+    setPlanBusyId(org.id);
+    try {
+      const { data } = await organizationService.assignOrgPlan(org.id, planCode);
+      setPlatformOrgs((list) => list.map((row) => (row.id === org.id ? { ...row, ...data } : row)));
+      toast.success(t('admin.planAssigned'));
+    } catch (err) {
+      toast.error(extractError(err));
+    } finally {
+      setPlanBusyId(null);
     }
   };
 
@@ -439,6 +456,24 @@ function AdminPage() {
                         >
                           {org.is_active ? t('admin.deactivate') : t('admin.activate')}
                         </button>
+                        {platformPlans.length > 0 && (
+                          <select
+                            className="input max-w-[8rem] py-1 text-xs"
+                            value={org.plan_code || ''}
+                            disabled={planBusyId === org.id}
+                            onChange={(e) => assignOrgPlan(org, e.target.value)}
+                            aria-label={t('admin.assignPlan')}
+                          >
+                            <option value="" disabled>
+                              {t('admin.assignPlan')}
+                            </option>
+                            {platformPlans.map((plan) => (
+                              <option key={plan.code} value={plan.code}>
+                                {plan.name}
+                              </option>
+                            ))}
+                          </select>
+                        )}
                       </div>
                     </td>
                   </tr>

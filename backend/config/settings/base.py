@@ -204,6 +204,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:5173')
 API_BASE_URL = config('API_BASE_URL', default='http://127.0.0.1:8000')
+SUPPORT_EMAIL = config('SUPPORT_EMAIL', default='')
 
 # Enterprise SSO (OpenID Connect)
 OIDC_ISSUER = config('OIDC_ISSUER', default='')
@@ -254,6 +255,7 @@ STRIPE_PRICE_IDS = {
     'pro': config('STRIPE_PRICE_PRO', default=''),
     'enterprise': config('STRIPE_PRICE_ENTERPRISE', default=''),
 }
+AUDIT_WORM_PATH = config('AUDIT_WORM_PATH', default='')
 
 # AI Tutor
 # 'auto' (default) picks Anthropic, then OpenAI-compatible, then the offline stub,
@@ -289,6 +291,10 @@ WHATSAPP_PHONE_NUMBER_ID = config('WHATSAPP_PHONE_NUMBER_ID', default='')
 WHATSAPP_VERIFY_TOKEN = config('WHATSAPP_VERIFY_TOKEN', default='')
 WHATSAPP_APP_SECRET = config('WHATSAPP_APP_SECRET', default='')
 WHATSAPP_DISPLAY_NUMBER = config('WHATSAPP_DISPLAY_NUMBER', default='')
+# Approved Meta template for business-initiated alerts ({{1}} = message body).
+WHATSAPP_TEMPLATE_NAME = config('WHATSAPP_TEMPLATE_NAME', default='')
+WHATSAPP_TEMPLATE_LANG = config('WHATSAPP_TEMPLATE_LANG', default='en')
+WHATSAPP_TEMPLATE_BODY_VARS = config('WHATSAPP_TEMPLATE_BODY_VARS', default=1, cast=int)
 
 # Web Push (optional — generate VAPID keys for browser notifications)
 VAPID_PUBLIC_KEY = config('VAPID_PUBLIC_KEY', default='')

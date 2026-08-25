@@ -50,6 +50,10 @@ vi.mock('../lib/services', () => ({
     platformUsage: vi.fn().mockResolvedValue({ data: { totals: {}, organizations: [] } }),
     platformSlo: vi.fn().mockResolvedValue({ data: {} }),
     platformSupportCases: vi.fn().mockResolvedValue({ data: { results: [] } }),
+    assignOrgPlan: vi.fn().mockResolvedValue({ data: {} }),
+  },
+  billingService: {
+    plans: vi.fn().mockResolvedValue({ data: { results: [] } }),
   },
   securityService: {
     events: vi.fn().mockResolvedValue({ data: { results: [] } }),

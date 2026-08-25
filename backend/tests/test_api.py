@@ -24,6 +24,26 @@ class TestHealthCheck:
         assert response['Cross-Origin-Opener-Policy'] == 'same-origin'
         assert 'Content-Security-Policy' in response
 
+    def test_public_branding_exposes_support_email(self, api_client, settings):
+        settings.SUPPORT_EMAIL = 'ops@example.org'
+        response = api_client.get('/api/branding/')
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['support_email'] == 'ops@example.org'
+        assert response.data['platform_name']
+
+
+@pytest.mark.django_db
+class TestAdminViewSite:
+    def test_view_site_links_to_frontend(self, client, settings, super_admin_user):
+        from django.contrib import admin
+
+        frontend = settings.FRONTEND_URL.rstrip('/')
+        assert admin.site.site_url == frontend
+        client.force_login(super_admin_user)
+        response = client.get('/admin/')
+        assert response.status_code == 200
+        assert frontend in response.content.decode()
+
 
 @pytest.mark.django_db
 class TestAuth:
@@ -66,8 +86,8 @@ class TestArticles:
             organization=org,
             status='published',
         )
-        api_client.credentials(HTTP_X_TENANT_SLUG=org.slug)
         api_client.force_authenticate(user=None)
+        api_client.credentials(HTTP_X_TENANT_SLUG=org.slug)
         response = api_client.get('/api/articles/')
         assert response.status_code == status.HTTP_200_OK
         assert response.data['count'] == 1

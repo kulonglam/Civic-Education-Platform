@@ -26,6 +26,7 @@ class TestWhatsAppChannel:
         assert response.status_code == status.HTTP_200_OK
         assert response.data['share_enabled'] is True
         assert response.data['cloud_configured'] is False
+        assert response.data['templates_configured'] is False
 
     def test_send_requires_paid_plan(self, api_client, org, citizen_user, db):
         free_plan = Plan.objects.create(
@@ -70,3 +71,23 @@ class TestWhatsAppChannel:
         )
         assert response.status_code == status.HTTP_200_OK
         assert response.content.decode() == 'abc'
+
+
+def test_meta_payload_uses_approved_template(settings):
+    from apps.notifications.whatsapp_providers import build_meta_message_payload
+
+    settings.WHATSAPP_TEMPLATE_NAME = 'civic_alert'
+    settings.WHATSAPP_TEMPLATE_LANG = 'en'
+    settings.WHATSAPP_TEMPLATE_BODY_VARS = 1
+    payload = build_meta_message_payload('+211922123456', 'Town hall tonight')
+    assert payload['type'] == 'template'
+    assert payload['template']['name'] == 'civic_alert'
+    assert payload['template']['components'][0]['parameters'][0]['text'] == 'Town hall tonight'
+
+
+def test_websocket_origins_include_frontend(settings):
+    from apps.core.websocket import allowed_websocket_origins
+
+    settings.CORS_ALLOWED_ORIGINS = ['https://app.example.com']
+    settings.FRONTEND_URL = 'https://app.example.com'
+    assert 'https://app.example.com' in allowed_websocket_origins()

@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { platformService } from '../lib/services';
 
 function LegalPage({ type }) {
   const { t } = useTranslation();
@@ -53,6 +55,14 @@ export function TermsPage() {
 
 export function ContactPage() {
   const { t } = useTranslation();
+  const [supportEmail, setSupportEmail] = useState('');
+
+  useEffect(() => {
+    platformService
+      .branding()
+      .then(({ data }) => setSupportEmail(data.support_email || ''))
+      .catch(() => setSupportEmail(''));
+  }, []);
 
   return (
     <article className="mx-auto max-w-3xl">
@@ -79,12 +89,18 @@ export function ContactPage() {
           <p className="mt-2 text-sm leading-relaxed text-gray-600 dark:text-slate-400">
             {t('legal.contact.supportBody')}
           </p>
-          <a
-            href="mailto:support@civiced.org"
-            className="mt-3 inline-block font-semibold text-brand-700 hover:underline dark:text-brand-300"
-          >
-            support@civiced.org
-          </a>
+          {supportEmail ? (
+            <a
+              href={`mailto:${supportEmail}`}
+              className="mt-3 inline-block font-semibold text-brand-700 hover:underline dark:text-brand-300"
+            >
+              {supportEmail}
+            </a>
+          ) : (
+            <p className="mt-3 text-sm text-gray-500 dark:text-slate-400">
+              {t('legal.contact.noEmail')}
+            </p>
+          )}
         </section>
 
         <section>

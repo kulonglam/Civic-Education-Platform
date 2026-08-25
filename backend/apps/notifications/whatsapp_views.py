@@ -18,7 +18,7 @@ from apps.tenants.context import get_current_organization
 from apps.tenants.permissions import IsOrgOwnerOrAdmin
 
 from .models import WhatsAppMessage
-from .whatsapp_providers import whatsapp_cloud_configured, whatsapp_to_e164
+from .whatsapp_providers import whatsapp_cloud_configured, whatsapp_templates_configured, whatsapp_to_e164
 from .whatsapp_serializers import (
     BroadcastWhatsAppSerializer,
     SendWhatsAppSerializer,
@@ -40,6 +40,7 @@ class WhatsAppStatusView(APIView):
         return Response({
             'share_enabled': True,
             'cloud_configured': whatsapp_cloud_configured(),
+            'templates_configured': whatsapp_templates_configured(),
             'display_number': display,
             'click_to_chat_url': f'https://wa.me/{display.lstrip("+")}' if display else '',
         })

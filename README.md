@@ -7,7 +7,7 @@ Full-stack civic education platform for South Sudan: Django REST API + React (Vi
 
 **Local dev:** run the backend, then `cd frontend && npm install && npm run dev` (API default: `http://127.0.0.1:8000/api`).
 
-**Production:** [docs/production-launch.md](docs/production-launch.md) · [docs/production-env-checklist.md](docs/production-env-checklist.md) · [docs/enterprise.md](docs/enterprise.md) · [docs/tutor-rag.md](docs/tutor-rag.md) · [docs/constitution-content.md](docs/constitution-content.md) · [docs/compliance-readiness.md](docs/compliance-readiness.md) · [docs/disaster-recovery.md](docs/disaster-recovery.md) · [docs/scaling.md](docs/scaling.md)
+**Production:** [docs/production-credentials.md](docs/production-credentials.md) (integrations step by step) · [docs/production-launch.md](docs/production-launch.md) · [docs/production-env-checklist.md](docs/production-env-checklist.md) · [docs/enterprise.md](docs/enterprise.md) · [docs/tutor-rag.md](docs/tutor-rag.md) · [docs/constitution-content.md](docs/constitution-content.md) · [docs/compliance-readiness.md](docs/compliance-readiness.md) · [docs/disaster-recovery.md](docs/disaster-recovery.md) · [docs/scaling.md](docs/scaling.md)
 
 ---
 
@@ -29,8 +29,10 @@ pip install -r requirements.txt
 copy .env.example .env         # DATABASE_URL, SECRET_KEY
 python manage.py migrate
 python manage.py seed_data
-python manage.py runserver
+python -m daphne -b 127.0.0.1 -p 8000 config.asgi:application
 ```
+
+Use Daphne (not `runserver`) so in-app notification WebSockets work. `start-backend.cmd` does this on Windows.
 
 - API docs: http://127.0.0.1:8000/api/docs/
 - Health: http://127.0.0.1:8000/api/health/

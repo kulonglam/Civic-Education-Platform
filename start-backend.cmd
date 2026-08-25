@@ -10,6 +10,7 @@ if not exist "venv\Scripts\python.exe" (
   exit /b 1
 )
 
-echo Starting Django backend on http://127.0.0.1:8000 ...
-"venv\Scripts\python.exe" manage.py runserver
+echo Starting Django backend (ASGI / WebSockets) on http://127.0.0.1:8000 ...
+set DJANGO_SETTINGS_MODULE=config.settings.development
+"venv\Scripts\python.exe" -m daphne -b 127.0.0.1 -p 8000 config.asgi:application
 pause

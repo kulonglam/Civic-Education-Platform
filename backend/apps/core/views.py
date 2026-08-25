@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from apps.core.permissions import IsSuperAdmin
 
 from .models import SecurityEvent
-from .serializers import HealthSerializer
+from .serializers import HealthSerializer, PublicConfigSerializer
 
 from .integrations import (
     STATUS_DEGRADED,
@@ -33,6 +33,25 @@ class HealthCheckView(APIView):
     @extend_schema(responses=HealthSerializer)
     def get(self, request):
         return Response({'status': 'ok'}, status=status.HTTP_200_OK)
+
+
+class PublicConfigView(APIView):
+    """Public platform strings (support email, product name)."""
+
+    permission_classes = [AllowAny]
+    serializer_class = PublicConfigSerializer
+    authentication_classes = []
+
+    @extend_schema(responses=PublicConfigSerializer)
+    def get(self, request):
+        from django.conf import settings
+
+        from apps.core.branding import PLATFORM_NAME
+
+        return Response({
+            'platform_name': PLATFORM_NAME,
+            'support_email': getattr(settings, 'SUPPORT_EMAIL', '') or '',
+        })
 
 
 class ReadinessCheckView(APIView):

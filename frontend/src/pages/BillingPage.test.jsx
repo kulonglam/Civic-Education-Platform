@@ -41,6 +41,7 @@ vi.mock('@tanstack/react-query', async () => {
             articles: { used: 3, limit: 10 },
             quizzes: { used: 1, limit: 5 },
           },
+          self_serve_checkout: false,
         },
         isLoading: false,
       };
@@ -50,10 +51,11 @@ vi.mock('@tanstack/react-query', async () => {
 });
 
 describe('BillingPage', () => {
-  it('renders current plan and available plans', () => {
+  it('renders current plan and invoice-only guidance', () => {
     renderWithProviders(<BillingPage />);
     expect(screen.getByText(/billing & plans/i)).toBeInTheDocument();
     expect(screen.getAllByText('Free').length).toBeGreaterThan(0);
-    expect(screen.getByText(/manage billing/i)).toBeInTheDocument();
+    expect(screen.getByText(/assigned by the platform operator/i)).toBeInTheDocument();
+    expect(screen.queryByText(/manage billing/i)).not.toBeInTheDocument();
   });
 });

@@ -256,3 +256,25 @@ def apply_subscription_deleted(stripe_subscription: dict) -> None:
     if free_plan:
         subscription.plan = free_plan
     subscription.save()
+
+
+def self_serve_checkout_enabled() -> bool:
+    """Paid self-serve checkout is off when dummy billing is used (East Africa)."""
+    return getattr(settings, 'BILLING_PROVIDER', 'dummy') != 'dummy'
+
+
+def assign_organization_plan(organization, plan: Plan) -> Subscription:
+    """Platform-operator plan assignment (invoice / card upgrade)."""
+    subscription = ensure_subscription(organization)
+    if subscription is None:
+        return Subscription.objects.create(
+            organization=organization,
+            plan=plan,
+            status=Subscription.ACTIVE,
+        )
+    subscription.plan = plan
+    subscription.status = Subscription.ACTIVE
+    subscription.save(update_fields=['plan', 'status'])
+    for resource in _RESOURCE_MODELS:
+        invalidate_quota_cache(organization, resource)
+    return subscription

@@ -5,7 +5,7 @@ services:
     plan: starter
     # Free-tier hosts often lack Shell — migrate + seed run on every deploy instead.
     buildCommand: pip install -r backend/requirements.txt && cd backend && python manage.py migrate --noinput && python manage.py seed_data && python manage.py collectstatic --noinput
-    startCommand: cd backend && python manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    startCommand: cd backend && python manage.py migrate --noinput && daphne -b 0.0.0.0 -p $PORT config.asgi:application
     healthCheckPath: /api/ready/
     envVars:
       - key: DJANGO_SETTINGS_MODULE
@@ -86,8 +86,26 @@ services:
         sync: false
       - key: SENTRY_DSN
         sync: false
+      - key: REQUIRE_SENTRY
+        value: "False"
       - key: SENTRY_ENVIRONMENT
         value: production
+      - key: SENTRY_TRACES_SAMPLE_RATE
+        value: "0.1"
+      - key: AUDIT_WORM_PATH
+        sync: false
+      - key: WHATSAPP_PROVIDER
+        sync: false
+      - key: WHATSAPP_ACCESS_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
+      - key: WHATSAPP_TEMPLATE_NAME
+        sync: false
+      - key: WHATSAPP_TEMPLATE_LANG
+        sync: false
+      - key: SUPPORT_EMAIL
+        sync: false
 
   - type: cron
     name: civic-education-backup
@@ -96,6 +114,10 @@ services:
     schedule: "0 3 * * *"
     buildCommand: pip install -r backend/requirements.txt
     startCommand: cd backend && python manage.py backup_database
+    disk:
+      name: civic-education-backups
+      mountPath: /var/data/backups
+      sizeGB: 10
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings.production
@@ -112,6 +134,12 @@ services:
         value: /var/data/backups
       - key: BACKUP_RETAIN_DAYS
         value: "14"
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: AUDIT_WORM_PATH
+        value: /var/data/backups/audit-worm.jsonl
 
   - type: cron
     name: civic-education-audit-purge
@@ -156,8 +184,32 @@ services:
           name: civic-education-redis
           type: redis
           property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: civic-education-redis
+          type: redis
+          property: connectionString
       - key: CELERY_TASK_ALWAYS_EAGER
         value: "False"
+      - key: FRONTEND_URL
+        fromService:
+          name: civic-education-api
+          type: web
+          envVarKey: FRONTEND_URL
+      - key: REQUIRE_SENTRY
+        fromService:
+          name: civic-education-api
+          type: web
+          envVarKey: REQUIRE_SENTRY
+      - key: SENTRY_DSN
+        fromService:
+          name: civic-education-api
+          type: web
+          envVarKey: SENTRY_DSN
+      - key: SENTRY_ENVIRONMENT
+        value: production
+      - key: SENTRY_TRACES_SAMPLE_RATE
+        value: "0.1"
       - key: BILLING_PROVIDER
         value: dummy
       - key: ALLOW_DUMMY_BILLING_IN_PRODUCTION

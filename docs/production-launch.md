@@ -6,21 +6,23 @@ Step-by-step checklist to take the Civic Education RSS from local development to
 
 | Component | Role |
 |-----------|------|
-| **Web API** | Django + Gunicorn (`/api/*`) |
+| **Web API** | Django + Daphne ASGI (`/api/*` + `/ws/notifications/`) |
 | **Worker** | Celery (notifications, email, certificate PDFs) |
 | **Redis** | Celery broker + cache (readiness probe) |
 | **PostgreSQL** | Primary database (+ optional read replica via `DATABASE_URL_REPLICA`) |
 | **Static frontend** | Vite build served from CDN/static host |
 | **Supabase Storage** | File uploads and certificate PDFs |
-| **Stripe** | Subscription billing (required in production) |
+| **Billing** | Invoice / card upgrade via Super Admin (`BILLING_PROVIDER=dummy` in East Africa) |
 
 ## Pre-launch checklist
 
 ### 1. Domain and TLS
 
-- [ ] Register API domain (e.g. `api.yourdomain.com`)
-- [ ] Register app domain (e.g. `app.yourdomain.com`)
-- [ ] Enable HTTPS on both (Render/Vercel/Cloudflare handle this automatically)
+A custom domain is optional. On Render free/starter, use the assigned HTTPS URLs (`https://civic-education-api-xxxx.onrender.com` and `https://civic-education-web-xxxx.onrender.com`). See [production-credentials.md](production-credentials.md#no-custom-domain-render-onrendercom).
+
+- [ ] (Optional) Register API domain (e.g. `api.yourdomain.com`)
+- [ ] (Optional) Register app domain (e.g. `app.yourdomain.com`)
+- [ ] HTTPS is automatic on Render `*.onrender.com` (and on custom domains after you attach them)
 
 ### 2. Backend secrets
 
@@ -85,8 +87,8 @@ Deploy the `frontend/dist` folder to your static host (Render Static Site, Netli
 
 The repo includes [render.yaml](../render.yaml) for API + worker + Redis + Postgres + daily backup + weekly audit purge + static frontend. After connecting the repo:
 
-1. Set sync=false env vars in the Render dashboard (`CORS_ALLOWED_ORIGINS`, Stripe, Supabase, email, Sentry). `ALLOWED_HOSTS` can list custom API domains; the service’s `*.onrender.com` hostname is picked up via `RENDER_EXTERNAL_HOSTNAME` automatically.
-2. Attach custom domains: API (`api.yourdomain.com`) on the web service and app (`app.yourdomain.com`) on the static site — HTTPS is automatic.
+1. After the first deploy, copy the static-site URL into API `FRONTEND_URL` and the API URL into static-site `VITE_API_BASE_URL` (then rebuild the frontend). `ALLOWED_HOSTS` can stay empty on Render. Set SMTP (`EMAIL_HOST` …). Sentry is optional (`REQUIRE_SENTRY=False` in this blueprint).
+2. Custom domains are optional. If you add them later: API (`api.yourdomain.com`) on the web service and app (`app.yourdomain.com`) on the static site — then update `FRONTEND_URL` and `VITE_API_BASE_URL` to match.
 3. Configure **Supabase Storage** (or S3-compatible): set `SUPABASE_URL` + `SUPABASE_KEY` on both web and worker so certificate PDFs and article attachments upload correctly.
 4. Confirm worker and web services share the same `SECRET_KEY` and `DATABASE_URL`.
 5. Optional: set `VITE_SENTRY_DSN` on the static site (build-time) and `SENTRY_DSN` on the API.

@@ -15,3 +15,8 @@ class DetailSerializer(serializers.Serializer):
 
 class HealthSerializer(serializers.Serializer):
     status = serializers.CharField()
+
+
+class PublicConfigSerializer(serializers.Serializer):
+    platform_name = serializers.CharField()
+    support_email = serializers.CharField(allow_blank=True)

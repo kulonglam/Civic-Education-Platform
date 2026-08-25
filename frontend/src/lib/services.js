@@ -37,6 +37,9 @@ const userService = {
   exportMyData: () => api.get("/users/me/export/"),
   deactivate: () => api.post("/users/me/deactivate/"),
 };
+const platformService = {
+  branding: () => api.get("/branding/"),
+};
 const articleService = {
   list: (params) => api.get("/articles/", { params }),
   get: (id) => api.get(`/articles/${id}/`),
@@ -190,6 +193,8 @@ const organizationService = {
   platformOrgDetail: (orgId) => api.get(`/organization/platform/orgs/${orgId}/`),
   setOrgActive: (orgId, is_active) =>
     api.patch(`/organization/platform/orgs/${orgId}/`, { is_active }),
+  assignOrgPlan: (orgId, planCode) =>
+    api.post(`/organization/platform/orgs/${orgId}/plan/`, { plan_code: planCode }),
   platformUsage: () => api.get("/organization/platform/usage/"),
   platformSupportCases: (params) => api.get("/organization/platform/support/cases/", { params }),
   updatePlatformSupportCase: (id, payload) =>
@@ -317,6 +322,7 @@ export {
   notificationService,
   notifyService,
   organizationService,
+  platformService,
   quizService,
   recommendationService,
   searchService,

@@ -227,11 +227,15 @@ def check_whatsapp() -> dict[str, Any]:
     token = getattr(settings, 'WHATSAPP_ACCESS_TOKEN', '') or ''
     phone_id = getattr(settings, 'WHATSAPP_PHONE_NUMBER_ID', '') or ''
     if provider == 'meta' and token and phone_id:
+        template = (getattr(settings, 'WHATSAPP_TEMPLATE_NAME', '') or '').strip()
         return _entry(
             'whatsapp',
             STATUS_LIVE,
-            detail='WhatsApp Cloud API configured',
-            meta={'phone_number_id': phone_id},
+            detail=(
+                'WhatsApp Cloud API configured'
+                + (f' (template {template})' if template else ' — set WHATSAPP_TEMPLATE_NAME for broadcasts')
+            ),
+            meta={'phone_number_id': phone_id, 'template_name': template},
         )
     if provider != 'dummy':
         return _entry(

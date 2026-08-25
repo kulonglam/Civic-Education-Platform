@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { Alert, Spinner } from '../components/ui';
+import { ReadAloudButton } from '../components/ReadAloudButton';
 import { AcademicCap, ChevronLeft, CloudArrowDown, Trophy } from '../components/Icons';
 import { useOnlineStatus } from '../hooks/useOnlineStatus';
 import { extractError } from '../lib/api';
@@ -303,6 +304,9 @@ export function QuizTakePage() {
               <p className={`mt-2 font-display text-base font-semibold text-ink-900 dark:text-slate-100 ${q.question_type === 'scenario' ? 'whitespace-pre-line' : ''}`}>
                 {q.question_type === 'scenario' ? q.question_text : `${idx + 1}. ${q.question_text}`}
               </p>
+              <div className="mt-2">
+                <ReadAloudButton text={q.question_text} />
+              </div>
               <div className="mt-4 space-y-2">
                 {(q.displayOptions ?? []).map((opt) => (
                   <label

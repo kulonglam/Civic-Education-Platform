@@ -21,6 +21,7 @@ export function BillingPage() {
   const { t } = useTranslation();
   const { isOrgAdmin } = useOrganization();
   const [params] = useSearchParams();
+  const statusMsg = params.get('status');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState('');
   const [ssoStatus, setSsoStatus] = useState({ configured: false, enabled_for_org: false });
@@ -75,7 +76,7 @@ export function BillingPage() {
   const hasEnterpriseSso = Boolean(billing?.subscription?.plan?.features?.sso);
   const ssoReady = ssoStatus.configured && ssoStatus.enabled_for_org;
 
-  const statusMsg = params.get('status');
+  const selfServe = billing?.self_serve_checkout !== false;
 
   return (
     <div className="page-shell">
@@ -86,6 +87,9 @@ export function BillingPage() {
       />
 
       {statusMsg === 'success' && <Alert kind="success">{t('saas.checkoutSuccess')}</Alert>}
+      {billing && !selfServe && (
+        <Alert kind="info">{t('saas.invoiceOnly')}</Alert>
+      )}
       {error && <Alert>{error}</Alert>}
       {billingError && <Alert>{t('saas.billingUnavailable')}</Alert>}
 
@@ -117,7 +121,7 @@ export function BillingPage() {
               limit={billing.usage.quizzes.limit}
             />
           </div>
-          {isOrgAdmin && (
+          {isOrgAdmin && selfServe && (
             <button
               type="button"
               className="btn-secondary mt-6"
@@ -185,7 +189,7 @@ export function BillingPage() {
                     {plan.max_quizzes ?? '∞'} {t('saas.quizzes')}
                   </li>
                 </ul>
-                {isOrgAdmin && !isCurrent && (
+                {isOrgAdmin && !isCurrent && selfServe && (
                   <button
                     type="button"
                     className={`mt-6 w-full ${isPopular ? 'btn-primary' : 'btn-secondary'}`}
