@@ -12,6 +12,14 @@ ALLOWED_HOSTS = unique_hosts(
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+_email_host = config('EMAIL_HOST', default='').strip()
+if _email_host:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = _email_host
+    EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+    EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 
 CORS_ALLOWED_ORIGINS = [
     origin.strip()

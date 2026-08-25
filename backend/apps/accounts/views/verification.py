@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 from apps.audit.services import log_activity
 from apps.core.branding import PLATFORM_NAME
 from apps.core.serializers import MessageSerializer
-from apps.core.tasks import send_transactional_email
+from apps.core.tasks import send_transactional_email, format_mail_error
 from apps.core.throttling import AuthRateThrottle
 
 from ..models import EmailVerificationToken
@@ -67,13 +67,15 @@ class ResendVerificationEmailView(APIView):
                 f'Click to verify your email: {verify_url}',
                 [user.email],
             )
-        except Exception:
+        except Exception as exc:
             logger.exception('Resend verification email failed')
             return Response(
                 {
                     'detail': (
-                        'Could not send the verification email. Configure SMTP on the API '
-                        '(EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, DEFAULT_FROM_EMAIL).'
+                        'Could not send the verification email. '
+                        f'{format_mail_error(exc)} '
+                        'On Render set EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, '
+                        'and DEFAULT_FROM_EMAIL (Brevo SMTP login + verified sender).'
                     )
                 },
                 status=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -115,7 +117,21 @@ class PhoneVerifySendView(APIView):
         from apps.notifications.models import SmsMessage
         from apps.notifications.sms_services import send_phone_verify_otp
 
-        sms_log = send_phone_verify_otp(user)
+        try:
+            sms_log = send_phone_verify_otp(user)
+        except ValueError as exc:
+            return Response({'detail': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception:
+            logger.exception('Phone verification SMS failed')
+            return Response(
+                {
+                    'detail': (
+                        'Could not send the SMS. Use a Uganda number (+256772123456 or 0772123456) '
+                        'and check Africa\'s Talking AT_USERNAME / AT_API_KEY on the API service.'
+                    )
+                },
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
         if sms_log is not None and sms_log.status == SmsMessage.STATUS_FAILED:
             return Response(
                 {'detail': sms_log.error_detail or 'The SMS provider rejected the message.'},

@@ -35,7 +35,18 @@ def create_sms_log(
             .first()
         )
         organization = membership.organization if membership else None
-    return SmsMessage.objects.create(
+    if organization is None:
+        from django.conf import settings as django_settings
+
+        from apps.tenants.models import Organization
+
+        slug = getattr(django_settings, 'PUBLIC_ORGANIZATION_SLUG', 'platform-demo')
+        organization = Organization.objects.filter(slug=slug, is_active=True).first()
+    if organization is None:
+        raise ValueError(
+            'Cannot send SMS without an organization. Join an organization first.'
+        )
+    return SmsMessage.all_objects.create(
         user=user,
         organization=organization,
         phone=phone,

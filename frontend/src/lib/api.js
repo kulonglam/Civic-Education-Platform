@@ -170,7 +170,15 @@ api.interceptors.response.use(
 export function extractError(err) {
   if (axios.isAxiosError(err)) {
     const data = err.response?.data;
-    if (typeof data === 'string') return data;
+    if (typeof data === 'string') {
+      const trimmed = data.trim();
+      if (/^<!doctype html/i.test(trimmed) || /^<html[\s>]/i.test(trimmed)) {
+        return err.response?.status >= 500
+          ? 'The server hit an internal error. Save a Uganda number (+256 or 07…) and try again.'
+          : 'The server returned an error. Try again.';
+      }
+      return data;
+    }
     if (data && typeof data === 'object') {
       const detail = data.detail;
       if (typeof detail === 'string') return detail;

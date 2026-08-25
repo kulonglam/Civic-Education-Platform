@@ -59,10 +59,24 @@ class AfricasTalkingSmsProvider(BaseSmsProvider):
             return SmsSendResult(success=False, error=str(exc))
 
 
+class _BrokenSmsProvider(BaseSmsProvider):
+    """Used when Africa's Talking fails to initialize (bad key, missing package)."""
+
+    def __init__(self, error: str):
+        self._error = error
+
+    def send(self, phone: str, message: str) -> SmsSendResult:
+        return SmsSendResult(success=False, error=self._error)
+
+
 def get_sms_provider() -> BaseSmsProvider:
     provider = getattr(settings, 'SMS_PROVIDER', 'dummy')
     if provider == 'africastalking' and settings.AT_API_KEY and settings.AT_USERNAME:
-        return AfricasTalkingSmsProvider()
+        try:
+            return AfricasTalkingSmsProvider()
+        except Exception as exc:  # noqa: BLE001
+            logger.exception("Africa's Talking client failed to start: %s", exc)
+            return _BrokenSmsProvider(str(exc))
     return DummySmsProvider()
 
 

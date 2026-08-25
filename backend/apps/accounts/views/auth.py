@@ -19,7 +19,7 @@ from apps.audit.services import log_activity
 from apps.core.branding import PLATFORM_NAME
 from apps.core.security import log_security_event
 from apps.core.serializers import MessageSerializer
-from apps.core.tasks import send_transactional_email
+from apps.core.tasks import send_transactional_email, format_mail_error
 from apps.core.throttling import AuthRateThrottle
 
 from ..mfa import issue_mfa_challenge, user_has_mfa_enabled, user_requires_mfa
@@ -58,11 +58,13 @@ class RegisterView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         email_sent = True
+        mail_error = ''
         try:
             self.perform_create(serializer)
-        except Exception:
+        except Exception as exc:
             logger.exception('Verification email failed after registration')
             email_sent = False
+            mail_error = format_mail_error(exc)
             if serializer.instance is None:
                 raise
         message = (
@@ -70,9 +72,9 @@ class RegisterView(generics.CreateAPIView):
             if email_sent
             else (
                 'Registration succeeded, but the verification email could not be sent. '
-                'The operator must set a real SMTP host (not a placeholder), '
-                'EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, and DEFAULT_FROM_EMAIL that the '
-                'provider allows (Gmail needs an App Password; Brevo/Resend need a verified sender).'
+                f'{mail_error} '
+                'Set EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, and a Brevo-verified '
+                'DEFAULT_FROM_EMAIL on the API service.'
             )
         )
         return Response(

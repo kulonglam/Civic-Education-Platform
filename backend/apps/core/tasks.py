@@ -31,6 +31,14 @@ def send_email_task(self, subject: str, message: str, recipients: list[str]):
     return sent
 
 
+def format_mail_error(exc: BaseException) -> str:
+    """Short SMTP/Django mail error safe to return in an API body."""
+    detail = ' '.join(str(exc).split()) or type(exc).__name__
+    if len(detail) > 240:
+        detail = f'{detail[:237]}...'
+    return detail
+
+
 def send_transactional_email(subject: str, message: str, recipients: list[str]):
     """Send auth/invite mail in this process (no Celery worker required).
 
