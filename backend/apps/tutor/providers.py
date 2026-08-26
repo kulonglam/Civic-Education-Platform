@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_ANTHROPIC_MODEL = 'claude-sonnet-4-20250514'
 DEFAULT_OPENAI_MODEL = 'gpt-4o-mini'
-DEFAULT_GROQ_MODEL = 'llama-3.1-8b-instant'
+DEFAULT_GROQ_MODEL = 'openai/gpt-oss-20b'
 DEFAULT_MAX_TOKENS = 1024
 GROQ_API_BASE = 'https://api.groq.com/openai/v1'
 _PLACEHOLDER_KEYS = {
@@ -49,6 +49,18 @@ _OPENAI_HOSTED_MODELS = (
     'o1',
     'o3-mini',
 )
+# Groq retired these for free/developer tiers on 2026-08-16.
+_RETIRED_GROQ_MODELS = frozenset({
+    'llama-3.1-8b-instant',
+    'llama-3.3-70b-versatile',
+    'llama3-8b-8192',
+    'llama3-70b-8192',
+    'gemma2-9b-it',
+})
+_GROQ_ALIASES = {
+    'gpt-oss-20b': 'openai/gpt-oss-20b',
+    'gpt-oss-120b': 'openai/gpt-oss-120b',
+}
 
 
 def _usable_secret(value) -> bool:
@@ -75,7 +87,15 @@ def _normalize_openai_base_url(base_url: str) -> str:
 
 def _normalize_openai_model(base_url: str, model: str) -> str:
     chosen = (model or '').strip() or DEFAULT_OPENAI_MODEL
-    if _is_groq_url(base_url) and (chosen in _OPENAI_HOSTED_MODELS or chosen.startswith('gpt-')):
+    if not _is_groq_url(base_url):
+        return chosen
+    if chosen in _GROQ_ALIASES:
+        return _GROQ_ALIASES[chosen]
+    if (
+        chosen in _OPENAI_HOSTED_MODELS
+        or chosen in _RETIRED_GROQ_MODELS
+        or chosen.startswith('gpt-')
+    ):
         return DEFAULT_GROQ_MODEL
     return chosen
 

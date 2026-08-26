@@ -284,7 +284,7 @@ OpenAI’s own API is billed. Ollama cannot run on Render free/starter. Use Groq
 TUTOR_PROVIDER=openai
 OPENAI_API_KEY=gsk_...
 OPENAI_BASE_URL=https://api.groq.com/openai/v1
-OPENAI_MODEL=llama-3.1-8b-instant
+OPENAI_MODEL=openai/gpt-oss-20b
 ```
 
 Create the key at https://console.groq.com. Leave `ANTHROPIC_API_KEY` blank. Restart the web service after saving.

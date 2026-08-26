@@ -1,46 +1,46 @@
 # Graph Report - Civic Education Platform  (2026-08-26)
 
 ## Corpus Check
-- 579 files · ~238,248 words
+- 580 files · ~238,776 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3747 nodes · 9100 edges · 294 communities (195 shown, 99 thin omitted)
-- Extraction: 94% EXTRACTED · 6% INFERRED · 0% AMBIGUOUS · INFERRED: 501 edges (avg confidence: 0.94)
+- 3759 nodes · 9131 edges · 307 communities (205 shown, 102 thin omitted)
+- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 501 edges (avg confidence: 0.94)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2b40db04`
+- Built from commit: `70982a76`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- services.js
-- QuizTakePage.jsx
+- AdminPage.jsx
+- views/mfa.py
 - quizzes/views.py
-- NewsPage.jsx
+- Alert
 - sso.py
 - Quiz
 - forum/views.py
-- useAuth
-- test_saas.py
-- ArticleSerializer
+- core/permissions.py
+- django_db
+- MediaAssetSerializer
 - EventsDetailPage.jsx
 - get_preferred_language
-- CivicEvent
-- log_activity
-- core/middleware.py
 - event_views.py
+- grade_a_views.py
+- core/middleware.py
+- safe_urlopen
 - App.jsx
-- articles.js
-- log_security_event
+- QuizTakePage.jsx
+- TestPlatformSupportAndSecurity
 - notifications/views.py
-- ArticleDetailPage.jsx
-- api.js
+- formatDate
+- TutorPage.jsx
 - BaseBillingProvider
 - tenants/permissions.py
-- test_medium_features.py
-- engagement/views.py
+- TutorChat
+- seed_data.py
 - tutor/views.py
 - test_tutor_retrieval.py
 - dependencies
@@ -50,16 +50,16 @@
 - sms_views.py
 - devDependencies
 - billing/services.py
-- EngagementPage.jsx
+- tokens.py
 - django_db
 - test_article_translation.py
 - i18n_report.py
-- django_db
+- test_product_features.py
 - Production credentials — step by step
 - TestCivicEvents
-- seed_data.py
+- audit/services.py
 - views/auth.py
-- analytics/views.py
+- get_current_organization
 - NotificationConsumer
 - CivicUser
 - Command
@@ -70,38 +70,38 @@
 - Pre-launch checklist
 - SmsSendResult
 - ForumPage.jsx
-- CivicEventSerializer
+- sso_views.py
 - Command
 - learning/signals.py
 - Production environment checklist — integrations
-- extractError
+- services.js
 - _parse_stats
 - fan_out.py
 - Membership
-- Subscription
+- apply_subscription_updated
 - bind_client_to_org
-- ui.jsx
+- extractError
 - scripts
 - billing/views.py
-- notifications/tasks.py
+- translate_missing.py
 - TestNotifications
 - helpers.js
-- QuizSerializer
+- tenants/serializers.py
 - profile.py
-- quizzes/services.py
+- Question
 - TenantsConfig
 - TestAwareness
 - Load testing (Locust)
 - Backend setup
 - speech.ts
-- analytics/services.py
-- test_brevo_mail.py
+- prompts.py
+- format_mail_error
 - package.json
 - AccountsConfig
 - Civic Education RSS — Frontend
 - LearningConfig
 - 0003_migrate_primary_color_to_green.py
-- test_security.py
+- TestQuizzes
 - Article
 - test_auth_flows.py
 - vercel.json
@@ -112,7 +112,7 @@
 - QuizzesConfig
 - TutorConfig
 - Constitution & controlled documents
-- billing/signals.py
+- BillingConfig
 - AI Tutor — RAG & PDF grounding
 - make_icon
 - accounts/migrations/0001_initial.py
@@ -155,17 +155,17 @@
 - 0002_tutor_daily_usage.py
 - wsgi.py
 - Enterprise features (Government / NGO)
-- BillingPage.jsx
+- document_text.py
 - TestSeedDataContent
 - Compliance readiness (SOC 2 / ISO 27001)
 - Disaster recovery
 - @vitejs/plugin-react
-- enterprise_views.py
+- APIView
 - TestBilling
 - TestArticleI18n
-- test_tutor_providers.py
-- test_org_analytics.py
-- RecommendationView
+- resolve_provider_name
+- CourseSerializer
+- test_sanitize_http.py
 - tenants/views.py
 - Civic Education RSS API Reference
 - test_low_vision_features.py
@@ -176,27 +176,27 @@
 - engagement/signals.py
 - jwt.js
 - 0012_bookmark.py
-- test_media_articles.py
+- Meta
 - 0009_learning_progress.py
 - 0006_phone_verified_activity_type.py
-- ArticleViewSet
-- QuizEditorPage.jsx
-- test_phase4.py
+- log_activity
+- QuizzesPage.jsx
+- TestPushAdmin
 - tailwindcss
 - pageTitle.ts
 - TestCivicMap
 - 0005_quiz_kind_feedback_question_explanation.py
 - session.py
-- WebPushSubscriptionAdmin
+- PasswordResetOtpConfirmSerializer
 - EngagementConfig
 - GamificationConfig
 - Command
-- sanitize_text_for_db
-- datetime
+- extract_pdf_text
+- CivicEventSerializer
 - @vitest/coverage-v8
-- test_news.py
-- demographics.py
-- Command
+- TestCivicNews
+- ArticleSerializer
+- StubTutorProvider
 - TestSupportImpersonation
 - start.sh
 - TestTutorChat
@@ -207,12 +207,12 @@
 - TestTopicModeration
 - useNotificationSocket.js
 - 0011_article_translation.py
-- generate_certificate_pdf
+- Certificate
 - 0008_role_super_admin.py
 - CookieTokenRefreshView
-- Command
+- ActivityLog
 - 0006_question_scenario_option_feedback.py
-- media_views.py
+- learning/views.py
 - TestPolls
 - accounts/serializers.py
 - @testing-library/user-event
@@ -221,37 +221,50 @@
 - 0003_forum_community_moderation.py
 - 0007_userprofile_region_age_band.py
 - 0004_poll_kind_vote_demographics.py
-- Plan
+- TestForum
 - eslint
-- context.py
+- test_enterprise_hardening.py
 - 0006_alter_notification_notification_type.py
 - postcss
-- Command
-- get_current_organization
+- brevo_mail.py
+- OrganizationInvite
 - 0007_impersonation_activity_type.py
 - 0006_campaignsignup.py
 - 0005_civicevent_eventsignup.py
 - 0013_course_courselesson.py
-- test_bookmarks.py
+- TestBookmarks
 - RecordingProvider
-- conftest.py
-- enable_tenant_rls.py
-- map_views.py
+- enable_mfa
+- rls.py
+- SearchPage.jsx
 - @sentry/react
-- django_db
+- notifications/models.py
 - vite-plugin-pwa
 - CivicMap.jsx
 - sms_services.py
 - vitest
 - TestWhatsAppChannel
 - TestCourses
-- send_email_task
+- _upload_media_file
 - vite
 - TestOrganizationInvites
+- QuizCheckAnswerView
+- TestUserSuspendIsolation
+- GlobalSearchView
+- MemberDetailView
+- TestLearningProgress
 - 0009_userprofile_show_on_leaderboard.py
 - 0007_civicevent_region_coords.py
 - 0007_whatsapp_channel.py
 - TestRecommendations
+- 4. Web push — VAPID (optional)
+- 5. AI tutor (optional)
+- OrganizationSsoConfig
+- tenants/admin.py
+- TestMediaLibraryApi
+- UserManager
+- TestTutorHistory
+- create_default_subscription
 
 ## God Nodes (most connected - your core abstractions)
 1. `bind_client_to_org()` - 170 edges
@@ -269,130 +282,130 @@
 - `BulkImportRowSerializer` --uses--> `Membership`  [INFERRED]
   backend/apps/tenants/serializers.py → backend/apps/tenants/models.py
 - `Command` --uses--> `Role`  [INFERRED]
-  backend/apps/accounts/management/commands/demote_legacy_org_admins.py → backend/apps/accounts/models.py
-- `Command` --uses--> `Role`  [INFERRED]
   backend/apps/accounts/management/commands/seed_data.py → backend/apps/accounts/models.py
 - `Command` --uses--> `UserProfile`  [INFERRED]
   backend/apps/accounts/management/commands/seed_data.py → backend/apps/accounts/models.py
 - `RegisterSerializer` --uses--> `Role`  [INFERRED]
   backend/apps/accounts/serializers.py → backend/apps/accounts/models.py
+- `RoleSerializer` --uses--> `Role`  [INFERRED]
+  backend/apps/accounts/serializers.py → backend/apps/accounts/models.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (294 total, 99 thin omitted)
+## Communities (307 total, 102 thin omitted)
 
-### Community 0 - "services.js"
-Cohesion: 0.07
-Nodes (35): DashboardPage, EngagementEditorPage, OrganizationPage, GamificationSummary(), RecommendationsSection(), TabList(), TabPanel(), StatCardSkeleton() (+27 more)
+### Community 0 - "AdminPage.jsx"
+Cohesion: 0.10
+Nodes (24): AdminPage, OrganizationPage, TabList(), TabPanel(), AuthProvider(), ADMIN, CITIZEN, EDITOR (+16 more)
 
-### Community 1 - "QuizTakePage.jsx"
-Cohesion: 0.14
-Nodes (20): ArticlesPage, QuizTakePage, QuizzesPage, Pagination(), CardSkeleton(), useDebouncedValue(), contentLanguage(), localizedArticle() (+12 more)
+### Community 1 - "views/mfa.py"
+Cohesion: 0.09
+Nodes (28): consume_mfa_challenge(), generate_totp_secret(), issue_mfa_challenge(), provisioning_uri(), TOTP multi-factor authentication for privileged accounts., Platform admins and organization owners/admins must use MFA when org requires…, totp_for_secret(), user_has_mfa_enabled() (+20 more)
 
 ### Community 2 - "quizzes/views.py"
-Cohesion: 0.21
-Nodes (12): CertificateSerializer, QuizAttemptSerializer, QuizAttemptSubmitSerializer, QuizReviewItemSerializer, generate_certificate_number(), CertificateDownloadView, CertificateListView, APIView (+4 more)
+Cohesion: 0.16
+Nodes (15): CertificateSerializer, Meta, QuestionWriteSerializer, QuizAttemptSerializer, QuizAttemptSubmitSerializer, QuizListSerializer, QuizReviewItemSerializer, QuizSerializer (+7 more)
 
-### Community 3 - "NewsPage.jsx"
+### Community 3 - "Alert"
 Cohesion: 0.15
-Nodes (21): NewsDetailPage, NewsEditorPage, NewsManagePage, NewsPage, CLAIM_ALERT, CLAIM_STYLES, claimAlertKind(), ClaimBadge() (+13 more)
+Nodes (20): CLAIM_ALERT, CLAIM_STYLES, claimAlertKind(), ClaimBadge(), ClaimLegend(), NEWS_CLAIM_TYPES, NEWS_TOPICS, TopicBadge() (+12 more)
 
 ### Community 4 - "sso.py"
-Cohesion: 0.07
-Nodes (50): UserManager, build_authorize_url(), claims_from_tokens(), exchange_code_for_tokens(), _fetch_jwks(), fetch_oidc_metadata(), fetch_userinfo(), get_or_create_user_from_sso() (+42 more)
+Cohesion: 0.22
+Nodes (21): build_authorize_url(), claims_from_tokens(), exchange_code_for_tokens(), _fetch_jwks(), fetch_oidc_metadata(), fetch_userinfo(), get_or_create_user_from_sso(), global_oidc_configured() (+13 more)
 
 ### Community 5 - "Quiz"
-Cohesion: 0.22
-Nodes (8): Certificate, Meta, Question, Quiz, QuizAttempt, QuestionWriteSerializer, bilingual_article(), fixture
+Cohesion: 0.21
+Nodes (5): Misinformation-awareness track: lesson keys, extra articles, and quiz title.…, Quiz, QuizAttempt, bilingual_article(), fixture
 
 ### Community 6 - "forum/views.py"
-Cohesion: 0.06
-Nodes (49): DiscussionCommentAdmin, DiscussionTopicAdmin, ForumReportAdmin, register, Civic discussion boards and report reasons for the community forum., Only platform moderators skip pre-moderation so citizen posts stay in the queue., Editors, moderators, and org content leads can post expert replies., user_is_forum_expert() (+41 more)
-
-### Community 7 - "useAuth"
 Cohesion: 0.08
-Nodes (28): ProfilePage, EmailVerifyBanner(), ArrowUp(), Moon(), Sun(), InstallPrompt(), Layout(), OrgSwitcher() (+20 more)
+Nodes (42): DiscussionCommentAdmin, DiscussionTopicAdmin, ForumReportAdmin, register, Civic discussion boards and report reasons for the community forum., Only platform moderators skip pre-moderation so citizen posts stay in the queue., Editors, moderators, and org content leads can post expert replies., user_is_forum_expert() (+34 more)
 
-### Community 8 - "test_saas.py"
+### Community 7 - "core/permissions.py"
 Cohesion: 0.14
+Nodes (15): check_mfa_enrolled(), Raise ``MfaSetupRequired`` when a privileged user has not enrolled MFA., IsAdmin, IsCitizenOrAbove, IsEditor, IsEditorOrAdmin, IsModerator, IsModeratorOrAdmin (+7 more)
+
+### Community 8 - "django_db"
+Cohesion: 0.12
 Nodes (8): django_db, An article cannot reference a category that belongs to a different org., Org switcher: header selects another org the user belongs to., The tenant middleware must ignore X-Tenant-Slug for orgs the user doesn't…, TestMyOrganizations, TestOrganizationRegistration, TestQuotas, TestTenantIsolation
 
-### Community 9 - "ArticleSerializer"
-Cohesion: 0.08
-Nodes (7): ArticleSerializer, _can_publish_directly(), CourseSerializer, MediaAssetSerializer, validate_http_url(), django_db, TestMediaHttpUrlValidation
+### Community 9 - "MediaAssetSerializer"
+Cohesion: 0.16
+Nodes (4): MediaAssetSerializer, validate_http_url(), django_db, TestMediaHttpUrlValidation
 
 ### Community 10 - "EventsDetailPage.jsx"
 Cohesion: 0.11
-Nodes (26): EventsDetailPage, EventsEditorPage, EventsPage, Breadcrumb(), EVENT_KINDS, EventKindBadge(), KIND_CLASS, ChevronRight() (+18 more)
+Nodes (26): EventsDetailPage, EventsEditorPage, EventsPage, EVENT_KINDS, EventKindBadge(), KIND_CLASS, WhatsAppShareButton(), formatDateTime() (+18 more)
 
 ### Community 11 - "get_preferred_language"
-Cohesion: 0.09
-Nodes (12): get_preferred_language(), Resolve API content language to ``en`` or ``ar`` only., _localize_title(), _skip_i18n(), BookmarkViewSet, Saved-lesson list and delete., BookmarkSerializer, CategorySerializer (+4 more)
+Cohesion: 0.15
+Nodes (5): get_preferred_language(), Resolve API content language to ``en`` or ``ar`` only., _localize_title(), _skip_i18n(), QuestionSerializer
 
-### Community 12 - "CivicEvent"
-Cohesion: 0.20
-Nodes (10): CivicEvent, EventSignup, Public civic calendar item: elections, hearings, workshops, holidays., due_signups_qs(), event_is_due_for_reminder(), Due-soon reminders for civic events., send_due_event_reminders(), send_event_reminder() (+2 more)
+### Community 12 - "event_views.py"
+Cohesion: 0.12
+Nodes (17): CivicEventFilter, CivicEventViewSet, Meta, action, CivicEvent, EventSignup, Public civic calendar item: elections, hearings, workshops, holidays., _can_see_unpublished() (+9 more)
 
-### Community 13 - "log_activity"
-Cohesion: 0.06
-Nodes (34): APIView, SsoCallbackView, SsoLoginView, SsoStatusView, extend_schema, _append_worm_record(), _client_meta(), compute_integrity_hash() (+26 more)
+### Community 13 - "grade_a_views.py"
+Cohesion: 0.08
+Nodes (23): Meta, Persisted security events for platform-admin monitoring dashboards., SecurityEvent, AuditIntegrityVerifyView, ComplianceEvidencePackView, _hash_token(), PlatformSupportCaseListView, PlatformSupportCaseUpdateView (+15 more)
 
 ### Community 14 - "core/middleware.py"
 Cohesion: 0.08
 Nodes (15): client_ip_from_request(), ip_allowed(), IP allowlist helpers and read-replica database router., Return True when allowlist is empty or client_ip matches an entry., Route reads to DATABASES['replica'] when configured., ReadReplicaRouter, ContentSecurityPolicyMiddleware, IpAllowlistMiddleware (+7 more)
 
-### Community 15 - "event_views.py"
-Cohesion: 0.25
-Nodes (6): CivicEventFilter, CivicEventViewSet, Meta, action, EventRegisterSerializer, EventReminderSerializer
+### Community 15 - "safe_urlopen"
+Cohesion: 0.15
+Nodes (17): Command, _has_results(), BaseCommand, _request(), assert_http_url(), Any, HTTP helpers that reject non-http(s) URL schemes before urlopen (Bandit B310)., Raise ValueError unless *url* uses an allowed scheme and has a host. (+9 more)
 
 ### Community 16 - "App.jsx"
-Cohesion: 0.07
-Nodes (23): ArticlesManagePage, AwarenessPage, CategoriesManagePage, ContactPage, CourseDetailPage, CourseEditorPage, CoursesManagePage, CoursesPage (+15 more)
+Cohesion: 0.05
+Nodes (33): AcceptInvitePage, App(), ArticlesManagePage, CategoriesManagePage, ContactPage, CourseDetailPage, CoursesManagePage, CoursesPage (+25 more)
 
-### Community 17 - "articles.js"
-Cohesion: 0.10
-Nodes (28): App(), guard(), ErrorBoundary, OfflineBanner(), useOnlineStatus(), fetchOrCache(), listCacheKey(), loadArticle() (+20 more)
+### Community 17 - "QuizTakePage.jsx"
+Cohesion: 0.11
+Nodes (30): ArticlesPage, QuizTakePage, OfflineBanner(), useDebouncedValue(), useOnlineStatus(), api, fetchOrCache(), listCacheKey() (+22 more)
 
-### Community 18 - "log_security_event"
-Cohesion: 0.10
-Nodes (15): custom_exception_handler(), Log permission denials and MFA setup blocks as security events., Meta, Persisted security events for platform-admin monitoring dashboards., SecurityEvent, _client_ip(), log_security_event(), Any (+7 more)
+### Community 18 - "TestPlatformSupportAndSecurity"
+Cohesion: 0.18
+Nodes (4): django_db, TestContentPacks, TestOrgRoleRBAC, TestPlatformSupportAndSecurity
 
 ### Community 19 - "notifications/views.py"
-Cohesion: 0.10
-Nodes (25): BroadcastNotificationSerializer, WebPushSubscribeSerializer, Meta, Notification, WebPushSubscription, cleanup_push_subscriptions(), push_subscription_stats(), Send a web push to all subscriptions for a user. Returns count sent. (+17 more)
+Cohesion: 0.13
+Nodes (18): BroadcastNotificationSerializer, WebPushSubscribeSerializer, WebPushSubscription, cleanup_push_subscriptions(), push_subscription_stats(), cleanup_push_subscriptions_task(), BroadcastNotificationView, Meta (+10 more)
 
-### Community 20 - "ArticleDetailPage.jsx"
+### Community 20 - "formatDate"
+Cohesion: 0.07
+Nodes (38): ArticleDetailPage, ArticleEditorPage, MediaDetailPage, MediaEditorPage, MediaPage, SavedPage, TopicDetailPage, BookmarkButton() (+30 more)
+
+### Community 21 - "TutorPage.jsx"
 Cohesion: 0.12
-Nodes (19): ArticleDetailPage, ArticleEditorPage, MediaEditorPage, ChevronLeft(), MediaPlayer(), readingTime(), renderMarkdown(), API_ORIGIN (+11 more)
-
-### Community 21 - "api.js"
-Cohesion: 0.06
-Nodes (42): AcceptInvitePage, AdminPage, SsoCallbackPage, LanguageSwitcher(), mockRefreshUser, mockUpdateProfile, ProtectedRoute(), mockedUseAuth (+34 more)
+Nodes (25): TutorPage, LanguageSwitcher(), mockRefreshUser, mockUpdateProfile, applyDirection(), initial, DEFAULT_LANGUAGE, normalizeLanguage() (+17 more)
 
 ### Community 22 - "BaseBillingProvider"
-Cohesion: 0.12
-Nodes (6): BaseBillingProvider, CheckoutResult, DummyBillingProvider, Pluggable billing providers. The ``dummy`` provider requires no external…, No-op provider for local dev/tests; activates plans instantly., StripeBillingProvider
+Cohesion: 0.11
+Nodes (8): BaseBillingProvider, CheckoutResult, DummyBillingProvider, get_billing_provider(), Pluggable billing providers. The ``dummy`` provider requires no external…, No-op provider for local dev/tests; activates plans instantly., StripeBillingProvider, extend_schema
 
 ### Community 23 - "tenants/permissions.py"
-Cohesion: 0.07
-Nodes (22): check_mfa_enrolled(), Account-level permission helpers., Raise ``MfaSetupRequired`` when a privileged user has not enrolled MFA., MfaSetupRequired, APIException, _can_see_unpublished(), CivicNewsFilter, CivicNewsViewSet (+14 more)
+Cohesion: 0.12
+Nodes (12): CivicNewsFilter, CivicNewsViewSet, Meta, CivicNewsSerializer, CanDeleteOrgContent, IsOrgContentEditor, IsOrgForumModerator, IsOrgMember (+4 more)
 
-### Community 24 - "test_medium_features.py"
-Cohesion: 0.07
-Nodes (18): register, TutorChatAdmin, get_chat_session_history(), list_chat_sessions(), Read access to persisted tutor conversations., Return ordered messages for a persisted session owned by the user., Summarize recent tutor conversations persisted for the user., Meta (+10 more)
+### Community 24 - "TutorChat"
+Cohesion: 0.13
+Nodes (13): register, TutorChatAdmin, get_chat_session_history(), list_chat_sessions(), Read access to persisted tutor conversations., Return ordered messages for a persisted session owned by the user., Summarize recent tutor conversations persisted for the user., Meta (+5 more)
 
-### Community 25 - "engagement/views.py"
-Cohesion: 0.09
-Nodes (21): CampaignCreateSerializer, CampaignSerializer, PetitionCreateSerializer, PetitionSerializer, PollCreateSerializer, PollSerializer, PollVoteSerializer, atomic (+13 more)
+### Community 25 - "seed_data.py"
+Cohesion: 0.05
+Nodes (50): CivicEventAdmin, CivicNewsAdmin, EventSignupAdmin, PollAdmin, register, AwarenessOverviewView, APIView, SuspiciousReportListCreateView (+42 more)
 
 ### Community 26 - "tutor/views.py"
 Cohesion: 0.13
 Nodes (22): ChatRequestSerializer, ChatResponseSerializer, TutorMessageSerializer, TutorSessionSerializer, TutorSessionSummarySerializer, TutorSourceSerializer, TutorUsageSerializer, get_tutor_service() (+14 more)
 
 ### Community 27 - "test_tutor_retrieval.py"
-Cohesion: 0.15
-Nodes (16): curriculum_category_list(), Official civic curriculum catalog (15 learning modules). Seed data, the AI…, Human-readable list for tutor prompts., _article_searchable_text(), _category_boost(), chunk_text(), detect_query_categories(), format_retrieved_context() (+8 more)
+Cohesion: 0.17
+Nodes (15): set_current_organization(), get_attachment_text(), Extract and cache PDF text for an article attachment., _article_searchable_text(), _category_boost(), chunk_text(), detect_query_categories(), Lightweight retrieval over published articles for the AI tutor. Uses keyword… (+7 more)
 
 ### Community 28 - "dependencies"
 Cohesion: 0.08
@@ -400,46 +413,46 @@ Nodes (25): axios, dompurify, dependencies, axios, dompurify, i18next, i18next-b
 
 ### Community 29 - "scim.py"
 Cohesion: 0.12
-Nodes (19): bump_session_epoch(), Invalidate all outstanding JWTs for this user by advancing session_epoch., OrganizationScimToken, Bearer token for SCIM 2.0 provisioning integrations (hashed at rest)., authenticate_scim(), _group_to_scim(), APIView, ScimGroupDetailView (+11 more)
+Nodes (20): bump_session_epoch(), Invalidate all outstanding JWTs for this user by advancing session_epoch., OrganizationScimToken, Bearer token for SCIM 2.0 provisioning integrations (hashed at rest)., authenticate_scim(), _group_to_scim(), APIView, SCIM 2.0 Groups — mapped to organization departments. (+12 more)
 
 ### Community 30 - "TutorUnavailable"
-Cohesion: 0.13
-Nodes (8): APIException, TutorUnavailable, AnthropicTutorProvider, BaseTutorProvider, OpenAICompatibleTutorProvider, Any OpenAI-compatible endpoint: OpenAI, Ollama, OpenRouter, Groq, Together., FailingProvider, FailingProvider
+Cohesion: 0.15
+Nodes (7): TutorUnavailable, AnthropicTutorProvider, BaseTutorProvider, OpenAICompatibleTutorProvider, Any OpenAI-compatible endpoint: OpenAI, Ollama, OpenRouter, Groq, Together., FailingProvider, FailingProvider
 
 ### Community 31 - "integrations.py"
 Cohesion: 0.08
 Nodes (40): build_integrations_report(), check_cache(), check_celery(), check_database(), check_email(), check_oidc(), check_pypdf(), check_sentry() (+32 more)
 
 ### Community 32 - "sms_views.py"
-Cohesion: 0.17
-Nodes (13): BroadcastSmsSerializer, Meta, SendSmsSerializer, SmsMessageSerializer, BroadcastSmsView, PlatformBroadcastSmsView, APIView, extend_schema (+5 more)
+Cohesion: 0.18
+Nodes (14): require_sms(), BroadcastSmsSerializer, Meta, SendSmsSerializer, SmsMessageSerializer, BroadcastSmsView, PlatformBroadcastSmsView, APIView (+6 more)
 
 ### Community 33 - "devDependencies"
 Cohesion: 0.09
 Nodes (23): autoprefixer, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, devDependencies, autoprefixer, @eslint/js, eslint-plugin-react-hooks (+15 more)
 
 ### Community 34 - "billing/services.py"
-Cohesion: 0.16
-Nodes (17): extend_schema, AnalyticsNotAvailable, assign_organization_plan(), count_usage(), get_active_plan(), get_subscription(), invalidate_quota_cache(), plan_has_analytics() (+9 more)
+Cohesion: 0.17
+Nodes (19): AnalyticsNotAvailable, check_quota(), count_usage(), ensure_subscription(), get_active_plan(), get_default_plan(), get_subscription(), invalidate_quota_cache() (+11 more)
 
-### Community 35 - "EngagementPage.jsx"
-Cohesion: 0.23
-Nodes (5): EngagementPage, WhatsAppShareButton(), whatsappClickToChatUrl(), whatsappShareUrl(), EngagementPage()
+### Community 35 - "tokens.py"
+Cohesion: 0.13
+Nodes (10): get_session_epoch(), issue_jwt_tokens(), EmailTokenObtainPairSerializer, issue_tokens_for_user(), Build access/refresh JWTs, optionally with extra claims and a short lifetime., CiSmokeUser, HttpUser, task (+2 more)
 
 ### Community 36 - "django_db"
 Cohesion: 0.17
 Nodes (5): django_db, TestEngagement, TestGamification, TestMediaCaptions, TestTutorStream
 
 ### Community 37 - "test_article_translation.py"
-Cohesion: 0.06
-Nodes (36): Command, BaseCommand, apply_article_translation(), apply_record_translation(), _build_updates(), _cap_field(), chunk_markdown(), detect_language() (+28 more)
+Cohesion: 0.07
+Nodes (36): apply_article_translation(), apply_record_translation(), _build_updates(), _cap_field(), chunk_markdown(), detect_language(), _is_blank(), Automatic English/Arabic translation for civic-education articles. Detects the… (+28 more)
 
 ### Community 38 - "i18n_report.py"
 Cohesion: 0.21
 Nodes (9): bilingual_queryset(), build_translation_completeness(), _organization_lookup(), English/Arabic bilingual content completeness for admin dashboards and CLI., Rows for one bilingual model, optionally limited to an organization., Per-field Arabic translation coverage for tenant content., Command, BaseCommand (+1 more)
 
-### Community 39 - "django_db"
-Cohesion: 0.10
+### Community 39 - "test_product_features.py"
+Cohesion: 0.12
 Nodes (7): django_db, TestAuditLogs, TestAvatarUpload, TestPhoneVerification, TestResendVerificationEmail, TestUnsuspendUser, TestWebPushSubscribe
 
 ### Community 40 - "Production credentials — step by step"
@@ -450,17 +463,17 @@ Nodes (19): 1a. Redis (web + worker), 1b. Email (web + worker), 1c. Sentry (web 
 Cohesion: 0.33
 Nodes (3): _make_event(), django_db, TestCivicEvents
 
-### Community 42 - "seed_data.py"
-Cohesion: 0.07
-Nodes (28): CivicEventAdmin, CivicNewsAdmin, EventSignupAdmin, PollAdmin, register, AwarenessOverviewView, APIView, SuspiciousReportListCreateView (+20 more)
+### Community 42 - "audit/services.py"
+Cohesion: 0.14
+Nodes (13): _append_worm_record(), _client_meta(), compute_integrity_hash(), Verify hash-chain integrity for recent activity logs., Append-only replica of the hash chain for off-box retention., verify_audit_chain(), django_db, Grade-A enterprise: sessions, SCIM, compliance, support, IP allowlist. (+5 more)
 
 ### Community 43 - "views/auth.py"
-Cohesion: 0.05
-Nodes (60): AnonRateThrottle, consume_mfa_challenge(), generate_totp_secret(), issue_mfa_challenge(), provisioning_uri(), TOTP multi-factor authentication for privileged accounts., Platform admins and organization owners/admins must use MFA when org requires…, totp_for_secret() (+52 more)
+Cohesion: 0.11
+Nodes (33): AnonRateThrottle, EmailVerificationToken, PasswordResetRequestSerializer, EmailTokenObtainPairView, LoginView, LogoutView, APIView, Registration, login and logout. (+25 more)
 
-### Community 44 - "analytics/views.py"
-Cohesion: 0.13
-Nodes (24): IsOrgAnalyticsAdmin, BasePermission, Organization owner or admin (analytics plan checked in the view)., _parse_date(), parse_report_dates(), AnalyticsForumView, AnalyticsLearningView, AnalyticsOverviewView (+16 more)
+### Community 44 - "get_current_organization"
+Cohesion: 0.04
+Nodes (64): AbstractBaseUser, Optional, coarse profile fields for civic poll summaries. Values are states /…, _event_at(), Meta, User, UserProfile, ensure_profile(), receiver (+56 more)
 
 ### Community 45 - "NotificationConsumer"
 Cohesion: 0.12
@@ -479,12 +492,12 @@ Cohesion: 0.07
 Nodes (31): CoreConfig, AppConfig, production_security_checks(), register, Validate settings required for a safe production deployment., production_public_origin(), Helpers for building Django ALLOWED_HOSTS / CSRF_TRUSTED_ORIGINS lists., Split comma-separated host strings and return de-duplicated hosts. (+23 more)
 
 ### Community 49 - "tutor/services.py"
-Cohesion: 0.11
-Nodes (32): normalize_language(), Shared application constants., Return ``en`` or ``ar``; any other value maps to ``en``., get_user_organization(), Return the user's primary organization (first membership), or None., _daily_cache_key(), enforce_budget(), get_daily_limit() (+24 more)
+Cohesion: 0.12
+Nodes (27): _daily_cache_key(), enforce_budget(), get_daily_limit(), get_daily_usage(), increment_daily_usage(), Daily message quota for the AI tutor. Usage is counted in Redis for speed and…, Return today's usage from Redis cache, seeding from DB on cold miss., Increment Redis counter and persist to DB asynchronously. (+19 more)
 
 ### Community 50 - "Icons.jsx"
-Cohesion: 0.15
-Nodes (22): BookmarkButton(), AcademicCap(), Bell(), Bookmark(), BookmarkFilled(), BookOpen(), Calendar(), ChatBubble() (+14 more)
+Cohesion: 0.13
+Nodes (25): AwarenessPage, NotificationsPage, FEATURES, AcademicCap(), ArrowUp(), Bell(), BookOpen(), Calendar() (+17 more)
 
 ### Community 51 - "compilerOptions"
 Cohesion: 0.08
@@ -495,80 +508,84 @@ Cohesion: 0.10
 Nodes (20): 10. Ongoing operations, 11. Organization invites, 12. Error monitoring (Sentry), 13. Database backups, 14. E2E testing, 1. Domain and TLS, 2. Backend secrets, 3. Database (+12 more)
 
 ### Community 53 - "SmsSendResult"
-Cohesion: 0.14
-Nodes (15): AfricasTalkingSmsProvider, BaseSmsProvider, _BrokenSmsProvider, DummySmsProvider, get_sms_provider(), Log SMS in development; always succeeds., Used when Africa's Talking fails to initialize (bad key, missing package)., SmsSendResult (+7 more)
+Cohesion: 0.20
+Nodes (10): SmsSendResult, BaseWhatsAppProvider, build_meta_message_payload(), DummyWhatsAppProvider, get_whatsapp_provider(), MetaCloudWhatsAppProvider, Log WhatsApp messages in development; always succeeds., Graph API payload: template when configured, otherwise session text. (+2 more)
 
 ### Community 54 - "ForumPage.jsx"
-Cohesion: 0.10
-Nodes (15): ForumPage, TopicDetailPage, GuestSaveCta(), forumService, mockHasRole, mockIsPlatformAdmin, AwarenessPage(), BOARD_FILTERS (+7 more)
+Cohesion: 0.09
+Nodes (15): BillingPage, ForumPage, UsageBar(), billingService, mockHasRole, mockIsPlatformAdmin, API_ORIGIN, BillingPage() (+7 more)
+
+### Community 55 - "sso_views.py"
+Cohesion: 0.15
+Nodes (8): APIView, extend_schema, SsoCallbackView, SsoLoginView, SsoStatusView, require_sso(), OrganizationSsoConfigView, OrganizationSsoConfigSerializer
 
 ### Community 56 - "Command"
 Cohesion: 0.19
 Nodes (5): absolute_media_url(), build_topic_svg(), Command, BaseCommand, Simple infographic card used as the lesson featured image.
 
 ### Community 57 - "learning/signals.py"
-Cohesion: 0.12
-Nodes (24): enqueue_article_translation(), enqueue_course_translation(), enqueue_media_translation(), enqueue_record_translation(), maintain_tutor_index(), notify_on_publish(), receiver, track_attachment_change() (+16 more)
+Cohesion: 0.19
+Nodes (14): enqueue_article_translation(), enqueue_course_translation(), enqueue_media_translation(), enqueue_record_translation(), maintain_tutor_index(), notify_on_publish(), receiver, track_attachment_change() (+6 more)
 
 ### Community 58 - "Production environment checklist — integrations"
-Cohesion: 0.05
-Nodes (37): 10. Compliance / monitoring gates (production), 1. Celery + Redis (required), 2. Stripe billing (required for paid SaaS), 2b. No Stripe / unsupported country (e.g. Uganda), 3. SMS — Africa's Talking (optional), 3b. WhatsApp Cloud API (optional), 4. Web push — VAPID (optional), 5. AI tutor (optional) (+29 more)
+Cohesion: 0.08
+Nodes (26): 10. Compliance / monitoring gates (production), 1. Celery + Redis (required), 2. Stripe billing (required for paid SaaS), 2b. No Stripe / unsupported country (e.g. Uganda), 3. SMS — Africa's Talking (optional), 3b. WhatsApp Cloud API (optional), 6. Enterprise SSO — OpenID Connect (optional), 6b. Tenant RLS and audit replica (optional, production Postgres) (+18 more)
 
-### Community 59 - "extractError"
-Cohesion: 0.11
-Nodes (26): ForgotPasswordPage, ResetPasswordPage, VerifyEmailPage, AuthShell(), FEATURES, PlatformLogo(), PasswordInput(), extractError() (+18 more)
+### Community 59 - "services.js"
+Cohesion: 0.06
+Nodes (46): DashboardPage, ForgotPasswordPage, ProfilePage, ResetPasswordPage, VerifyEmailPage, AuthShell(), GamificationSummary(), EyeOff() (+38 more)
 
 ### Community 60 - "_parse_stats"
 Cohesion: 0.29
 Nodes (8): main(), _parse_stats(), Path, Headless Locust smoke gate for CI. Runs a short read-heavy scenario and fails…, Return fail_ratio, p95_ms, failures, requests from Locust CSV stats., Path, Unit tests for Locust CI gate stats parsing (no live Locust run)., test_parse_stats_aggregated()
 
 ### Community 61 - "fan_out.py"
-Cohesion: 0.16
-Nodes (13): Push a notification dict to all WebSocket connections for ``user_pk``. Call…, send_notification_to_user(), _get_or_create_prefs(), notify_user(), Unified notification fan-out. Call :func:`notify_user` to deliver a…, Create an in-app Notification and fan-out to configured channels. Returns the…, Fire-and-forget async send to the user's WebSocket group., _sms_push() (+5 more)
+Cohesion: 0.13
+Nodes (16): Push a notification dict to all WebSocket connections for ``user_pk``. Call…, send_notification_to_user(), _get_or_create_prefs(), notify_user(), Unified notification fan-out. Call :func:`notify_user` to deliver a…, Create an in-app Notification and fan-out to configured channels. Returns the…, Fire-and-forget async send to the user's WebSocket group., _sms_push() (+8 more)
 
 ### Community 62 - "Membership"
-Cohesion: 0.07
-Nodes (33): ActivityLog, Meta, MembershipAdmin, OrganizationAdmin, OrganizationInviteAdmin, register, Department, Membership (+25 more)
+Cohesion: 0.04
+Nodes (57): Command, BaseCommand, Role, PlanAdmin, register, SubscriptionAdmin, Meta, Plan (+49 more)
 
-### Community 63 - "Subscription"
-Cohesion: 0.18
-Nodes (12): Subscription, apply_checkout_completed(), _apply_plan_code(), apply_subscription_deleted(), apply_subscription_updated(), plan_code_for_stripe_price(), Sync subscription after Stripe Checkout completes., Sync plan/status when Stripe subscription changes. (+4 more)
+### Community 63 - "apply_subscription_updated"
+Cohesion: 0.16
+Nodes (13): apply_checkout_completed(), _apply_plan_code(), apply_subscription_deleted(), apply_subscription_updated(), plan_code_for_stripe_price(), Sync subscription after Stripe Checkout completes., Sync plan/status when Stripe subscription changes., Downgrade to the free plan when a paid subscription ends. (+5 more)
 
 ### Community 64 - "bind_client_to_org"
-Cohesion: 0.05
-Nodes (17): bind_client_to_org(), Authenticate and scope requests to ``org`` (creates membership if needed)., TestArticles, django_db, TestLearningProgress, TestMediaLibraryApi, TestInAppBroadcast, django_db (+9 more)
+Cohesion: 0.08
+Nodes (11): bind_client_to_org(), Authenticate and scope requests to ``org`` (creates membership if needed)., TestArticles, django_db, TestLeaderboard, django_db, TestOrgAnalytics, TestInAppBroadcast (+3 more)
 
-### Community 65 - "ui.jsx"
-Cohesion: 0.11
-Nodes (35): CertificatesPage, TutorPage, Trophy(), Alert(), ConfirmDialog(), EmptyState(), ORG_ROLE_STYLES, PageHeader() (+27 more)
+### Community 65 - "extractError"
+Cohesion: 0.07
+Nodes (55): CourseEditorPage, EngagementPage, MapPage, EmailVerifyBanner(), Layout(), OrgSwitcher(), ProtectedRoute(), mockedUseAuth (+47 more)
 
 ### Community 66 - "scripts"
 Cohesion: 0.20
 Nodes (10): scripts, build, dev, lint, preview, test, test:e2e, test:e2e:live (+2 more)
 
 ### Community 67 - "billing/views.py"
-Cohesion: 0.17
-Nodes (17): get_billing_provider(), CheckoutSerializer, Meta, PlanSerializer, SubscriptionSerializer, ensure_subscription(), Paid self-serve checkout is off when dummy billing is used (East Africa)., Return the org subscription, creating a free-plan row if missing. (+9 more)
+Cohesion: 0.29
+Nodes (11): CheckoutSerializer, Meta, PlanSerializer, SubscriptionSerializer, Paid self-serve checkout is off when dummy billing is used (East Africa)., self_serve_checkout_enabled(), BillingPortalView, CheckoutView (+3 more)
 
-### Community 68 - "notifications/tasks.py"
-Cohesion: 0.24
-Nodes (11): org_member_phones(), broadcast_notification_task(), broadcast_sms_task(), broadcast_whatsapp_task(), cleanup_push_subscriptions_task(), shared_task, Fan out an in-app notification to active users in batches., send_whatsapp_task() (+3 more)
+### Community 68 - "translate_missing.py"
+Cohesion: 0.15
+Nodes (12): Command, BaseCommand, Enqueue automatic translation for articles missing English or Arabic., shared_task, Fill the missing English or Arabic side of an article., Fill missing English/Arabic fields on quizzes, news, events, and similar., translate_article_task(), translate_record_task() (+4 more)
 
 ### Community 70 - "helpers.js"
 Cohesion: 0.19
 Nodes (11): API, apiGlob(), LIVE_ADMIN_EMAIL, LIVE_ADMIN_PASSWORD, LIVE_API, LIVE_ORG_SLUG, liveAuthHeaders(), loginLive() (+3 more)
 
-### Community 71 - "QuizSerializer"
-Cohesion: 0.18
-Nodes (6): Meta, QuestionSerializer, QuizListSerializer, QuizSerializer, QuizWriteSerializer, Public catalog card — titles and counts, not question bodies.
+### Community 71 - "tenants/serializers.py"
+Cohesion: 0.22
+Nodes (11): normalize_primary_color(), Return green default when ``color`` is a legacy blue brand value., BulkImportRowSerializer, DepartmentSerializer, MemberInviteSerializer, MembershipSerializer, Meta, OrganizationInviteSerializer (+3 more)
 
 ### Community 72 - "profile.py"
 Cohesion: 0.33
 Nodes (8): Self-service profile, avatar, data export and deactivation., get_signed_url(), get_supabase_client(), _local_media_url(), _save_local_file(), upload_bytesio(), upload_file(), Client
 
-### Community 73 - "quizzes/services.py"
-Cohesion: 0.27
-Nodes (7): QuizCheckAnswerSerializer, build_review_item(), grade_answer(), option_feedback_text(), Teaching note for the choice the learner made, falling back to the question…, score_quiz(), extend_schema
+### Community 73 - "Question"
+Cohesion: 0.46
+Nodes (6): Question, build_review_item(), grade_answer(), option_feedback_text(), Teaching note for the choice the learner made, falling back to the question…, score_quiz()
 
 ### Community 74 - "TenantsConfig"
 Cohesion: 0.33
@@ -587,16 +604,16 @@ Cohesion: 0.15
 Nodes (13): AI tutor (RAG), API reference, Backend setup, Background tasks (Celery), Civic Education RSS, Default accounts (after `seed_data`), Deployment (Render), Load testing (+5 more)
 
 ### Community 78 - "speech.ts"
-Cohesion: 0.12
-Nodes (29): AccessibilityMenu(), ReadAloudButton(), VoiceInputButton(), AccessibilityContext, AccessibilityProvider(), useAccessibility(), useFocusTrap(), A11ySettings (+21 more)
-
-### Community 79 - "analytics/services.py"
-Cohesion: 0.16
-Nodes (18): _attempts_queryset(), _bucket_counts(), build_completion_snapshot(), build_dashboard_summary(), build_institutional_report_pdf(), build_language_usage(), build_learning_insights(), build_member_progress() (+10 more)
-
-### Community 80 - "test_brevo_mail.py"
 Cohesion: 0.14
-Nodes (11): BrevoAPIEmailBackend, _contacts(), _html_body(), Django email backend that sends via Brevo's HTTPS API (port 443). Render free…, POST each message to ``https://api.brevo.com/v3/smtp/email``., _OkResponse, override_settings, test_brevo_backend_posts_to_https_api() (+3 more)
+Nodes (26): AccessibilityMenu(), ReadAloudButton(), AccessibilityContext, AccessibilityProvider(), useAccessibility(), useFocusTrap(), A11ySettings, applyA11ySettings() (+18 more)
+
+### Community 79 - "prompts.py"
+Cohesion: 0.24
+Nodes (11): normalize_language(), Return ``en`` or ``ar``; any other value maps to ``en``., curriculum_category_list(), Official civic curriculum catalog (15 learning modules). Seed data, the AI…, Human-readable list for tutor prompts., get_user_organization(), Return the user's primary organization (first membership), or None., build_system_prompt() (+3 more)
+
+### Community 80 - "format_mail_error"
+Cohesion: 0.12
+Nodes (11): PhoneVerifyConfirmSerializer, extend_schema, format_mail_error(), Short SMTP/Django mail error safe to return in an API body., _OkResponse, override_settings, test_brevo_backend_posts_to_https_api(), test_brevo_backend_requires_api_key() (+3 more)
 
 ### Community 81 - "package.json"
 Cohesion: 0.40
@@ -606,13 +623,13 @@ Nodes (4): name, private, type, version
 Cohesion: 0.22
 Nodes (8): Civic Education RSS — Frontend, Deployment, Environment variables, Features, Local setup, Project structure, Requirements, Scripts
 
-### Community 86 - "test_security.py"
-Cohesion: 0.24
-Nodes (4): django_db, TestMarkdownXss, TestMfaEnforcement, TestMfaLogin
+### Community 86 - "TestQuizzes"
+Cohesion: 0.15
+Nodes (3): django_db, TestAnalytics, TestQuizzes
 
 ### Community 87 - "Article"
-Cohesion: 0.07
-Nodes (44): api_view, award_xp(), Enqueue automatic translation for articles missing English or Arabic., Article, ArticleProgress, Bookmark, Category, Course (+36 more)
+Cohesion: 0.06
+Nodes (48): award_xp(), Saved-lesson list and delete., _can_see_unpublished_courses(), CourseViewSet, Article, ArticleProgress, Bookmark, Category (+40 more)
 
 ### Community 88 - "test_auth_flows.py"
 Cohesion: 0.11
@@ -626,10 +643,6 @@ Nodes (3): buildCommand, outputDirectory, rewrites
 Cohesion: 0.17
 Nodes (12): 1. Add source files, 2. Run seed, 3. Verify, API path, Constitution & controlled documents, Option A — Seed data (recommended for demos), Option B — Article editor (production / org admins), Overview (+4 more)
 
-### Community 97 - "billing/signals.py"
-Cohesion: 0.25
-Nodes (6): BillingConfig, AppConfig, get_default_plan(), create_default_subscription(), receiver, Every new organization starts on the default (free) plan.
-
 ### Community 98 - "AI Tutor — RAG & PDF grounding"
 Cohesion: 0.17
 Nodes (12): AI Tutor — RAG & PDF grounding, API endpoints, Constitution & PDF content, Dependencies, Frontend, GET `/api/tutor/usage/platform/` — platform admin, How retrieval works, Limits & caching (+4 more)
@@ -638,9 +651,9 @@ Nodes (12): AI Tutor — RAG & PDF grounding, API endpoints, Constitution & PDF 
 Cohesion: 0.20
 Nodes (10): Billing (East Africa), Certification readiness, Content governance & reporting, Enterprise features (Government / NGO), Grade-A controls (summary), Identity provisioning, Org structure & scale, Production ops (+2 more)
 
-### Community 143 - "BillingPage.jsx"
-Cohesion: 0.29
-Nodes (6): BillingPage, UsageBar(), billingService, API_ORIGIN, BillingPage(), formatPrice()
+### Community 143 - "document_text.py"
+Cohesion: 0.20
+Nodes (9): load_constitution_text(), Build and maintain pre-indexed tutor search text on articles., fetch_attachment_bytes(), _local_media_path(), Path, Extract searchable text from article PDF attachments for tutor retrieval., PostgreSQL text fields reject NUL (0x00) bytes; PDF extractors may emit them., Load attachment bytes from local media or remote URL. (+1 more)
 
 ### Community 144 - "TestSeedDataContent"
 Cohesion: 0.22
@@ -654,29 +667,25 @@ Nodes (6): Compliance readiness (SOC 2 / ISO 27001), Control matrix, Evidence pa
 Cohesion: 0.33
 Nodes (6): Automated backup, CI, Disaster recovery, Manual restore (true incident), Restore drill (required before audits), RPO / RTO targets (ops commitment)
 
-### Community 148 - "enterprise_views.py"
-Cohesion: 0.07
-Nodes (28): issue_tokens_for_user(), Build access/refresh JWTs, optionally with extra claims and a short lifetime., require_sso(), BulkMemberImportView, DepartmentDetailView, _impersonator_id(), _org_support_snapshot(), OrganizationSsoConfigView (+20 more)
+### Community 148 - "APIView"
+Cohesion: 0.08
+Nodes (19): BulkMemberImportView, _impersonator_id(), _org_support_snapshot(), PlatformImpersonateExitView, PlatformImpersonateView, PlatformOrganizationDetailView, PlatformOrganizationListView, PlatformOrganizationPlanView (+11 more)
 
 ### Community 150 - "TestArticleI18n"
 Cohesion: 0.18
 Nodes (4): django_db, TestArticleI18n, TestQuizI18n, TestQuizOptionsI18n
 
-### Community 182 - "test_tutor_providers.py"
-Cohesion: 0.12
-Nodes (14): _anthropic_configured(), get_tutor_provider(), _last_user_message(), _openai_configured(), Pluggable AI providers for the tutor. Mirrors ``apps/billing/providers.py``: a…, Resolve the active provider, degrading to the stub when credentials are missing., Offline provider used when no AI credentials are configured., resolve_provider_name() (+6 more)
+### Community 182 - "resolve_provider_name"
+Cohesion: 0.15
+Nodes (12): _anthropic_configured(), get_tutor_provider(), _is_groq_url(), _normalize_openai_base_url(), _normalize_openai_model(), _openai_configured(), Pluggable AI providers for the tutor. Mirrors ``apps/billing/providers.py``: a…, Resolve the active provider, degrading to the stub when credentials are missing. (+4 more)
 
-### Community 192 - "test_org_analytics.py"
-Cohesion: 0.18
-Nodes (6): free_plan(), org_admin_member(), pro_plan(), django_db, fixture, TestOrgAnalytics
-
-### Community 196 - "RecommendationView"
-Cohesion: 0.40
-Nodes (3): APIView, extend_schema, RecommendationView
+### Community 196 - "test_sanitize_http.py"
+Cohesion: 0.24
+Nodes (9): HTML sanitization helpers (defense-in-depth for user-generated content)., Strip dangerous markup while preserving safe article formatting., Raise ValueError if raw markdown contains obvious XSS payloads., reject_dangerous_markdown(), sanitize_html(), Unit tests for sanitize helpers and remaining safe_http paths., test_assert_http_url_rejects_empty_host(), test_reject_dangerous_markdown_allows_safe() (+1 more)
 
 ### Community 197 - "tenants/views.py"
-Cohesion: 0.11
-Nodes (30): normalize_primary_color(), Return green default when ``color`` is a legacy blue brand value., IsOrgOwnerOrAdmin, BulkImportRowSerializer, DepartmentSerializer, InvitePreviewSerializer, MemberInviteSerializer, MemberRoleUpdateSerializer (+22 more)
+Cohesion: 0.16
+Nodes (13): InvitePreviewSerializer, OrganizationSerializer, UserOrganizationMembershipSerializer, CurrentOrganizationView, InvitePreviewView, LeaveOrganizationView, MyOrganizationsView, OrganizationBySlugView (+5 more)
 
 ### Community 198 - "Civic Education RSS API Reference"
 Cohesion: 0.29
@@ -695,30 +704,30 @@ Cohesion: 0.20
 Nodes (10): Backend tests, CI pipeline (`.github/workflows/ci.yml`), E2E tests (Playwright), Environment variables (live e2e), Frontend unit tests (Vitest), Live backend (`e2e-live` CI job), Mocked API (default — `frontend` CI job), Ops smoke (loadtest job) (+2 more)
 
 ### Community 202 - "whatsapp_views.py"
-Cohesion: 0.14
-Nodes (23): require_sms(), WhatsAppMessage, whatsapp_to_e164(), BroadcastWhatsAppSerializer, Meta, SendWhatsAppSerializer, WhatsAppMessageSerializer, create_whatsapp_log() (+15 more)
+Cohesion: 0.12
+Nodes (30): WhatsAppMessage, org_member_phones(), broadcast_sms_task(), broadcast_whatsapp_task(), shared_task, send_whatsapp_task(), whatsapp_templates_configured(), whatsapp_to_e164() (+22 more)
 
 ### Community 203 - "user_management.py"
-Cohesion: 0.06
-Nodes (40): assignable_roles_for(), is_platform_admin(), is_super_admin(), Platform role names and permission groups. Two authorization planes (do not mix…, role_name(), UserRoleUpdateSerializer, AvatarUploadView, DeactivateAccountView (+32 more)
+Cohesion: 0.11
+Nodes (22): assignable_roles_for(), is_platform_admin(), is_super_admin(), Platform role names and permission groups. Two authorization planes (do not mix…, role_name(), UserRoleUpdateSerializer, AvatarUploadView, DeactivateAccountView (+14 more)
 
 ### Community 204 - "engagement/signals.py"
-Cohesion: 0.22
-Nodes (15): _enqueue(), enqueue_campaign_translation(), enqueue_event_translation(), enqueue_news_translation(), enqueue_petition_translation(), enqueue_poll_option_translation(), enqueue_poll_translation(), receiver (+7 more)
+Cohesion: 0.53
+Nodes (8): _enqueue(), enqueue_campaign_translation(), enqueue_event_translation(), enqueue_news_translation(), enqueue_petition_translation(), enqueue_poll_option_translation(), enqueue_poll_translation(), receiver
 
-### Community 207 - "test_media_articles.py"
-Cohesion: 0.43
-Nodes (6): django_db, Coverage-oriented tests for media–article linking and MediaAsset helpers., test_article_can_attach_audio_and_video(), test_article_rejects_wrong_media_type(), test_media_asset_playback_url_external(), test_media_asset_playback_url_prefers_upload()
+### Community 207 - "Meta"
+Cohesion: 0.18
+Nodes (6): BookmarkViewSet, BookmarkSerializer, CourseLessonSerializer, MediaAssetSummarySerializer, Meta, Compact nested representation for articles.
 
-### Community 210 - "ArticleViewSet"
-Cohesion: 0.14
-Nodes (9): ArticleAttachmentUploadView, ArticleImageUploadView, ArticleViewSet, _can_see_unpublished(), action, APIView, extend_schema, Upload a PDF or document attachment for an article (e.g. full constitution… (+1 more)
+### Community 210 - "log_activity"
+Cohesion: 0.11
+Nodes (12): extend_schema, log_activity(), MediaAssetViewSet, action, ArticleAttachmentUploadView, ArticleImageUploadView, ArticleViewSet, action (+4 more)
 
-### Community 211 - "QuizEditorPage.jsx"
-Cohesion: 0.50
-Nodes (7): QuizEditorPage, buildPayload(), emptyQuestion(), optionsArMismatch(), optionsFromText(), questionFromApi(), QuizEditorPage()
+### Community 211 - "QuizzesPage.jsx"
+Cohesion: 0.12
+Nodes (18): CertificatesPage, QuizEditorPage, QuizzesPage, ResultsPage, Trophy(), Pagination(), CardSkeleton(), TableRowSkeleton() (+10 more)
 
-### Community 212 - "test_phase4.py"
+### Community 212 - "TestPushAdmin"
 Cohesion: 0.24
 Nodes (4): django_db, override_settings, TestPushAdmin, TestSsoStatus
 
@@ -731,128 +740,172 @@ Cohesion: 0.33
 Nodes (3): _make_event(), django_db, TestCivicMap
 
 ### Community 217 - "session.py"
-Cohesion: 0.10
-Nodes (17): JWTCookieAuthentication, Cookie-aware JWT authentication. Checks httpOnly cookies first (preferred, more…, Authenticate via httpOnly cookie if present; fall back to Bearer header., check_session_idle(), get_session_epoch(), is_privileged_user(), Server-side session controls: idle timeout and epoch-based revocation., Privileged sessions enforce idle timeout (platform staff or org admins). (+9 more)
+Cohesion: 0.20
+Nodes (12): JWTCookieAuthentication, Cookie-aware JWT authentication. Checks httpOnly cookies first (preferred, more…, Authenticate via httpOnly cookie if present; fall back to Bearer header., check_session_idle(), is_privileged_user(), Server-side session controls: idle timeout and epoch-based revocation., Privileged sessions enforce idle timeout (platform staff or org admins)., Raise AuthenticationFailed if a privileged user has been idle too long. (+4 more)
 
-### Community 218 - "WebPushSubscriptionAdmin"
-Cohesion: 0.40
-Nodes (4): register, SmsMessageAdmin, WebPushSubscriptionAdmin, display
+### Community 218 - "PasswordResetOtpConfirmSerializer"
+Cohesion: 0.20
+Nodes (3): PasswordResetConfirmSerializer, PasswordResetOtpConfirmSerializer, extend_schema
 
 ### Community 221 - "Command"
 Cohesion: 0.31
 Nodes (4): Command, BaseCommand, Path, Create a PostgreSQL logical backup using pg_dump.
 
-### Community 222 - "sanitize_text_for_db"
-Cohesion: 0.16
-Nodes (11): build_handout_pdf(), load_constitution_text(), One-page learner handout (key facts infographic + reminder)., extract_pdf_text(), PostgreSQL text fields reject NUL (0x00) bytes; PDF extractors may emit them., Return plain text from PDF bytes; empty string on failure., sanitize_text_for_db(), _make_pdf() (+3 more)
+### Community 222 - "extract_pdf_text"
+Cohesion: 0.24
+Nodes (8): build_handout_pdf(), One-page learner handout (key facts infographic + reminder)., extract_pdf_text(), Return plain text from PDF bytes; empty string on failure., _make_pdf(), django_db, TestDocumentText, BytesIO
 
-### Community 223 - "datetime"
-Cohesion: 0.38
-Nodes (11): _event_at(), _all_day_dates(), _as_aware(), build_ics(), event_time_span(), fmt_utc(), fold_ics_line(), google_calendar_url() (+3 more)
+### Community 223 - "CivicEventSerializer"
+Cohesion: 0.19
+Nodes (10): _all_day_dates(), _as_aware(), build_ics(), event_time_span(), fmt_utc(), fold_ics_line(), google_calendar_url(), ics_escape() (+2 more)
 
-### Community 225 - "test_news.py"
-Cohesion: 0.29
+### Community 225 - "TestCivicNews"
+Cohesion: 0.31
 Nodes (3): _make_news(), django_db, TestCivicNews
 
+### Community 227 - "StubTutorProvider"
+Cohesion: 0.27
+Nodes (4): _last_user_message(), Offline provider used when no AI credentials are configured., StubTutorProvider, TestStubProvider
+
 ### Community 230 - "TestTutorChat"
-Cohesion: 0.18
+Cohesion: 0.20
 Nodes (3): django_db, TestTutorAdminUsage, TestTutorChat
 
 ### Community 240 - "TestTopicModeration"
 Cohesion: 0.15
 Nodes (5): django_db, TestCommentModeration, TestPendingQueue, TestTopicModeration, TestTopicVisibility
 
-### Community 243 - "generate_certificate_pdf"
-Cohesion: 0.50
-Nodes (4): generate_certificate_pdf(), generate_certificate_pdf_task(), shared_task, Render the certificate PDF and upload it to storage off the request path.
+### Community 243 - "Certificate"
+Cohesion: 0.27
+Nodes (6): Certificate, Meta, generate_certificate_pdf(), generate_certificate_pdf_task(), shared_task, Render the certificate PDF and upload it to storage off the request path.
 
 ### Community 247 - "CookieTokenRefreshView"
 Cohesion: 0.22
 Nodes (6): CookieAwareTokenRefreshSerializer, CookieTokenRefreshView, Cookie-aware JWT refresh — accepts refresh from body or httpOnly cookie., Refresh access tokens using body or the httpOnly refresh cookie., TokenRefreshSerializer, TokenRefreshView
 
-### Community 250 - "media_views.py"
-Cohesion: 0.10
-Nodes (22): annotate_is_bookmarked(), BookmarkError, Toggle and annotate saved lessons (bookmarks)., Raised when a bookmark cannot be created or removed., Annotate ``is_bookmarked`` for article (``article_id``) or media (``media_id``)., Save or unsave an article. Returns True when the article is now bookmarked., Save or unsave media. Returns True when the media is now bookmarked., _require_organization() (+14 more)
+### Community 248 - "ActivityLog"
+Cohesion: 0.09
+Nodes (14): Command, BaseCommand, Command, BaseCommand, ActivityLog, Meta, ActivityLogSerializer, Meta (+6 more)
+
+### Community 250 - "learning/views.py"
+Cohesion: 0.06
+Nodes (37): api_view, annotate_is_bookmarked(), BookmarkError, Toggle and annotate saved lessons (bookmarks)., Raised when a bookmark cannot be created or removed., Annotate ``is_bookmarked`` for article (``article_id``) or media (``media_id``)., Save or unsave an article. Returns True when the article is now bookmarked., Save or unsave media. Returns True when the media is now bookmarked. (+29 more)
 
 ### Community 251 - "TestPolls"
-Cohesion: 0.19
-Nodes (6): _open_poll(), django_db, TestCampaignJoin, TestPollManagement, TestPollOpinionAnalytics, TestPolls
+Cohesion: 0.20
+Nodes (5): _open_poll(), django_db, TestCampaignJoin, TestPollManagement, TestPolls
 
 ### Community 252 - "accounts/serializers.py"
-Cohesion: 0.08
-Nodes (12): Meta, PasswordResetConfirmSerializer, PasswordResetOtpConfirmSerializer, PasswordResetOtpRequestSerializer, ProfileUpdateSerializer, RegisterSerializer, RoleSerializer, UserProfileSerializer (+4 more)
+Cohesion: 0.12
+Nodes (8): Meta, PasswordResetOtpRequestSerializer, ProfileUpdateSerializer, RegisterSerializer, RoleSerializer, UserProfileSerializer, UserSerializer, ProfileView
 
-### Community 259 - "Plan"
-Cohesion: 0.13
-Nodes (13): PlanAdmin, register, SubscriptionAdmin, Meta, Plan, A subscription tier with pricing and per-tenant quotas., build_meta_message_payload(), Graph API payload: template when configured, otherwise session text. (+5 more)
-
-### Community 261 - "context.py"
-Cohesion: 0.11
-Nodes (16): clear_current_organization(), organization_context(), Per-request tenant context. The current organization is stored in a context…, Temporarily run a block scoped to ``organization`` (e.g. in tasks/tests)., reset_tenant_fail_closed(), set_current_organization(), set_tenant_fail_closed(), Resolves the current tenant for each request. Resolution order: 1. ``X-Tenant-… (+8 more)
-
-### Community 265 - "get_current_organization"
-Cohesion: 0.11
-Nodes (7): build_my_learning_summary(), Personal learning dashboard for the current user in the active organization., get_current_organization(), When True, TenantManager returns no rows unless an org is in context., tenant_queries_fail_closed(), DepartmentListCreateView, TenantQuerySet
-
-### Community 270 - "test_bookmarks.py"
+### Community 261 - "test_enterprise_hardening.py"
 Cohesion: 0.16
-Nodes (6): published_article(), published_media(), django_db, fixture, TestBookmarks, TestPublicQuizList
+Nodes (7): reset_tenant_fail_closed(), set_tenant_fail_closed(), TenantMiddleware, django_db, Fail-closed tenancy, append-only audit, and WORM replica., TestAuditAppendOnly, TestFailClosedTenancy
+
+### Community 264 - "brevo_mail.py"
+Cohesion: 0.31
+Nodes (6): BrevoAPIEmailBackend, _contacts(), _html_body(), Django email backend that sends via Brevo's HTTPS API (port 443). Render free…, POST each message to ``https://api.brevo.com/v3/smtp/email``., BaseEmailBackend
+
+### Community 265 - "OrganizationInvite"
+Cohesion: 0.14
+Nodes (11): OrganizationInvite, Pending email invitation to join an organization., accept_organization_invite(), bulk_provision_members(), create_organization_invite(), get_valid_invite(), atomic, Accept a pending invite and return the new membership. (+3 more)
+
+### Community 270 - "TestBookmarks"
+Cohesion: 0.20
+Nodes (3): django_db, TestBookmarks, TestPublicQuizList
 
 ### Community 271 - "RecordingProvider"
 Cohesion: 0.29
 Nodes (4): django_db, Honors the (text, 0) deltas then ('', total_tokens) terminal contract., RecordingProvider, TestServiceHonorsProviderContract
 
-### Community 272 - "conftest.py"
-Cohesion: 0.06
-Nodes (40): AbstractBaseUser, EmailVerificationToken, Meta, Role, User, UserProfile, ensure_profile(), receiver (+32 more)
+### Community 272 - "enable_mfa"
+Cohesion: 0.12
+Nodes (12): enable_mfa(), login_user(), Enroll a test user in TOTP MFA (privileged routes require this)., Log in via API, completing MFA when enrolled., TestSessionControls, _editor_owner(), django_db, TestOrgAdminIsolation (+4 more)
 
-### Community 273 - "enable_tenant_rls.py"
+### Community 273 - "rls.py"
+Cohesion: 0.22
+Nodes (7): Command, BaseCommand, Opt-in Postgres RLS for tenant tables (non-superuser app role)., apply_rls_session(), Postgres session GUCs for optional row-level security. Django's default…, Bind (or clear) the current org id on the Postgres session., tenant_table_names()
+
+### Community 274 - "SearchPage.jsx"
 Cohesion: 0.33
-Nodes (4): Command, BaseCommand, Opt-in Postgres RLS for tenant tables (non-superuser app role)., tenant_table_names()
+Nodes (6): SearchPage, VoiceInputButton(), searchService, createSpeechRecognizer(), isRecognitionSupported(), SearchPage()
 
-### Community 274 - "map_views.py"
-Cohesion: 0.32
-Nodes (5): CivicMapView, _event_payload(), APIView, extend_schema, Published civic events and k-anonymized learner counts by state.
-
-### Community 276 - "django_db"
-Cohesion: 0.33
-Nodes (3): django_db, TestArticlePublishBroadcast, TestEmailTask
+### Community 276 - "notifications/models.py"
+Cohesion: 0.09
+Nodes (19): shared_task, Send an email asynchronously with retry and logging. Replaces fail_silently so…, send_email_task(), register, SmsMessageAdmin, WebPushSubscriptionAdmin, Notification, notify_user() (+11 more)
 
 ### Community 278 - "CivicMap.jsx"
 Cohesion: 0.44
 Nodes (7): CivicMap(), fillForCount(), MAP_BOUNDS, MAP_SIZE, projectLonLat(), ringToPath(), SOUTH_SUDAN_STATES
 
 ### Community 279 - "sms_services.py"
-Cohesion: 0.16
-Nodes (21): PhoneOTP, SmsMessage, normalize_phone(), Normalize to E.164 for Uganda (+256)., create_sms_log(), deliver_sms(), issue_phone_otp(), queue_sms_to_phone() (+13 more)
+Cohesion: 0.12
+Nodes (28): PhoneOTP, SmsMessage, AfricasTalkingSmsProvider, BaseSmsProvider, _BrokenSmsProvider, DummySmsProvider, get_sms_provider(), normalize_phone() (+20 more)
 
 ### Community 283 - "TestCourses"
 Cohesion: 0.47
 Nodes (3): _published_article(), django_db, TestCourses
 
-### Community 284 - "send_email_task"
+### Community 284 - "_upload_media_file"
+Cohesion: 0.36
+Nodes (5): MediaAudioUploadView, MediaVideoUploadView, APIView, extend_schema, _upload_media_file()
+
+### Community 288 - "QuizCheckAnswerView"
+Cohesion: 0.38
+Nodes (5): QuizCheckAnswerSerializer, CertificateDownloadView, APIView, extend_schema, QuizCheckAnswerView
+
+### Community 289 - "TestUserSuspendIsolation"
+Cohesion: 0.29
+Nodes (3): django_db, TestUserList, TestUserSuspendIsolation
+
+### Community 290 - "GlobalSearchView"
+Cohesion: 0.40
+Nodes (3): GlobalSearchView, APIView, extend_schema
+
+### Community 292 - "MemberDetailView"
+Cohesion: 0.53
+Nodes (3): MemberRoleUpdateSerializer, resolve_department(), MemberDetailView
+
+### Community 299 - "4. Web push — VAPID (optional)"
+Cohesion: 0.33
+Nodes (6): 4. Web push — VAPID (optional), Backend environment, Checklist, Frontend environment (build time), Generate keys, Verify
+
+### Community 300 - "5. AI tutor (optional)"
+Cohesion: 0.33
+Nodes (6): 5. AI tutor (optional), Backend environment, Checklist, Free option for local testing, Free option on Render ($0 ongoing), Verify
+
+### Community 301 - "OrganizationSsoConfig"
+Cohesion: 0.40
+Nodes (3): get_org_sso_config(), OrganizationSsoConfig, Per-organization OpenID Connect settings (Enterprise plan).
+
+### Community 302 - "tenants/admin.py"
+Cohesion: 0.60
+Nodes (4): MembershipAdmin, OrganizationAdmin, OrganizationInviteAdmin, register
+
+### Community 306 - "create_default_subscription"
 Cohesion: 0.67
-Nodes (3): shared_task, Send an email asynchronously with retry and logging. Replaces fail_silently so…, send_email_task()
+Nodes (3): create_default_subscription(), receiver, Every new organization starts on the default (free) plan.
 
 ## Knowledge Gaps
-- **352 isolated node(s):** `Migration`, `Migration`, `Migration`, `Migration`, `Migration` (+347 more)
+- **353 isolated node(s):** `Migration`, `Migration`, `Migration`, `Migration`, `Migration` (+348 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **99 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **102 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `bind_client_to_org()` connect `bind_client_to_org` to `Plan`, `Quiz`, `forum/views.py`, `test_saas.py`, `CivicEvent`, `test_bookmarks.py`, `conftest.py`, `log_security_event`, `notifications/views.py`, `TestBilling`, `TestArticleI18n`, `sms_services.py`, `test_medium_features.py`, `TestWhatsAppChannel`, `TestCourses`, `TestOrganizationInvites`, `integrations.py`, `django_db`, `django_db`, `TestCivicEvents`, `seed_data.py`, `views/auth.py`, `TestRecommendations`, `Membership`, `test_org_analytics.py`, `test_low_vision_features.py`, `TestAwareness`, `test_media_articles.py`, `test_phase4.py`, `test_security.py`, `Article`, `TestCivicMap`, `test_news.py`, `TestSupportImpersonation`, `TestTutorChat`, `TestTopicModeration`, `TestPolls`?**
-  _High betweenness centrality (0.072) - this node is a cross-community bridge._
-- **Why does `get_current_organization()` connect `get_current_organization` to `quizzes/views.py`, `sso.py`, `context.py`, `forum/views.py`, `ArticleSerializer`, `log_activity`, `core/middleware.py`, `map_views.py`, `notifications/views.py`, `enterprise_views.py`, `sms_services.py`, `tenants/permissions.py`, `engagement/views.py`, `sms_views.py`, `i18n_report.py`, `seed_data.py`, `analytics/views.py`, `tutor/services.py`, `Membership`, `billing/views.py`, `tenants/views.py`, `test_low_vision_features.py`, `whatsapp_views.py`, `user_management.py`, `analytics/services.py`, `ArticleViewSet`, `Article`, `media_views.py`?**
-  _High betweenness centrality (0.059) - this node is a cross-community bridge._
-- **Why does `Article` connect `Article` to `context.py`, `forum/views.py`, `Quiz`, `test_saas.py`, `ArticleSerializer`, `test_bookmarks.py`, `conftest.py`, `enterprise_views.py`, `test_medium_features.py`, `test_tutor_retrieval.py`, `test_article_translation.py`, `seed_data.py`, `analytics/views.py`, `tutor/services.py`, `learning/signals.py`, `test_low_vision_features.py`, `analytics/services.py`, `test_media_articles.py`, `ArticleViewSet`, `media_views.py`?**
-  _High betweenness centrality (0.037) - this node is a cross-community bridge._
+- **Why does `bind_client_to_org()` connect `bind_client_to_org` to `views/mfa.py`, `TestForum`, `Quiz`, `forum/views.py`, `event_views.py`, `TestBookmarks`, `enable_mfa`, `TestPlatformSupportAndSecurity`, `notifications/models.py`, `TestBilling`, `TestArticleI18n`, `sms_services.py`, `seed_data.py`, `TestWhatsAppChannel`, `TestCourses`, `TestOrganizationInvites`, `integrations.py`, `TestUserSuspendIsolation`, `django_db`, `TestLearningProgress`, `test_product_features.py`, `TestCivicEvents`, `audit/services.py`, `TestRecommendations`, `get_current_organization`, `TestMediaLibraryApi`, `TestTutorHistory`, `tutor/services.py`, `Membership`, `test_low_vision_features.py`, `TestAwareness`, `TestPushAdmin`, `TestQuizzes`, `Article`, `TestCivicMap`, `TestCivicNews`, `TestSupportImpersonation`, `TestTutorChat`, `TestTopicModeration`, `TestPolls`?**
+  _High betweenness centrality (0.074) - this node is a cross-community bridge._
+- **Why does `get_current_organization()` connect `get_current_organization` to `quizzes/views.py`, `MediaAssetSerializer`, `OrganizationInvite`, `grade_a_views.py`, `core/middleware.py`, `notifications/views.py`, `APIView`, `BaseBillingProvider`, `sms_services.py`, `tenants/permissions.py`, `seed_data.py`, `_upload_media_file`, `sms_views.py`, `billing/services.py`, `MemberDetailView`, `i18n_report.py`, `audit/services.py`, `tutor/services.py`, `sso_views.py`, `Membership`, `CourseSerializer`, `billing/views.py`, `tenants/views.py`, `test_low_vision_features.py`, `tenants/serializers.py`, `whatsapp_views.py`, `user_management.py`, `prompts.py`, `log_activity`, `Article`, `ArticleSerializer`, `ActivityLog`, `learning/views.py`?**
+  _High betweenness centrality (0.058) - this node is a cross-community bridge._
+- **Why does `Article` connect `Article` to `CourseSerializer`, `ArticleSerializer`, `translate_missing.py`, `test_article_translation.py`, `Quiz`, `test_enterprise_hardening.py`, `test_low_vision_features.py`, `get_current_organization`, `prompts.py`, `tutor/services.py`, `log_activity`, `notifications/models.py`, `seed_data.py`, `learning/views.py`, `test_tutor_retrieval.py`, `Membership`, `learning/signals.py`?**
+  _High betweenness centrality (0.039) - this node is a cross-community bridge._
 - **Are the 21 inferred relationships involving `Membership` (e.g. with `TenantMiddleware` and `CanDeleteOrgContent`) actually correct?**
   _`Membership` has 21 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `Migration`, `Migration`, `Migration` to the rest of the system?**
-  _352 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `services.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.07399577167019028 - nodes in this community are weakly interconnected._
-- **Should `QuizTakePage.jsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.14482758620689656 - nodes in this community are weakly interconnected._
+  _353 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `AdminPage.jsx` be split into smaller, more focused modules?**
+  _Cohesion score 0.0989247311827957 - nodes in this community are weakly interconnected._
+- **Should `views/mfa.py` be split into smaller, more focused modules?**
+  _Cohesion score 0.09388335704125178 - nodes in this community are weakly interconnected._

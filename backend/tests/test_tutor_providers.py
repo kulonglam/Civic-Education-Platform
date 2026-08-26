@@ -81,8 +81,16 @@ class TestProviderSelection:
         no_ai_credentials.OPENAI_BASE_URL = 'https://api.groq.com/openai/v1'
         no_ai_credentials.OPENAI_MODEL = 'gpt-4o-mini'
         provider = get_tutor_provider()
-        assert provider.model == 'llama-3.1-8b-instant'
+        assert provider.model == 'openai/gpt-oss-20b'
         assert provider.base_url == 'https://api.groq.com/openai/v1'
+
+    def test_groq_replaces_retired_llama_model_ids(self, no_ai_credentials):
+        no_ai_credentials.TUTOR_PROVIDER = 'openai'
+        no_ai_credentials.OPENAI_API_KEY = 'gsk_live_tutor_key'
+        no_ai_credentials.OPENAI_BASE_URL = 'https://api.groq.com/openai/v1'
+        no_ai_credentials.OPENAI_MODEL = 'llama-3.1-8b-instant'
+        provider = get_tutor_provider()
+        assert provider.model == 'openai/gpt-oss-20b'
 
 
 class TestStubProvider:

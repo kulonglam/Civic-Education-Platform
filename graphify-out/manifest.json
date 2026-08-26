@@ -1230,9 +1230,9 @@
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "backend/config/settings/base.py": {
-    "mtime": 1787740720.1129405,
-    "seen": 1787740800.7238133,
-    "ast_hash": "de32453b3651e1a85274bf115602a2ab",
+    "mtime": 1787742542.5998993,
+    "seen": 1787742611.8318071,
+    "ast_hash": "f4de51a2b5b947b73aecbd3785a610dd",
     "semantic_hash": ""
   },
   "backend/config/settings/development.py": {
@@ -2286,9 +2286,9 @@
     "semantic_hash": ""
   },
   "docs/production-env-checklist.md": {
-    "mtime": 1787738779.9768949,
-    "seen": 1787740800.7245626,
-    "ast_hash": "4cb405c9b21a24dc935f5f0f3be80246",
+    "mtime": 1787742543.5511525,
+    "seen": 1787742611.832449,
+    "ast_hash": "209012c0493554663b4601b733bc3630",
     "semantic_hash": ""
   },
   "docs/production-launch.md": {
@@ -2316,9 +2316,9 @@
     "semantic_hash": ""
   },
   "render.yaml": {
-    "mtime": 1787738808.7293382,
-    "seen": 1787740800.724581,
-    "ast_hash": "8865368a9009cdcce608c994dcf09452",
+    "mtime": 1787742542.585848,
+    "seen": 1787742611.8324656,
+    "ast_hash": "50a393ed9a6f8a61f054ff6ad4aecff2",
     "semantic_hash": ""
   },
   "backend/apps/accounts/management/commands/seed_assets/transitional-constitution-sample.pdf": {
@@ -2694,9 +2694,9 @@
     "semantic_hash": ""
   },
   "backend/apps/tutor/providers.py": {
-    "mtime": 1787740712.7766716,
-    "seen": 1787740800.7237766,
-    "ast_hash": "de2d61882ecd0f4b85b41ffa45eb2ead",
+    "mtime": 1787742547.5214956,
+    "seen": 1787742611.831775,
+    "ast_hash": "a306908cfeede2ca97ae5976c2320ec4",
     "semantic_hash": ""
   },
   "backend/apps/tutor/sessions.py": {
@@ -2706,9 +2706,9 @@
     "semantic_hash": ""
   },
   "backend/tests/test_tutor_providers.py": {
-    "mtime": 1787740712.7924166,
-    "seen": 1787740800.723989,
-    "ast_hash": "edaedf04b624ecef77a481ba1404f35c",
+    "mtime": 1787742542.1524043,
+    "seen": 1787742611.8319583,
+    "ast_hash": "1d7034e221fa74f8d7a81f0856cf3a00",
     "semantic_hash": ""
   },
   "backend/apps/learning/management/__init__.py": {
@@ -3486,9 +3486,9 @@
     "semantic_hash": ""
   },
   "docs/production-credentials.md": {
-    "mtime": 1787738774.363575,
-    "seen": 1787740800.7245605,
-    "ast_hash": "9f9a4a9659db03fa0431f7fa02144a2e",
+    "mtime": 1787742543.2671106,
+    "seen": 1787742611.832446,
+    "ast_hash": "addca16b17e7f01fe5fd676da9c2b19f",
     "semantic_hash": ""
   },
   "backend/apps/core/brevo_mail.py": {

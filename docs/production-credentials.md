@@ -282,7 +282,7 @@ Set on the **API web** service (sync request). Same provider fills Arabic articl
 TUTOR_PROVIDER=openai
 OPENAI_API_KEY=gsk_...
 OPENAI_BASE_URL=https://api.groq.com/openai/v1
-OPENAI_MODEL=llama-3.1-8b-instant
+OPENAI_MODEL=openai/gpt-oss-20b
 OPENAI_MAX_TOKENS=1024
 ANTHROPIC_API_KEY=
 ```

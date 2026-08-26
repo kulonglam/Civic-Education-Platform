@@ -1230,9 +1230,9 @@
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "backend/config/settings/base.py": {
-    "mtime": 1787724512.074336,
-    "seen": 1787724731.6244445,
-    "ast_hash": "b78e3b16ec6b70da7c98bac114468360",
+    "mtime": 1787740720.1129405,
+    "seen": 1787740800.7238133,
+    "ast_hash": "de32453b3651e1a85274bf115602a2ab",
     "semantic_hash": ""
   },
   "backend/config/settings/development.py": {
@@ -1590,9 +1590,9 @@
     "semantic_hash": "c8ccb55be01f9f8dab02cca5c010085c"
   },
   "frontend/src/components/ErrorBoundary.jsx": {
-    "mtime": 1787733835.3383281,
-    "seen": 1787734039.6831498,
-    "ast_hash": "315b7eee9031962bf69262b8cab5fb5c",
+    "mtime": 1787736709.1865442,
+    "seen": 1787740800.7240705,
+    "ast_hash": "9972956c5a31eb1598e8bc647ae6b1a5",
     "semantic_hash": ""
   },
   "frontend/src/components/Icons.jsx": {
@@ -1614,9 +1614,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Layout.jsx": {
-    "mtime": 1787735066.689283,
-    "seen": 1787735304.8527362,
-    "ast_hash": "58a04241b5fcc83acdccd4221c9c420f",
+    "mtime": 1787736723.6011848,
+    "seen": 1787740800.7240996,
+    "ast_hash": "b5d246525bba59e94073c254a64423f6",
     "semantic_hash": ""
   },
   "frontend/src/components/MediaPlayer.jsx": {
@@ -1734,15 +1734,15 @@
     "semantic_hash": "8f158a1aeb80418205bdf225babba6f4"
   },
   "frontend/src/i18n/ar.json": {
-    "mtime": 1787735258.1716533,
-    "seen": 1787735304.8527894,
-    "ast_hash": "913ef2a45c893db29f1691cce5512124",
+    "mtime": 1787736688.469649,
+    "seen": 1787740800.7241807,
+    "ast_hash": "a5cf7570dcc06184089d99da59d7e967",
     "semantic_hash": ""
   },
   "frontend/src/i18n/en.json": {
-    "mtime": 1787689537.0265553,
-    "seen": 1787689883.627456,
-    "ast_hash": "3a06b0f040bd454fb84edff383e739cb",
+    "mtime": 1787736686.871449,
+    "seen": 1787740800.724183,
+    "ast_hash": "4a65e8f8282f8b9a9c1e65b1680f2e9b",
     "semantic_hash": ""
   },
   "frontend/src/i18n/index.js": {
@@ -2286,9 +2286,9 @@
     "semantic_hash": ""
   },
   "docs/production-env-checklist.md": {
-    "mtime": 1787689616.2622893,
-    "seen": 1787689883.6276424,
-    "ast_hash": "594a455734190472a6ed0d474d8e6b2e",
+    "mtime": 1787738779.9768949,
+    "seen": 1787740800.7245626,
+    "ast_hash": "4cb405c9b21a24dc935f5f0f3be80246",
     "semantic_hash": ""
   },
   "docs/production-launch.md": {
@@ -2316,9 +2316,9 @@
     "semantic_hash": ""
   },
   "render.yaml": {
-    "mtime": 1787724547.7538118,
-    "seen": 1787724731.6258001,
-    "ast_hash": "2f0e8a57ea86a5e1ae68727802cbd82e",
+    "mtime": 1787738808.7293382,
+    "seen": 1787740800.724581,
+    "ast_hash": "8865368a9009cdcce608c994dcf09452",
     "semantic_hash": ""
   },
   "backend/apps/accounts/management/commands/seed_assets/transitional-constitution-sample.pdf": {
@@ -2694,9 +2694,9 @@
     "semantic_hash": ""
   },
   "backend/apps/tutor/providers.py": {
-    "mtime": 1787566381.3794897,
-    "seen": 1787566563.5958421,
-    "ast_hash": "6484dbbe8aa669da9d851601eb4f79c5",
+    "mtime": 1787740712.7766716,
+    "seen": 1787740800.7237766,
+    "ast_hash": "de2d61882ecd0f4b85b41ffa45eb2ead",
     "semantic_hash": ""
   },
   "backend/apps/tutor/sessions.py": {
@@ -2706,9 +2706,9 @@
     "semantic_hash": ""
   },
   "backend/tests/test_tutor_providers.py": {
-    "mtime": 1787309571.4482384,
-    "seen": 1787310004.7908056,
-    "ast_hash": "a94551e58feff774dfd12b536a66b49b",
+    "mtime": 1787740712.7924166,
+    "seen": 1787740800.723989,
+    "ast_hash": "edaedf04b624ecef77a481ba1404f35c",
     "semantic_hash": ""
   },
   "backend/apps/learning/management/__init__.py": {
@@ -3486,9 +3486,9 @@
     "semantic_hash": ""
   },
   "docs/production-credentials.md": {
-    "mtime": 1787728970.3722577,
-    "seen": 1787734039.6833723,
-    "ast_hash": "da8a3283a82322a17b84d7157c4f76eb",
+    "mtime": 1787738774.363575,
+    "seen": 1787740800.7245605,
+    "ast_hash": "9f9a4a9659db03fa0431f7fa02144a2e",
     "semantic_hash": ""
   },
   "backend/apps/core/brevo_mail.py": {
@@ -3579,6 +3579,12 @@
     "mtime": 1787734788.6373894,
     "seen": 1787735304.8529491,
     "ast_hash": "92a0757457249758308633be1429d919",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/ErrorBoundary.test.jsx": {
+    "mtime": 1787736723.656251,
+    "seen": 1787740800.724074,
+    "ast_hash": "ed8c6165c42ffaade5dc804b16eb067f",
     "semantic_hash": ""
   }
 }
