@@ -11,7 +11,9 @@ import App from './App';
 initSentry();
 
 if ('serviceWorker' in navigator) {
-  registerSW({ immediate: true });
+  window.addEventListener('load', () => {
+    registerSW({ immediate: false });
+  });
 }
 
 createRoot(document.getElementById('root')).render(

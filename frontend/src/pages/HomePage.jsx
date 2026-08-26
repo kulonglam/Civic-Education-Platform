@@ -107,11 +107,15 @@ function HomePage() {
       {/* Full-bleed hero: photo plane + headline, support, CTAs (brand lives in navbar) */}
       <section
         aria-labelledby="home-hero-title"
-        className="relative isolate min-h-[min(92vh,52rem)] overflow-hidden bg-brand-950 text-white"
+        className="relative isolate min-h-[min(68vh,34rem)] overflow-hidden bg-brand-950 text-white sm:min-h-[min(88vh,48rem)]"
       >
         <img
           src="/hero-civic.jpg"
           alt={t('home.heroImageAlt')}
+          width={1920}
+          height={1080}
+          sizes="100vw"
+          decoding="async"
           className="absolute inset-0 h-full w-full object-cover object-[center_28%]"
           fetchPriority="high"
         />
@@ -120,11 +124,11 @@ function HomePage() {
           aria-hidden="true"
         />
         <div
-          className="pointer-events-none absolute -right-24 top-10 h-[28rem] w-[28rem] rounded-full bg-brand-400/15 blur-3xl animate-soft-pulse"
+          className="pointer-events-none absolute -right-24 top-10 hidden h-[28rem] w-[28rem] rounded-full bg-brand-400/15 blur-3xl animate-soft-pulse sm:block"
           aria-hidden="true"
         />
 
-        <div className="relative prose-panel flex min-h-[min(92vh,52rem)] flex-col justify-center py-16 sm:py-20">
+        <div className="relative prose-panel flex min-h-[min(68vh,34rem)] flex-col justify-center py-12 sm:min-h-[min(88vh,48rem)] sm:py-20">
           <div className="max-w-3xl">
             {user && (
               <p className="animate-fade-up text-sm font-medium text-brand-200">
@@ -142,7 +146,7 @@ function HomePage() {
               {t('home.heroSubtitle')}
             </p>
 
-            <div className="animate-fade-up-late mt-9 flex flex-wrap gap-3">
+            <div className="animate-fade-up-late mt-8 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:flex-wrap [&_.btn]:w-full [&_.btn]:justify-center sm:[&_.btn]:w-auto">
               {user ? (
                 <>
                   <Link
@@ -355,7 +359,7 @@ function HomePage() {
         </section>
 
         {!user && (
-          <section className="relative overflow-hidden rounded-[2rem] bg-brand-900 px-8 py-14 text-center text-white sm:px-12">
+          <section className="relative overflow-hidden rounded-3xl bg-brand-900 px-5 py-10 text-center text-white sm:rounded-[2rem] sm:px-12 sm:py-14">
             <div
               className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(52,211,153,0.25),transparent_55%)]"
               aria-hidden="true"

@@ -62,7 +62,7 @@ export function AccessibilityMenu() {
         <div
           role="dialog"
           aria-label={t('a11y.panelTitle')}
-          className="absolute right-0 z-40 mt-1.5 w-72 rounded-xl border border-ink-100 bg-white/95 p-4 shadow-lift backdrop-blur-sm dark:border-slate-700 dark:bg-slate-800"
+          className="absolute right-0 z-40 mt-1.5 w-72 max-w-[calc(100vw-1.5rem)] rounded-xl border border-ink-100 bg-white/95 p-4 shadow-lift backdrop-blur-sm dark:border-slate-700 dark:bg-slate-800"
         >
           <p className="font-display text-sm font-semibold text-ink-900 dark:text-slate-100">
             {t('a11y.panelTitle')}

@@ -29,6 +29,11 @@
       radial-gradient(ellipse 90% 55% at 0% -8%, rgba(16, 185, 129, 0.11), transparent 58%),
       radial-gradient(ellipse 70% 45% at 100% 0%, rgba(4, 120, 87, 0.08), transparent 52%),
       radial-gradient(ellipse 50% 30% at 50% 100%, rgba(15, 18, 14, 0.03), transparent 60%);
+    overflow-x: clip;
+  }
+  #root {
+    max-width: 100%;
+    overflow-x: clip;
   }
   .dark body,
   html.dark body {
@@ -85,7 +90,7 @@
     @apply mb-1.5 block text-sm font-medium text-ink-700 dark:text-slate-300;
   }
   .card {
-    @apply rounded-2xl border border-ink-100/80 bg-white/90 p-6 shadow-soft backdrop-blur-sm;
+    @apply rounded-2xl border border-ink-100/80 bg-white/90 p-4 shadow-soft backdrop-blur-sm sm:p-6;
     @apply dark:border-slate-700/70 dark:bg-slate-800/90;
   }
   .surface {
@@ -180,7 +185,7 @@
     @apply dark:border-slate-700/70 dark:bg-slate-800/80;
   }
   .data-table-wrap {
-    @apply overflow-hidden rounded-2xl border border-ink-100/80 bg-white/95 shadow-soft dark:border-slate-700/70 dark:bg-slate-800/90;
+    @apply overflow-x-auto rounded-2xl border border-ink-100/80 bg-white/95 shadow-soft dark:border-slate-700/70 dark:bg-slate-800/90;
   }
   .data-table {
     @apply w-full text-sm;
@@ -211,13 +216,13 @@
     @apply pointer-events-none absolute -left-2 -top-3 h-16 w-16 rounded-full bg-brand-400/10 blur-2xl dark:bg-brand-500/15;
   }
   .trust-strip {
-    @apply flex flex-col gap-3 text-sm font-medium text-ink-800 dark:text-slate-200 sm:flex-row sm:flex-wrap sm:items-center sm:gap-0;
+    @apply flex flex-col gap-3 text-sm font-medium text-ink-800 dark:text-slate-200 md:flex-row md:flex-wrap md:items-center md:gap-0;
   }
   .trust-strip li {
-    @apply sm:pr-4;
+    @apply md:pr-4;
   }
   .trust-strip li + li {
-    @apply sm:border-l sm:border-ink-200 sm:pl-4 dark:sm:border-slate-700;
+    @apply md:border-l md:border-ink-200 md:pl-4 dark:md:border-slate-700;
   }
   .topic-links {
     @apply flex flex-wrap gap-x-5 gap-y-2 text-sm;

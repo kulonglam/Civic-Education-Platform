@@ -72,7 +72,7 @@ function HeaderSearchLink() {
   );
 }
 
-function NavDropdown({ label, avatar, badge, items, align = 'left', active = false }) {
+function NavDropdown({ label, avatar, badge, items, align = 'left', active = false, compactOnMobile = false }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -136,7 +136,7 @@ function NavDropdown({ label, avatar, badge, items, align = 'left', active = fal
     <div ref={ref} className="relative" onKeyDown={handleKeyDown}>
       <button
         type="button"
-        className={`relative flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+        className={`relative flex max-w-[40vw] items-center gap-1.5 rounded-lg px-2 py-2 text-sm font-medium transition-colors sm:max-w-none sm:px-3 ${
           open || active
             ? 'bg-brand-50 text-brand-800 dark:bg-brand-900/40 dark:text-brand-300'
             : 'text-ink-700 hover:bg-ink-100/70 dark:text-slate-300 dark:hover:bg-slate-800'
@@ -151,13 +151,17 @@ function NavDropdown({ label, avatar, badge, items, align = 'left', active = fal
             {avatar}
           </span>
         )}
-        {label}
+        {label && (
+          <span className={compactOnMobile ? 'hidden max-w-[8rem] truncate sm:inline' : 'truncate'}>
+            {label}
+          </span>
+        )}
         {badge > 0 && (
           <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
             {badge > 9 ? '9+' : badge}
           </span>
         )}
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+        <svg className="hidden sm:block" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
           <path d="M6 9l6 6 6-6" />
         </svg>
       </button>
@@ -165,7 +169,7 @@ function NavDropdown({ label, avatar, badge, items, align = 'left', active = fal
       {open && (
         <div
           role="menu"
-          className={`absolute top-full z-30 mt-1.5 min-w-[12rem] rounded-xl border border-ink-100 bg-white/95 py-1 shadow-lift backdrop-blur-sm dark:border-slate-700 dark:bg-slate-800 ${
+          className={`absolute top-full z-30 mt-1.5 max-h-[70vh] min-w-[12rem] max-w-[min(20rem,calc(100vw-1.5rem))] overflow-y-auto rounded-xl border border-ink-100 bg-white/95 py-1 shadow-lift backdrop-blur-sm dark:border-slate-700 dark:bg-slate-800 ${
             align === 'right' ? 'right-0' : 'left-0'
           }`}
         >
@@ -405,7 +409,7 @@ export function Layout() {
       )}
 
       <header className="glass-nav" role="banner">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3.5">
+        <div className="mx-auto flex max-w-6xl min-w-0 items-center justify-between gap-2 px-3 py-3 sm:gap-3 sm:px-4 sm:py-3.5">
           <Link to="/" className="flex min-w-0 shrink items-center gap-2.5" aria-label={t('app.name')}>
             {organization?.logo_url ? (
               <img
@@ -417,7 +421,7 @@ export function Layout() {
               <PlatformLogo className="h-9 w-9" alt={organization?.name ?? t('app.name')} />
             )}
             <span className="min-w-0">
-              <span className="block truncate font-display text-base font-semibold text-ink-900 dark:text-slate-100 lg:text-lg">
+              <span className="block truncate font-display text-sm font-semibold text-ink-900 dark:text-slate-100 sm:text-base lg:text-lg">
                 {organization?.name ?? t('app.name')}
               </span>
               {organization?.name && !isAuthSurface && (
@@ -450,7 +454,7 @@ export function Layout() {
             </>
           )}
 
-          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
             {user && !isAuthSurface && <OrgSwitcher />}
             <LanguageSwitcher />
             <AccessibilityMenu />
@@ -471,6 +475,7 @@ export function Layout() {
                 badge={unreadCount}
                 items={accountItems}
                 align="right"
+                compactOnMobile
               />
             ) : (
               <div className="hidden items-center gap-2 lg:flex">
@@ -507,7 +512,7 @@ export function Layout() {
         {menuOpen && !isAuthSurface && (
           <div
             id="mobile-nav"
-            className="border-t border-ink-100/80 bg-white/95 px-4 py-4 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95 lg:hidden"
+            className="max-h-[min(70vh,28rem)] overflow-y-auto border-t border-ink-100/80 bg-white/95 px-4 py-4 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95 lg:hidden"
           >
             <div className="flex flex-col gap-2">
               <MobileSection title={t('nav.learn')}>
@@ -661,7 +666,7 @@ export function Layout() {
         <button
           type="button"
           aria-label={t('a11y.backToTop')}
-          className="fixed bottom-6 right-6 z-40 flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-700 text-white shadow-lift transition-all hover:bg-brand-800"
+          className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-4 z-40 flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-700 text-white shadow-lift transition-all hover:bg-brand-800 sm:bottom-6 sm:right-6"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
           <ArrowUp className="h-5 w-5" />
@@ -669,7 +674,8 @@ export function Layout() {
       )}
 
       <Toaster
-        position="top-right"
+        position="top-center"
+        containerStyle={{ top: '0.75rem' }}
         toastOptions={{
           duration: 3500,
           style: {
