@@ -107,3 +107,16 @@ class TestTutorAdminUsage:
         assert response.data['messages_today'] >= 1
         assert 'tokens_today' in response.data
         assert 'active_users_today' in response.data
+
+
+@pytest.mark.django_db
+class TestTutorPromptVoice:
+    def test_system_prompt_forbids_report_tables(self, org, citizen_user):
+        from apps.tenants.context import set_current_organization
+        from apps.tutor.prompts import build_system_prompt
+
+        set_current_organization(org)
+        prompt = build_system_prompt(citizen_user, None, 'What are the takeaways?')
+        assert 'markdown tables' in prompt
+        assert 'Key Take-aways' in prompt
+        assert '220 words' in prompt

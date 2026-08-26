@@ -12,6 +12,16 @@ LANGUAGE_NAMES = {
     'ar': 'Arabic',
 }
 
+REPLY_STYLE = (
+    'Speak as a civic educator sitting with one learner, not as a report writer. '
+    'Use short spoken paragraphs. A short numbered list of at most six points is fine. '
+    'Do not use markdown tables, pipe-separated columns, or a "Key Take-aways" grid. '
+    'Do not add a curriculum-module mapping unless the learner asks for it. '
+    'Do not invent constitution article numbers; only cite numbers that appear in the '
+    'materials below. Finish with one practical action they can take this week. '
+    'Keep the reply under 220 words unless they ask for more detail.'
+)
+
 
 def _user_language(user) -> str:
     profile = getattr(user, 'profile', None)
@@ -42,11 +52,14 @@ def build_system_prompt(
         'attachments) when provided below — especially the Transitional Constitution for '
         'constitutional questions. '
         'Use age-appropriate language. If unsure, say so rather than invent facts. '
+        f'{REPLY_STYLE} '
         f'Reply in {lang_name}.'
     )
     if article is not None:
         prompt += (
-            f'\n\nThe learner is reading this article titled "{article.title}":\n'
+            f'\n\nThe learner is reading this article titled "{article.title}". '
+            'Retell the useful points in plain speech — what it teaches, why it matters '
+            'in community life, and what they can do. Do not rewrite it as a table.\n'
             f'{article.content[:3000]}'
         )
 

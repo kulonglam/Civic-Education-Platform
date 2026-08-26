@@ -10,7 +10,21 @@ import { formatDate } from '../lib/format';
 import { localizedArticle } from '../lib/localizedContent';
 import { streamTutorChat } from '../lib/tutorStream';
 import { articleService, tutorService } from '../lib/services';
+import { renderMarkdown } from '../lib/markdown';
 import { VoiceInputButton } from '../components/VoiceInputButton';
+
+function TutorBubble({ role, content }) {
+  const isUser = role === 'user';
+  const className = `max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+    isUser
+      ? 'bg-brand-700 text-white shadow-soft whitespace-pre-wrap'
+      : 'tutor-reply prose prose-sm max-w-none bg-ink-50 text-ink-900 dark:bg-slate-800 dark:text-slate-100 dark:prose-invert'
+  }`;
+  if (isUser) {
+    return <div className={className}>{content}</div>;
+  }
+  return <div className={className} dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }} />;
+}
 
 function UsageMeter({ usage }) {
   const { t } = useTranslation();
@@ -372,23 +386,13 @@ export function TutorPage() {
                   key={`${msg.role}-${index}`}
                   className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
                 >
-                  <div
-                    className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
-                      msg.role === 'user'
-                        ? 'bg-brand-700 text-white shadow-soft'
-                        : 'bg-ink-50 text-ink-900 dark:bg-slate-800 dark:text-slate-100'
-                    }`}
-                  >
-                    {msg.content}
-                  </div>
+                  <TutorBubble role={msg.role} content={msg.content} />
                   {msg.role === 'assistant' && <TutorSources sources={msg.sources} />}
                 </div>
               ))}
               {sendMessage.isPending && streamText && (
                 <div className="flex justify-start">
-                  <div className="max-w-[85%] rounded-2xl bg-ink-50 px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap text-ink-900 dark:bg-slate-800 dark:text-slate-100">
-                    {streamText}
-                  </div>
+                  <TutorBubble role="assistant" content={streamText} />
                 </div>
               )}
               {sendMessage.isPending && !streamText && (

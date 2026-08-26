@@ -258,6 +258,33 @@
   .empty-state {
     @apply surface px-6 py-16 text-center;
   }
+  .tutor-reply {
+    @apply text-sm leading-relaxed;
+  }
+  .tutor-reply :first-child {
+    @apply mt-0;
+  }
+  .tutor-reply :last-child {
+    @apply mb-0;
+  }
+  .tutor-reply p {
+    @apply mb-2.5;
+  }
+  .tutor-reply ul,
+  .tutor-reply ol {
+    @apply mb-2.5 ms-4 list-outside space-y-1;
+  }
+  .tutor-reply li {
+    @apply leading-relaxed;
+  }
+  .tutor-reply h1,
+  .tutor-reply h2,
+  .tutor-reply h3 {
+    @apply mb-1.5 mt-3 text-sm font-semibold;
+  }
+  .tutor-reply strong {
+    @apply font-semibold;
+  }
 }
 
 html[data-contrast='high'] body {

@@ -1464,9 +1464,9 @@
     "semantic_hash": ""
   },
   "backend/tests/test_tutor.py": {
-    "mtime": 1785016598.1035283,
-    "seen": 1787306733.3913333,
-    "ast_hash": "2d56df26482881dbd4cb2d1aee68f29c",
+    "mtime": 1787743715.998713,
+    "seen": 1787743780.355011,
+    "ast_hash": "4a5853face5c275ab7dbac0595bb4080",
     "semantic_hash": ""
   },
   "backend/tests/test_tutor_retrieval.py": {
@@ -2148,9 +2148,9 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/TutorPage.jsx": {
-    "mtime": 1787590845.4504144,
-    "seen": 1787591276.9962268,
-    "ast_hash": "4cc5466779d3e9c966199021ef73025e",
+    "mtime": 1787743735.0466056,
+    "seen": 1787743780.3552644,
+    "ast_hash": "7da1040a41d7cdf8d809e50d528f6cb4",
     "semantic_hash": ""
   },
   "frontend/src/pages/VerifyEmailPage.jsx": {
@@ -2688,9 +2688,9 @@
     "semantic_hash": ""
   },
   "backend/apps/tutor/prompts.py": {
-    "mtime": 1787577234.6103125,
-    "seen": 1787577668.6390004,
-    "ast_hash": "54dce4e2d0fbea10b9e0dff3e8c40aa9",
+    "mtime": 1787743704.6203485,
+    "seen": 1787743780.3549056,
+    "ast_hash": "bfd069143b19241b9c6df644d07834a7",
     "semantic_hash": ""
   },
   "backend/apps/tutor/providers.py": {
