@@ -1067,7 +1067,7 @@ function AdminPage() {
                   <span className="badge mb-1 bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">{t('admin.pendingTopics')}</span>
                   <h3 className="font-semibold text-ink-900 dark:text-slate-100">{topic.title}</h3>
                   <p className="mt-1 line-clamp-2 text-sm text-ink-700/80 dark:text-slate-400">{topic.content}</p>
-                  <p className="mt-1 text-xs text-ink-700/45 dark:text-slate-500">{topic.author_name}</p>
+                  <p className="mt-1 text-xs text-ink-700/70 dark:text-slate-500">{topic.author_name}</p>
                 </div>
                 <div className="flex shrink-0 gap-2">
                   <button className="btn-primary" onClick={() => moderateTopic(topic.id, true)}>
@@ -1084,7 +1084,7 @@ function AdminPage() {
                 <div>
                   <span className="badge mb-1 bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">{t('admin.pendingComments')}</span>
                   <p className="text-sm text-ink-700 dark:text-slate-300">{c.comment}</p>
-                  <p className="mt-1 text-xs text-ink-700/45 dark:text-slate-500">{c.author_name}</p>
+                  <p className="mt-1 text-xs text-ink-700/70 dark:text-slate-500">{c.author_name}</p>
                 </div>
                 <div className="flex shrink-0 gap-2">
                   <button className="btn-primary" onClick={() => moderateComment(c.id, true)}>
@@ -1111,7 +1111,7 @@ function AdminPage() {
                   {report.details && (
                     <p className="mt-1 text-sm text-ink-700/80 dark:text-slate-400">{report.details}</p>
                   )}
-                  <p className="mt-1 text-xs text-ink-700/45 dark:text-slate-500">{report.reporter_name}</p>
+                  <p className="mt-1 text-xs text-ink-700/70 dark:text-slate-500">{report.reporter_name}</p>
                 </div>
                 <div className="flex shrink-0 flex-col gap-2">
                   <button className="btn-primary" onClick={() => reviewForumReport(report.id, 'reviewed')}>
@@ -1132,7 +1132,7 @@ function AdminPage() {
                   <p className="text-sm font-medium text-ink-900 dark:text-slate-100">{report.channel}</p>
                   <p className="mt-1 text-sm text-ink-700 dark:text-slate-300">{report.description}</p>
                   {report.source_url && (
-                    <p className="mt-1 break-all text-xs text-ink-700/45 dark:text-slate-500">{report.source_url}</p>
+                    <p className="mt-1 break-all text-xs text-ink-700/70 dark:text-slate-500">{report.source_url}</p>
                   )}
                 </div>
                 <div className="flex shrink-0 flex-col gap-2">

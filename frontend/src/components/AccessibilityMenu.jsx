@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAccessibility } from '../context/AccessibilityContext';
 import { FONT_SCALES, pagePlainText } from '../lib/a11y';
 import { isSpeechSupported, speak, stopSpeaking } from '../lib/speech';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 export function AccessibilityMenu() {
   const { t, i18n } = useTranslation();
@@ -10,7 +11,9 @@ export function AccessibilityMenu() {
   const [open, setOpen] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const ref = useRef(null);
+  const panelRef = useRef(null);
   const supported = isSpeechSupported();
+  useFocusTrap(open, panelRef);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -60,9 +63,11 @@ export function AccessibilityMenu() {
       </button>
       {open && (
         <div
+          ref={panelRef}
           role="dialog"
+          aria-modal="true"
           aria-label={t('a11y.panelTitle')}
-          className="absolute right-0 z-40 mt-1.5 w-72 max-w-[calc(100vw-1.5rem)] rounded-xl border border-ink-100 bg-white/95 p-4 shadow-lift backdrop-blur-sm dark:border-slate-700 dark:bg-slate-800"
+          className="absolute end-0 z-40 mt-1.5 w-72 max-w-[calc(100vw-1.5rem)] rounded-xl border border-ink-100 bg-white/95 p-4 shadow-lift backdrop-blur-sm dark:border-slate-700 dark:bg-slate-800"
         >
           <p className="font-display text-sm font-semibold text-ink-900 dark:text-slate-100">
             {t('a11y.panelTitle')}

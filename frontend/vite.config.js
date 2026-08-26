@@ -35,7 +35,7 @@ export default defineConfig(({ mode }) => {
           name: 'Civic Education RSS',
           short_name: 'Civic RSS',
           description: 'Civic education for citizens of South Sudan',
-          theme_color: '#059669',
+          theme_color: '#047857',
           background_color: '#ffffff',
           display: 'standalone',
           orientation: 'portrait',
@@ -64,7 +64,7 @@ export default defineConfig(({ mode }) => {
         },
         workbox: {
           importScripts: ['push-sw.js'],
-          globPatterns: ['**/*.{js,css,html,ico,svg,woff2}'],
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
           navigateFallback: '/index.html',
           navigateFallbackDenylist: [/^\/api/],
           runtimeCaching: [
@@ -108,6 +108,19 @@ export default defineConfig(({ mode }) => {
       setupFiles: ['./src/test/setup.js'],
       css: true,
       include: ['src/**/*.{test,spec}.{js,jsx,ts,tsx}'],
+    },
+    build: {
+      target: 'es2022',
+      cssCodeSplit: true,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            react: ['react', 'react-dom', 'react-router-dom'],
+            query: ['@tanstack/react-query'],
+            i18n: ['i18next', 'react-i18next', 'i18next-browser-languagedetector'],
+          },
+        },
+      },
     },
   };
 });

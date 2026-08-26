@@ -93,11 +93,11 @@ export function ForgotPasswordPage() {
         <>
           {error && (
             <div className="mb-4">
-              <Alert>{error}</Alert>
+              <Alert id="reset-error">{error}</Alert>
             </div>
           )}
           {mode === 'email' ? (
-            <form onSubmit={submitEmail} className="space-y-4">
+            <form onSubmit={submitEmail} className="space-y-4" aria-describedby={error ? 'reset-error' : undefined}>
               <div>
                 <label className="label" htmlFor="reset-email">{t('auth.email')}</label>
                 <input
@@ -107,6 +107,8 @@ export function ForgotPasswordPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
+                  aria-invalid={Boolean(error)}
+                  aria-describedby={error ? 'reset-error' : undefined}
                   required
                 />
               </div>
@@ -115,7 +117,7 @@ export function ForgotPasswordPage() {
               </button>
             </form>
           ) : (
-            <form onSubmit={submitPhone} className="space-y-4">
+            <form onSubmit={submitPhone} className="space-y-4" aria-describedby={error ? 'reset-error' : undefined}>
               <div>
                 <label className="label" htmlFor="reset-phone">{t('profile.phone')}</label>
                 <input

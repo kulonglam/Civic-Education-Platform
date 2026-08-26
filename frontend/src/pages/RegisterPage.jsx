@@ -127,7 +127,7 @@ export function RegisterPage() {
 
       {error && (
         <div className="mt-5">
-          <Alert>{error}</Alert>
+          <Alert id="register-error">{error}</Alert>
         </div>
       )}
 
@@ -135,22 +135,24 @@ export function RegisterPage() {
         <div className="mt-6 grid grid-cols-2 gap-1 rounded-xl border border-ink-100 bg-ink-50/80 p-1 dark:border-slate-700 dark:bg-slate-900/50">
           <button
             type="button"
-            className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors ${
+            className={`min-h-11 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors ${
               accountType === 'citizen'
                 ? 'bg-white text-brand-800 shadow-soft dark:bg-slate-800 dark:text-brand-300'
                 : 'text-ink-700/70 hover:text-ink-900 dark:text-slate-400'
             }`}
+            aria-pressed={accountType === 'citizen'}
             onClick={() => selectAccountType('citizen')}
           >
             {t('auth.accountTypeCitizen')}
           </button>
           <button
             type="button"
-            className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors ${
+            className={`min-h-11 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors ${
               accountType === 'organization'
                 ? 'bg-white text-brand-800 shadow-soft dark:bg-slate-800 dark:text-brand-300'
                 : 'text-ink-700/70 hover:text-ink-900 dark:text-slate-400'
             }`}
+            aria-pressed={accountType === 'organization'}
             onClick={() => selectAccountType('organization')}
           >
             {t('auth.accountTypeOrganization')}
@@ -158,7 +160,7 @@ export function RegisterPage() {
         </div>
       )}
 
-      <form onSubmit={submit} className="mt-6 space-y-4">
+      <form onSubmit={submit} className="mt-6 space-y-4" aria-describedby={error ? 'register-error' : undefined}>
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="label" htmlFor="first_name">
@@ -210,6 +212,9 @@ export function RegisterPage() {
             value={form.email}
             onChange={update('email')}
             readOnly={joiningViaInvite && Boolean(prefilledEmail)}
+            autoComplete="email"
+            aria-invalid={Boolean(error)}
+            aria-describedby={error ? 'register-error' : undefined}
             required
           />
         </div>
@@ -223,6 +228,8 @@ export function RegisterPage() {
             onChange={update('password')}
             autoComplete="new-password"
             minLength={8}
+            aria-invalid={Boolean(error)}
+            aria-describedby={error ? 'register-error' : undefined}
             required
           />
           <PasswordStrengthBar password={form.password} />
@@ -236,6 +243,8 @@ export function RegisterPage() {
             value={form.password_confirm}
             onChange={update('password_confirm')}
             autoComplete="new-password"
+            aria-invalid={Boolean(error)}
+            aria-describedby={error ? 'register-error' : undefined}
             required
           />
         </div>

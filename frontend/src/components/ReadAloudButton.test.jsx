@@ -11,7 +11,7 @@ describe('ReadAloudButton', () => {
   beforeEach(() => {
     speak.mockClear();
     cancel.mockClear();
-    vi.stubGlobal('speechSynthesis', { speak, cancel });
+    vi.stubGlobal('speechSynthesis', { speak, cancel, getVoices: () => [] });
     vi.stubGlobal(
       'SpeechSynthesisUtterance',
       class {

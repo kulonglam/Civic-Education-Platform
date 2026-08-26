@@ -246,7 +246,7 @@ function TopicDetailPage() {
                     {t('forum.awaitingApproval')}
                   </span>
                 )}
-                <span className="text-xs font-normal text-ink-700/45 dark:text-slate-500">
+                <span className="text-xs font-normal text-ink-700/70 dark:text-slate-500">
                   {formatDate(c.created_at)}
                 </span>
               </div>
@@ -280,7 +280,7 @@ function TopicDetailPage() {
           <button type="submit" className="btn-primary" disabled={submitting}>
             {t('forum.reply')}
           </button>
-          <p className="text-xs text-ink-700/45 dark:text-slate-500">{t('forum.awaitingApproval')}</p>
+          <p className="text-xs text-ink-700/70 dark:text-slate-500">{t('forum.awaitingApproval')}</p>
         </form>
       ) : user ? (
         <p className="mt-6 text-sm text-ink-700/70 dark:text-slate-400">{t('forum.lockedNotice')}</p>

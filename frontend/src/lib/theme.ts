@@ -16,7 +16,7 @@ const LEGACY_BLUE_PRIMARY_COLORS = new Set([
 ]);
 
 /** Map legacy blue org colors to the current green default. */
-export function normalizePrimaryColor(color) {
+export function normalizePrimaryColor(color?: string | null): string {
   if (!color) return DEFAULT_PRIMARY_COLOR;
   const normalized = String(color).trim().toLowerCase();
   if (LEGACY_BLUE_PRIMARY_COLORS.has(normalized)) return DEFAULT_PRIMARY_COLOR;

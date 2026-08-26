@@ -12,7 +12,8 @@ function Spinner({
 }
 function Alert({
   kind = "error",
-  children
+  children,
+  id
 }) {
   const styles = {
     error: "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-300 dark:border-red-900",
@@ -20,7 +21,7 @@ function Alert({
     info: "bg-brand-50 text-brand-700 border-brand-200 dark:bg-brand-950/40 dark:text-brand-300 dark:border-brand-900",
     warning: "bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900"
   }[kind];
-  return <div className={`rounded-xl border px-4 py-3.5 text-sm leading-relaxed shadow-soft ${styles}`}>{children}</div>;
+  return <div id={id} role={kind === "error" ? "alert" : "status"} className={`rounded-xl border px-4 py-3.5 text-sm leading-relaxed shadow-soft ${styles}`}>{children}</div>;
 }
 function EmptyState({ children, icon, title, action }) {
   return (
@@ -152,7 +153,7 @@ function TableRowSkeleton({ cols = 5, rows = 1 }) {
   );
 }
 
-function PasswordInput({ id, value, onChange, autoComplete, className = '', required, minLength, placeholder }) {
+function PasswordInput({ id, value, onChange, autoComplete, className = '', required, minLength, placeholder, 'aria-invalid': ariaInvalid, 'aria-describedby': ariaDescribedBy }) {
   const [show, setShow] = useState(false);
   return (
     <div className="relative">
@@ -165,13 +166,15 @@ function PasswordInput({ id, value, onChange, autoComplete, className = '', requ
         required={required}
         minLength={minLength}
         placeholder={placeholder}
+        aria-invalid={ariaInvalid}
+        aria-describedby={ariaDescribedBy}
         className={`input pr-10 ${className}`}
       />
       <button
         type="button"
         aria-label={show ? 'Hide password' : 'Show password'}
         onClick={() => setShow((s) => !s)}
-        className="absolute inset-y-0 right-0 flex min-w-11 items-center justify-center px-3 text-ink-700/45 hover:text-ink-700/80 dark:text-slate-500 dark:hover:text-slate-300"
+        className="absolute inset-y-0 right-0 flex min-w-11 items-center justify-center px-3 text-ink-700/70 hover:text-ink-700/80 dark:text-slate-500 dark:hover:text-slate-300"
         tabIndex={-1}
       >
         {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

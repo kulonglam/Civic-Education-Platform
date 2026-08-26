@@ -99,7 +99,7 @@ export function NotificationsPage() {
                     {!n.is_read && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-500" />}
                   </div>
                   <p className="mt-1 text-sm text-ink-700/80 dark:text-slate-400">{n.message}</p>
-                  <p className="mt-1 text-xs text-ink-700/45 dark:text-slate-500">{formatDate(n.created_at)}</p>
+                  <p className="mt-1 text-xs text-ink-700/70 dark:text-slate-500">{formatDate(n.created_at)}</p>
                 </div>
               </button>
             ))}

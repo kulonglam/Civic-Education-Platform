@@ -20,7 +20,7 @@ import { queryKeys } from '../lib/queryKeys';
 import { extractError, tokenStore } from '../lib/api';
 import { stopSpeaking } from '../lib/speech';
 import { PlatformLogo } from './PlatformLogo';
-import { useNotificationSocket } from '../hooks/useNotificationSocket';
+import { documentTitle } from '../lib/pageTitle';
 
 function navLinkClass({ isActive }) {
   return `nav-link ${isActive ? 'nav-link-active' : 'nav-link-idle'}`;
@@ -170,7 +170,7 @@ function NavDropdown({ label, avatar, badge, items, align = 'left', active = fal
         <div
           role="menu"
           className={`absolute top-full z-30 mt-1.5 max-h-[70vh] min-w-[12rem] max-w-[min(20rem,calc(100vw-1.5rem))] overflow-y-auto rounded-xl border border-ink-100 bg-white/95 py-1 shadow-lift backdrop-blur-sm dark:border-slate-700 dark:bg-slate-800 ${
-            align === 'right' ? 'right-0' : 'left-0'
+            align === 'right' ? 'end-0' : 'start-0'
           }`}
         >
           {items.map((item, idx) => {
@@ -224,7 +224,7 @@ function MobileSection({ title, children }) {
   return (
     <div className="pt-2">
       {title && (
-        <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-ink-700/45 dark:text-slate-500">
+        <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-ink-700/70 dark:text-slate-500">
           {title}
         </p>
       )}
@@ -251,6 +251,10 @@ export function Layout() {
     const t = setTimeout(() => setRouteLoading(false), 350);
     return () => clearTimeout(t);
   }, [location.pathname]);
+
+  useEffect(() => {
+    document.title = documentTitle(location.pathname, t);
+  }, [location.pathname, t]);
 
   // Back-to-top visibility
   useEffect(() => {
@@ -376,7 +380,7 @@ export function Layout() {
       </a>
 
       {/* Route loading bar */}
-      {routeLoading && <div className="route-loading-bar" />}
+      {routeLoading && <div className="route-loading-bar" aria-hidden="true" />}
 
       <OfflineBanner />
       <EmailVerifyBanner />
@@ -425,7 +429,7 @@ export function Layout() {
                 {organization?.name ?? t('app.name')}
               </span>
               {organization?.name && !isAuthSurface && (
-                <span className="hidden truncate text-[11px] font-medium uppercase tracking-wide text-ink-700/45 dark:text-slate-500 xl:block">
+                <span className="hidden truncate text-[11px] font-medium uppercase tracking-wide text-ink-700/70 dark:text-slate-500 xl:block">
                   {t('app.tagline')}
                 </span>
               )}
@@ -605,7 +609,7 @@ export function Layout() {
           aria-live="polite"
           aria-atomic="true"
         >
-          {location.pathname}
+          {documentTitle(location.pathname, t)}
         </div>
         <div key={location.pathname} className={isHome || isAuthSurface ? undefined : 'page-enter'}>
           <Outlet />
@@ -667,7 +671,7 @@ export function Layout() {
         <button
           type="button"
           aria-label={t('a11y.backToTop')}
-          className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-4 z-40 flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-700 text-white shadow-lift transition-all hover:bg-brand-800 sm:bottom-6 sm:right-6"
+          className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] end-4 z-40 flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-700 text-white shadow-lift transition-all hover:bg-brand-800 sm:bottom-6 sm:end-6"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
           <ArrowUp className="h-5 w-5" />

@@ -324,7 +324,7 @@ export function ProfilePage() {
             {membership && <OrgRoleBadge role={membership.role} />}
           </div>
           <p className="text-sm text-ink-700/60">{user.email}</p>
-          <p className="text-xs text-ink-700/45">
+          <p className="text-xs text-ink-700/70">
             {t('profile.memberSince')} {formatDate(user.created_at)}
           </p>
         </div>

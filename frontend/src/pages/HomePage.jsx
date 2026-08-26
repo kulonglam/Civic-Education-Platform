@@ -115,7 +115,7 @@ function HomePage() {
           width={1920}
           height={1080}
           sizes="100vw"
-          decoding="async"
+          decoding="sync"
           className="absolute inset-0 h-full w-full object-cover object-[center_28%]"
           fetchPriority="high"
         />

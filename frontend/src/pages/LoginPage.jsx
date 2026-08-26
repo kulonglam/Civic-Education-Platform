@@ -102,7 +102,7 @@ function LoginPage() {
 
       {error && (
         <div className="mt-5">
-          <Alert>{error}</Alert>
+          <Alert id="login-error">{error}</Alert>
         </div>
       )}
 
@@ -114,7 +114,7 @@ function LoginPage() {
             </button>
             <div className="my-5 flex items-center gap-3">
               <hr className="flex-1 border-ink-100 dark:border-slate-700" />
-              <span className="text-xs font-medium uppercase tracking-wide text-ink-700/45 dark:text-slate-500">
+              <span className="text-xs font-medium uppercase tracking-wide text-ink-700/70 dark:text-slate-500">
                 {t('misc.orContinueWith')}
               </span>
               <hr className="flex-1 border-ink-100 dark:border-slate-700" />
@@ -123,7 +123,7 @@ function LoginPage() {
         )}
 
         {mfaStep ? (
-          <form onSubmit={submitMfa} className="space-y-4">
+          <form onSubmit={submitMfa} className="space-y-4" aria-describedby={error ? 'login-error' : undefined}>
             <div>
               <label className="label" htmlFor="mfa-code">{t('auth.mfaCode')}</label>
               <input
@@ -154,7 +154,7 @@ function LoginPage() {
             </button>
           </form>
         ) : (
-          <form onSubmit={submit} className="space-y-4">
+          <form onSubmit={submit} className="space-y-4" aria-describedby={error ? 'login-error' : undefined}>
             <div>
               <label className="label" htmlFor="email">{t('auth.email')}</label>
               <input
@@ -163,6 +163,8 @@ function LoginPage() {
                 className="input"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                aria-invalid={Boolean(error)}
+                aria-describedby={error ? 'login-error' : undefined}
                 autoComplete="email"
                 required
               />
@@ -180,6 +182,8 @@ function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
                 className="mt-1.5"
+                aria-invalid={Boolean(error)}
+                aria-describedby={error ? 'login-error' : undefined}
                 required
               />
             </div>

@@ -869,6 +869,7 @@
     "misinfoReports": "بلاغات محتوى مريب",
     "reviewReport": "وُضع قيد المراجعة",
     "dismissReport": "رفض",
+    "noMisinfoReports": "لا توجد بلاغات محتوى مريب.",
     "passRate": "معدل النجاح",
     "avgScore": "متوسط الدرجات",
     "attempts": "المحاولات",

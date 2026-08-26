@@ -10,7 +10,7 @@ export function Breadcrumb({ items }) {
     >
       {items.map((item, idx) => (
         <Fragment key={idx}>
-          {idx > 0 && <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-ink-700/45 dark:text-slate-600" />}
+          {idx > 0 && <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-ink-700/70 dark:text-slate-600" />}
           {item.to ? (
             <Link
               to={item.to}

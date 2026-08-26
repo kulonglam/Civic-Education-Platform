@@ -5,20 +5,27 @@ export const FONT_SCALES = [
   { id: 'lg', percent: 125 },
   { id: 'xl', percent: 150 },
   { id: 'xxl', percent: 175 },
-];
+] as const;
 
-export const DEFAULT_A11Y = {
+export type FontScaleId = (typeof FONT_SCALES)[number]['id'];
+
+export type A11ySettings = {
+  fontScale: FontScaleId;
+  highContrast: boolean;
+};
+
+export const DEFAULT_A11Y: A11ySettings = {
   fontScale: 'md',
   highContrast: false,
 };
 
-export function readA11ySettings() {
+export function readA11ySettings(): A11ySettings {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return { ...DEFAULT_A11Y };
-    const parsed = JSON.parse(raw);
+    const parsed = JSON.parse(raw) as Partial<A11ySettings>;
     const fontScale = FONT_SCALES.some((item) => item.id === parsed.fontScale)
-      ? parsed.fontScale
+      ? (parsed.fontScale as FontScaleId)
       : DEFAULT_A11Y.fontScale;
     return {
       fontScale,
@@ -29,11 +36,11 @@ export function readA11ySettings() {
   }
 }
 
-export function writeA11ySettings(settings) {
+export function writeA11ySettings(settings: A11ySettings): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
 }
 
-export function applyA11ySettings(settings) {
+export function applyA11ySettings(settings: A11ySettings): void {
   const root = document.documentElement;
   if (!root) return;
   if (!settings.fontScale || settings.fontScale === 'md') {
@@ -48,7 +55,7 @@ export function applyA11ySettings(settings) {
   }
 }
 
-export function parseVtt(text) {
+export function parseVtt(text?: string | null): string {
   if (!text) return '';
   return text
     .replace(/^\uFEFF/, '')
@@ -66,9 +73,9 @@ export function parseVtt(text) {
     .trim();
 }
 
-export function pagePlainText(root = document.getElementById('main-content')) {
+export function pagePlainText(root: HTMLElement | null = document.getElementById('main-content')): string {
   if (!root) return '';
-  const clone = root.cloneNode(true);
+  const clone = root.cloneNode(true) as HTMLElement;
   clone.querySelectorAll('.sr-only, [aria-hidden="true"], script, style, noscript').forEach((el) => el.remove());
   return (clone.innerText || '').replace(/\s+/g, ' ').trim();
 }

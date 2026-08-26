@@ -67,10 +67,10 @@ export function ResetPasswordPage() {
           <>
             {error && (
               <div className="mb-4">
-                <Alert>{error}</Alert>
+              <Alert id="reset-confirm-error">{error}</Alert>
               </div>
             )}
-            <form onSubmit={submit} className="space-y-4">
+            <form onSubmit={submit} className="space-y-4" aria-describedby={error ? 'reset-confirm-error' : undefined}>
               {otpMode && (
                 <>
                   <div>
@@ -108,6 +108,8 @@ export function ResetPasswordPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="new-password"
                   minLength={8}
+                  aria-invalid={Boolean(error)}
+                  aria-describedby={error ? 'reset-confirm-error' : undefined}
                   required
                 />
               </div>

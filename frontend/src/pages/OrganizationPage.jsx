@@ -1107,7 +1107,7 @@ function OrganizationPage() {
                             onChange={() => toggleMember(m.user)}
                             disabled={!m.user_phone}
                           />
-                          <span className={m.user_phone ? 'text-ink-900 dark:text-slate-200' : 'text-ink-700/45 dark:text-slate-500'}>
+                          <span className={m.user_phone ? 'text-ink-900 dark:text-slate-200' : 'text-ink-700/70 dark:text-slate-500'}>
                             {m.user_name || m.user_email}
                             {m.user_phone ? ` · ${m.user_phone}` : ` · ${t('sms.noPhone')}`}
                           </span>
@@ -1143,7 +1143,7 @@ function OrganizationPage() {
                     {t('sms.sendTargeted')}
                   </button>
                   {membersWithPhone.length === 0 && !extraPhone && (
-                    <p className="text-xs text-ink-700/45 dark:text-slate-500">{t('sms.noPhoneMembers')}</p>
+                    <p className="text-xs text-ink-700/70 dark:text-slate-500">{t('sms.noPhoneMembers')}</p>
                   )}
                 </form>
               </div>
@@ -1156,7 +1156,7 @@ function OrganizationPage() {
                       <li key={row.id} className="py-2">
                         <p className="font-medium text-ink-900 dark:text-slate-100">{row.phone}</p>
                         <p className="line-clamp-1 text-ink-700/80 dark:text-slate-400">{row.message}</p>
-                        <p className="text-xs capitalize text-ink-700/45 dark:text-slate-500">
+                        <p className="text-xs capitalize text-ink-700/70 dark:text-slate-500">
                           {row.status} · {row.message_type}
                         </p>
                       </li>
@@ -1201,7 +1201,7 @@ function OrganizationPage() {
                       <li key={row.id} className="py-2">
                         <p className="font-medium text-ink-900 dark:text-slate-100">{row.phone}</p>
                         <p className="line-clamp-1 text-ink-700/80 dark:text-slate-400">{row.message}</p>
-                        <p className="text-xs capitalize text-ink-700/45 dark:text-slate-500">
+                        <p className="text-xs capitalize text-ink-700/70 dark:text-slate-500">
                           {row.status} · {row.direction}
                         </p>
                       </li>
