@@ -276,7 +276,20 @@ OPENAI_MODEL=gpt-4o-mini
 OPENAI_MAX_TOKENS=1024
 ```
 
-### Free option for testing
+### Free option on Render ($0 ongoing)
+
+OpenAI’s own API is billed. Ollama cannot run on Render free/starter. Use Groq’s OpenAI-compatible free tier:
+
+```env
+TUTOR_PROVIDER=openai
+OPENAI_API_KEY=gsk_...
+OPENAI_BASE_URL=https://api.groq.com/openai/v1
+OPENAI_MODEL=llama-3.1-8b-instant
+```
+
+Create the key at https://console.groq.com. Leave `ANTHROPIC_API_KEY` blank. Restart the web service after saving.
+
+### Free option for local testing
 
 Run a local model instead of paying for tokens. Install [Ollama](https://ollama.com), then:
 

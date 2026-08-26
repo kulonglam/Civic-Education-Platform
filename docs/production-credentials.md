@@ -271,31 +271,38 @@ Without `WHATSAPP_TEMPLATE_NAME`, the API still sends session **text** (only wor
 
 ## Step 4 — AI tutor + article translation — optional
 
-Set on **web** (sync API). Same provider translates article Arabic fields on save.
+Set on the **API web** service (sync request). Same provider fills Arabic article fields on save.
 
-1. Get an Anthropic key **or** an OpenAI-compatible key (OpenAI, Groq, OpenRouter, Ollama).
-2. Anthropic:
+**OpenAI.com is not $0.** This app’s `TUTOR_PROVIDER=openai` talks to any OpenAI-compatible API. On Render, use **Groq’s free tier** (rate-limited, not Claude/GPT).
+
+1. Create a key at [console.groq.com](https://console.groq.com) (no credit card).
+2. On the Render **web** service → Environment:
 
 ```env
-TUTOR_PROVIDER=auto
-ANTHROPIC_API_KEY=sk-ant-...
-ANTHROPIC_MODEL=claude-sonnet-4-20250514
-TRANSLATION_ENABLED=True
+TUTOR_PROVIDER=openai
+OPENAI_API_KEY=gsk_...
+OPENAI_BASE_URL=https://api.groq.com/openai/v1
+OPENAI_MODEL=llama-3.1-8b-instant
+OPENAI_MAX_TOKENS=1024
+ANTHROPIC_API_KEY=
 ```
 
-3. Or OpenAI-compatible:
+Leave `ANTHROPIC_API_KEY` empty. If both are set, `TUTOR_PROVIDER=auto` prefers Anthropic (paid).
+
+3. Save and **restart** the API (or wait for the next deploy).
+4. Ask the tutor a civic question. You must **not** see “development response”.
+5. `GET /api/integrations/status/` → `ai_tutor` status `live`, `provider` `openai`.
+
+Groq free-tier limits apply per account (requests/minute and per day). If you hit them, the tutor returns unavailable until the window resets.
+
+Paid OpenAI (not free):
 
 ```env
-TUTOR_PROVIDER=auto
-OPENAI_API_KEY=
+TUTOR_PROVIDER=openai
+OPENAI_API_KEY=sk-...
 OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_MODEL=gpt-4o-mini
 ```
-
-4. Restart the API.
-5. Ask the tutor a civic question; you must **not** see the development stub reply.
-6. Save an article with English body and confirm Arabic fields fill (non-stub provider).
-7. `check_integrations` → `ai_tutor` status `live`.
 
 ---
 

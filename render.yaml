@@ -62,6 +62,16 @@ services:
         sync: false
       - key: ANTHROPIC_API_KEY
         sync: false
+      - key: TUTOR_PROVIDER
+        value: openai
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_BASE_URL
+        value: https://api.groq.com/openai/v1
+      - key: OPENAI_MODEL
+        value: llama-3.1-8b-instant
+      - key: OPENAI_MAX_TOKENS
+        value: "1024"
       - key: SMS_PROVIDER
         sync: false
       - key: AT_USERNAME
@@ -221,7 +231,35 @@ services:
       - key: SUPABASE_KEY
         sync: false
       - key: ANTHROPIC_API_KEY
-        sync: false
+        fromService:
+          name: civic-education-api
+          type: web
+          envVarKey: ANTHROPIC_API_KEY
+      - key: TUTOR_PROVIDER
+        fromService:
+          name: civic-education-api
+          type: web
+          envVarKey: TUTOR_PROVIDER
+      - key: OPENAI_API_KEY
+        fromService:
+          name: civic-education-api
+          type: web
+          envVarKey: OPENAI_API_KEY
+      - key: OPENAI_BASE_URL
+        fromService:
+          name: civic-education-api
+          type: web
+          envVarKey: OPENAI_BASE_URL
+      - key: OPENAI_MODEL
+        fromService:
+          name: civic-education-api
+          type: web
+          envVarKey: OPENAI_MODEL
+      - key: OPENAI_MAX_TOKENS
+        fromService:
+          name: civic-education-api
+          type: web
+          envVarKey: OPENAI_MAX_TOKENS
       - key: SMS_PROVIDER
         sync: false
       - key: AT_USERNAME
