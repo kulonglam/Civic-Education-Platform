@@ -115,8 +115,7 @@
     "notFoundMessage": "The page you're looking for doesn't exist or has been moved.",
     "goHome": "Go back home",
     "boundaryTitle": "Something went wrong",
-    "boundaryMessage": "An unexpected error occurred. Please try again.",
-    "tryAgain": "Try again",
+    "boundaryMessage": "Please refresh the page or try again later.",
     "tryAgain": "Try again"
   },
   "misc": {
@@ -1412,10 +1411,5 @@
     "previous": "Previous",
     "next": "Next",
     "pageOf": "Page {{page}} of {{total}}"
-  },
-  "errors": {
-    "boundaryTitle": "Something went wrong",
-    "boundaryMessage": "Please refresh the page or try again later.",
-    "tryAgain": "Try again"
   }
 }

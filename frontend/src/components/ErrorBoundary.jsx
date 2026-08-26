@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { useTranslation } from 'react-i18next';
 import { captureUiError } from '../lib/sentry';
 
-function ErrorFallback({ onRetry }) {
+function ErrorFallback() {
   const { t } = useTranslation();
   return (
     <div className="mx-auto max-w-lg px-4 py-16 text-center" role="alert">
@@ -16,9 +16,21 @@ function ErrorFallback({ onRetry }) {
         {t('errors.boundaryTitle')}
       </h1>
       <p className="mt-2 text-sm leading-relaxed text-ink-700/70 dark:text-slate-400">{t('errors.boundaryMessage')}</p>
-      <button type="button" className="btn-primary mt-6" onClick={onRetry}>
-        {t('errors.tryAgain')}
-      </button>
+      <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <a
+          href="/"
+          className="btn-primary"
+          onClick={(event) => {
+            event.preventDefault();
+            window.location.assign('/');
+          }}
+        >
+          {t('errors.goHome')}
+        </a>
+        <button type="button" className="btn-secondary" onClick={() => window.location.reload()}>
+          {t('errors.tryAgain')}
+        </button>
+      </div>
     </div>
   );
 }
@@ -34,11 +46,15 @@ class ErrorBoundary extends Component {
     captureUiError(error, info);
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.state.hasError && prevProps.resetKey !== this.props.resetKey) {
+      this.setState({ hasError: false });
+    }
+  }
+
   render() {
     if (this.state.hasError) {
-      return (
-        <ErrorFallback onRetry={() => this.setState({ hasError: false })} />
-      );
+      return <ErrorFallback />;
     }
     return this.props.children;
   }

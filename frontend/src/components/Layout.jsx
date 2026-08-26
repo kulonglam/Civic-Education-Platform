@@ -21,6 +21,8 @@ import { extractError, tokenStore } from '../lib/api';
 import { stopSpeaking } from '../lib/speech';
 import { PlatformLogo } from './PlatformLogo';
 import { documentTitle } from '../lib/pageTitle';
+import { useNotificationSocket } from '../hooks/useNotificationSocket';
+import { ErrorBoundary } from './ErrorBoundary';
 
 function navLinkClass({ isActive }) {
   return `nav-link ${isActive ? 'nav-link-active' : 'nav-link-idle'}`;
@@ -612,7 +614,9 @@ export function Layout() {
           {documentTitle(location.pathname, t)}
         </div>
         <div key={location.pathname} className={isHome || isAuthSurface ? undefined : 'page-enter'}>
-          <Outlet />
+          <ErrorBoundary resetKey={location.pathname}>
+            <Outlet />
+          </ErrorBoundary>
         </div>
       </main>
 
