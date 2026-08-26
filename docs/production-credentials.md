@@ -79,6 +79,8 @@ REQUIRE_SENTRY=False
 
 Leave `ALLOWED_HOSTS` empty. Do not set `FRONTEND_URL` to the API host.
 
+The static site must rewrite unknown paths to `index.html` (already in `render.yaml`). If `/verify-email/...` shows **Not Found**, add that rewrite on the frontend service, or redeploy so `dist/404.html` is published.
+
 **Frontend** build env (then Clear build cache & deploy). Vite needs this at **image/build** time:
 
 ```env

@@ -1,6 +1,23 @@
+import { copyFileSync, existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+
+/** Render static sites 404 missing paths. Copy the SPA shell so /verify-email/:token loads. */
+function spaNotFoundPage() {
+  return {
+    name: 'spa-404-html',
+    apply: 'build',
+    writeBundle({ dir }) {
+      if (!dir) return;
+      const index = resolve(dir, 'index.html');
+      if (existsSync(index)) {
+        copyFileSync(index, resolve(dir, '404.html'));
+      }
+    },
+  };
+}
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -10,6 +27,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
+      spaNotFoundPage(),
       VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['civic-education-logo.png', 'icon-192.png', 'icon-512.png'],

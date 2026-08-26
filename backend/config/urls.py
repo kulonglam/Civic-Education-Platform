@@ -3,6 +3,8 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
+
+from apps.core.spa_redirects import FrontendVerifyEmailRedirect
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 # All versioned API routes live here.  Both /api/v1/ (canonical) and /api/
@@ -40,6 +42,11 @@ _v1_patterns = [
 
 urlpatterns = [
     path('', RedirectView.as_view(url='/api/docs/', permanent=False)),
+    path(
+        'verify-email/<str:token>/',
+        FrontendVerifyEmailRedirect.as_view(),
+        name='spa-verify-email',
+    ),
     path('admin/', admin.site.urls),
 
     # ── Canonical versioned API (v1) ──────────────────────────────────────

@@ -141,3 +141,19 @@ class TestPasswordReset:
             'password': 'BrandNewPass456!',
         })
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
+class TestSpaVerifyEmailRedirect:
+    def test_api_host_redirects_verify_link_to_frontend(self, api_client, settings):
+        settings.FRONTEND_URL = 'https://civic-education-platform-1.onrender.com'
+        response = api_client.get('/verify-email/sample-token/', follow=False)
+        assert response.status_code == 302
+        assert response['Location'] == (
+            'https://civic-education-platform-1.onrender.com/verify-email/sample-token'
+        )
+
+    def test_does_not_redirect_when_frontend_is_this_host(self, api_client, settings):
+        settings.FRONTEND_URL = 'http://testserver'
+        response = api_client.get('/verify-email/sample-token/')
+        assert response.status_code == 404
