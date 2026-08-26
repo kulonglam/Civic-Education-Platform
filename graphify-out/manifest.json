@@ -2190,9 +2190,9 @@
     "semantic_hash": "b4168c8724207a7f9dee698749067ee3"
   },
   "frontend/vite.config.js": {
-    "mtime": 1787735057.9526668,
-    "seen": 1787735304.852952,
-    "ast_hash": "d69e1387142aaacd790c9add3489ec7a",
+    "mtime": 1787735894.5209985,
+    "seen": 1787735946.408369,
+    "ast_hash": "8ec3befb0e42ebd230c45e4ff5e86ab7",
     "semantic_hash": ""
   },
   "scripts/generate_pwa_icons.py": {

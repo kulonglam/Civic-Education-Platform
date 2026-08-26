@@ -112,12 +112,14 @@ export default defineConfig(({ mode }) => {
     build: {
       target: 'es2022',
       cssCodeSplit: true,
-      rollupOptions: {
+      rolldownOptions: {
         output: {
-          manualChunks: {
-            react: ['react', 'react-dom', 'react-router-dom'],
-            query: ['@tanstack/react-query'],
-            i18n: ['i18next', 'react-i18next', 'i18next-browser-languagedetector'],
+          codeSplitting: {
+            groups: [
+              { name: 'react', test: /[/\\]node_modules[/\\](?:react|react-dom|react-router)(?:-dom)?[/\\]/ },
+              { name: 'query', test: /[/\\]node_modules[/\\]@tanstack[/\\]/ },
+              { name: 'i18n', test: /[/\\]node_modules[/\\](?:i18next|react-i18next|i18next-browser-languagedetector)[/\\]/ },
+            ],
           },
         },
       },
