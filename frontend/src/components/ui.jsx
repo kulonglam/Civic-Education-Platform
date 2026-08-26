@@ -2,12 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Eye, EyeOff } from "./Icons";
 function Spinner({
-  label
+  label,
+  className = "",
 }) {
   const {
     t
   } = useTranslation();
-  return <div className="flex items-center justify-center gap-3 py-12 text-ink-700/60 dark:text-slate-400"><span className="h-5 w-5 animate-spin rounded-full border-2 border-brand-600 border-t-transparent" /><span className="text-sm font-medium">{label ?? t("common.loading")}</span></div>;
+  return <div className={`flex items-center justify-center gap-3 py-12 text-ink-700/60 dark:text-slate-400 ${className}`.trim()} role="status"><span className="h-5 w-5 animate-spin rounded-full border-2 border-brand-600 border-t-transparent" aria-hidden="true" /><span className="text-sm font-medium">{label ?? t("common.loading")}</span></div>;
 }
 function Alert({
   kind = "error",
@@ -170,7 +171,7 @@ function PasswordInput({ id, value, onChange, autoComplete, className = '', requ
         type="button"
         aria-label={show ? 'Hide password' : 'Show password'}
         onClick={() => setShow((s) => !s)}
-        className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600 dark:text-slate-500 dark:hover:text-slate-300"
+        className="absolute inset-y-0 right-0 flex min-w-11 items-center justify-center px-3 text-ink-700/45 hover:text-ink-700/80 dark:text-slate-500 dark:hover:text-slate-300"
         tabIndex={-1}
       >
         {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -202,7 +203,7 @@ function PasswordStrengthBar({ password }) {
         {[1, 2, 3, 4, 5].map((i) => (
           <div
             key={i}
-            className={`h-1 flex-1 rounded-full transition-colors ${i <= strength ? STRENGTH_COLORS[strength] : 'bg-gray-200 dark:bg-slate-600'}`}
+            className={`h-1 flex-1 rounded-full transition-colors ${i <= strength ? STRENGTH_COLORS[strength] : 'bg-ink-200 dark:bg-slate-600'}`}
           />
         ))}
       </div>

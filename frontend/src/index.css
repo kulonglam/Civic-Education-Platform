@@ -16,6 +16,7 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
   }
   html[data-font-size='lg'] { font-size: 112.5%; }
   html[data-font-size='xl'] { font-size: 125%; }
@@ -65,7 +66,8 @@
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold tracking-normal transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold tracking-normal transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+    touch-action: manipulation;
   }
   .btn-primary {
     @apply btn bg-brand-700 text-white shadow-soft hover:bg-brand-800 hover:shadow-lift active:scale-[0.98];
@@ -83,7 +85,7 @@
     @apply btn text-ink-700 hover:bg-ink-100/80 dark:text-slate-300 dark:hover:bg-slate-800;
   }
   .input {
-    @apply w-full rounded-xl border border-ink-200/90 bg-white/95 px-3.5 py-2.5 text-sm shadow-sm transition-colors placeholder:text-ink-200/90 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20;
+    @apply w-full min-h-11 rounded-xl border border-ink-200/90 bg-white/95 px-3.5 py-2.5 text-sm shadow-sm transition-colors placeholder:text-ink-200/90 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20;
     @apply dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-brand-400;
   }
   .label {
@@ -115,15 +117,23 @@
   .section-lead {
     @apply mt-3 max-w-2xl text-hero-sub text-ink-700/80 dark:text-slate-400;
   }
-  .prose-panel {
-    @apply mx-auto w-full max-w-6xl px-4;
-  }
   .page-shell {
     @apply space-y-6;
   }
   .glass-nav {
     @apply sticky top-0 z-20 border-b border-ink-100/70 bg-white/80 shadow-[0_1px_0_rgba(15,18,14,0.03)] backdrop-blur-xl;
     @apply dark:border-slate-800/80 dark:bg-ink-950/80 dark:shadow-[0_1px_0_rgba(0,0,0,0.25)];
+    padding-top: env(safe-area-inset-top);
+  }
+  .icon-btn {
+    @apply inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-ink-200 text-ink-700 transition-colors hover:bg-ink-100/70;
+    @apply dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800;
+    touch-action: manipulation;
+  }
+  .prose-panel {
+    @apply mx-auto w-full max-w-6xl px-4;
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
   }
   .nav-link {
     @apply relative rounded-xl px-2.5 py-2 text-sm font-semibold transition-colors lg:px-3;
@@ -231,7 +241,7 @@
     @apply font-semibold text-brand-700 underline-offset-4 transition-colors hover:text-brand-800 hover:underline dark:text-brand-400 dark:hover:text-brand-300;
   }
   .auth-shell {
-    @apply grid min-h-[calc(100vh-4.5rem)] lg:grid-cols-2;
+    @apply grid min-h-[calc(100dvh-4.5rem-env(safe-area-inset-top))] lg:grid-cols-2;
   }
   .auth-brand-panel {
     @apply relative hidden overflow-hidden bg-brand-950 text-white lg:flex lg:flex-col lg:justify-between;
@@ -243,6 +253,7 @@
   }
   .auth-form-panel {
     @apply flex items-center justify-center bg-ink-50/90 px-4 py-12 dark:bg-ink-950/50 sm:px-10;
+    padding-bottom: max(3rem, env(safe-area-inset-bottom));
   }
   .empty-state {
     @apply surface px-6 py-16 text-center;

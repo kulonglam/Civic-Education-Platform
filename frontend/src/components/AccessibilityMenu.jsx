@@ -48,7 +48,7 @@ export function AccessibilityMenu() {
     <div ref={ref} className="relative">
       <button
         type="button"
-        className="rounded-xl border border-ink-200 p-2 text-ink-700 hover:bg-ink-100/70 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
+        className="icon-btn"
         aria-label={t('a11y.menuLabel')}
         aria-haspopup="dialog"
         aria-expanded={open}
@@ -78,7 +78,7 @@ export function AccessibilityMenu() {
                 <button
                   key={scale.id}
                   type="button"
-                  className={`rounded-lg border px-1 py-2 text-xs font-semibold ${
+                  className={`min-h-11 rounded-lg border px-1 py-2 text-xs font-semibold ${
                     fontScale === scale.id
                       ? 'border-brand-600 bg-brand-50 text-brand-900 dark:border-brand-400 dark:bg-brand-900/40 dark:text-brand-100'
                       : 'border-ink-200 text-ink-800 hover:bg-ink-50 dark:border-slate-600 dark:text-slate-200'
@@ -95,6 +95,7 @@ export function AccessibilityMenu() {
           <label className="mt-4 flex items-center gap-2 text-sm font-medium text-ink-800 dark:text-slate-200">
             <input
               type="checkbox"
+              className="h-4 w-4 accent-brand-700"
               checked={highContrast}
               onChange={(event) => setHighContrast(event.target.checked)}
             />

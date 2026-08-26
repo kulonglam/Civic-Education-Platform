@@ -31,7 +31,9 @@ function OfflineBanner() {
   return (
     <div
       className={`border-b px-4 py-2 text-sm ${
-        online ? 'border-brand-200 bg-brand-50 text-brand-900' : 'border-amber-200 bg-amber-50 text-amber-900'
+        online
+          ? 'border-brand-200 bg-brand-50 text-brand-900 dark:border-brand-900/40 dark:bg-brand-950/40 dark:text-brand-200'
+          : 'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/40 dark:text-amber-200'
       }`}
       role="status"
     >

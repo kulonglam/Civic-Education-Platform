@@ -48,7 +48,7 @@ function AcceptInvitePage() {
     }
   };
 
-  if (loading) return <Spinner />;
+  if (loading) return <Spinner className="min-h-[45vh]" />;
 
   if (!invite) {
     return (
@@ -83,7 +83,7 @@ function AcceptInvitePage() {
         </div>
       )}
       <div className="card space-y-4">
-        <p className="text-gray-600">
+        <p className="text-ink-700/80 dark:text-slate-300">
           {t('saas.inviteRole', { role: invite.role, email: invite.email })}
         </p>
         {user ? (

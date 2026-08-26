@@ -91,10 +91,10 @@ export function CertificatesPage() {
                   </span>
                 </div>
 
-                <h3 className="relative mt-4 text-lg font-bold text-gray-900 dark:text-slate-100">
+                <h3 className="relative mt-4 text-lg font-bold text-ink-900 dark:text-slate-100">
                   {cert.quiz_title}
                 </h3>
-                <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">
+                <p className="mt-1 text-sm text-ink-700/60 dark:text-slate-400">
                   {t('quizzes.issued')}: {formatDate(cert.issue_date)}
                 </p>
 

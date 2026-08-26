@@ -323,8 +323,8 @@ export function ProfilePage() {
             <RoleBadge role={user.role.name} />
             {membership && <OrgRoleBadge role={membership.role} />}
           </div>
-          <p className="text-sm text-gray-500">{user.email}</p>
-          <p className="text-xs text-gray-400">
+          <p className="text-sm text-ink-700/60">{user.email}</p>
+          <p className="text-xs text-ink-700/45">
             {t('profile.memberSince')} {formatDate(user.created_at)}
           </p>
         </div>
@@ -360,7 +360,7 @@ export function ProfilePage() {
             value={form.phone}
             onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
           />
-          <p className="mt-1 text-xs text-gray-500">{t('profile.phoneHint')}</p>
+          <p className="mt-1 text-xs text-ink-700/60">{t('profile.phoneHint')}</p>
           {user.phone && user.phone_verified && (
             <p className="mt-1 text-xs font-medium text-green-700">{t('phoneVerify.verifiedBadge')}</p>
           )}
@@ -415,7 +415,7 @@ export function ProfilePage() {
             onChange={uploadAvatar}
             disabled={avatarUploading}
           />
-          <p className="mt-1 text-xs text-gray-500">{t('profile.avatarUploadHint')}</p>
+          <p className="mt-1 text-xs text-ink-700/60">{t('profile.avatarUploadHint')}</p>
         </div>
         <div>
           <label className="label">{t('profile.avatarUrl')}</label>
@@ -447,7 +447,7 @@ export function ProfilePage() {
               <option key={option.value || 'unset'} value={option.value}>{t(option.labelKey)}</option>
             ))}
           </select>
-          <p className="mt-1 text-xs text-gray-500">{t('profile.regionHint')}</p>
+          <p className="mt-1 text-xs text-ink-700/60">{t('profile.regionHint')}</p>
         </div>
         <div>
           <label className="label">{t('profile.ageBand')}</label>
@@ -460,7 +460,7 @@ export function ProfilePage() {
               <option key={option.value || 'unset'} value={option.value}>{t(option.labelKey)}</option>
             ))}
           </select>
-          <p className="mt-1 text-xs text-gray-500">{t('profile.ageHint')}</p>
+          <p className="mt-1 text-xs text-ink-700/60">{t('profile.ageHint')}</p>
         </div>
         <label className="flex items-center gap-2 text-sm font-medium">
           <input
@@ -478,7 +478,7 @@ export function ProfilePage() {
           />
           {t('profile.whatsappAlerts')}
         </label>
-        <p className="text-xs text-gray-500">{t('profile.whatsappHint')}</p>
+        <p className="text-xs text-ink-700/60">{t('profile.whatsappHint')}</p>
         <button type="submit" className="btn-primary" disabled={loading}>
           {loading ? t('common.loading') : t('common.save')}
         </button>
@@ -486,7 +486,7 @@ export function ProfilePage() {
 
       {(user.mfa_required || user.mfa_enabled) && (
         <div className="card mt-6 space-y-4">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-slate-100">{t('profile.mfaTitle')}</h2>
+          <h2 className="text-sm font-semibold text-ink-900 dark:text-slate-100">{t('profile.mfaTitle')}</h2>
           {user.mfa_enabled ? (
             <p className="text-sm text-green-700 dark:text-green-400">{t('profile.mfaEnabled')}</p>
           ) : (
@@ -500,7 +500,7 @@ export function ProfilePage() {
                 <form onSubmit={confirmMfaSetup} className="space-y-3">
                   <div>
                     <label className="label">{t('profile.mfaSecretLabel')}</label>
-                    <code className="block break-all rounded bg-gray-100 px-2 py-1 text-xs dark:bg-slate-900">
+                    <code className="block break-all rounded bg-ink-100 px-2 py-1 text-xs dark:bg-slate-900">
                       {mfaSetup.secret}
                     </code>
                   </div>
@@ -527,7 +527,7 @@ export function ProfilePage() {
 
       {/* Change password */}
       <form onSubmit={changePassword} className="card mt-6 space-y-4">
-        <h2 className="text-sm font-semibold text-gray-900 dark:text-slate-100">{t('profile.changePassword')}</h2>
+        <h2 className="text-sm font-semibold text-ink-900 dark:text-slate-100">{t('profile.changePassword')}</h2>
         <div>
           <label className="label">{t('profile.currentPassword')}</label>
           <PasswordInput
@@ -569,10 +569,10 @@ export function ProfilePage() {
             <CloudArrowDown className="h-5 w-5" />
           </div>
           <div className="min-w-0 flex-1">
-            <h2 className="text-sm font-semibold text-gray-900 dark:text-slate-100">{t('offline.bundleTitle')}</h2>
-            <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">{t('offline.bundleHint')}</p>
+            <h2 className="text-sm font-semibold text-ink-900 dark:text-slate-100">{t('offline.bundleTitle')}</h2>
+            <p className="mt-1 text-sm text-ink-700/80 dark:text-slate-400">{t('offline.bundleHint')}</p>
             {bundleMeta && (
-              <p className="mt-2 text-xs text-gray-500 dark:text-slate-500">
+              <p className="mt-2 text-xs text-ink-700/60 dark:text-slate-500">
                 {t('offline.bundleStatus', {
                   articles: bundleMeta.articles,
                   quizzes: bundleMeta.quizzes,
@@ -594,8 +594,8 @@ export function ProfilePage() {
 
       {pushSupported && (
         <div className="card mt-6 space-y-3">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-slate-100">{t('push.profileTitle')}</h2>
-          <p className="text-sm text-gray-600">{t('push.profileHint')}</p>
+          <h2 className="text-sm font-semibold text-ink-900 dark:text-slate-100">{t('push.profileTitle')}</h2>
+          <p className="text-sm text-ink-700/80">{t('push.profileHint')}</p>
           <div className="flex flex-wrap gap-2">
             {pushEnabled ? (
               <button type="button" className="btn-secondary text-sm" onClick={disablePush} disabled={pushBusy}>
@@ -611,8 +611,8 @@ export function ProfilePage() {
       )}
 
       <div className="card mt-6 space-y-4">
-        <h2 className="text-sm font-semibold text-gray-900 dark:text-slate-100">{t('profile.exportMyData')}</h2>
-        <p className="text-sm text-gray-600 dark:text-slate-400">{t('profile.exportMyDataHint')}</p>
+        <h2 className="text-sm font-semibold text-ink-900 dark:text-slate-100">{t('profile.exportMyData')}</h2>
+        <p className="text-sm text-ink-700/80 dark:text-slate-400">{t('profile.exportMyDataHint')}</p>
         <div className="flex flex-wrap gap-2">
           <button
             type="button"

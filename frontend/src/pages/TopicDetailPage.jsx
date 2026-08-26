@@ -181,16 +181,16 @@ function TopicDetailPage() {
             </span>
           )}
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">{topic.title}</h1>
+        <h1 className="text-2xl font-bold text-ink-900 dark:text-slate-100">{topic.title}</h1>
         <div className="mt-3">
           <ReadAloudButton text={`${topic.title}. ${topic.content || ''}`} />
         </div>
-        <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-gray-500 dark:text-slate-400">
+        <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-ink-700/60 dark:text-slate-400">
           <span>{topic.author_name}</span>
           <span>•</span>
           <span>{formatDate(topic.created_at)}</span>
         </div>
-        <p className="mt-4 whitespace-pre-wrap text-gray-800 dark:text-slate-300">{topic.content}</p>
+        <p className="mt-4 whitespace-pre-wrap text-ink-800 dark:text-slate-300">{topic.content}</p>
         {topic.is_locked && (
           <p className="mt-4 text-sm text-rose-700 dark:text-rose-300">{t('forum.lockedNotice')}</p>
         )}
@@ -215,7 +215,7 @@ function TopicDetailPage() {
         </div>
       )}
 
-      <h2 className="mb-3 mt-8 text-lg font-semibold text-gray-900 dark:text-slate-100">
+      <h2 className="mb-3 mt-8 text-lg font-semibold text-ink-900 dark:text-slate-100">
         {t('forum.comments')} ({approvedCount})
       </h2>
 
@@ -229,7 +229,7 @@ function TopicDetailPage() {
                 accepted ? 'border-brand-300 dark:border-brand-700' : ''
               }`}
             >
-              <div className="flex flex-wrap items-center gap-2 text-sm font-medium text-gray-700 dark:text-slate-300">
+              <div className="flex flex-wrap items-center gap-2 text-sm font-medium text-ink-700 dark:text-slate-300">
                 {c.author_name}
                 {c.is_expert && (
                   <span className="badge bg-brand-100 text-brand-800 dark:bg-brand-900/40 dark:text-brand-200">
@@ -246,11 +246,11 @@ function TopicDetailPage() {
                     {t('forum.awaitingApproval')}
                   </span>
                 )}
-                <span className="text-xs font-normal text-gray-400 dark:text-slate-500">
+                <span className="text-xs font-normal text-ink-700/45 dark:text-slate-500">
                   {formatDate(c.created_at)}
                 </span>
               </div>
-              <p className="mt-2 whitespace-pre-wrap text-sm text-gray-700 dark:text-slate-300">{c.comment}</p>
+              <p className="mt-2 whitespace-pre-wrap text-sm text-ink-700 dark:text-slate-300">{c.comment}</p>
               {topic.kind === 'question' && c.is_approved && (isAuthor || canModerate) && !accepted && (
                 <button
                   type="button"
@@ -280,7 +280,7 @@ function TopicDetailPage() {
           <button type="submit" className="btn-primary" disabled={submitting}>
             {t('forum.reply')}
           </button>
-          <p className="text-xs text-gray-400 dark:text-slate-500">{t('forum.awaitingApproval')}</p>
+          <p className="text-xs text-ink-700/45 dark:text-slate-500">{t('forum.awaitingApproval')}</p>
         </form>
       ) : user ? (
         <p className="mt-6 text-sm text-ink-700/70 dark:text-slate-400">{t('forum.lockedNotice')}</p>

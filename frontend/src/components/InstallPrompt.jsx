@@ -34,7 +34,7 @@ export function InstallPrompt() {
   };
 
   return (
-    <div className="border-b border-brand-100 bg-brand-50 px-4 py-3">
+    <div className="border-b border-brand-100 bg-brand-50 px-4 py-3 dark:border-brand-900/40 dark:bg-brand-950/30">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3">
         <Alert kind="warning">{t('pwa.installHint')}</Alert>
         <div className="flex gap-2">

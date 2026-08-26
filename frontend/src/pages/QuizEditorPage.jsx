@@ -342,7 +342,7 @@ export function QuizEditorPage() {
             return (
               <div key={index} className="card space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-500">
+                  <span className="text-sm font-medium text-ink-700/60">
                     {t('quizzes.questionNumber', { n: index + 1 })}
                   </span>
                   {form.questions.length > 1 && (
@@ -437,7 +437,7 @@ export function QuizEditorPage() {
                       value={q.optionsTextAr}
                       onChange={(e) => updateQuestion(index, { optionsTextAr: e.target.value })}
                     />
-                    <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">
+                    <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">
                       {t('quizzes.trueFalseArHint')}
                     </p>
                   </div>

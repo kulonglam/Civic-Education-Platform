@@ -367,7 +367,7 @@ export function ArticleEditorPage() {
               </button>
             </div>
           </div>
-          <p className="mb-2 text-xs text-gray-500 dark:text-slate-400">{t('articles.markdownHint')}</p>
+          <p className="mb-2 text-xs text-ink-700/60 dark:text-slate-400">{t('articles.markdownHint')}</p>
           {!showPreview ? (
             <>
               <MarkdownToolbar
@@ -394,7 +394,7 @@ export function ArticleEditorPage() {
             </>
           ) : (
             <div
-              className="prose min-h-[160px] max-w-none rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-slate-600 dark:bg-slate-900 dark:prose-invert"
+              className="prose min-h-[160px] max-w-none rounded-lg border border-ink-100 bg-ink-50 p-4 dark:border-slate-600 dark:bg-slate-900 dark:prose-invert"
               dangerouslySetInnerHTML={{ __html: previewHtml }}
             />
           )}
@@ -436,7 +436,7 @@ export function ArticleEditorPage() {
         </div>
         <div>
           <label className="label">{t('articles.fieldImage')}</label>
-          <p className="mb-2 text-xs text-gray-500 dark:text-slate-400">{t('articles.imageUploadHint')}</p>
+          <p className="mb-2 text-xs text-ink-700/60 dark:text-slate-400">{t('articles.imageUploadHint')}</p>
           {form.featured_image_url && (
             <img
               src={resolveMediaUrl(form.featured_image_url)}
@@ -466,7 +466,7 @@ export function ArticleEditorPage() {
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className="label">{t('articles.fieldAudio')}</label>
-            <p className="mb-2 text-xs text-gray-500 dark:text-slate-400">{t('articles.mediaAttachHint')}</p>
+            <p className="mb-2 text-xs text-ink-700/60 dark:text-slate-400">{t('articles.mediaAttachHint')}</p>
             <select
               className="input"
               value={form.audio_media_id}
@@ -482,7 +482,7 @@ export function ArticleEditorPage() {
           </div>
           <div>
             <label className="label">{t('articles.fieldVideo')}</label>
-            <p className="mb-2 text-xs text-gray-500 dark:text-slate-400">{t('articles.mediaAttachHint')}</p>
+            <p className="mb-2 text-xs text-ink-700/60 dark:text-slate-400">{t('articles.mediaAttachHint')}</p>
             <select
               className="input"
               value={form.video_media_id}
@@ -499,12 +499,12 @@ export function ArticleEditorPage() {
         </div>
         <div>
           <label className="label">{t('articles.fieldAttachment')}</label>
-          <p className="mb-2 text-xs text-gray-500 dark:text-slate-400">{t('articles.attachmentHint')}</p>
+          <p className="mb-2 text-xs text-ink-700/60 dark:text-slate-400">{t('articles.attachmentHint')}</p>
           {form.attachment_url ? (
-            <div className="flex flex-wrap items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 dark:border-slate-600 dark:bg-slate-900">
+            <div className="flex flex-wrap items-center gap-3 rounded-lg border border-ink-100 bg-ink-50 px-4 py-3 dark:border-slate-600 dark:bg-slate-900">
               <FileText className="h-5 w-5 shrink-0 text-brand-600 dark:text-brand-400" />
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-slate-400">
+                <p className="text-xs font-medium uppercase tracking-wide text-ink-700/60 dark:text-slate-400">
                   {t('articles.attachmentCurrent')}
                 </p>
                 <a
@@ -531,11 +531,11 @@ export function ArticleEditorPage() {
                 disabled={uploading}
               />
               {uploading && (
-                <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">{t('articles.attachmentUploading')}</p>
+                <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">{t('articles.attachmentUploading')}</p>
               )}
             </div>
           )}
-          <label className="mt-4 flex items-center gap-2 text-sm text-gray-700 dark:text-slate-300">
+          <label className="mt-4 flex items-center gap-2 text-sm text-ink-700 dark:text-slate-300">
             <input
               type="checkbox"
               checked={form.is_controlled_document}

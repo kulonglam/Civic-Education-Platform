@@ -26,7 +26,7 @@ function LanguageSwitcher() {
     <button
       type="button"
       onClick={toggle}
-      className="rounded-xl border border-ink-200 px-2 py-2 text-xs font-medium text-ink-700 hover:bg-ink-100/70 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800 sm:px-3 sm:py-1.5 sm:text-sm"
+      className="icon-btn w-auto min-w-11 px-2.5 text-xs font-medium sm:px-3 sm:text-sm"
       aria-label={t("nav.switchLanguage")}
     >
       {current === "ar" ? "EN" : "عربي"}

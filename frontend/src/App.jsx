@@ -171,7 +171,7 @@ const LeaderboardPage = lazy(() =>
 );
 
 function Lazy({ children }) {
-  return <Suspense fallback={<Spinner />}>{children}</Suspense>;
+  return <Suspense fallback={<Spinner className="min-h-[45vh]" />}>{children}</Suspense>;
 }
 
 function guard(element, props = {}) {

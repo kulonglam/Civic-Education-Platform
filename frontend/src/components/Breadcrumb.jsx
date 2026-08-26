@@ -6,11 +6,11 @@ export function Breadcrumb({ items }) {
   return (
     <nav
       aria-label="Breadcrumb"
-      className="mb-4 flex items-center gap-1 text-sm text-gray-500 dark:text-slate-400"
+      className="mb-4 flex min-w-0 flex-wrap items-center gap-1 text-sm text-ink-700/60 dark:text-slate-400"
     >
       {items.map((item, idx) => (
         <Fragment key={idx}>
-          {idx > 0 && <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-gray-400 dark:text-slate-600" />}
+          {idx > 0 && <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-ink-700/45 dark:text-slate-600" />}
           {item.to ? (
             <Link
               to={item.to}
@@ -19,7 +19,7 @@ export function Breadcrumb({ items }) {
               {item.label}
             </Link>
           ) : (
-            <span className="truncate max-w-[220px] font-medium text-gray-800 dark:text-slate-200">
+            <span className="truncate max-w-[220px] font-medium text-ink-800 dark:text-slate-200">
               {item.label}
             </span>
           )}

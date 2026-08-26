@@ -23,7 +23,7 @@ const TYPE_ICON_MAP = {
 function NotificationIcon({ type }) {
   const Icon = TYPE_ICON_MAP[type] ?? Bell;
   return (
-    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-600 dark:bg-slate-700 dark:text-slate-300">
+    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink-100 text-ink-700/80 dark:bg-slate-700 dark:text-slate-300">
       <Icon className="h-4 w-4" />
     </span>
   );
@@ -88,18 +88,18 @@ export function NotificationsPage() {
                 onClick={() => !n.is_read && markOne.mutate(n.id)}
                 className={`flex w-full items-start gap-3 rounded-xl border p-4 text-start transition-colors ${
                   n.is_read
-                    ? 'border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800'
+                    ? 'border-ink-100 bg-white dark:border-slate-700 dark:bg-slate-800'
                     : 'border-brand-200 bg-brand-50 dark:border-brand-800 dark:bg-brand-950/30'
                 }`}
               >
                 <NotificationIcon type={n.notification_type} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
-                    <p className="font-medium text-gray-900 dark:text-slate-100">{n.title}</p>
+                    <p className="font-medium text-ink-900 dark:text-slate-100">{n.title}</p>
                     {!n.is_read && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-500" />}
                   </div>
-                  <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">{n.message}</p>
-                  <p className="mt-1 text-xs text-gray-400 dark:text-slate-500">{formatDate(n.created_at)}</p>
+                  <p className="mt-1 text-sm text-ink-700/80 dark:text-slate-400">{n.message}</p>
+                  <p className="mt-1 text-xs text-ink-700/45 dark:text-slate-500">{formatDate(n.created_at)}</p>
                 </div>
               </button>
             ))}

@@ -4,7 +4,8 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { authService } from '../lib/services';
 import { extractError } from '../lib/api';
 import { Alert, PasswordInput } from '../components/ui';
-import { ShieldCheck } from '../components/Icons';
+import { AuthShell } from '../components/AuthShell';
+import { PlatformLogo } from '../components/PlatformLogo';
 
 export function ResetPasswordPage() {
   const { t } = useTranslation();
@@ -39,79 +40,84 @@ export function ResetPasswordPage() {
   };
 
   return (
-    <div className="mx-auto max-w-md">
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
-        {/* Branded header */}
-        <div className="bg-gradient-to-br from-brand-600 to-brand-700 px-8 py-8 text-white">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20">
-              <ShieldCheck className="h-5 w-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold">{t('auth.resetTitle')}</h1>
-              <p className="text-sm text-brand-100">{t('auth.resetSubtitle')}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="p-6">
-          {done ? (
-            <>
-              <Alert kind="success">{t('auth.verifySuccess')}</Alert>
-              <Link to="/login" className="btn-primary mt-4 block w-full text-center">
-                {t('nav.login')}
-              </Link>
-            </>
-          ) : (
-            <>
-              {error && (
-                <div className="mb-4">
-                  <Alert>{error}</Alert>
-                </div>
-              )}
-              <form onSubmit={submit} className="space-y-4">
-                {otpMode && (
-                  <>
-                    <div>
-                      <label className="label">{t('profile.phone')}</label>
-                      <input
-                        type="tel"
-                        className="input"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="label">{t('sms.otpCode')}</label>
-                      <input
-                        className="input"
-                        value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                        required
-                        maxLength={6}
-                      />
-                    </div>
-                  </>
-                )}
-                <div>
-                  <label className="label">{t('auth.newPassword')}</label>
-                  <PasswordInput
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    autoComplete="new-password"
-                    minLength={8}
-                    required
-                  />
-                </div>
-                <button type="submit" className="btn-primary w-full" disabled={loading}>
-                  {loading ? t('common.loading') : t('common.submit')}
-                </button>
-              </form>
-            </>
-          )}
+    <AuthShell title={t('auth.resetTitle')} subtitle={t('auth.resetSubtitle')}>
+      <div className="mb-6 flex items-center gap-3 lg:hidden">
+        <PlatformLogo className="h-10 w-10" />
+        <div>
+          <p className="font-display text-lg font-semibold text-ink-900 dark:text-slate-100">{t('app.name')}</p>
+          <p className="text-xs text-ink-700/60 dark:text-slate-400">{t('app.tagline')}</p>
         </div>
       </div>
-    </div>
+
+      <p className="eyebrow">{t('auth.secureAccess')}</p>
+      <h2 className="mt-2 font-display text-2xl font-semibold text-ink-900 dark:text-slate-50">
+        {t('auth.resetTitle')}
+      </h2>
+      <p className="mt-2 text-sm text-ink-700/70 dark:text-slate-400">{t('auth.resetSubtitle')}</p>
+
+      <div className="mt-6">
+        {done ? (
+          <>
+            <Alert kind="success">{t('auth.verifySuccess')}</Alert>
+            <Link to="/login" className="btn-primary mt-4 block w-full text-center">
+              {t('nav.login')}
+            </Link>
+          </>
+        ) : (
+          <>
+            {error && (
+              <div className="mb-4">
+                <Alert>{error}</Alert>
+              </div>
+            )}
+            <form onSubmit={submit} className="space-y-4">
+              {otpMode && (
+                <>
+                  <div>
+                    <label className="label" htmlFor="reset-phone">{t('profile.phone')}</label>
+                    <input
+                      id="reset-phone"
+                      type="tel"
+                      className="input"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      autoComplete="tel"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="label" htmlFor="reset-otp">{t('sms.otpCode')}</label>
+                    <input
+                      id="reset-otp"
+                      className="input"
+                      value={code}
+                      onChange={(e) => setCode(e.target.value)}
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      required
+                      maxLength={6}
+                    />
+                  </div>
+                </>
+              )}
+              <div>
+                <label className="label" htmlFor="reset-password">{t('auth.newPassword')}</label>
+                <PasswordInput
+                  id="reset-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="new-password"
+                  minLength={8}
+                  required
+                />
+              </div>
+              <button type="submit" className="btn-primary w-full" disabled={loading}>
+                {loading ? t('common.loading') : t('common.submit')}
+              </button>
+            </form>
+          </>
+        )}
+      </div>
+    </AuthShell>
   );
 }

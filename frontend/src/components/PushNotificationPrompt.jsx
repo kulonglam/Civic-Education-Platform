@@ -62,11 +62,11 @@ export function PushNotificationPrompt() {
   };
 
   return (
-    <div className="border-b border-gray-200 bg-gray-50 px-4 py-3">
+    <div className="border-b border-ink-100 bg-ink-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-900">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-sm font-medium text-gray-900">{t('push.title')}</p>
-          <p className="text-xs text-gray-600">{t('push.hint')}</p>
+          <p className="text-sm font-medium text-ink-900 dark:text-slate-100">{t('push.title')}</p>
+          <p className="text-xs text-ink-700/80 dark:text-slate-400">{t('push.hint')}</p>
           {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
         </div>
         <div className="flex gap-2">

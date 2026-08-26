@@ -46,7 +46,7 @@ function ScoreRing({ score, passed }) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-3xl font-extrabold text-gray-900 dark:text-slate-100">{score}%</span>
+        <span className="text-3xl font-extrabold text-ink-900 dark:text-slate-100">{score}%</span>
       </div>
     </div>
   );

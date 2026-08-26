@@ -113,9 +113,9 @@ export function ArticlesManagePage() {
       {articles.length === 0 ? (
         <EmptyState>{t('articles.noArticlesManage')}</EmptyState>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-left text-gray-500 dark:bg-slate-700/50 dark:text-slate-400">
+        <div className="overflow-x-auto rounded-xl border border-ink-100 bg-white dark:border-slate-700 dark:bg-slate-800">
+          <table className="min-w-full text-sm">
+            <thead className="bg-ink-50 text-left text-ink-700/60 dark:bg-slate-700/50 dark:text-slate-400">
               <tr>
                 <th className="px-4 py-3 font-medium">{t('articles.fieldTitle')}</th>
                 <th className="px-4 py-3 font-medium">{t('articles.category')}</th>
@@ -124,10 +124,10 @@ export function ArticlesManagePage() {
                 <th className="px-4 py-3 font-medium">{t('common.edit')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+            <tbody className="divide-y divide-ink-100 dark:divide-slate-700">
               {articles.map((article) => (
                 <tr key={article.id} className="dark:hover:bg-slate-700/30">
-                  <td className="px-4 py-3 font-medium text-gray-900 dark:text-slate-100">{article.title}</td>
+                  <td className="px-4 py-3 font-medium text-ink-900 dark:text-slate-100">{article.title}</td>
                   <td className="px-4 py-3 dark:text-slate-300">{article.category?.name ?? '—'}</td>
                   <td className="px-4 py-3 capitalize dark:text-slate-300">
                     {article.status === 'pending_review'

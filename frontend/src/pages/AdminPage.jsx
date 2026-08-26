@@ -13,8 +13,8 @@ import { formatDate } from '../lib/format';
 function StatCard({ label, value }) {
   return (
     <div className="card dark:border-slate-700 dark:bg-slate-800">
-      <p className="text-sm text-gray-500 dark:text-slate-400">{label}</p>
-      <p className="mt-1 text-3xl font-bold text-gray-900 dark:text-slate-100">{value}</p>
+      <p className="text-sm text-ink-700/60 dark:text-slate-400">{label}</p>
+      <p className="mt-1 text-3xl font-bold text-ink-900 dark:text-slate-100">{value}</p>
     </div>
   );
 }
@@ -314,10 +314,10 @@ function AdminPage() {
 
       <div className="card border-brand-100 bg-brand-50/60 dark:border-brand-900/40 dark:bg-brand-950/30">
         <h2 className="text-sm font-semibold text-brand-900 dark:text-brand-200">{t('roles.modelTitle')}</h2>
-        <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">{t('roles.modelHint')}</p>
-        <div className="mt-3 overflow-hidden rounded-lg border border-brand-100 dark:border-brand-900/40">
-          <table className="w-full text-sm">
-            <thead className="bg-white/70 text-left text-gray-500 dark:bg-slate-900/40 dark:text-slate-400">
+        <p className="mt-1 text-sm text-ink-700/80 dark:text-slate-400">{t('roles.modelHint')}</p>
+        <div className="mt-3 overflow-x-auto rounded-lg border border-brand-100 dark:border-brand-900/40">
+          <table className="min-w-full text-sm">
+            <thead className="bg-white/70 text-left text-ink-700/60 dark:bg-slate-900/40 dark:text-slate-400">
               <tr>
                 <th className="px-3 py-2 font-medium">{t('roles.roleColumn')}</th>
                 <th className="px-3 py-2 font-medium">{t('roles.permissionsColumn')}</th>
@@ -326,30 +326,30 @@ function AdminPage() {
             <tbody className="divide-y divide-brand-100/80 bg-white/50 dark:divide-slate-700 dark:bg-slate-900/20">
               {RECOMMENDED_ROLES.map((row) => (
                 <tr key={row.key}>
-                  <td className="px-3 py-2 font-medium text-gray-900 dark:text-slate-100">
+                  <td className="px-3 py-2 font-medium text-ink-900 dark:text-slate-100">
                     {t(`admin.roles.${row.key}`)}
                   </td>
-                  <td className="px-3 py-2 text-gray-700 dark:text-slate-300">{t(`roles.${row.permKey}`)}</td>
+                  <td className="px-3 py-2 text-ink-700 dark:text-slate-300">{t(`roles.${row.permKey}`)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <p className="mt-3 text-sm text-gray-600 dark:text-slate-400">
+        <p className="mt-3 text-sm text-ink-700/80 dark:text-slate-400">
           <strong>{t('roles.orgRole')}:</strong> {t('roles.orgRoleDesc')}
         </p>
         {!isAdmin && canModerate && (
-          <p className="mt-3 text-sm text-gray-600 dark:text-slate-400">{t('admin.moderationPanelDesc')}</p>
+          <p className="mt-3 text-sm text-ink-700/80 dark:text-slate-400">{t('admin.moderationPanelDesc')}</p>
         )}
         {!isAdmin && canManageContent && (
-          <p className="mt-3 text-sm text-gray-600 dark:text-slate-400">{t('admin.contentPanelDesc')}</p>
+          <p className="mt-3 text-sm text-ink-700/80 dark:text-slate-400">{t('admin.contentPanelDesc')}</p>
         )}
       </div>
 
       {canManageContent && (
         <section>
-          <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.contentManagement')}</h2>
-          <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('admin.contentManagementHint')}</p>
+          <h2 className="mb-2 text-lg font-semibold text-ink-900 dark:text-slate-100">{t('admin.contentManagement')}</h2>
+          <p className="mb-4 text-sm text-ink-700/60 dark:text-slate-400">{t('admin.contentManagementHint')}</p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {CONTENT_LINKS.map((item) => (
               <Link
@@ -357,14 +357,14 @@ function AdminPage() {
                 to={item.to}
                 className="card block transition hover:-translate-y-0.5 hover:shadow-lift dark:border-slate-700 dark:bg-slate-800"
               >
-                <h3 className="font-semibold text-gray-900 dark:text-slate-100">{t(item.titleKey)}</h3>
-                <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">{t(item.hintKey)}</p>
+                <h3 className="font-semibold text-ink-900 dark:text-slate-100">{t(item.titleKey)}</h3>
+                <p className="mt-1 text-sm text-ink-700/60 dark:text-slate-400">{t(item.hintKey)}</p>
               </Link>
             ))}
           </div>
-          <p className="mt-3 text-sm text-gray-500 dark:text-slate-400">{t('admin.translateHint')}</p>
+          <p className="mt-3 text-sm text-ink-700/60 dark:text-slate-400">{t('admin.translateHint')}</p>
           {isOrgAdmin && !isAdmin && (
-            <p className="mt-2 text-sm text-gray-500 dark:text-slate-400">
+            <p className="mt-2 text-sm text-ink-700/60 dark:text-slate-400">
               <Link to="/dashboard" className="font-semibold text-brand-700 hover:underline dark:text-brand-400">
                 {t('nav.dashboard')}
               </Link>
@@ -377,7 +377,7 @@ function AdminPage() {
 
       {isAdmin && overview && (
         <section>
-          <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.overview')}</h2>
+          <h2 className="mb-4 text-lg font-semibold text-ink-900 dark:text-slate-100">{t('admin.overview')}</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <StatCard label={t('admin.totalUsers')} value={overview.total_users} />
             <StatCard label={t('admin.activeUsers')} value={overview.active_users_30d} />
@@ -392,8 +392,8 @@ function AdminPage() {
 
       {superAdmin && (
         <section>
-          <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.platformOrgs')}</h2>
-          <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('admin.platformOrgsSubtitle')}</p>
+          <h2 className="mb-2 text-lg font-semibold text-ink-900 dark:text-slate-100">{t('admin.platformOrgs')}</h2>
+          <p className="mb-4 text-sm text-ink-700/60 dark:text-slate-400">{t('admin.platformOrgsSubtitle')}</p>
           <form
             className="mb-4 flex flex-wrap gap-2"
             onSubmit={(e) => {
@@ -411,9 +411,9 @@ function AdminPage() {
               {t('common.search')}
             </button>
           </form>
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 text-left text-gray-500 dark:bg-slate-700/50 dark:text-slate-400">
+          <div className="overflow-x-auto rounded-xl border border-ink-100 bg-white dark:border-slate-700 dark:bg-slate-800">
+            <table className="min-w-full text-sm">
+              <thead className="bg-ink-50 text-left text-ink-700/60 dark:bg-slate-700/50 dark:text-slate-400">
                 <tr>
                   <th className="px-4 py-3 font-medium">{t('saas.orgName')}</th>
                   <th className="px-4 py-3 font-medium">{t('admin.plan')}</th>
@@ -422,12 +422,12 @@ function AdminPage() {
                   <th className="px-4 py-3 font-medium">{t('admin.actions')}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+              <tbody className="divide-y divide-ink-100 dark:divide-slate-700">
                 {platformOrgs.map((org) => (
                   <tr key={org.id} className="dark:hover:bg-slate-700/30">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-gray-900 dark:text-slate-100">{org.name}</p>
-                      <p className="text-xs text-gray-500 dark:text-slate-400">{org.slug}</p>
+                      <p className="font-medium text-ink-900 dark:text-slate-100">{org.name}</p>
+                      <p className="text-xs text-ink-700/60 dark:text-slate-400">{org.slug}</p>
                     </td>
                     <td className="px-4 py-3 dark:text-slate-300">{org.plan_code || '—'}</td>
                     <td className="px-4 py-3 dark:text-slate-300">{org.member_count ?? '—'}</td>
@@ -435,7 +435,7 @@ function AdminPage() {
                       {org.is_active ? (
                         <span className="badge bg-green-100 text-green-700">{t('admin.active')}</span>
                       ) : (
-                        <span className="badge bg-gray-100 text-gray-600">{t('admin.inactive')}</span>
+                        <span className="badge bg-ink-100 text-ink-700/80">{t('admin.inactive')}</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
@@ -487,14 +487,14 @@ function AdminPage() {
       {superAdmin && supportOrg && (
         <section className="card">
           <div className="mb-3 flex items-center justify-between gap-2">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">
+            <h2 className="text-lg font-semibold text-ink-900 dark:text-slate-100">
               {t('admin.supportView')}: {supportOrg.name}
             </h2>
             <button type="button" className="btn-secondary text-xs" onClick={() => setSupportOrg(null)}>
               {t('common.close')}
             </button>
           </div>
-          <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('admin.supportViewHint')}</p>
+          <p className="mb-4 text-sm text-ink-700/60 dark:text-slate-400">{t('admin.supportViewHint')}</p>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <StatCard label={t('admin.membersCount')} value={supportOrg.member_count} />
             <StatCard label={t('admin.plan')} value={supportOrg.plan_code || '—'} />
@@ -506,20 +506,20 @@ function AdminPage() {
             <StatCard label={t('admin.controlledDocs')} value={supportOrg.controlled_documents} />
           </div>
           {supportOrg.members?.length > 0 && (
-            <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 dark:border-slate-700">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 text-left text-gray-500 dark:bg-slate-700/50 dark:text-slate-400">
+            <div className="mt-6 overflow-x-auto rounded-xl border border-ink-100 dark:border-slate-700">
+              <table className="min-w-full text-sm">
+                <thead className="bg-ink-50 text-left text-ink-700/60 dark:bg-slate-700/50 dark:text-slate-400">
                   <tr>
                     <th className="px-4 py-3 font-medium">{t('saas.members')}</th>
                     <th className="px-4 py-3 font-medium">{t('admin.actions')}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+                <tbody className="divide-y divide-ink-100 dark:divide-slate-700">
                   {supportOrg.members.map((member) => (
                     <tr key={member.user_id}>
                       <td className="px-4 py-3">
-                        <p className="font-medium text-gray-900 dark:text-slate-100">{member.full_name}</p>
-                        <p className="text-xs text-gray-500 dark:text-slate-400">{member.email}</p>
+                        <p className="font-medium text-ink-900 dark:text-slate-100">{member.full_name}</p>
+                        <p className="text-xs text-ink-700/60 dark:text-slate-400">{member.email}</p>
                       </td>
                       <td className="px-4 py-3">
                         <button
@@ -542,8 +542,8 @@ function AdminPage() {
 
       {superAdmin && usageSummary?.totals && (
         <section>
-          <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.usageSummary')}</h2>
-          <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('admin.usageSummarySubtitle')}</p>
+          <h2 className="mb-2 text-lg font-semibold text-ink-900 dark:text-slate-100">{t('admin.usageSummary')}</h2>
+          <p className="mb-4 text-sm text-ink-700/60 dark:text-slate-400">{t('admin.usageSummarySubtitle')}</p>
           <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <StatCard label={t('admin.platformOrgs')} value={usageSummary.totals.organizations} />
             <StatCard label={t('admin.membersCount')} value={usageSummary.totals.members} />
@@ -555,8 +555,8 @@ function AdminPage() {
 
       {superAdmin && sloMetrics && (
         <section>
-          <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">SLO status</h2>
-          <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">
+          <h2 className="mb-2 text-lg font-semibold text-ink-900 dark:text-slate-100">SLO status</h2>
+          <p className="mb-4 text-sm text-ink-700/60 dark:text-slate-400">
             24h auth success and security-event snapshot ({sloMetrics.status})
           </p>
           <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -569,12 +569,12 @@ function AdminPage() {
             <StatCard label="Status" value={sloMetrics.status} />
           </div>
           {platformCases.length > 0 && (
-            <ul className="mb-6 divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white text-sm dark:divide-slate-700 dark:border-slate-700 dark:bg-slate-800">
+            <ul className="mb-6 divide-y divide-ink-100 rounded-xl border border-ink-100 bg-white text-sm dark:divide-slate-700 dark:border-slate-700 dark:bg-slate-800">
               {platformCases.slice(0, 8).map((c) => (
                 <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-slate-100">{c.subject}</p>
-                    <p className="text-xs text-gray-500 dark:text-slate-400">
+                    <p className="font-medium text-ink-900 dark:text-slate-100">{c.subject}</p>
+                    <p className="text-xs text-ink-700/60 dark:text-slate-400">
                       {c.organization_name} · {c.status} · {c.priority}
                     </p>
                   </div>
@@ -608,11 +608,11 @@ function AdminPage() {
 
       {superAdmin && securityEvents.length > 0 && (
         <section>
-          <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.securityEvents')}</h2>
-          <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('admin.securityEventsSubtitle')}</p>
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 text-left text-gray-500 dark:bg-slate-700/50 dark:text-slate-400">
+          <h2 className="mb-2 text-lg font-semibold text-ink-900 dark:text-slate-100">{t('admin.securityEvents')}</h2>
+          <p className="mb-4 text-sm text-ink-700/60 dark:text-slate-400">{t('admin.securityEventsSubtitle')}</p>
+          <div className="overflow-x-auto rounded-xl border border-ink-100 bg-white dark:border-slate-700 dark:bg-slate-800">
+            <table className="min-w-full text-sm">
+              <thead className="bg-ink-50 text-left text-ink-700/60 dark:bg-slate-700/50 dark:text-slate-400">
                 <tr>
                   <th className="px-4 py-3 font-medium">{t('audit.when')}</th>
                   <th className="px-4 py-3 font-medium">{t('audit.type')}</th>
@@ -620,10 +620,10 @@ function AdminPage() {
                   <th className="px-4 py-3 font-medium">IP</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+              <tbody className="divide-y divide-ink-100 dark:divide-slate-700">
                 {securityEvents.map((ev) => (
                   <tr key={ev.id} className="dark:hover:bg-slate-700/30">
-                    <td className="px-4 py-3 whitespace-nowrap text-gray-500 dark:text-slate-400">
+                    <td className="px-4 py-3 whitespace-nowrap text-ink-700/60 dark:text-slate-400">
                       {formatDate(ev.created_at)}
                     </td>
                     <td className="px-4 py-3 dark:text-slate-300">{ev.event_type}</td>
@@ -639,7 +639,7 @@ function AdminPage() {
 
       {isAdmin && pushStats && (
         <section>
-          <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.pushTitle')}</h2>
+          <h2 className="mb-4 text-lg font-semibold text-ink-900 dark:text-slate-100">{t('admin.pushTitle')}</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <StatCard label={t('admin.pushSubscriptions')} value={pushStats.total_subscriptions} />
             <StatCard label={t('admin.pushUsers')} value={pushStats.users_with_push} />
@@ -659,7 +659,7 @@ function AdminPage() {
 
       {isAdmin && forumStats && (
         <section>
-          <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.forumEngagement')}</h2>
+          <h2 className="mb-4 text-lg font-semibold text-ink-900 dark:text-slate-100">{t('admin.forumEngagement')}</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <StatCard label={t('admin.totalTopics')} value={forumStats.total_topics} />
             <StatCard label={t('admin.totalComments')} value={forumStats.total_comments} />
@@ -671,8 +671,8 @@ function AdminPage() {
 
       {isAdmin && pollOpinion && (
         <section>
-          <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.pollOpinion')}</h2>
-          <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('admin.pollOpinionHint')}</p>
+          <h2 className="mb-2 text-lg font-semibold text-ink-900 dark:text-slate-100">{t('admin.pollOpinion')}</h2>
+          <p className="mb-4 text-sm text-ink-700/60 dark:text-slate-400">{t('admin.pollOpinionHint')}</p>
           <div className="mb-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <StatCard label={t('admin.totalPolls')} value={pollOpinion.total_polls} />
             <StatCard label={t('admin.totalPollResponses')} value={pollOpinion.total_responses} />
@@ -684,19 +684,19 @@ function AdminPage() {
                   <span className="badge bg-brand-50 text-brand-800 dark:bg-brand-900/30 dark:text-brand-200">
                     {t(`engage.kind_${poll.kind || 'community'}`)}
                   </span>
-                  <span className="text-xs text-gray-500 dark:text-slate-400">
+                  <span className="text-xs text-ink-700/60 dark:text-slate-400">
                     {t('engage.totalResponses', { count: poll.total_votes })}
                   </span>
                 </div>
-                <h3 className="font-semibold text-gray-900 dark:text-slate-100">{poll.question}</h3>
+                <h3 className="font-semibold text-ink-900 dark:text-slate-100">{poll.question}</h3>
                 <ul className="space-y-2">
                   {(poll.options ?? []).map((option) => (
                     <li key={option.id}>
-                      <div className="mb-1 flex justify-between text-sm text-gray-700 dark:text-slate-300">
+                      <div className="mb-1 flex justify-between text-sm text-ink-700 dark:text-slate-300">
                         <span>{option.label}</span>
                         <span>{option.percent}%</span>
                       </div>
-                      <div className="h-1.5 overflow-hidden rounded-full bg-gray-100 dark:bg-slate-700">
+                      <div className="h-1.5 overflow-hidden rounded-full bg-ink-100 dark:bg-slate-700">
                         <div className="h-full bg-brand-600" style={{ width: `${option.percent || 0}%` }} />
                       </div>
                     </li>
@@ -705,10 +705,10 @@ function AdminPage() {
                 {poll.demographics_available ? (
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+                      <h4 className="text-xs font-semibold uppercase tracking-wide text-ink-700/60 dark:text-slate-400">
                         {t('admin.regionalTrends')}
                       </h4>
-                      <ul className="mt-2 space-y-1 text-sm text-gray-700 dark:text-slate-300">
+                      <ul className="mt-2 space-y-1 text-sm text-ink-700 dark:text-slate-300">
                         {(poll.regions ?? []).map((row) => (
                           <li key={row.key} className="flex justify-between gap-3">
                             <span>{t(`admin.demo_${row.key}`, { defaultValue: t(`profile.region_${row.key}`, { defaultValue: row.key }) })}</span>
@@ -718,10 +718,10 @@ function AdminPage() {
                       </ul>
                     </div>
                     <div>
-                      <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+                      <h4 className="text-xs font-semibold uppercase tracking-wide text-ink-700/60 dark:text-slate-400">
                         {t('admin.demographicSummary')}
                       </h4>
-                      <ul className="mt-2 space-y-1 text-sm text-gray-700 dark:text-slate-300">
+                      <ul className="mt-2 space-y-1 text-sm text-ink-700 dark:text-slate-300">
                         {(poll.age_bands ?? []).map((row) => (
                           <li key={row.key} className="flex justify-between gap-3">
                             <span>{t(`admin.demo_${row.key}`, { defaultValue: t(`profile.age_${row.key}`, { defaultValue: row.key }) })}</span>
@@ -732,7 +732,7 @@ function AdminPage() {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500 dark:text-slate-400">{t('admin.pollDemographicsHidden')}</p>
+                  <p className="text-sm text-ink-700/60 dark:text-slate-400">{t('admin.pollDemographicsHidden')}</p>
                 )}
               </div>
             ))}
@@ -742,10 +742,10 @@ function AdminPage() {
 
       {isAdmin && quizStats.length > 0 && (
         <section>
-          <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.quizPerformance')}</h2>
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 text-left text-gray-500 dark:bg-slate-700/50 dark:text-slate-400">
+          <h2 className="mb-4 text-lg font-semibold text-ink-900 dark:text-slate-100">{t('admin.quizPerformance')}</h2>
+          <div className="overflow-x-auto rounded-xl border border-ink-100 bg-white dark:border-slate-700 dark:bg-slate-800">
+            <table className="min-w-full text-sm">
+              <thead className="bg-ink-50 text-left text-ink-700/60 dark:bg-slate-700/50 dark:text-slate-400">
                 <tr>
                   <th className="px-4 py-3 font-medium">{t('quizzes.title')}</th>
                   <th className="px-4 py-3 font-medium">{t('admin.attempts')}</th>
@@ -753,10 +753,10 @@ function AdminPage() {
                   <th className="px-4 py-3 font-medium">{t('admin.avgScore')}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+              <tbody className="divide-y divide-ink-100 dark:divide-slate-700">
                 {quizStats.map((q) => (
                   <tr key={q.quiz_id} className="dark:hover:bg-slate-700/30">
-                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-slate-100">{q.title}</td>
+                    <td className="px-4 py-3 font-medium text-ink-900 dark:text-slate-100">{q.title}</td>
                     <td className="px-4 py-3 dark:text-slate-300">{q.attempt_count}</td>
                     <td className="px-4 py-3 dark:text-slate-300">{q.pass_rate}%</td>
                     <td className="px-4 py-3 dark:text-slate-300">{q.avg_score}%</td>
@@ -770,11 +770,11 @@ function AdminPage() {
 
       {isAdmin && learningStats && (
         <section>
-          <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.learningInsights')}</h2>
+          <h2 className="mb-4 text-lg font-semibold text-ink-900 dark:text-slate-100">{t('admin.learningInsights')}</h2>
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="card">
-              <h3 className="mb-3 font-medium text-gray-900 dark:text-slate-100">{t('admin.articlesByCategory')}</h3>
-              <ul className="divide-y divide-gray-100 text-sm dark:divide-slate-700">
+              <h3 className="mb-3 font-medium text-ink-900 dark:text-slate-100">{t('admin.articlesByCategory')}</h3>
+              <ul className="divide-y divide-ink-100 text-sm dark:divide-slate-700">
                 {(learningStats.articles_by_category ?? []).map((row) => (
                   <li key={row.slug} className="flex justify-between py-2 dark:text-slate-300">
                     <span>{row.category}</span>
@@ -784,17 +784,17 @@ function AdminPage() {
               </ul>
             </div>
             <div className="card">
-              <h3 className="mb-3 font-medium text-gray-900 dark:text-slate-100">{t('admin.popularLessons')}</h3>
+              <h3 className="mb-3 font-medium text-ink-900 dark:text-slate-100">{t('admin.popularLessons')}</h3>
               {(learningStats.popular_lessons ?? []).length === 0 ? (
-                <p className="text-sm text-gray-500 dark:text-slate-400">{t('admin.noPopularLessons')}</p>
+                <p className="text-sm text-ink-700/60 dark:text-slate-400">{t('admin.noPopularLessons')}</p>
               ) : (
-                <ul className="divide-y divide-gray-100 text-sm dark:divide-slate-700">
+                <ul className="divide-y divide-ink-100 text-sm dark:divide-slate-700">
                   {(learningStats.popular_lessons ?? []).map((row) => (
                     <li key={row.id} className="flex justify-between gap-3 py-2 dark:text-slate-300">
                       <Link to={`/articles/${row.id}`} className="font-medium text-brand-700 hover:underline dark:text-brand-400">
                         {row.title}
                       </Link>
-                      <span className="shrink-0 text-gray-500 dark:text-slate-400">
+                      <span className="shrink-0 text-ink-700/60 dark:text-slate-400">
                         {t('admin.lessonStats', { completions: row.completions, views: row.views })}
                       </span>
                     </li>
@@ -803,8 +803,8 @@ function AdminPage() {
               )}
             </div>
             <div className="card">
-              <h3 className="mb-3 font-medium text-gray-900 dark:text-slate-100">{t('admin.languagesUsed')}</h3>
-              <ul className="divide-y divide-gray-100 text-sm dark:divide-slate-700">
+              <h3 className="mb-3 font-medium text-ink-900 dark:text-slate-100">{t('admin.languagesUsed')}</h3>
+              <ul className="divide-y divide-ink-100 text-sm dark:divide-slate-700">
                 {(learningStats.languages ?? []).map((row) => (
                   <li key={row.key} className="flex justify-between py-2 dark:text-slate-300">
                     <span>{t(`admin.lang_${row.key}`, { defaultValue: row.key })}</span>
@@ -814,9 +814,9 @@ function AdminPage() {
               </ul>
             </div>
             <div className="card">
-              <h3 className="mb-3 font-medium text-gray-900 dark:text-slate-100">{t('admin.regionalEngagement')}</h3>
+              <h3 className="mb-3 font-medium text-ink-900 dark:text-slate-100">{t('admin.regionalEngagement')}</h3>
               {learningStats.regional_engagement?.demographics_available ? (
-                <ul className="divide-y divide-gray-100 text-sm dark:divide-slate-700">
+                <ul className="divide-y divide-ink-100 text-sm dark:divide-slate-700">
                   {(learningStats.regional_engagement.regions ?? []).map((row) => (
                     <li key={row.key} className="flex justify-between py-2 dark:text-slate-300">
                       <span>
@@ -829,12 +829,12 @@ function AdminPage() {
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-gray-500 dark:text-slate-400">{t('admin.pollDemographicsHidden')}</p>
+                <p className="text-sm text-ink-700/60 dark:text-slate-400">{t('admin.pollDemographicsHidden')}</p>
               )}
             </div>
             <div className="card">
-              <h3 className="mb-3 font-medium text-gray-900 dark:text-slate-100">{t('admin.topTags')}</h3>
-              <ul className="divide-y divide-gray-100 text-sm dark:divide-slate-700">
+              <h3 className="mb-3 font-medium text-ink-900 dark:text-slate-100">{t('admin.topTags')}</h3>
+              <ul className="divide-y divide-ink-100 text-sm dark:divide-slate-700">
                 {(learningStats.top_tags ?? []).map((row) => (
                   <li key={row.tag} className="flex justify-between py-2 dark:text-slate-300">
                     <span>#{row.tag}</span>
@@ -844,15 +844,15 @@ function AdminPage() {
               </ul>
             </div>
             <div className="card">
-              <h3 className="mb-3 font-medium text-gray-900 dark:text-slate-100">{t('admin.translationCompleteness')}</h3>
-              <p className="mb-3 text-sm text-gray-500 dark:text-slate-400">
+              <h3 className="mb-3 font-medium text-ink-900 dark:text-slate-100">{t('admin.translationCompleteness')}</h3>
+              <p className="mb-3 text-sm text-ink-700/60 dark:text-slate-400">
                 {t('admin.translationOverall', {
                   pct: learningStats.translation?.overall_pct ?? 0,
                   done: learningStats.translation?.overall_translated ?? 0,
                   total: learningStats.translation?.overall_total ?? 0,
                 })}
               </p>
-              <ul className="divide-y divide-gray-100 text-sm dark:divide-slate-700">
+              <ul className="divide-y divide-ink-100 text-sm dark:divide-slate-700">
                 {(learningStats.translation?.rows ?? []).map((row) => (
                   <li key={`${row.model}-${row.field}`} className="flex justify-between gap-3 py-2 dark:text-slate-300">
                     <span>
@@ -871,14 +871,14 @@ function AdminPage() {
 
       {canManagePlatformUsers && users.length > 0 && (
         <section>
-          <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.userManagement')}</h2>
-          <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">
+          <h2 className="mb-4 text-lg font-semibold text-ink-900 dark:text-slate-100">{t('admin.userManagement')}</h2>
+          <p className="mb-4 text-sm text-ink-700/60 dark:text-slate-400">
             {isAdmin ? t('admin.platformRolesHint') : t('admin.rolesHint')}
           </p>
           {isAdmin && (
             <div className="card mb-4 border-brand-100 bg-brand-50/50 dark:border-brand-900/40 dark:bg-brand-950/20">
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-slate-100">{t('admin.manageModerators')}</h3>
-              <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">{t('admin.manageModeratorsHint')}</p>
+              <h3 className="text-sm font-semibold text-ink-900 dark:text-slate-100">{t('admin.manageModerators')}</h3>
+              <p className="mt-1 text-sm text-ink-700/80 dark:text-slate-400">{t('admin.manageModeratorsHint')}</p>
               {isOrgAdmin && (
                 <Link to="/organization" className="mt-2 inline-block text-sm font-semibold text-brand-700 hover:underline dark:text-brand-400">
                   {t('admin.manageOrgRoles')}
@@ -891,9 +891,9 @@ function AdminPage() {
               <Alert>{userActionError}</Alert>
             </div>
           )}
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 text-left text-gray-500 dark:bg-slate-700/50 dark:text-slate-400">
+          <div className="overflow-x-auto rounded-xl border border-ink-100 bg-white dark:border-slate-700 dark:bg-slate-800">
+            <table className="min-w-full text-sm">
+              <thead className="bg-ink-50 text-left text-ink-700/60 dark:bg-slate-700/50 dark:text-slate-400">
                 <tr>
                   <th className="px-4 py-3 font-medium">{t('auth.email')}</th>
                   <th className="px-4 py-3 font-medium">{t('profile.role')}</th>
@@ -904,12 +904,12 @@ function AdminPage() {
                   )}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+              <tbody className="divide-y divide-ink-100 dark:divide-slate-700">
                 {users.map((u) => (
                   <tr key={u.id} className="dark:hover:bg-slate-700/30">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-gray-900 dark:text-slate-100">{u.first_name} {u.last_name}</p>
-                      <p className="text-xs text-gray-500 dark:text-slate-400">{u.email}</p>
+                      <p className="font-medium text-ink-900 dark:text-slate-100">{u.first_name} {u.last_name}</p>
+                      <p className="text-xs text-ink-700/60 dark:text-slate-400">{u.email}</p>
                     </td>
                     <td className="px-4 py-3 dark:text-slate-300">
                       {isAdmin &&
@@ -936,10 +936,10 @@ function AdminPage() {
                       ) : u.is_active ? (
                         <span className="badge bg-green-100 text-green-700">{t('admin.active')}</span>
                       ) : (
-                        <span className="badge bg-gray-100 text-gray-600">{t('admin.inactive')}</span>
+                        <span className="badge bg-ink-100 text-ink-700/80">{t('admin.inactive')}</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-gray-500 dark:text-slate-400">
+                    <td className="px-4 py-3 whitespace-nowrap text-ink-700/60 dark:text-slate-400">
                       {u.last_activity_at ? formatDate(u.last_activity_at) : '—'}
                     </td>
                     {canManagePlatformUsers && (
@@ -973,15 +973,15 @@ function AdminPage() {
 
       {canManagePlatformUsers && (
         <section>
-          <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('audit.title')}</h2>
+          <h2 className="mb-4 text-lg font-semibold text-ink-900 dark:text-slate-100">{t('audit.title')}</h2>
           {auditLogs.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-gray-300 bg-white py-8 text-center text-gray-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+            <div className="rounded-xl border border-dashed border-ink-200 bg-white py-8 text-center text-ink-700/60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
               {t('audit.empty')}
             </div>
           ) : (
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 text-left text-gray-500 dark:bg-slate-700/50 dark:text-slate-400">
+            <div className="overflow-x-auto rounded-xl border border-ink-100 bg-white dark:border-slate-700 dark:bg-slate-800">
+              <table className="min-w-full text-sm">
+                <thead className="bg-ink-50 text-left text-ink-700/60 dark:bg-slate-700/50 dark:text-slate-400">
                   <tr>
                     <th className="px-4 py-3 font-medium">{t('audit.when')}</th>
                     <th className="px-4 py-3 font-medium">{t('audit.user')}</th>
@@ -989,18 +989,18 @@ function AdminPage() {
                     <th className="px-4 py-3 font-medium">{t('audit.details')}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+                <tbody className="divide-y divide-ink-100 dark:divide-slate-700">
                   {auditLogs.map((log) => (
                     <tr key={log.id} className="dark:hover:bg-slate-700/30">
-                      <td className="px-4 py-3 whitespace-nowrap text-gray-500 dark:text-slate-400">
+                      <td className="px-4 py-3 whitespace-nowrap text-ink-700/60 dark:text-slate-400">
                         {formatDate(log.timestamp)}
                       </td>
                       <td className="px-4 py-3">
-                        <p className="font-medium text-gray-900 dark:text-slate-100">{log.user_name || '—'}</p>
-                        <p className="text-xs text-gray-500 dark:text-slate-400">{log.user_email}</p>
+                        <p className="font-medium text-ink-900 dark:text-slate-100">{log.user_name || '—'}</p>
+                        <p className="text-xs text-ink-700/60 dark:text-slate-400">{log.user_email}</p>
                       </td>
                       <td className="px-4 py-3 capitalize dark:text-slate-300">{log.activity_type.replace(/_/g, ' ')}</td>
-                      <td className="px-4 py-3 text-xs text-gray-600 dark:text-slate-400">
+                      <td className="px-4 py-3 text-xs text-ink-700/80 dark:text-slate-400">
                         {log.metadata && Object.keys(log.metadata).length > 0
                           ? JSON.stringify(log.metadata)
                           : '—'}
@@ -1017,8 +1017,8 @@ function AdminPage() {
       {superAdmin && (
         <section>
           <div className="card">
-            <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.civicSmsTitle')}</h2>
-            <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('admin.civicSmsSubtitle')}</p>
+            <h2 className="mb-2 text-lg font-semibold text-ink-900 dark:text-slate-100">{t('admin.civicSmsTitle')}</h2>
+            <p className="mb-4 text-sm text-ink-700/60 dark:text-slate-400">{t('admin.civicSmsSubtitle')}</p>
             <form onSubmit={sendPlatformAlert} className="space-y-3">
               <textarea
                 className="input min-h-[100px]"
@@ -1032,9 +1032,9 @@ function AdminPage() {
                 {platformSmsBusy ? t('common.loading') : t('admin.civicSmsSend')}
               </button>
             </form>
-            <form onSubmit={sendPlatformWhatsApp} className="mt-8 space-y-3 border-t border-gray-100 pt-6 dark:border-slate-700">
-              <h3 className="text-base font-semibold text-gray-900 dark:text-slate-100">{t('admin.civicWhatsAppTitle')}</h3>
-              <p className="text-sm text-gray-500 dark:text-slate-400">{t('admin.civicWhatsAppSubtitle')}</p>
+            <form onSubmit={sendPlatformWhatsApp} className="mt-8 space-y-3 border-t border-ink-100 pt-6 dark:border-slate-700">
+              <h3 className="text-base font-semibold text-ink-900 dark:text-slate-100">{t('admin.civicWhatsAppTitle')}</h3>
+              <p className="text-sm text-ink-700/60 dark:text-slate-400">{t('admin.civicWhatsAppSubtitle')}</p>
               <textarea
                 className="input min-h-[100px]"
                 placeholder={t('admin.civicWhatsAppPlaceholder')}
@@ -1053,10 +1053,10 @@ function AdminPage() {
 
       {canModerate && (
       <section>
-        <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-slate-100">{t('admin.moderation')}</h2>
-        <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('admin.moderationHint')}</p>
+        <h2 className="mb-2 text-lg font-semibold text-ink-900 dark:text-slate-100">{t('admin.moderation')}</h2>
+        <p className="mb-4 text-sm text-ink-700/60 dark:text-slate-400">{t('admin.moderationHint')}</p>
         {pendingTopics.length === 0 && pendingComments.length === 0 && forumReports.length === 0 && misinfoReports.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-gray-300 bg-white py-8 text-center text-gray-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+          <div className="rounded-xl border border-dashed border-ink-200 bg-white py-8 text-center text-ink-700/60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
             {t('admin.nothingPending')}
           </div>
         ) : (
@@ -1065,9 +1065,9 @@ function AdminPage() {
               <div key={topic.id} className="card flex items-start justify-between gap-4">
                 <div>
                   <span className="badge mb-1 bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">{t('admin.pendingTopics')}</span>
-                  <h3 className="font-semibold text-gray-900 dark:text-slate-100">{topic.title}</h3>
-                  <p className="mt-1 line-clamp-2 text-sm text-gray-600 dark:text-slate-400">{topic.content}</p>
-                  <p className="mt-1 text-xs text-gray-400 dark:text-slate-500">{topic.author_name}</p>
+                  <h3 className="font-semibold text-ink-900 dark:text-slate-100">{topic.title}</h3>
+                  <p className="mt-1 line-clamp-2 text-sm text-ink-700/80 dark:text-slate-400">{topic.content}</p>
+                  <p className="mt-1 text-xs text-ink-700/45 dark:text-slate-500">{topic.author_name}</p>
                 </div>
                 <div className="flex shrink-0 gap-2">
                   <button className="btn-primary" onClick={() => moderateTopic(topic.id, true)}>
@@ -1083,8 +1083,8 @@ function AdminPage() {
               <div key={c.id} className="card flex items-start justify-between gap-4">
                 <div>
                   <span className="badge mb-1 bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">{t('admin.pendingComments')}</span>
-                  <p className="text-sm text-gray-700 dark:text-slate-300">{c.comment}</p>
-                  <p className="mt-1 text-xs text-gray-400 dark:text-slate-500">{c.author_name}</p>
+                  <p className="text-sm text-ink-700 dark:text-slate-300">{c.comment}</p>
+                  <p className="mt-1 text-xs text-ink-700/45 dark:text-slate-500">{c.author_name}</p>
                 </div>
                 <div className="flex shrink-0 gap-2">
                   <button className="btn-primary" onClick={() => moderateComment(c.id, true)}>
@@ -1102,16 +1102,16 @@ function AdminPage() {
                   <span className="badge mb-1 bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
                     {t('admin.forumReports')}
                   </span>
-                  <p className="text-sm font-medium text-gray-900 dark:text-slate-100">
+                  <p className="text-sm font-medium text-ink-900 dark:text-slate-100">
                     {t(`forum.reason_${report.reason}`)} · {report.topic_title}
                   </p>
                   {report.comment_excerpt && (
-                    <p className="mt-1 text-sm text-gray-700 dark:text-slate-300">{report.comment_excerpt}</p>
+                    <p className="mt-1 text-sm text-ink-700 dark:text-slate-300">{report.comment_excerpt}</p>
                   )}
                   {report.details && (
-                    <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">{report.details}</p>
+                    <p className="mt-1 text-sm text-ink-700/80 dark:text-slate-400">{report.details}</p>
                   )}
-                  <p className="mt-1 text-xs text-gray-400 dark:text-slate-500">{report.reporter_name}</p>
+                  <p className="mt-1 text-xs text-ink-700/45 dark:text-slate-500">{report.reporter_name}</p>
                 </div>
                 <div className="flex shrink-0 flex-col gap-2">
                   <button className="btn-primary" onClick={() => reviewForumReport(report.id, 'reviewed')}>
@@ -1129,10 +1129,10 @@ function AdminPage() {
                   <span className="badge mb-1 bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
                     {t('admin.misinfoReports')}
                   </span>
-                  <p className="text-sm font-medium text-gray-900 dark:text-slate-100">{report.channel}</p>
-                  <p className="mt-1 text-sm text-gray-700 dark:text-slate-300">{report.description}</p>
+                  <p className="text-sm font-medium text-ink-900 dark:text-slate-100">{report.channel}</p>
+                  <p className="mt-1 text-sm text-ink-700 dark:text-slate-300">{report.description}</p>
                   {report.source_url && (
-                    <p className="mt-1 break-all text-xs text-gray-400 dark:text-slate-500">{report.source_url}</p>
+                    <p className="mt-1 break-all text-xs text-ink-700/45 dark:text-slate-500">{report.source_url}</p>
                   )}
                 </div>
                 <div className="flex shrink-0 flex-col gap-2">

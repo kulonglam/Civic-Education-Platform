@@ -8,7 +8,7 @@ export function Pagination({ page, totalCount, pageSize = 20, onPageChange }) {
 
   return (
     <nav
-      className="mt-8 flex items-center justify-center gap-3"
+      className="mt-8 flex flex-wrap items-center justify-center gap-3"
       aria-label={t('pagination.label')}
     >
       <button
@@ -19,7 +19,7 @@ export function Pagination({ page, totalCount, pageSize = 20, onPageChange }) {
       >
         {t('pagination.previous')}
       </button>
-      <span className="text-sm text-gray-600 dark:text-slate-400" aria-current="page">
+      <span className="text-sm text-ink-700/80 dark:text-slate-400" aria-current="page">
         {t('pagination.pageOf', { page, total: totalPages })}
       </span>
       <button

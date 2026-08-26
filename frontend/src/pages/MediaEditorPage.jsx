@@ -235,7 +235,7 @@ export function MediaEditorPage() {
               placeholder="https://"
               required
             />
-            <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">
+            <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">
               {t('media.externalHint')}
             </p>
           </div>
@@ -255,7 +255,7 @@ export function MediaEditorPage() {
               }}
             />
             {uploading && (
-              <p className="mt-1 text-xs text-gray-500">{t('media.uploading')}</p>
+              <p className="mt-1 text-xs text-ink-700/60">{t('media.uploading')}</p>
             )}
             {form.file_url && (
               <p className="mt-2 truncate text-xs text-brand-700 dark:text-brand-400">
@@ -290,7 +290,7 @@ export function MediaEditorPage() {
             onChange={(e) => setForm({ ...form, captions_url: e.target.value })}
             placeholder="https:// (WebVTT .vtt)"
           />
-          <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">{t('media.captionsHint')}</p>
+          <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">{t('media.captionsHint')}</p>
         </div>
 
         <div>

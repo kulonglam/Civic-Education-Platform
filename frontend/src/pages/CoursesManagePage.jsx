@@ -71,7 +71,7 @@ export function CoursesManagePage() {
                 <th className="px-4 py-3 font-medium">{t('common.edit')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+            <tbody className="divide-y divide-ink-100 dark:divide-slate-700">
               {items.map((item) => (
                 <tr key={item.id}>
                   <td className="px-4 py-3 font-medium">

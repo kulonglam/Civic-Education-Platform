@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { authService } from '../lib/services';
 import { Alert, Spinner } from '../components/ui';
+import { AuthShell } from '../components/AuthShell';
+import { PlatformLogo } from '../components/PlatformLogo';
 
 export function VerifyEmailPage() {
   const { t } = useTranslation();
@@ -19,9 +21,23 @@ export function VerifyEmailPage() {
       .catch(() => setStatus('error'));
   }, [token]);
 
+  const title =
+    status === 'success' ? t('auth.verifySuccess') : status === 'error' ? t('auth.verifyFailed') : t('auth.verifying');
+
   return (
-    <div className="mx-auto max-w-md py-8">
-      <div className="card text-center">
+    <AuthShell title={title} subtitle={t('app.tagline')}>
+      <div className="mb-6 flex items-center gap-3 lg:hidden">
+        <PlatformLogo className="h-10 w-10" />
+        <div>
+          <p className="font-display text-lg font-semibold text-ink-900 dark:text-slate-100">{t('app.name')}</p>
+          <p className="text-xs text-ink-700/60 dark:text-slate-400">{t('app.tagline')}</p>
+        </div>
+      </div>
+
+      <p className="eyebrow">{t('auth.secureAccess')}</p>
+      <h2 className="mt-2 font-display text-2xl font-semibold text-ink-900 dark:text-slate-50">{title}</h2>
+
+      <div className="mt-6">
         {status === 'loading' && <Spinner label={t('auth.verifying')} />}
         {status === 'success' && (
           <>
@@ -40,6 +56,6 @@ export function VerifyEmailPage() {
           </>
         )}
       </div>
-    </div>
+    </AuthShell>
   );
 }

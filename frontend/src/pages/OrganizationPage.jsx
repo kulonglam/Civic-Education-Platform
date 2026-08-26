@@ -605,7 +605,7 @@ function OrganizationPage() {
       {isOrgAdmin && (
         <div className="card mb-6 border-teal-100 bg-teal-50/60 dark:border-teal-900/40 dark:bg-teal-950/30">
           <h2 className="text-sm font-semibold text-teal-900 dark:text-teal-200">{t('roles.orgAdminPanelTitle')}</h2>
-          <p className="mt-1 text-sm text-gray-700 dark:text-slate-300">{t('roles.orgAdminPanelDesc')}</p>
+          <p className="mt-1 text-sm text-ink-700 dark:text-slate-300">{t('roles.orgAdminPanelDesc')}</p>
         </div>
       )}
 
@@ -669,7 +669,7 @@ function OrganizationPage() {
               onChange={(e) => setForm({ ...form, primary_color: e.target.value })}
             />
           </div>
-          <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-300">
+          <label className="flex items-center gap-2 text-sm text-ink-700 dark:text-slate-300">
             <input
               type="checkbox"
               checked={form.force_mfa_for_admins}
@@ -698,7 +698,7 @@ function OrganizationPage() {
               onChange={(e) => setForm({ ...form, ip_allowlist_text: e.target.value })}
               placeholder={'203.0.113.0/24\n198.51.100.10'}
             />
-            <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">{t('saas.ipAllowlistHint')}</p>
+            <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">{t('saas.ipAllowlistHint')}</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <button type="submit" className="btn-primary" disabled={saving}>
@@ -711,7 +711,7 @@ function OrganizationPage() {
               {t('saas.compliancePack')}
             </button>
           </div>
-          <p className="text-xs text-gray-500 dark:text-slate-400">{t('saas.complianceDisclaimer')}</p>
+          <p className="text-xs text-ink-700/60 dark:text-slate-400">{t('saas.complianceDisclaimer')}</p>
         </form>
         </TabPanel>
       )}
@@ -720,11 +720,11 @@ function OrganizationPage() {
         <TabPanel id="security" active={orgTab}>
         <form onSubmit={saveSso} className="card mb-8 space-y-4">
           <h2 className="font-display text-xl font-semibold text-ink-900 dark:text-slate-100">{t('saas.ssoTitle')}</h2>
-          <p className="text-sm text-gray-500 dark:text-slate-400">{t('saas.ssoSubtitle')}</p>
+          <p className="text-sm text-ink-700/60 dark:text-slate-400">{t('saas.ssoSubtitle')}</p>
           {!hasSsoPlan && (
             <Alert kind="warning">{t('saas.upgradePlan')}</Alert>
           )}
-          <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-300">
+          <label className="flex items-center gap-2 text-sm text-ink-700 dark:text-slate-300">
             <input
               type="checkbox"
               checked={ssoForm.enabled}
@@ -780,9 +780,9 @@ function OrganizationPage() {
 
         <div className="card mb-8 space-y-4">
           <h2 className="font-display text-xl font-semibold text-ink-900 dark:text-slate-100">{t('saas.scimTitle')}</h2>
-          <p className="text-sm text-gray-500 dark:text-slate-400">{t('saas.scimSubtitle')}</p>
-          <p className="text-xs text-gray-500 dark:text-slate-400">
-            {t('saas.scimEndpoint')}: <code className="rounded bg-gray-100 px-1 dark:bg-slate-900">/scim/v2/Users</code>
+          <p className="text-sm text-ink-700/60 dark:text-slate-400">{t('saas.scimSubtitle')}</p>
+          <p className="text-xs text-ink-700/60 dark:text-slate-400">
+            {t('saas.scimEndpoint')}: <code className="rounded bg-ink-100 px-1 dark:bg-slate-900">/scim/v2/Users</code>
           </p>
           <form onSubmit={createScimToken} className="flex flex-wrap gap-2">
             <input
@@ -798,10 +798,10 @@ function OrganizationPage() {
               <span className="break-all font-mono text-xs">{scimNewToken}</span>
             </Alert>
           )}
-          <ul className="divide-y divide-gray-100 dark:divide-slate-700">
+          <ul className="divide-y divide-ink-100 dark:divide-slate-700">
             {scimTokens.map((tok) => (
               <li key={tok.id} className="flex items-center justify-between py-2 text-sm">
-                <span className="text-gray-900 dark:text-slate-100">
+                <span className="text-ink-900 dark:text-slate-100">
                   {tok.name} · {tok.token_prefix}… {!tok.is_active ? '(revoked)' : ''}
                 </span>
                 {tok.is_active && (
@@ -834,11 +834,11 @@ function OrganizationPage() {
             />
             <button type="submit" className="btn-primary">{t('saas.supportSubmit')}</button>
           </form>
-          <ul className="divide-y divide-gray-100 dark:divide-slate-700">
+          <ul className="divide-y divide-ink-100 dark:divide-slate-700">
             {supportCases.map((c) => (
               <li key={c.id} className="py-2 text-sm">
-                <p className="font-medium text-gray-900 dark:text-slate-100">{c.subject}</p>
-                <p className="text-xs capitalize text-gray-500 dark:text-slate-400">{c.status} · {c.priority}</p>
+                <p className="font-medium text-ink-900 dark:text-slate-100">{c.subject}</p>
+                <p className="text-xs capitalize text-ink-700/60 dark:text-slate-400">{c.status} · {c.priority}</p>
               </li>
             ))}
           </ul>
@@ -862,10 +862,10 @@ function OrganizationPage() {
               {t('saas.addDepartment')}
             </button>
           </form>
-          <ul className="divide-y divide-gray-100 dark:divide-slate-700">
+          <ul className="divide-y divide-ink-100 dark:divide-slate-700">
             {departments.map((d) => (
               <li key={d.id} className="flex items-center justify-between py-2 text-sm">
-                <span className="text-gray-900 dark:text-slate-100">{d.name}</span>
+                <span className="text-ink-900 dark:text-slate-100">{d.name}</span>
                 <button type="button" className="btn-secondary text-xs" onClick={() => removeDepartment(d.id)}>
                   {t('common.delete')}
                 </button>
@@ -1093,12 +1093,12 @@ function OrganizationPage() {
                 </button>
               </form>
 
-              <div className="mt-8 border-t border-gray-100 pt-6 dark:border-slate-700">
-                <h3 className="mb-2 font-medium text-gray-900 dark:text-slate-100">{t('sms.targetedTitle')}</h3>
-                <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{t('sms.targetedSubtitle')}</p>
+              <div className="mt-8 border-t border-ink-100 pt-6 dark:border-slate-700">
+                <h3 className="mb-2 font-medium text-ink-900 dark:text-slate-100">{t('sms.targetedTitle')}</h3>
+                <p className="mb-4 text-sm text-ink-700/60 dark:text-slate-400">{t('sms.targetedSubtitle')}</p>
                 <form onSubmit={sendTargeted} className="space-y-3">
                   {members.length > 0 && (
-                    <div className="max-h-48 space-y-2 overflow-y-auto rounded-lg border border-gray-100 p-3 dark:border-slate-600 dark:bg-slate-900/40">
+                    <div className="max-h-48 space-y-2 overflow-y-auto rounded-lg border border-ink-100 p-3 dark:border-slate-600 dark:bg-slate-900/40">
                       {members.map((m) => (
                         <label key={m.id} className="flex items-center gap-2 text-sm">
                           <input
@@ -1107,7 +1107,7 @@ function OrganizationPage() {
                             onChange={() => toggleMember(m.user)}
                             disabled={!m.user_phone}
                           />
-                          <span className={m.user_phone ? 'text-gray-900 dark:text-slate-200' : 'text-gray-400 dark:text-slate-500'}>
+                          <span className={m.user_phone ? 'text-ink-900 dark:text-slate-200' : 'text-ink-700/45 dark:text-slate-500'}>
                             {m.user_name || m.user_email}
                             {m.user_phone ? ` · ${m.user_phone}` : ` · ${t('sms.noPhone')}`}
                           </span>
@@ -1143,20 +1143,20 @@ function OrganizationPage() {
                     {t('sms.sendTargeted')}
                   </button>
                   {membersWithPhone.length === 0 && !extraPhone && (
-                    <p className="text-xs text-gray-400 dark:text-slate-500">{t('sms.noPhoneMembers')}</p>
+                    <p className="text-xs text-ink-700/45 dark:text-slate-500">{t('sms.noPhoneMembers')}</p>
                   )}
                 </form>
               </div>
 
               {smsHistory.length > 0 && (
                 <div className="mt-6">
-                  <h3 className="mb-2 font-medium text-gray-900 dark:text-slate-100">{t('sms.recentDeliveries')}</h3>
-                  <ul className="divide-y divide-gray-100 text-sm dark:divide-slate-700">
+                  <h3 className="mb-2 font-medium text-ink-900 dark:text-slate-100">{t('sms.recentDeliveries')}</h3>
+                  <ul className="divide-y divide-ink-100 text-sm dark:divide-slate-700">
                     {smsHistory.slice(0, 5).map((row) => (
                       <li key={row.id} className="py-2">
-                        <p className="font-medium text-gray-900 dark:text-slate-100">{row.phone}</p>
-                        <p className="line-clamp-1 text-gray-600 dark:text-slate-400">{row.message}</p>
-                        <p className="text-xs capitalize text-gray-400 dark:text-slate-500">
+                        <p className="font-medium text-ink-900 dark:text-slate-100">{row.phone}</p>
+                        <p className="line-clamp-1 text-ink-700/80 dark:text-slate-400">{row.message}</p>
+                        <p className="text-xs capitalize text-ink-700/45 dark:text-slate-500">
                           {row.status} · {row.message_type}
                         </p>
                       </li>
@@ -1195,13 +1195,13 @@ function OrganizationPage() {
               </form>
               {whatsappHistory.length > 0 && (
                 <div className="mt-6">
-                  <h3 className="mb-2 font-medium text-gray-900 dark:text-slate-100">{t('whatsapp.recentDeliveries')}</h3>
-                  <ul className="divide-y divide-gray-100 text-sm dark:divide-slate-700">
+                  <h3 className="mb-2 font-medium text-ink-900 dark:text-slate-100">{t('whatsapp.recentDeliveries')}</h3>
+                  <ul className="divide-y divide-ink-100 text-sm dark:divide-slate-700">
                     {whatsappHistory.slice(0, 5).map((row) => (
                       <li key={row.id} className="py-2">
-                        <p className="font-medium text-gray-900 dark:text-slate-100">{row.phone}</p>
-                        <p className="line-clamp-1 text-gray-600 dark:text-slate-400">{row.message}</p>
-                        <p className="text-xs capitalize text-gray-400 dark:text-slate-500">
+                        <p className="font-medium text-ink-900 dark:text-slate-100">{row.phone}</p>
+                        <p className="line-clamp-1 text-ink-700/80 dark:text-slate-400">{row.message}</p>
+                        <p className="text-xs capitalize text-ink-700/45 dark:text-slate-500">
                           {row.status} · {row.direction}
                         </p>
                       </li>

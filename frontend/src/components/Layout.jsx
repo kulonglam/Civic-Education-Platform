@@ -61,7 +61,7 @@ function HeaderSearchLink() {
   return (
     <Link
       to="/search"
-      className="hidden rounded-xl border border-ink-200 p-2 text-ink-700 hover:bg-ink-100/70 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800 lg:inline-flex xl:hidden"
+      className="icon-btn hidden lg:inline-flex xl:hidden"
       aria-label={t('nav.search')}
     >
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -136,7 +136,7 @@ function NavDropdown({ label, avatar, badge, items, align = 'left', active = fal
     <div ref={ref} className="relative" onKeyDown={handleKeyDown}>
       <button
         type="button"
-        className={`relative flex max-w-[40vw] items-center gap-1.5 rounded-lg px-2 py-2 text-sm font-medium transition-colors sm:max-w-none sm:px-3 ${
+        className={`relative flex min-h-11 max-w-[40vw] items-center gap-1.5 rounded-lg px-2 py-2 text-sm font-medium transition-colors sm:max-w-none sm:px-3 ${
           open || active
             ? 'bg-brand-50 text-brand-800 dark:bg-brand-900/40 dark:text-brand-300'
             : 'text-ink-700 hover:bg-ink-100/70 dark:text-slate-300 dark:hover:bg-slate-800'
@@ -370,7 +370,7 @@ export function Layout() {
       {/* Skip to content – accessibility */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-xl focus:bg-brand-700 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-[max(1rem,env(safe-area-inset-top))] focus:z-50 focus:rounded-xl focus:bg-brand-700 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
       >
         {t('a11y.skipToContent')}
       </a>
@@ -462,7 +462,7 @@ export function Layout() {
             <button
               type="button"
               aria-label={dark ? t('a11y.switchToLight') : t('a11y.switchToDark')}
-              className="rounded-xl border border-ink-200 p-2 text-ink-700 hover:bg-ink-100/70 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
+              className="icon-btn"
               onClick={() => setDark((d) => !d)}
             >
               {dark ? <Sun className="h-4 w-4" aria-hidden="true" /> : <Moon className="h-4 w-4" aria-hidden="true" />}
@@ -491,7 +491,7 @@ export function Layout() {
             {!isAuthSurface && (
             <button
               type="button"
-              className="rounded-xl border border-ink-200 p-2 text-ink-700 dark:border-slate-600 dark:text-slate-300 lg:hidden"
+              className="icon-btn lg:hidden"
               onClick={() => setMenuOpen((v) => !v)}
               aria-label={t('a11y.menu')}
               aria-expanded={menuOpen}
@@ -615,6 +615,7 @@ export function Layout() {
       {!isAuthSurface && (
       <footer
         className="border-t border-ink-100/80 bg-white/60 py-11 backdrop-blur-sm dark:border-slate-800 dark:bg-ink-950/70"
+        style={{ paddingBottom: 'max(2.75rem, env(safe-area-inset-bottom))' }}
         role="contentinfo"
       >
         <div className="mx-auto max-w-6xl px-4">
@@ -675,7 +676,7 @@ export function Layout() {
 
       <Toaster
         position="top-center"
-        containerStyle={{ top: '0.75rem' }}
+        containerStyle={{ top: 'max(0.75rem, env(safe-area-inset-top))' }}
         toastOptions={{
           duration: 3500,
           style: {

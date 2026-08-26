@@ -516,9 +516,9 @@
     "semantic_hash": "371e68c37ee13aecfd6ebed7fb7e16e4"
   },
   "backend/apps/core/tasks.py": {
-    "mtime": 1787649510.7667403,
-    "seen": 1787649901.8446739,
-    "ast_hash": "4e85d77f755ab3688d4de1f34511aaf3",
+    "mtime": 1787724515.6102817,
+    "seen": 1787724731.6237614,
+    "ast_hash": "df49281aead83c02ff8c8ba308a28fa3",
     "semantic_hash": ""
   },
   "backend/apps/core/throttling.py": {
@@ -1230,27 +1230,27 @@
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "backend/config/settings/base.py": {
-    "mtime": 1787689613.197543,
-    "seen": 1787689883.6272583,
-    "ast_hash": "56ddfa09c2bdcfd1025fbe0546d73613",
+    "mtime": 1787724512.074336,
+    "seen": 1787724731.6244445,
+    "ast_hash": "b78e3b16ec6b70da7c98bac114468360",
     "semantic_hash": ""
   },
   "backend/config/settings/development.py": {
-    "mtime": 1785683644.9354284,
-    "seen": 1787306733.3912659,
-    "ast_hash": "f8d944f0047094a773f4d250bfe7fefc",
+    "mtime": 1787724512.9365366,
+    "seen": 1787724731.6244473,
+    "ast_hash": "421156a0154443315e45d9c9a49a0b76",
     "semantic_hash": ""
   },
   "backend/config/settings/production.py": {
-    "mtime": 1787649733.4821851,
-    "seen": 1787649901.8463573,
-    "ast_hash": "81c66267c99c38efeba3238beb02850a",
+    "mtime": 1787724512.5315177,
+    "seen": 1787724731.6244497,
+    "ast_hash": "93ebef1aa17f35166d928d35dd494675",
     "semantic_hash": ""
   },
   "backend/config/settings/test.py": {
-    "mtime": 1787691500.4972386,
-    "seen": 1787691556.3916183,
-    "ast_hash": "c12b30b47773840c06845e067a28b166",
+    "mtime": 1787724513.7810879,
+    "seen": 1787724731.624452,
+    "ast_hash": "cc227e8725d486894ddba670de15e80f",
     "semantic_hash": ""
   },
   "backend/config/urls.py": {
@@ -1410,9 +1410,9 @@
     "semantic_hash": "cfc1c575e3a5b83d6a1d4a2471360056"
   },
   "backend/tests/test_product_features.py": {
-    "mtime": 1787691232.1388721,
-    "seen": 1787691556.3916934,
-    "ast_hash": "c8299d8264da3b8a36dbe2214a3d3f22",
+    "mtime": 1787724562.2211218,
+    "seen": 1787724731.624591,
+    "ast_hash": "1d7eff96855d6606e33065f7204dc5e4",
     "semantic_hash": ""
   },
   "backend/tests/test_quizzes_forum.py": {
@@ -1458,9 +1458,9 @@
     "semantic_hash": ""
   },
   "backend/tests/test_tasks.py": {
-    "mtime": 1787649573.171703,
-    "seen": 1787649901.8469512,
-    "ast_hash": "8fa99fdf8127a00b8205282fd0b87bdc",
+    "mtime": 1787691788.6594644,
+    "seen": 1787724731.6246176,
+    "ast_hash": "3776302611ffd4f293271acc2c01a3cd",
     "semantic_hash": ""
   },
   "backend/tests/test_tutor.py": {
@@ -2340,9 +2340,9 @@
     "semantic_hash": ""
   },
   "render.yaml": {
-    "mtime": 1787645803.7980785,
-    "seen": 1787645866.6712885,
-    "ast_hash": "5ed311ce4a08494db41115981856db49",
+    "mtime": 1787724547.7538118,
+    "seen": 1787724731.6258001,
+    "ast_hash": "2f0e8a57ea86a5e1ae68727802cbd82e",
     "semantic_hash": ""
   },
   "backend/apps/accounts/management/commands/seed_assets/transitional-constitution-sample.pdf": {
@@ -2418,9 +2418,9 @@
     "semantic_hash": ""
   },
   "backend/apps/core/integrations.py": {
-    "mtime": 1787649541.1338773,
-    "seen": 1787649901.8445914,
-    "ast_hash": "2d587846a3192cb8fb3034bc5955cc5c",
+    "mtime": 1787724531.1090908,
+    "seen": 1787724731.6236975,
+    "ast_hash": "29ca739fea1344507488c95f9e52aca5",
     "semantic_hash": ""
   },
   "backend/apps/core/management/commands/check_integrations.py": {
@@ -2658,9 +2658,9 @@
     "semantic_hash": ""
   },
   "backend/apps/accounts/views/auth.py": {
-    "mtime": 1787649435.2896588,
-    "seen": 1787649901.8444102,
-    "ast_hash": "7d9ea9c8d33b639e550044044fb5c239",
+    "mtime": 1787724515.702824,
+    "seen": 1787724731.623438,
+    "ast_hash": "d06792f3e163ba13047cbdcfd63f992c",
     "semantic_hash": ""
   },
   "backend/apps/accounts/views/mfa.py": {
@@ -2688,9 +2688,9 @@
     "semantic_hash": ""
   },
   "backend/apps/accounts/views/verification.py": {
-    "mtime": 1787691227.4696434,
-    "seen": 1787691556.3911455,
-    "ast_hash": "4100298945a9b4bd5984c6a27366f92a",
+    "mtime": 1787724515.702824,
+    "seen": 1787724731.623455,
+    "ast_hash": "fe00558d33829c14cb5a57ce7ad800ce",
     "semantic_hash": ""
   },
   "backend/apps/tutor/budget.py": {
@@ -3528,9 +3528,21 @@
     "semantic_hash": ""
   },
   "docs/production-credentials.md": {
-    "mtime": 1787689615.8203413,
-    "seen": 1787689883.6276407,
-    "ast_hash": "1ff1f8e0843df740c16f4f298cc7645d",
+    "mtime": 1787724569.2539306,
+    "seen": 1787724731.6257727,
+    "ast_hash": "bc08fc750f410c9838dc3445a0abc29a",
+    "semantic_hash": ""
+  },
+  "backend/apps/core/brevo_mail.py": {
+    "mtime": 1787724494.8869321,
+    "seen": 1787724731.6236706,
+    "ast_hash": "85bf4c0442fc6467b83f6fe634409af6",
+    "semantic_hash": ""
+  },
+  "backend/tests/test_brevo_mail.py": {
+    "mtime": 1787724562.224123,
+    "seen": 1787724731.6245031,
+    "ast_hash": "c982fb2df3d06211c9d463f8c820447a",
     "semantic_hash": ""
   }
 }

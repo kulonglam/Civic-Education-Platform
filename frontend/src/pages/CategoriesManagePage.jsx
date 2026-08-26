@@ -185,7 +185,7 @@ export function CategoriesManagePage() {
             onChange={(e) => setForm({ ...form, description: e.target.value })}
           />
         </div>
-        <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-300">
+        <label className="flex items-center gap-2 text-sm text-ink-700 dark:text-slate-300">
           <input
             type="checkbox"
             checked={form.is_locked}
@@ -193,7 +193,7 @@ export function CategoriesManagePage() {
           />
           {t('categories.lockCurriculum')}
         </label>
-        <p className="text-xs text-gray-500 dark:text-slate-400">{t('categories.lockHint')}</p>
+        <p className="text-xs text-ink-700/60 dark:text-slate-400">{t('categories.lockHint')}</p>
         <div className="flex flex-wrap gap-3">
           <button type="submit" className="btn-primary" disabled={saving}>
             {saving ? t('common.loading') : editId ? t('common.save') : t('common.create')}
@@ -209,11 +209,11 @@ export function CategoriesManagePage() {
       {categories.length === 0 ? (
         <EmptyState>{t('categories.empty')}</EmptyState>
       ) : (
-        <ul className="divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white dark:divide-slate-700 dark:border-slate-700 dark:bg-slate-800">
+        <ul className="divide-y divide-ink-100 rounded-xl border border-ink-100 bg-white dark:divide-slate-700 dark:border-slate-700 dark:bg-slate-800">
           {categories.map((cat) => (
             <li key={cat.id} className="flex items-center justify-between gap-4 px-4 py-3">
               <div>
-                <p className="font-medium text-gray-900 dark:text-slate-100">
+                <p className="font-medium text-ink-900 dark:text-slate-100">
                   {cat.name}
                   {cat.is_locked ? (
                     <span className="ml-2 text-xs font-normal text-amber-700 dark:text-amber-300">
@@ -221,7 +221,7 @@ export function CategoriesManagePage() {
                     </span>
                   ) : null}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-slate-400">{cat.slug}</p>
+                <p className="text-xs text-ink-700/60 dark:text-slate-400">{cat.slug}</p>
               </div>
               <div className="flex gap-2">
                 <button type="button" className="btn-secondary text-xs" onClick={() => startEdit(cat)}>
