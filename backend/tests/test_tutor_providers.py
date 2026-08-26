@@ -59,6 +59,31 @@ class TestProviderSelection:
         no_ai_credentials.TUTOR_PROVIDER = 'gemini'
         assert resolve_provider_name() == 'stub'
 
+    def test_placeholder_anthropic_key_does_not_select_anthropic(self, no_ai_credentials):
+        no_ai_credentials.ANTHROPIC_API_KEY = 'sk-ant-...'
+        no_ai_credentials.OPENAI_API_KEY = 'gsk_live_tutor_key'
+        no_ai_credentials.OPENAI_BASE_URL = 'https://api.groq.com/openai/v1'
+        assert resolve_provider_name() == 'openai'
+
+    def test_placeholder_groq_key_is_not_configured(self, no_ai_credentials):
+        no_ai_credentials.TUTOR_PROVIDER = 'openai'
+        no_ai_credentials.OPENAI_API_KEY = 'gsk_...'
+        no_ai_credentials.OPENAI_BASE_URL = 'https://api.groq.com/openai/v1'
+        assert resolve_provider_name() == 'stub'
+
+    def test_groq_url_without_key_is_not_configured(self, no_ai_credentials):
+        no_ai_credentials.OPENAI_BASE_URL = 'https://api.groq.com/openai/v1'
+        assert resolve_provider_name() == 'stub'
+
+    def test_groq_replaces_openai_hosted_model_ids(self, no_ai_credentials):
+        no_ai_credentials.TUTOR_PROVIDER = 'openai'
+        no_ai_credentials.OPENAI_API_KEY = 'gsk_live_tutor_key'
+        no_ai_credentials.OPENAI_BASE_URL = 'https://api.groq.com/openai/v1'
+        no_ai_credentials.OPENAI_MODEL = 'gpt-4o-mini'
+        provider = get_tutor_provider()
+        assert provider.model == 'llama-3.1-8b-instant'
+        assert provider.base_url == 'https://api.groq.com/openai/v1'
+
 
 class TestStubProvider:
     def test_complete_echoes_question_and_reports_zero_tokens(self):

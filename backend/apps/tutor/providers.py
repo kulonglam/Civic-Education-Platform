@@ -28,7 +28,56 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_ANTHROPIC_MODEL = 'claude-sonnet-4-20250514'
 DEFAULT_OPENAI_MODEL = 'gpt-4o-mini'
+DEFAULT_GROQ_MODEL = 'llama-3.1-8b-instant'
 DEFAULT_MAX_TOKENS = 1024
+GROQ_API_BASE = 'https://api.groq.com/openai/v1'
+_PLACEHOLDER_KEYS = {
+    '',
+    'sk-ant-...',
+    'sk-...',
+    'gsk_...',
+    'your-openai-key',
+    'not-needed',
+}
+_OPENAI_HOSTED_MODELS = (
+    'gpt-4o-mini',
+    'gpt-4o',
+    'gpt-4-turbo',
+    'gpt-4',
+    'gpt-3.5-turbo',
+    'o1-mini',
+    'o1',
+    'o3-mini',
+)
+
+
+def _usable_secret(value) -> bool:
+    raw = (value or '').strip()
+    if not raw or raw in _PLACEHOLDER_KEYS:
+        return False
+    if '...' in raw:
+        return False
+    return True
+
+
+def _is_groq_url(base_url: str) -> bool:
+    return 'groq.com' in (base_url or '').lower()
+
+
+def _normalize_openai_base_url(base_url: str) -> str:
+    url = (base_url or '').strip().rstrip('/')
+    if not url:
+        return ''
+    if url in {'https://api.groq.com', 'https://api.groq.com/openai'}:
+        return GROQ_API_BASE
+    return url
+
+
+def _normalize_openai_model(base_url: str, model: str) -> str:
+    chosen = (model or '').strip() or DEFAULT_OPENAI_MODEL
+    if _is_groq_url(base_url) and (chosen in _OPENAI_HOSTED_MODELS or chosen.startswith('gpt-')):
+        return DEFAULT_GROQ_MODEL
+    return chosen
 
 
 def _last_user_message(messages: list[dict]) -> str:
@@ -121,8 +170,10 @@ class OpenAICompatibleTutorProvider(BaseTutorProvider):
 
     def __init__(self, *, api_key=None, base_url=None, model=None, max_tokens=None):
         self.api_key = api_key if api_key is not None else getattr(settings, 'OPENAI_API_KEY', '')
-        self.base_url = base_url if base_url is not None else getattr(settings, 'OPENAI_BASE_URL', '')
-        self.model = model or getattr(settings, 'OPENAI_MODEL', DEFAULT_OPENAI_MODEL)
+        raw_base = base_url if base_url is not None else getattr(settings, 'OPENAI_BASE_URL', '')
+        self.base_url = _normalize_openai_base_url(raw_base)
+        raw_model = model or getattr(settings, 'OPENAI_MODEL', DEFAULT_OPENAI_MODEL)
+        self.model = _normalize_openai_model(self.base_url, raw_model)
         self.max_tokens = max_tokens or getattr(settings, 'OPENAI_MAX_TOKENS', DEFAULT_MAX_TOKENS)
 
     def _client(self):
@@ -156,6 +207,17 @@ class OpenAICompatibleTutorProvider(BaseTutorProvider):
 
     def stream(self, *, system_prompt: str, messages: list[dict]) -> Iterator[tuple[str, int]]:
         try:
+            yield from self._stream(system_prompt=system_prompt, messages=messages)
+            return
+        except TutorUnavailable:
+            logger.warning('OpenAI-compatible streaming failed; retrying as a single completion.')
+        text, tokens = self.complete(system_prompt=system_prompt, messages=messages)
+        if text:
+            yield text, 0
+        yield '', tokens
+
+    def _stream(self, *, system_prompt: str, messages: list[dict]) -> Iterator[tuple[str, int]]:
+        try:
             # stream_options={'include_usage': True} would give exact token counts but is
             # rejected by several OpenAI-compatible servers, so usage is read only when a
             # server volunteers it and otherwise reported as 0.
@@ -186,11 +248,15 @@ PROVIDERS: dict[str, type[BaseTutorProvider]] = {
 
 
 def _anthropic_configured() -> bool:
-    return bool(getattr(settings, 'ANTHROPIC_API_KEY', ''))
+    return _usable_secret(getattr(settings, 'ANTHROPIC_API_KEY', ''))
 
 
 def _openai_configured() -> bool:
-    return bool(getattr(settings, 'OPENAI_API_KEY', '') or getattr(settings, 'OPENAI_BASE_URL', ''))
+    key = getattr(settings, 'OPENAI_API_KEY', '')
+    base = getattr(settings, 'OPENAI_BASE_URL', '')
+    if _is_groq_url(base):
+        return _usable_secret(key)
+    return _usable_secret(key) or bool((base or '').strip())
 
 
 def resolve_provider_name() -> str:

@@ -267,7 +267,8 @@ ANTHROPIC_MODEL = config('ANTHROPIC_MODEL', default='claude-sonnet-4-20250514')
 ANTHROPIC_MAX_TOKENS = config('ANTHROPIC_MAX_TOKENS', default=1024, cast=int)
 
 # Any OpenAI-compatible endpoint. Leave OPENAI_BASE_URL blank for OpenAI itself, or
-# point it at a free local runtime (Ollama: http://localhost:11434/v1) or a gateway.
+# point it at Groq (https://api.groq.com/openai/v1), Ollama, or another gateway.
+# gpt-* model ids are remapped to llama-3.1-8b-instant when the base URL is Groq.
 OPENAI_API_KEY = config('OPENAI_API_KEY', default='')
 OPENAI_BASE_URL = config('OPENAI_BASE_URL', default='')
 OPENAI_MODEL = config('OPENAI_MODEL', default='gpt-4o-mini')
