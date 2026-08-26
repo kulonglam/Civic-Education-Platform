@@ -111,6 +111,9 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@civic-education.ss')
+# Render free web services block SMTP 25/465/587. Prefer Brevo HTTPS when keyed.
+if BREVO_API_KEY:  # noqa: F405
+    EMAIL_BACKEND = 'apps.core.brevo_mail.BrevoAPIEmailBackend'
 
 CELERY_TASK_ALWAYS_EAGER = False
 

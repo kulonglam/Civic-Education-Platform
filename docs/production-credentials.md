@@ -90,19 +90,23 @@ On a Docker frontend, mark `VITE_API_BASE_URL` as available at build time.
 
 ### Verification email and SMS (why Gmail never arrived)
 
-Signing up with a Gmail address is not enough. The **API** must send mail through SMTP. Phone OTP is a separate Africa's Talking account. Your Docker API process does not run a Celery worker; verification mail now sends during the HTTP request, but SMTP and SMS credentials still have to be real.
+Signing up with a Gmail address is not enough. The **API** must send mail through Brevo. Phone OTP is a separate Africa's Talking account. Verification mail sends during the HTTP request (no Celery worker).
 
-**Email — set all of these on the API** (then Manual Deploy). A value only in `EMAIL_HOST` (for example `smtp.example.com`) will not deliver:
+**Email — Render free web services block SMTP** (ports 25, 465, 587). That is `[Errno 110] Connection timed out`, not a wrong password. Use Brevo’s **HTTPS API** instead:
+
+1. In Brevo: **SMTP & API → API Keys → Generate a new API key** (this is **not** the SMTP key / `EMAIL_HOST_PASSWORD`).
+2. Confirm `makhol1990@gmail.com` (or whichever From address) is a **verified sender**.
+3. On the **API** service (`civic-education-platform-66rb`), set:
 
 ```env
+BREVO_API_KEY=xkeysib-...
+DEFAULT_FROM_EMAIL=makhol1990@gmail.com
 EMAIL_HOST=smtp-relay.brevo.com
-EMAIL_PORT=587
-EMAIL_HOST_USER=your-brevo-login
-EMAIL_HOST_PASSWORD=your-brevo-smtp-key
-DEFAULT_FROM_EMAIL=the-verified-sender@your-brevo-domain
 ```
 
-[Brevo](https://www.brevo.com/) and [Resend](https://resend.com/) have free tiers. Gmail SMTP (`smtp.gmail.com`) only works with a Google **App Password**, and `DEFAULT_FROM_EMAIL` must be that same Gmail address. Check Promotions/Spam after you deploy.
+`EMAIL_HOST` can stay; production still requires it to boot. Mail will go over HTTPS once `BREVO_API_KEY` is set. Then **Manual Deploy** (this code must be on the API) and click Resend verification.
+
+SMTP on a **paid** Render instance can still use `EMAIL_HOST` / `EMAIL_HOST_USER` / `EMAIL_HOST_PASSWORD` without the API key.
 
 Then click **Resend verification** on the site. The message should arrive within a minute.
 
@@ -144,17 +148,19 @@ CELERY_TASK_ALWAYS_EAGER=False
 - [ ] Worker running: `celery -A config worker --loglevel=info`
 - [ ] `GET https://api.yourdomain.com/api/ready/` returns ready (Postgres + Redis)
 
-### 1b. SMTP (web + worker)
+### 1b. Email (web + worker)
+
+Render **free** web services block SMTP (ports 25/465/587). Set the Brevo **API** key:
 
 ```env
-EMAIL_HOST=smtp.yourprovider.com
-EMAIL_PORT=587
-EMAIL_HOST_USER=
-EMAIL_HOST_PASSWORD=
+BREVO_API_KEY=
 DEFAULT_FROM_EMAIL=noreply@yourdomain.com
+EMAIL_HOST=smtp-relay.brevo.com
 ```
 
-- [ ] Register a mailbox (SendGrid, Mailgun, SES, or your host SMTP)
+On a paid Render instance you can use SMTP instead (`EMAIL_HOST_USER` / `EMAIL_HOST_PASSWORD`).
+
+- [ ] Sender verified in Brevo
 - [ ] Send a test: register a user and confirm the verification email arrives
 - [ ] `check_integrations` shows `email` as `configured`
 

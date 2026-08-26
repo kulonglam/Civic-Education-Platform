@@ -286,6 +286,9 @@ def _env_first(*names: str) -> str:
     return ''
 
 
+# Brevo REST API (port 443). Distinct from the SMTP key (xsmtpsib-…).
+BREVO_API_KEY = _env_first('BREVO_API_KEY', 'SENDINBLUE_API_KEY')
+
 # SMS (Africa's Talking). AFRICASTALKING_* aliases match the dashboard copy.
 SMS_PROVIDER = config('SMS_PROVIDER', default='dummy')
 AT_USERNAME = _env_first('AT_USERNAME', 'AFRICASTALKING_USERNAME')

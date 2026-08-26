@@ -73,8 +73,8 @@ class RegisterView(generics.CreateAPIView):
             else (
                 'Registration succeeded, but the verification email could not be sent. '
                 f'{mail_error} '
-                'Set EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, and a Brevo-verified '
-                'DEFAULT_FROM_EMAIL on the API service.'
+                'On Render free plans set BREVO_API_KEY (Brevo API Keys page, not SMTP) '
+                'and a verified DEFAULT_FROM_EMAIL, then redeploy the API.'
             )
         )
         return Response(

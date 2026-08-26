@@ -24,6 +24,20 @@ class TestResendVerificationEmail:
         assert response.status_code == status.HTTP_200_OK
         assert 'already verified' in response.data['message'].lower()
 
+    def test_resend_timeout_mentions_brevo_api_key(self, api_client, citizen_user, monkeypatch):
+        api_client.force_authenticate(user=citizen_user)
+
+        def fail_smtp(*args, **kwargs):
+            raise OSError(110, 'Connection timed out')
+
+        monkeypatch.setattr(
+            'apps.accounts.views.verification.send_transactional_email',
+            fail_smtp,
+        )
+        response = api_client.post('/api/auth/verify-email/resend/')
+        assert response.status_code == status.HTTP_503_SERVICE_UNAVAILABLE
+        assert 'BREVO_API_KEY' in response.data['detail']
+
 
 @pytest.mark.django_db
 class TestPhoneVerification:

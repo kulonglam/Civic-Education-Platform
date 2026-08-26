@@ -33,9 +33,17 @@ def send_email_task(self, subject: str, message: str, recipients: list[str]):
 
 def format_mail_error(exc: BaseException) -> str:
     """Short SMTP/Django mail error safe to return in an API body."""
+    from apps.core.brevo_mail import RENDER_BREVO_API_HINT
+
     detail = ' '.join(str(exc).split()) or type(exc).__name__
-    if len(detail) > 240:
-        detail = f'{detail[:237]}...'
+    errno = getattr(exc, 'errno', None)
+    if errno is None and exc.args:
+        errno = exc.args[0] if isinstance(exc.args[0], int) else None
+    lowered = detail.lower()
+    if errno in (110, 101, 10060) or 'timed out' in lowered or 'etimedout' in lowered:
+        detail = f'{detail} {RENDER_BREVO_API_HINT}'
+    if len(detail) > 400:
+        detail = f'{detail[:397]}...'
     return detail
 
 

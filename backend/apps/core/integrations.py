@@ -161,16 +161,31 @@ def check_stripe() -> dict[str, Any]:
 
 
 def check_email() -> dict[str, Any]:
+    api_key = getattr(settings, 'BREVO_API_KEY', '') or ''
+    backend = getattr(settings, 'EMAIL_BACKEND', '')
+    from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', '') or ''
+    if api_key or 'brevo_mail' in backend:
+        detail = 'Brevo HTTPS API configured (port 443; works on Render free web services)'
+        if from_email.endswith('civic-education.ss') or 'noreply@civic-education' in from_email:
+            detail += (
+                ' — DEFAULT_FROM_EMAIL is still the placeholder; '
+                'set it to a sender Brevo has verified'
+            )
+        return _entry(
+            'email',
+            STATUS_CONFIGURED,
+            required_in_production=True,
+            detail=detail,
+            meta={'backend': backend, 'from_email': from_email, 'transport': 'brevo-api'},
+        )
     host = getattr(settings, 'EMAIL_HOST', '')
     if not host:
         return _entry(
             'email',
             STATUS_UNSET,
             required_in_production=True,
-            detail='EMAIL_HOST is not set',
+            detail='EMAIL_HOST is not set (and BREVO_API_KEY is empty)',
         )
-    backend = getattr(settings, 'EMAIL_BACKEND', '')
-    from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', '') or ''
     detail = f'SMTP configured ({host})'
     if 'example.com' in host or host in {'localhost', 'smtp.example.com'}:
         detail += ' — EMAIL_HOST looks like a placeholder; mail will not reach Gmail'
@@ -184,7 +199,7 @@ def check_email() -> dict[str, Any]:
         STATUS_CONFIGURED,
         required_in_production=True,
         detail=detail,
-        meta={'backend': backend, 'from_email': from_email},
+        meta={'backend': backend, 'from_email': from_email, 'transport': 'smtp'},
     )
 
 

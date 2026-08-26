@@ -73,9 +73,7 @@ class ResendVerificationEmailView(APIView):
                 {
                     'detail': (
                         'Could not send the verification email. '
-                        f'{format_mail_error(exc)} '
-                        'On Render set EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, '
-                        'and DEFAULT_FROM_EMAIL (Brevo SMTP login + verified sender).'
+                        f'{format_mail_error(exc)}'
                     )
                 },
                 status=status.HTTP_503_SERVICE_UNAVAILABLE,
