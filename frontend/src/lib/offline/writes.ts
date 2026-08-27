@@ -13,7 +13,21 @@
 import { api } from '../api';
 import { getDb } from './db';
 
-export async function queueWrite(type: string, payload: any) {
+type WritePayload = Record<string, unknown>;
+
+type WriteQueueItem = {
+  id?: number;
+  type: string;
+  payload: WritePayload;
+  queuedAt: number;
+  attempts?: number;
+};
+
+type SyncCapableRegistration = ServiceWorkerRegistration & {
+  sync?: { register: (tag: string) => Promise<void> };
+};
+
+export async function queueWrite(type: string, payload: WritePayload) {
   const db = await getDb();
   const id = await db.add('write_queue', {
     type,
@@ -21,10 +35,9 @@ export async function queueWrite(type: string, payload: any) {
     queuedAt: Date.now(),
     attempts: 0,
   });
-  // Register a Background Sync tag so the SW can replay when online
   if ('serviceWorker' in navigator && 'SyncManager' in window) {
-    const reg = await navigator.serviceWorker.ready;
-    await (reg as any).sync.register('cep-write-queue').catch(() => {});
+    const reg = (await navigator.serviceWorker.ready) as SyncCapableRegistration;
+    await reg.sync?.register('cep-write-queue').catch(() => {});
   }
   return id;
 }
@@ -38,16 +51,15 @@ export async function flushWriteQueue() {
   if (!navigator.onLine) return { synced: 0, pending: await getPendingWriteCount() };
 
   const db = await getDb();
-  const items = await db.getAll('write_queue');
+  const items = (await db.getAll('write_queue')) as WriteQueueItem[];
   let synced = 0;
 
   for (const item of items) {
     try {
       await _replay(item);
-      await db.delete('write_queue', item.id);
+      if (item.id != null) await db.delete('write_queue', item.id);
       synced += 1;
     } catch {
-      // Leave in queue; will retry on next flush
       await db.put('write_queue', { ...item, attempts: (item.attempts || 0) + 1 });
       break;
     }
@@ -60,7 +72,7 @@ export async function flushWriteQueue() {
   return { synced, pending };
 }
 
-async function _replay(item: any) {
+async function _replay(item: WriteQueueItem) {
   switch (item.type) {
     case 'forum_post':
       return api.post(`/forum/topics/${item.payload.topicId}/posts/`, { body: item.payload.body });

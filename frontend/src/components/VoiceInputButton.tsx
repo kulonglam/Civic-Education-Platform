@@ -5,7 +5,7 @@ import { createSpeechRecognizer, isRecognitionSupported } from '../lib/speech';
 export function VoiceInputButton({ onTranscript, className = '', disabled = false }: { onTranscript?: (text: string) => void; className?: string; disabled?: boolean }) {
   const { t, i18n } = useTranslation();
   const [listening, setListening] = useState(false);
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<ReturnType<typeof createSpeechRecognizer>>(null);
   const supported = isRecognitionSupported();
 
   useEffect(() => () => {

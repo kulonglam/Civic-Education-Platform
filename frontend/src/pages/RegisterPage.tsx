@@ -60,7 +60,7 @@ export function RegisterPage() {
     setError('');
     setLoading(true);
     try {
-      const payload: Record<string, any> = { ...form, account_type: accountType };
+      const payload: RegisterPayload = { ...form, account_type: accountType };
       if (payload.invite_token) {
         delete payload.organization_name;
         delete payload.account_type;

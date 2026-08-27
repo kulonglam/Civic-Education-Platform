@@ -38,12 +38,26 @@ const emptyCampaign = {
   status: 'draft',
 };
 
+type EngagementForm = {
+  question?: string;
+  question_ar?: string;
+  description?: string;
+  description_ar?: string;
+  kind?: string;
+  status?: string;
+  options?: PollOption[];
+  title?: string;
+  title_ar?: string;
+  goal_signatures?: number;
+  link_url?: string;
+};
+
 export function EngagementEditorPage() {
   const { t } = useTranslation();
   const { kind, id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
-  const [form, setForm] = useState<any>(
+  const [form, setForm] = useState<EngagementForm>(
     kind === 'polls' ? emptyPoll : kind === 'petitions' ? emptyPetition : emptyCampaign,
   );
   const [loading, setLoading] = useState(isEdit);
@@ -109,8 +123,8 @@ export function EngagementEditorPage() {
     };
   }, [id, isEdit, kind]);
 
-  const setField = (key: string, value: unknown) =>
-    setForm((prev: Record<string, unknown>) => ({ ...prev, [key]: value }));
+  const setField = (key: keyof EngagementForm, value: EngagementForm[keyof EngagementForm]) =>
+    setForm((prev) => ({ ...prev, [key]: value }));
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -118,16 +132,39 @@ export function EngagementEditorPage() {
     setError('');
     try {
       if (kind === 'polls') {
-        const payload = { ...form, options: form.options.filter((opt: PollOption) => opt.label.trim()) };
+        const payload = {
+          question: form.question ?? '',
+          question_ar: form.question_ar,
+          description: form.description,
+          description_ar: form.description_ar,
+          kind: form.kind,
+          status: form.status,
+          options: (form.options ?? []).filter((opt) => opt.label.trim()),
+        };
         if (isEdit) await engagementService.updatePoll(id, payload);
         else await engagementService.createPoll(payload);
       } else if (kind === 'petitions') {
-        if (isEdit) await engagementService.updatePetition(id, form);
-        else await engagementService.createPetition(form);
-      } else if (isEdit) {
-        await engagementService.updateCampaign(id, form);
+        const payload = {
+          title: form.title ?? '',
+          title_ar: form.title_ar,
+          description: form.description ?? '',
+          description_ar: form.description_ar,
+          goal_signatures: form.goal_signatures ?? 100,
+          status: form.status,
+        };
+        if (isEdit) await engagementService.updatePetition(id, payload);
+        else await engagementService.createPetition(payload);
       } else {
-        await engagementService.createCampaign(form);
+        const payload = {
+          title: form.title ?? '',
+          title_ar: form.title_ar,
+          description: form.description ?? '',
+          description_ar: form.description_ar,
+          link_url: form.link_url,
+          status: form.status,
+        };
+        if (isEdit) await engagementService.updateCampaign(id, payload);
+        else await engagementService.createCampaign(payload);
       }
       navigate('/engage/manage');
     } catch (err) {
@@ -203,7 +240,7 @@ export function EngagementEditorPage() {
             </div>
             <fieldset className="grid gap-3">
               <legend className="text-sm font-medium">{t('engage.fields.options')}</legend>
-              {form.options.map((opt: PollOption, index: number) => (
+              {(form.options ?? []).map((opt, index) => (
                 <div key={opt.id || index} className="grid gap-2 sm:grid-cols-2">
                   <input
                     className="input"
@@ -211,7 +248,7 @@ export function EngagementEditorPage() {
                     placeholder={t('engage.fields.optionEn')}
                     value={opt.label}
                     onChange={(e) => {
-                      const next = [...form.options];
+                      const next = [...(form.options ?? [])];
                       next[index] = { ...next[index], label: e.target.value };
                       setField('options', next);
                     }}
@@ -221,18 +258,18 @@ export function EngagementEditorPage() {
                     placeholder={t('engage.fields.optionAr')}
                     value={opt.label_ar}
                     onChange={(e) => {
-                      const next = [...form.options];
+                      const next = [...(form.options ?? [])];
                       next[index] = { ...next[index], label_ar: e.target.value };
                       setField('options', next);
                     }}
                   />
                 </div>
               ))}
-              {form.options.length < 8 && (
+              {(form.options ?? []).length < 8 && (
                 <button
                   type="button"
                   className="btn-secondary justify-self-start text-sm"
-                  onClick={() => setField('options', [...form.options, { label: '', label_ar: '' }])}
+                  onClick={() => setField('options', [...(form.options ?? []), { label: '', label_ar: '' }])}
                 >
                   {t('engage.addOption')}
                 </button>

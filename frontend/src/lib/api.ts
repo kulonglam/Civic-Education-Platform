@@ -93,9 +93,9 @@ api.interceptors.request.use((config) => {
 });
 
 let isRefreshing = false;
-let pendingQueue: { resolve: (token: string | null) => void; reject: (error?: any) => void }[] = [];
+let pendingQueue: { resolve: (token: string | null) => void; reject: (error?: unknown) => void }[] = [];
 
-function flushQueue(error: any, token: string | null) {
+function flushQueue(error: unknown, token: string | null) {
   pendingQueue.forEach((p) => {
     if (token) p.resolve(token);
     else p.reject(error);

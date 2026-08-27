@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import type { NotificationSocketPayload } from '../types/api';
 
 export function notificationSocketUrl(token?: string) {
   const apiBase = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000/api/v1';
@@ -16,7 +17,7 @@ export function useNotificationSocket({
 }: {
   enabled?: boolean;
   token?: string;
-  onNotification?: (payload: any) => void;
+  onNotification?: (payload: NotificationSocketPayload) => void;
 } = {}) {
   const [connected, setConnected] = useState(false);
 
@@ -43,7 +44,7 @@ export function useNotificationSocket({
     };
     socket.onmessage = (event) => {
       try {
-        const payload = JSON.parse(event.data);
+        const payload = JSON.parse(event.data) as NotificationSocketPayload;
         if (payload?.type === 'notification') {
           onNotification?.(payload);
         }

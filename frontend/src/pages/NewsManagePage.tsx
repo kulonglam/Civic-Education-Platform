@@ -10,13 +10,14 @@ import { useOrganization } from '../context/OrganizationContext';
 import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import { newsService } from '../lib/services';
+import type { CivicNews } from '../types/api';
 
 export function NewsManagePage() {
   const { t } = useTranslation();
   const { hasRole } = useAuth();
   const { isOrgAdmin } = useOrganization();
   const canDelete = hasRole('admin') || isOrgAdmin;
-  const [pendingDelete, setPendingDelete] = useState<any>(null);
+  const [pendingDelete, setPendingDelete] = useState<CivicNews | null>(null);
   const [deleteError, setDeleteError] = useState('');
   const [deleting, setDeleting] = useState(false);
 

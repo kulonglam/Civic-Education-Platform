@@ -87,7 +87,13 @@ function NavDropdown({
   label: string;
   avatar?: ReactNode;
   badge?: number | null;
-  items: any[];
+  items: Array<{
+    label?: string;
+    to?: string;
+    onClick?: () => void;
+    divider?: boolean;
+    badge?: number;
+  }>;
   align?: 'left' | 'right';
   active?: boolean;
   compactOnMobile?: boolean;
@@ -197,13 +203,14 @@ function NavDropdown({
               return <hr key={`d-${idx}`} className="my-1 border-ink-100 dark:border-slate-700" />;
             }
             if (item.onClick) {
+              const handleClick = item.onClick;
               return (
                 <button
                   key={item.label}
                   type="button"
                   role="menuitem"
                   className="block w-full px-4 py-2 text-left text-sm text-ink-800 hover:bg-ink-50 dark:text-slate-300 dark:hover:bg-slate-700"
-                  onClick={() => { setOpen(false); item.onClick(); }}
+                  onClick={() => { setOpen(false); handleClick(); }}
                 >
                   {item.label}
                 </button>
@@ -212,7 +219,7 @@ function NavDropdown({
             return (
               <NavLink
                 key={item.to}
-                to={item.to}
+                to={item.to ?? '/'}
                 role="menuitem"
                 className={({ isActive }) =>
                   `flex items-center justify-between px-4 py-2 text-sm ${
@@ -224,7 +231,7 @@ function NavDropdown({
                 onClick={() => setOpen(false)}
               >
                 {item.label}
-                {item.badge > 0 && (
+                {item.badge != null && item.badge > 0 && (
                   <span className="ml-2 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
                     {item.badge > 99 ? '99+' : item.badge}
                   </span>

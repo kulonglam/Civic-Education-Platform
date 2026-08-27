@@ -1,4 +1,5 @@
 import { api } from '../api';
+import type { ContentBundleMeta, QueryParams } from '../../types/api';
 import { getEntry, scopeKey, setEntry } from './db';
 
 /**
@@ -6,10 +7,16 @@ import { getEntry, scopeKey, setEntry } from './db';
  * articles, quizzes, media metadata, and categories in IndexedDB for offline reading.
  */
 export async function downloadContentBundle({ categoryId }: { categoryId?: string | number } = {}) {
-  const params: Record<string, any> = {};
+  const params: QueryParams = {};
   if (categoryId) params.category_id = categoryId;
 
-  const { data } = await api.get('/content-bundle/', { params });
+  const { data } = await api.get<{
+    categories?: unknown[];
+    articles?: Array<{ id: string }>;
+    quizzes?: Array<{ id: string }>;
+    media?: Array<{ id: string }>;
+    generated_at?: string | null;
+  }>('/content-bundle/', { params });
   const categories = data.categories ?? [];
   const articles = data.articles ?? [];
   const quizzes = data.quizzes ?? [];
@@ -38,7 +45,7 @@ export async function downloadContentBundle({ categoryId }: { categoryId?: strin
     results: media,
   });
 
-  const summary = {
+  const summary: ContentBundleMeta = {
     articles: articles.length,
     quizzes: quizzes.length,
     media: media.length,
@@ -50,5 +57,5 @@ export async function downloadContentBundle({ categoryId }: { categoryId?: strin
 }
 
 export async function getContentBundleMeta() {
-  return getEntry('categories', scopeKey('bundle:meta'));
+  return getEntry<ContentBundleMeta>('categories', scopeKey('bundle:meta'));
 }

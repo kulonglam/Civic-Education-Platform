@@ -8,7 +8,7 @@ import { Trophy } from '../components/Icons';
 import { queryKeys } from '../lib/queryKeys';
 import { quizService } from '../lib/services';
 import { formatDate } from '../lib/format';
-import type { Certificate } from '../types/api';
+import type { Certificate, Id } from '../types/api';
 
 const PAGE_SIZE = 20;
 
@@ -29,7 +29,7 @@ function CertCardSkeleton() {
 export function CertificatesPage() {
   const { t } = useTranslation();
   const [page, setPage] = useState(1);
-  const [downloading, setDownloading] = useState<any>(null);
+  const [downloading, setDownloading] = useState<Id | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: queryKeys.certificates({ page }),

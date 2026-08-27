@@ -1,11 +1,16 @@
 import { normalizeLanguage } from '../i18n/languages';
 import { tenantStore, tokenStore } from './api';
+import type { TutorMessage } from '../types/api';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000/api/v1';
 
-/**
- * Stream tutor chat tokens via SSE. Calls onToken, onDone, onError.
- */
+export type TutorStreamDone = {
+  reply?: string;
+  sources?: TutorMessage['sources'];
+  text?: string;
+  detail?: string;
+};
+
 export async function streamTutorChat(
   message: string,
   {
@@ -17,8 +22,8 @@ export async function streamTutorChat(
   }: {
     articleId?: string | number;
     onToken?: (token: string) => void;
-    onDone?: (payload?: any) => void;
-    onError?: (error: any) => void;
+    onDone?: (payload?: TutorStreamDone) => void;
+    onError?: (error: unknown) => void;
     signal?: AbortSignal;
   } = {},
 ) {
@@ -88,18 +93,18 @@ export async function streamTutorChat(
         if (line.startsWith('data:')) dataLine += line.slice(5).trim();
       }
       if (!dataLine) continue;
-      let payload;
+      let payload: Record<string, unknown>;
       try {
-        payload = JSON.parse(dataLine);
+        payload = JSON.parse(dataLine) as Record<string, unknown>;
       } catch {
         continue;
       }
-      if (eventName === 'token' && payload.text) {
+      if (eventName === 'token' && typeof payload.text === 'string') {
         onToken?.(payload.text);
       } else if (eventName === 'done') {
-        onDone?.(payload);
+        onDone?.(payload as TutorStreamDone);
       } else if (eventName === 'error') {
-        onError?.(new Error(payload.detail || 'Tutor error'));
+        onError?.(new Error(typeof payload.detail === 'string' ? payload.detail : 'Tutor error'));
       }
     }
   }

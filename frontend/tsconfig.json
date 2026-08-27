@@ -10,7 +10,7 @@
     "noEmit": true,
     "strict": true,
     "noImplicitAny": true,
-    "noUnusedLocals": false,
+    "noUnusedLocals": true,
     "noUnusedParameters": false,
     "skipLibCheck": true,
     "isolatedModules": true,

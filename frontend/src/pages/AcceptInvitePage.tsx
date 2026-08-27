@@ -6,13 +6,14 @@ import { extractError } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import { tenantStore } from '../lib/api';
 import { Alert, PageHeader, Spinner } from '../components/ui';
+import type { InvitePreview } from '../types/api';
 
 function AcceptInvitePage() {
   const { token } = useParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [invite, setInvite] = useState<any>(null);
+  const [invite, setInvite] = useState<InvitePreview | null>(null);
   const [loading, setLoading] = useState(true);
   const [accepting, setAccepting] = useState(false);
   const [error, setError] = useState('');

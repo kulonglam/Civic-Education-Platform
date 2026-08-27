@@ -8,12 +8,13 @@ import { CmsManageHeader } from '../components/CmsWorkspace';
 import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import { quizService } from '../lib/services';
+import type { Quiz } from '../types/api';
 
 export function QuizzesManagePage() {
   const { t } = useTranslation();
   const { hasRole } = useAuth();
   const canDelete = hasRole('admin');
-  const [pendingDelete, setPendingDelete] = useState<any>(null);
+  const [pendingDelete, setPendingDelete] = useState<Quiz | null>(null);
   const [deleteError, setDeleteError] = useState('');
   const [deleting, setDeleting] = useState(false);
 

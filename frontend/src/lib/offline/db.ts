@@ -1,10 +1,19 @@
-import { openDB } from 'idb';
+import { openDB, type IDBPDatabase } from 'idb';
 import { tenantStore } from '../api';
 
 const DB_NAME = 'cep-offline';
 const DB_VERSION = 3;
 
-let dbPromise: Promise<any> | undefined;
+export type OfflineStoreName =
+  | 'articles'
+  | 'article_lists'
+  | 'categories'
+  | 'quizzes'
+  | 'quiz_queue'
+  | 'write_queue'
+  | 'media';
+
+let dbPromise: Promise<IDBPDatabase> | undefined;
 
 function scopeKey(suffix: string | number) {
   return `${tenantStore.slug || 'default'}:${suffix}`;
@@ -22,7 +31,6 @@ async function getDb() {
           db.createObjectStore('quiz_queue', { keyPath: 'id', autoIncrement: true });
         }
         if (oldVersion < 2) {
-          // Generic offline write queue for forum posts and profile edits
           const writeQueue = db.createObjectStore('write_queue', {
             keyPath: 'id',
             autoIncrement: true,
@@ -38,13 +46,13 @@ async function getDb() {
   return dbPromise;
 }
 
-async function getEntry(storeName: any, key: any) {
+async function getEntry<T = unknown>(storeName: OfflineStoreName, key: string): Promise<T | null> {
   const db = await getDb();
   const row = await db.get(storeName, key);
-  return row?.data ?? null;
+  return (row?.data as T | undefined) ?? null;
 }
 
-async function setEntry(storeName: any, key: any, data: any) {
+async function setEntry(storeName: OfflineStoreName, key: string, data: unknown) {
   const db = await getDb();
   await db.put(storeName, { key, data, cachedAt: Date.now() });
 }

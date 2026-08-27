@@ -5,6 +5,7 @@ import { Spinner } from '../components/ui';
 import { CmsEditorShell, CmsSidebarCard } from '../components/CmsWorkspace';
 import { extractError } from '../lib/api';
 import { categoryService, mediaService } from '../lib/services';
+import type { Category } from '../types/api';
 
 const emptyForm = {
   title: '',
@@ -28,7 +29,7 @@ export function MediaEditorPage() {
   const isEdit = Boolean(id);
   const navigate = useNavigate();
   const [form, setForm] = useState(emptyForm);
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);

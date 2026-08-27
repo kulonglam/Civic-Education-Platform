@@ -9,8 +9,8 @@ import {
   organizationService,
   notifyService,
 } from '../lib/services';
-import { extractError } from '../lib/api';
-import { unwrapList, type Id } from '../types/api';
+import { extractError, isApiStatus } from '../lib/api';
+import { unwrapList, type Id, type Membership, type OrganizationInvite, type ScimToken, type SmsHistoryItem, type SupportCase, type Subscription } from '../types/api';
 import { DEFAULT_PRIMARY_COLOR, normalizePrimaryColor } from '../lib/theme';
 import { Alert, ConfirmDialog, PageHeader, Spinner } from '../components/ui';
 import { TabList, TabPanel } from '../components/SettingsChrome';
@@ -23,9 +23,9 @@ function OrganizationPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { organization, membership, isOrgAdmin, refresh } = useOrganization();
-  const [members, setMembers] = useState<any[]>([]);
-  const [pendingInvites, setPendingInvites] = useState<any[]>([]);
-  const [departments, setDepartments] = useState<any[]>([]);
+  const [members, setMembers] = useState<Membership[]>([]);
+  const [pendingInvites, setPendingInvites] = useState<OrganizationInvite[]>([]);
+  const [departments, setDepartments] = useState<{ id: Id; name: string; slug?: string }[]>([]);
   const [form, setForm] = useState({
     name: '',
     tagline: '',
@@ -40,7 +40,7 @@ function OrganizationPage() {
   const [inviteDepartmentId, setInviteDepartmentId] = useState('');
   const [deptName, setDeptName] = useState('');
   const [bulkCsv, setBulkCsv] = useState('');
-  const [bulkResult, setBulkResult] = useState<any>(null);
+  const [bulkResult, setBulkResult] = useState<unknown>(null);
   const [ssoForm, setSsoForm] = useState({
     enabled: false,
     issuer: '',
@@ -49,10 +49,10 @@ function OrganizationPage() {
     scopes: 'openid profile email',
     has_client_secret: false,
   });
-  const [scimTokens, setScimTokens] = useState<any[]>([]);
+  const [scimTokens, setScimTokens] = useState<ScimToken[]>([]);
   const [scimTokenName, setScimTokenName] = useState('IdP provisioning');
   const [scimNewToken, setScimNewToken] = useState('');
-  const [supportCases, setSupportCases] = useState<any[]>([]);
+  const [supportCases, setSupportCases] = useState<SupportCase[]>([]);
   const [supportSubject, setSupportSubject] = useState('');
   const [supportBody, setSupportBody] = useState('');
   const [smsMessage, setSmsMessage] = useState('');
@@ -61,11 +61,11 @@ function OrganizationPage() {
   const [announceBusy, setAnnounceBusy] = useState(false);
   const [targetedMessage, setTargetedMessage] = useState('');
   const [extraPhone, setExtraPhone] = useState('');
-  const [selectedMemberIds, setSelectedMemberIds] = useState<any[]>([]);
-  const [smsHistory, setSmsHistory] = useState<any[]>([]);
+  const [selectedMemberIds, setSelectedMemberIds] = useState<Id[]>([]);
+  const [smsHistory, setSmsHistory] = useState<SmsHistoryItem[]>([]);
   const [whatsappMessage, setWhatsappMessage] = useState('');
-  const [whatsappHistory, setWhatsappHistory] = useState<any[]>([]);
-  const [subscription, setSubscription] = useState<any>(null);
+  const [whatsappHistory, setWhatsappHistory] = useState<SmsHistoryItem[]>([]);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -253,7 +253,7 @@ function OrganizationPage() {
     setError('');
     setSuccess('');
     try {
-      const payload: Record<string, any> = {
+      const payload: Record<string, string | boolean> = {
         enabled: ssoForm.enabled,
         issuer: ssoForm.issuer,
         client_id: ssoForm.client_id,
@@ -422,10 +422,10 @@ function OrganizationPage() {
         inviteDepartmentId || null,
       );
       if (status === 202) {
-        setPendingInvites((list) => [...list, data]);
+        setPendingInvites((list) => [...list, data as OrganizationInvite]);
         setSuccess(t('saas.inviteSent'));
       } else {
-        setMembers((m) => [...m, data]);
+        setMembers((m) => [...m, data as Membership]);
         setSuccess(t('saas.memberInvited'));
       }
       setInviteEmail('');
@@ -517,8 +517,8 @@ function OrganizationPage() {
       setSmsMessage('');
       setSuccess(t('sms.broadcastQueued'));
       await loadSmsHistory();
-    } catch (err: any) {
-      if (err?.response?.status === 402) {
+    } catch (err) {
+      if (isApiStatus(err, 402)) {
         setError(t('sms.upgradeRequired'));
       } else {
         setError(extractError(err));
@@ -535,8 +535,8 @@ function OrganizationPage() {
       setWhatsappMessage('');
       setSuccess(t('whatsapp.broadcastQueued'));
       await loadSmsHistory();
-    } catch (err: any) {
-      if (err?.response?.status === 402) {
+    } catch (err) {
+      if (isApiStatus(err, 402)) {
         setError(t('sms.upgradeRequired'));
       } else {
         setError(extractError(err));
@@ -572,8 +572,8 @@ function OrganizationPage() {
       setSelectedMemberIds([]);
       setSuccess(t('sms.targetedQueued'));
       await loadSmsHistory();
-    } catch (err: any) {
-      if (err?.response?.status === 402) {
+    } catch (err) {
+      if (isApiStatus(err, 402)) {
         setError(t('sms.upgradeRequired'));
       } else {
         setError(extractError(err));
@@ -892,7 +892,7 @@ function OrganizationPage() {
               {t('saas.bulkImportSubmit')}
             </button>
           </div>
-          {bulkResult && (
+          {bulkResult != null && (
             <pre className="max-h-48 overflow-auto rounded-xl bg-ink-50 p-3 text-xs dark:bg-slate-900 dark:text-slate-300">
               {JSON.stringify(bulkResult, null, 2)}
             </pre>
@@ -945,7 +945,7 @@ function OrganizationPage() {
               {pendingInvites.map((inv) => (
                 <li key={inv.id} className="flex items-center justify-between py-2 text-sm dark:text-slate-300">
                   <span>
-                    {inv.email} · {roleLabel(inv.role)}
+                    {inv.email} · {roleLabel(inv.role ?? 'member')}
                     {inv.department?.name ? ` · ${inv.department.name}` : ''} · {t('saas.invitePending')}
                   </span>
                   <button type="button" className="btn-secondary text-xs" onClick={() => revokeInvite(inv.id)}>
@@ -1104,8 +1104,8 @@ function OrganizationPage() {
                         <label key={m.id} className="flex items-center gap-2 text-sm">
                           <input
                             type="checkbox"
-                            checked={selectedMemberIds.includes(m.user)}
-                            onChange={() => toggleMember(m.user)}
+                            checked={selectedMemberIds.includes(m.user ?? '')}
+                            onChange={() => m.user && toggleMember(m.user)}
                             disabled={!m.user_phone}
                           />
                           <span className={m.user_phone ? 'text-ink-900 dark:text-slate-200' : 'text-ink-700/70 dark:text-slate-500'}>

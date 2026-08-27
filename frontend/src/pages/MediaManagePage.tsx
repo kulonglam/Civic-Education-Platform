@@ -10,13 +10,14 @@ import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import { mediaService } from '../lib/services';
 import { formatDate } from '../lib/format';
+import type { MediaAsset } from '../types/api';
 
 export function MediaManagePage() {
   const { t } = useTranslation();
   const { hasRole } = useAuth();
   const { isOrgAdmin } = useOrganization();
   const canDelete = hasRole('admin') || isOrgAdmin;
-  const [pendingDelete, setPendingDelete] = useState<any>(null);
+  const [pendingDelete, setPendingDelete] = useState<MediaAsset | null>(null);
   const [deleteError, setDeleteError] = useState('');
   const [deleting, setDeleting] = useState(false);
 

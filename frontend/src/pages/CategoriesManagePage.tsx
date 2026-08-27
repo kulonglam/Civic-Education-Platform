@@ -9,7 +9,7 @@ import { ChevronLeft } from '../components/Icons';
 import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import { categoryService } from '../lib/services';
-import type { Category } from '../types/api';
+import type { Category, Id } from '../types/api';
 
 function slugify(value: string) {
   return value
@@ -32,11 +32,11 @@ export function CategoriesManagePage() {
   const { t } = useTranslation();
   const { isOrgAdmin } = useOrganization();
   const [form, setForm] = useState(EMPTY_FORM);
-  const [editId, setEditId] = useState<any>(null);
+  const [editId, setEditId] = useState<Id | null>(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [saving, setSaving] = useState(false);
-  const [pendingDelete, setPendingDelete] = useState<any>(null);
+  const [pendingDelete, setPendingDelete] = useState<Category | null>(null);
   const [deleting, setDeleting] = useState(false);
 
   const { data, isLoading, error: loadError, refetch } = useQuery({
@@ -233,7 +233,7 @@ export function CategoriesManagePage() {
                   <button
                     type="button"
                     className="btn-danger text-xs"
-                    onClick={() => setPendingDelete({ id: cat.id, name: cat.name })}
+                    onClick={() => setPendingDelete({ id: cat.id, name: cat.name, slug: cat.slug })}
                   >
                     {t('common.delete')}
                   </button>

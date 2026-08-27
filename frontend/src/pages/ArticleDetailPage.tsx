@@ -133,9 +133,9 @@ export function ArticleDetailPage() {
         <span aria-hidden="true">·</span>
         <span>{mins} {t('misc.minRead')}</span>
       </div>
-      {article.tags?.length > 0 && (
+      {Array.isArray(article.tags) && article.tags.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-2">
-          {article.tags.map((tag: string) => (
+          {article.tags.map((tag) => (
             <span key={tag} className="badge bg-ink-100 text-ink-700 dark:bg-slate-700 dark:text-slate-300">
               #{tag}
             </span>

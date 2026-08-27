@@ -14,9 +14,11 @@ export function notifyApiReady() {
   window.dispatchEvent(new Event(API_READY_EVENT));
 }
 
-export function isWakeFailure(error: any) {
-  const status = error?.response?.status;
-  if (!error?.response) return true;
+export function isWakeFailure(error: unknown) {
+  if (!error || typeof error !== 'object') return true;
+  const response = 'response' in error ? (error as { response?: { status?: number } }).response : undefined;
+  if (!response) return true;
+  const status = response.status;
   return status === 502 || status === 504;
 }
 

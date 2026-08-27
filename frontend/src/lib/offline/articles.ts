@@ -1,7 +1,7 @@
 import { articleService, categoryService } from '../services';
 import { unwrapList } from '../../types/api';
 import type { Id, QueryParams } from '../../types/api';
-import { getEntry, scopeKey, setEntry } from './db';
+import { getEntry, scopeKey, setEntry, type OfflineStoreName } from './db';
 
 function listCacheKey(params: QueryParams = {}) {
   const sorted = Object.keys(params)
@@ -11,15 +11,19 @@ function listCacheKey(params: QueryParams = {}) {
   return scopeKey(`list:${sorted || 'default'}`);
 }
 
-async function fetchOrCache<T>(cacheKey: string, storeName: string, fetcher: () => Promise<T>) {
+async function fetchOrCache<T>(
+  cacheKey: string,
+  storeName: OfflineStoreName,
+  fetcher: () => Promise<T>,
+) {
   try {
     const data = await fetcher();
     await setEntry(storeName, cacheKey, data);
-    return { data, source: 'network' };
+    return { data, source: 'network' as const };
   } catch (error) {
-    const cached = await getEntry(storeName, cacheKey);
+    const cached = await getEntry<T>(storeName, cacheKey);
     if (cached) {
-      return { data: cached, source: 'cache' };
+      return { data: cached, source: 'cache' as const };
     }
     throw error;
   }

@@ -71,7 +71,6 @@ import type {
   SloMetrics,
   SmsHistoryItem,
   SsoConfig,
-  Subscription,
   SupportCase,
   TokenRefreshResponse,
   TutorChatResponse,
@@ -283,7 +282,7 @@ export const organizationService = {
   members: (params?: QueryParams) =>
     api.get<Paginated<Membership>>('/organization/members/', { params }),
   invite: (email: string, role = 'member', departmentId: Id | null = null) =>
-    api.post<OrganizationInvite>('/organization/members/invite/', {
+    api.post<Membership | OrganizationInvite>('/organization/members/invite/', {
       email,
       role,
       ...(departmentId ? { department_id: departmentId } : {}),

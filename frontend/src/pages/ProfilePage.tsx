@@ -12,6 +12,7 @@ import { MfaSetupCard } from '../components/MfaSetupCard';
 import { AGE_BAND_OPTIONS, REGION_OPTIONS } from '../lib/demographics';
 import { formatDate } from '../lib/format';
 import { downloadContentBundle, getContentBundleMeta } from '../lib/offline/contentBundle';
+import type { ContentBundleMeta, MfaSetupResponse } from '../types/api';
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY || '';
 
@@ -49,13 +50,13 @@ export function ProfilePage() {
   const [pushBusy, setPushBusy] = useState(false);
   const [pwForm, setPwForm] = useState({ current_password: '', new_password: '', confirm: '' });
   const [pwLoading, setPwLoading] = useState(false);
-  const [mfaSetup, setMfaSetup] = useState<any>(null);
+  const [mfaSetup, setMfaSetup] = useState<MfaSetupResponse | null>(null);
   const [mfaCode, setMfaCode] = useState('');
   const [mfaBusy, setMfaBusy] = useState('');
   const [dataBusy, setDataBusy] = useState('');
   const [deactivateOpen, setDeactivateOpen] = useState(false);
   const [bundleBusy, setBundleBusy] = useState(false);
-  const [bundleMeta, setBundleMeta] = useState<any>(null);
+  const [bundleMeta, setBundleMeta] = useState<ContentBundleMeta | null>(null);
   const [bundleError, setBundleError] = useState('');
 
   useEffect(() => {

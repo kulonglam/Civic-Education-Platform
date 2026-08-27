@@ -10,7 +10,7 @@ import { useOrganization } from '../context/OrganizationContext';
 import { extractError } from '../lib/api';
 import { formatDate } from '../lib/format';
 import { forumService } from '../lib/services';
-import type { ForumComment, Id } from '../types/api';
+import type { ForumComment, ForumTopic, Id } from '../types/api';
 
 const REPORT_REASONS = [
   'hate_speech',
@@ -64,7 +64,7 @@ function TopicDetailPage() {
   const { id } = useParams();
   const { user, hasRole } = useAuth();
   const { isOrgModerator } = useOrganization();
-  const [topic, setTopic] = useState<any>(null);
+  const [topic, setTopic] = useState<ForumTopic | null>(null);
   const [loading, setLoading] = useState(true);
   const [comment, setComment] = useState('');
   const [error, setError] = useState('');

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { MAP_SIZE, projectLonLat, ringToPath, SOUTH_SUDAN_STATES } from '../lib/southSudanMap';
+import type { CivicEvent, MapRegion } from '../types/api';
 
 function fillForCount(count = 0, max = 0) {
   if (!count) return 'var(--map-empty, #e2e8f0)';
@@ -11,7 +12,13 @@ function fillForCount(count = 0, max = 0) {
   return '#99f6e4';
 }
 
-export function CivicMap({ regions = [], events = [] }: { regions?: any[]; events?: any[] }) {
+export function CivicMap({
+  regions = [],
+  events = [],
+}: {
+  regions?: MapRegion[];
+  events?: CivicEvent[];
+}) {
   const { t, i18n } = useTranslation();
   const [selected, setSelected] = useState('');
   const regionByKey = useMemo(

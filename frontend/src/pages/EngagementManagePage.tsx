@@ -9,6 +9,7 @@ import { useOrganization } from '../context/OrganizationContext';
 import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import { engagementService } from '../lib/services';
+import type { Id } from '../types/api';
 
 const TABS = ['polls', 'petitions', 'campaigns'];
 
@@ -18,7 +19,7 @@ export function EngagementManagePage() {
   const { isOrgAdmin } = useOrganization();
   const canDelete = hasRole('admin') || isOrgAdmin;
   const [tab, setTab] = useState('polls');
-  const [pendingDelete, setPendingDelete] = useState<any>(null);
+  const [pendingDelete, setPendingDelete] = useState<{ kind: string; id: Id; question?: string; title?: string } | null>(null);
   const [deleteError, setDeleteError] = useState('');
   const [deleting, setDeleting] = useState(false);
 

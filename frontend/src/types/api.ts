@@ -110,6 +110,7 @@ export type ProfileUpdatePayload = {
 export type MfaSetupResponse = {
   secret?: string;
   otpauth_url?: string;
+  provisioning_uri?: string;
   qr_png?: string;
 };
 
@@ -397,6 +398,8 @@ export type QuizAttemptResult = {
   attempted_at?: string;
   queued?: boolean;
   data?: QuizAttemptResult;
+  attempt?: QuizAttemptResult;
+  certificate?: Certificate;
   review?: Array<{
     question_id: string;
     question_type?: string;
@@ -685,9 +688,11 @@ export type ForumTopic = {
   is_approved?: boolean;
   is_locked?: boolean;
   created_at?: string;
+  author?: Id;
   author_name?: string;
   comment_count?: number;
   comments?: ForumComment[];
+  accepted_answer_id?: Id | null;
 };
 
 export type ForumComment = {
@@ -865,10 +870,38 @@ export type SearchResults = {
   topics?: ForumTopic[];
 };
 
+export type MapRegion = {
+  key: string;
+  label?: string;
+  centroid?: [number, number];
+  upcoming_event_count?: number;
+  learner_count?: number | null;
+  learner_count_hidden?: boolean;
+};
+
 export type MapCivicResponse = {
   events?: CivicEvent[];
-  regions?: Array<{ id?: string; name?: string; count?: number }>;
+  regions?: MapRegion[];
+  nationwide_upcoming_count?: number;
+  privacy?: { min_region_learners?: number };
 };
+
+export type ContentBundleMeta = {
+  articles: number;
+  quizzes: number;
+  media: number;
+  categories: number;
+  generatedAt?: string | null;
+};
+
+export type NotificationSocketPayload = {
+  type?: string;
+  title?: string;
+  message?: string;
+  body?: string;
+};
+
+export type QuizAnswers = Record<string, string>;
 
 export type UploadResult = {
   url: string;
@@ -882,6 +915,8 @@ export type ScimToken = {
   id: Id;
   name?: string;
   token?: string;
+  token_prefix?: string;
+  is_active?: boolean;
   created_at?: string;
 };
 
@@ -890,6 +925,9 @@ export type SmsHistoryItem = {
   message?: string;
   created_at?: string;
   status?: string;
+  phone?: string;
+  message_type?: string;
+  direction?: string;
 };
 
 export type Branding = {

@@ -11,7 +11,7 @@ import { localizedArticle } from '../lib/localizedContent';
 import { streamTutorChat } from '../lib/tutorStream';
 import { articleService, tutorService } from '../lib/services';
 import { unwrapList } from '../types/api';
-import type { TutorChatResponse, TutorUsage } from '../types/api';
+import type { TutorChatResponse, TutorMessage, TutorUsage } from '../types/api';
 import { renderMarkdown } from '../lib/markdown';
 import { VoiceInputButton } from '../components/VoiceInputButton';
 
@@ -117,14 +117,14 @@ export function TutorPage() {
   const [searchParams] = useSearchParams();
   const articleId = searchParams.get('article') || undefined;
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<TutorMessage[]>([]);
   const [streamText, setStreamText] = useState('');
-  const streamAbortRef = useRef<any>(null);
+  const streamAbortRef = useRef<AbortController | null>(null);
   const [viewingHistory, setViewingHistory] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [error, setError] = useState('');
-  const bottomRef = useRef<any>(null);
-  const inputRef = useRef<any>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const restoredRef = useRef(false);
 
   const { data: usage, isLoading: usageLoading } = useQuery({
@@ -202,7 +202,16 @@ export function TutorPage() {
             accumulated += token;
             setStreamText(accumulated);
           },
-          onDone: (data) => resolve({ message, data, streamed: true, reply: accumulated || data.reply }),
+          onDone: (payload) =>
+            resolve({
+              message,
+              data: {
+                reply: accumulated || payload?.reply || '',
+                sources: payload?.sources,
+              },
+              streamed: true,
+              reply: accumulated || payload?.reply || '',
+            }),
           onError: async (err) => {
             if (controller.signal.aborted) {
               reject(err);
@@ -229,13 +238,13 @@ export function TutorPage() {
         ...prev,
         {
           role: 'assistant',
-          content: streamed ? reply : data.reply,
+          content: (streamed ? reply : data.reply) ?? '',
           sources: data.sources ?? [],
         },
       ]);
       setError('');
       queryClient.invalidateQueries({ queryKey: queryKeys.tutorHistory });
-      queryClient.setQueryData(queryKeys.tutorUsage, (old: any) =>
+      queryClient.setQueryData(queryKeys.tutorUsage, (old: TutorUsage | undefined) =>
         old
           ? {
               ...old,

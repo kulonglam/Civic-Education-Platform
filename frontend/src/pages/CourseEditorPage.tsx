@@ -15,7 +15,7 @@ const emptyForm = {
   description: '',
   description_ar: '',
   status: 'draft',
-  lesson_ids: [] as any[],
+  lesson_ids: [] as Id[],
 };
 
 export function CourseEditorPage() {
@@ -51,7 +51,9 @@ export function CourseEditorPage() {
           description: data.description ?? '',
           description_ar: data.description_ar ?? '',
           status: data.status ?? 'draft',
-          lesson_ids: (data.lessons || []).map((lesson) => lesson.article_id),
+          lesson_ids: (data.lessons || [])
+            .map((lesson) => lesson.article_id)
+            .filter((lessonId): lessonId is Id => Boolean(lessonId)),
         });
       } catch (err) {
         if (!cancelled) setError(extractError(err));

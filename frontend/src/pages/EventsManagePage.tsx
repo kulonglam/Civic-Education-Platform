@@ -11,13 +11,14 @@ import { extractError } from '../lib/api';
 import { formatDateTime } from '../lib/format';
 import { queryKeys } from '../lib/queryKeys';
 import { eventsService } from '../lib/services';
+import type { CivicEvent } from '../types/api';
 
 export function EventsManagePage() {
   const { t } = useTranslation();
   const { hasRole } = useAuth();
   const { isOrgAdmin } = useOrganization();
   const canDelete = hasRole('admin') || isOrgAdmin;
-  const [pendingDelete, setPendingDelete] = useState<any>(null);
+  const [pendingDelete, setPendingDelete] = useState<CivicEvent | null>(null);
   const [deleteError, setDeleteError] = useState('');
   const [deleting, setDeleting] = useState(false);
 

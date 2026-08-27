@@ -11,9 +11,9 @@ import { queryKeys } from '../lib/queryKeys';
 import { loadQuiz, queueQuizAttempt } from '../lib/offline/quizzes';
 import { localizedQuiz } from '../lib/localizedContent';
 import { quizService } from '../lib/services';
-import type { Question, QuizAttemptResult } from '../types/api';
+import type { AnswerCheck, Question, QuizAttemptResult } from '../types/api';
 
-type TakeQuestion = Question & { id: string };
+type TakeQuestion = Question;
 
 function ScoreRing({ score, passed }: { score: number; passed: boolean }) {
   const radius = 48;
@@ -140,12 +140,12 @@ export function QuizTakePage() {
   const { t, i18n } = useTranslation();
   const online = useOnlineStatus();
   const { id } = useParams();
-  const [answers, setAnswers] = useState<Record<string, any>>({});
-  const [result, setResult] = useState<any>(null);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [result, setResult] = useState<QuizAttemptResult | null>(null);
   const [queued, setQueued] = useState(false);
   const [error, setError] = useState('');
   const [currentQIdx, setCurrentQIdx] = useState(0);
-  const [checks, setChecks] = useState<Record<string, any>>({});
+  const [checks, setChecks] = useState<Record<string, AnswerCheck>>({});
 
   const { data: quizResult, isLoading } = useQuery({
     queryKey: queryKeys.quiz(id),
@@ -171,7 +171,7 @@ export function QuizTakePage() {
         setResult(null);
       } else {
         setQueued(false);
-        setResult(payload.data);
+        setResult(payload.data ?? null);
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
@@ -213,7 +213,8 @@ export function QuizTakePage() {
   }
 
   if (result) {
-    const { attempt, certificate, review } = result;
+    const attempt = result.attempt ?? result;
+    const { certificate, review } = result;
     return (
       <div className="mx-auto max-w-2xl">
         <div className={`quiz-stage text-center ${attempt.passed ? 'ring-1 ring-emerald-300/80' : 'ring-1 ring-amber-300/80'}`}>
@@ -221,7 +222,7 @@ export function QuizTakePage() {
             {attempt.passed ? <Trophy className="h-7 w-7" /> : <AcademicCap className="h-7 w-7" />}
           </div>
 
-          <ScoreRing score={attempt.score} passed={attempt.passed} />
+          <ScoreRing score={attempt.score ?? 0} passed={Boolean(attempt.passed)} />
 
           <h1 className="mt-3 font-display text-2xl font-semibold dark:text-slate-100">
             {attempt.passed ? t('quizzes.passed') : t('quizzes.failed')}
@@ -273,7 +274,7 @@ export function QuizTakePage() {
 
   const total = quiz.questions.length;
   const answeredCount = Object.keys(answers).length;
-  const allAnswered = quiz.questions.every((q: TakeQuestion) => answers[q.id]);
+  const allAnswered = quiz.questions.every((q: TakeQuestion) => Boolean(q.id && answers[q.id]));
   const perQuestion = quiz.feedback_mode === 'per_question';
 
   return (
@@ -313,9 +314,11 @@ export function QuizTakePage() {
       <div className="mt-8">
         <QuizProgress current={currentQIdx} total={total} answeredCount={answeredCount} />
         <div className="space-y-4">
-          {quiz.questions.map((q: TakeQuestion, idx: number) => (
+          {quiz.questions.map((q: TakeQuestion, idx: number) => {
+            const qid = q.id ?? `q-${idx}`;
+            return (
             <div
-              key={q.id}
+              key={qid}
               className="quiz-stage"
               onClick={() => setCurrentQIdx(idx)}
             >
@@ -333,17 +336,17 @@ export function QuizTakePage() {
                   <label
                     key={opt.value}
                     className={`flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-sm transition-colors ${
-                      answers[q.id] === opt.value
+                      answers[qid] === opt.value
                         ? 'border-brand-500 bg-brand-50 dark:border-brand-400 dark:bg-brand-900/30'
                         : 'border-ink-100 hover:bg-ink-50/80 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/60'
                     }`}
                   >
                     <input
                       type="radio"
-                      name={q.id}
+                      name={qid}
                       value={opt.value}
-                      checked={answers[q.id] === opt.value}
-                      onChange={() => setAnswer(q.id, opt.value)}
+                      checked={answers[qid] === opt.value}
+                      onChange={() => setAnswer(qid, opt.value)}
                       className="text-brand-600"
                     />
                     {opt.label}
@@ -355,28 +358,29 @@ export function QuizTakePage() {
                   <button
                     type="button"
                     className="btn-secondary text-sm"
-                    disabled={!answers[q.id] || !online || checkAnswer.isPending}
+                    disabled={!answers[qid] || !online || checkAnswer.isPending}
                     onClick={() => {
                       setError('');
-                      checkAnswer.mutate({ questionId: q.id, answer: answers[q.id] });
+                      checkAnswer.mutate({ questionId: qid, answer: answers[qid] });
                     }}
                   >
                     {t('quizzes.checkAnswer')}
                   </button>
-                  {checks[q.id] && (
-                    <div className={`mt-3 rounded-xl border p-3 text-sm ${checks[q.id].is_correct ? 'border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-200' : 'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-200'}`}>
+                  {checks[qid] && (
+                    <div className={`mt-3 rounded-xl border p-3 text-sm ${checks[qid].is_correct ? 'border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-200' : 'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-200'}`}>
                       <p className="font-semibold">
-                        {checks[q.id].is_correct ? t('quizzes.correct') : t('quizzes.incorrect')}
+                        {checks[qid].is_correct ? t('quizzes.correct') : t('quizzes.incorrect')}
                       </p>
-                      {checks[q.id].explanation && (
-                        <p className="mt-2 whitespace-pre-line">{checks[q.id].explanation}</p>
+                      {checks[qid].explanation && (
+                        <p className="mt-2 whitespace-pre-line">{checks[qid].explanation}</p>
                       )}
                     </div>
                   )}
                 </div>
               )}
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

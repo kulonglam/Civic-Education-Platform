@@ -8,7 +8,7 @@ import { extractError } from '../lib/api';
 import { renderMarkdown } from '../lib/markdown';
 import { resolveMediaUrl } from '../lib/media';
 import { articleService, categoryService, mediaService } from '../lib/services';
-import type { Article } from '../types/api';
+import type { Article, Category, MediaAsset } from '../types/api';
 
 const EMPTY_FORM = {
   title: '',
@@ -65,7 +65,7 @@ function MarkdownToolbar({
   uploading: boolean;
 }) {
   const { t } = useTranslation();
-  const imageInputRef = useRef<any>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <div className="mb-2 flex flex-wrap items-center gap-1">
@@ -115,16 +115,16 @@ export function ArticleEditorPage() {
   const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
-  const fileInputRef = useRef<any>(null);
-  const featuredInputRef = useRef<any>(null);
-  const contentRef = useRef<any>(null);
-  const contentArRef = useRef<any>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const featuredInputRef = useRef<HTMLInputElement>(null);
+  const contentRef = useRef<HTMLTextAreaElement>(null);
+  const contentArRef = useRef<HTMLTextAreaElement>(null);
   const activeFieldRef = useRef('content');
   const isEdit = Boolean(id);
   const [form, setForm] = useState(EMPTY_FORM);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [audioOptions, setAudioOptions] = useState<any[]>([]);
-  const [videoOptions, setVideoOptions] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [audioOptions, setAudioOptions] = useState<MediaAsset[]>([]);
+  const [videoOptions, setVideoOptions] = useState<MediaAsset[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
