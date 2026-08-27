@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { AdminPage } from './AdminPage';
 import { renderWithProviders } from '../test/utils';
 
@@ -90,5 +91,16 @@ describe('AdminPage', () => {
     expect(screen.getByRole('link', { name: /create a lesson/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /create a quiz/i })).toBeInTheDocument();
     expect(screen.queryByText(/moderation queue/i)).not.toBeInTheDocument();
+  });
+
+  it('splits platform admin into tabs', async () => {
+    const user = userEvent.setup();
+    mockIsPlatformAdmin.mockReturnValue(true);
+    mockHasRole.mockImplementation((...roles) => roles.includes('admin'));
+    renderWithProviders(<AdminPage />);
+    expect(await screen.findByRole('tab', { name: /^overview$/i })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.queryByRole('link', { name: /create a lesson/i })).not.toBeInTheDocument();
+    await user.click(screen.getByRole('tab', { name: /^content$/i }));
+    expect(screen.getByRole('link', { name: /create a lesson/i })).toBeInTheDocument();
   });
 });

@@ -1,0 +1,42 @@
+# Pings the live Render API so a sleeping free/starter web service is woken
+# before the next visitor. GitHub can delay cron by several minutes; this is
+# still the only $0 keep-alive that works without a custom domain.
+name: Keep Render awake
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    name: Wake API and static site
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Ping API /api/ready/
+        run: |
+          set -euo pipefail
+          url="${KEEP_AWAKE_API_URL:-https://civic-education-platform-66rb.onrender.com/api/ready/}"
+          for i in 1 2 3 4 5 6; do
+            if curl -fsS --max-time 90 "$url"; then
+              echo
+              echo "API ready on attempt $i"
+              exit 0
+            fi
+            echo "Attempt $i failed; retrying in 12s"
+            sleep 12
+          done
+          echo "API did not become ready"
+          exit 1
+        env:
+          KEEP_AWAKE_API_URL: ${{ vars.KEEP_AWAKE_API_URL }}
+
+      - name: Ping frontend
+        continue-on-error: true
+        run: |
+          url="${KEEP_AWAKE_WEB_URL:-https://civic-education-platform-1.onrender.com/}"
+          curl -fsS --max-time 90 -o /dev/null "$url"
+          echo "Frontend responded"
+        env:
+          KEEP_AWAKE_WEB_URL: ${{ vars.KEEP_AWAKE_WEB_URL }}

@@ -116,7 +116,8 @@
     "goHome": "Go back home",
     "boundaryTitle": "Something went wrong",
     "boundaryMessage": "Please refresh the page or try again later.",
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "apiWaking": "The server is starting up. Free hosting can take up to a minute — this page will continue automatically."
   },
   "misc": {
     "minRead": "min read",
@@ -182,7 +183,13 @@
     "reject": "Reject",
     "pending": "Pending",
     "approved": "Approved",
-    "close": "Close"
+    "close": "Close",
+    "draft": "Draft"
+  },
+  "cms": {
+    "workspace": "Content workspace",
+    "publish": "Publish",
+    "media": "Media"
   },
   "guest": {
     "saveProgress": "Create a free account to save progress, bookmark lessons, and earn certificates.",
@@ -773,6 +780,9 @@
     "mfaConfirmCode": "Enter the 6-digit code from your app",
     "mfaConfirm": "Enable MFA",
     "mfaSetupSuccess": "Multi-factor authentication enabled.",
+    "mfaQrHint": "Scan this QR code with Google Authenticator, Authy, or Microsoft Authenticator. You can also type the setup key below.",
+    "mfaQrAlt": "QR code for authenticator app setup",
+    "mfaQrUnavailable": "QR code could not be generated. Enter the setup key in your authenticator app instead.",
     "exportMyData": "Download my data",
     "exportMyDataHint": "Download a JSON copy of your profile, memberships, quiz attempts, and certificates.",
     "deactivateAccount": "Deactivate account",
@@ -815,6 +825,13 @@
   "admin": {
     "title": "Admin Dashboard",
     "platformTitle": "Platform administration",
+    "tablistLabel": "Admin sections",
+    "tabContent": "Content",
+    "tabOverview": "Overview",
+    "tabOrgs": "Organizations",
+    "tabPeople": "People",
+    "tabTrust": "Trust & safety",
+    "tabBroadcast": "Broadcasts",
     "platformOrgs": "Organizations",
     "platformOrgsSubtitle": "Activate, deactivate, or assign invoice/card-upgrade plans for tenant workspaces.",
     "searchOrgs": "Search organizations…",

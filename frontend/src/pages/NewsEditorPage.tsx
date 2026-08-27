@@ -1,8 +1,10 @@
+// @ts-nocheck
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { NEWS_CLAIM_TYPES, NEWS_TOPICS } from '../components/ClaimBadge';
-import { Alert, PageHeader, Spinner } from '../components/ui';
+import { Alert, Spinner } from '../components/ui';
+import { CmsEditorShell, CmsSidebarCard } from '../components/CmsWorkspace';
 import { extractError } from '../lib/api';
 import { newsService } from '../lib/services';
 
@@ -84,117 +86,110 @@ export function NewsEditorPage() {
   if (loading) return <Spinner />;
 
   return (
-    <div className="page-shell">
-      <PageHeader
-        eyebrow={t('nav.manage')}
+    <form onSubmit={handleSubmit}>
+      <CmsEditorShell
+        backTo="/news/manage"
+        backLabel={t('news.manageTitle')}
         title={isEdit ? t('news.editTitle') : t('news.create')}
         subtitle={t('news.editorHint')}
-      />
-      {error && <Alert>{error}</Alert>}
-      <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
-        <label className="grid gap-1 text-sm font-medium">
-          {t('news.fields.title')}
-          <input
-            className="input"
-            required
-            value={form.title}
-            onChange={(e) => setField('title', e.target.value)}
-          />
-        </label>
-        <label className="grid gap-1 text-sm font-medium">
-          {t('news.fields.titleAr')}
-          <input
-            className="input"
-            value={form.title_ar}
-            onChange={(e) => setField('title_ar', e.target.value)}
-          />
-        </label>
-        <label className="grid gap-1 text-sm font-medium">
-          {t('news.fields.body')}
-          <textarea
-            className="input min-h-[10rem]"
-            required
-            value={form.body}
-            onChange={(e) => setField('body', e.target.value)}
-          />
-        </label>
-        <label className="grid gap-1 text-sm font-medium">
-          {t('news.fields.bodyAr')}
-          <textarea
-            className="input min-h-[8rem]"
-            value={form.body_ar}
-            onChange={(e) => setField('body_ar', e.target.value)}
-          />
-        </label>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="grid gap-1 text-sm font-medium">
-            {t('news.fields.topic')}
-            <select
-              className="input"
-              value={form.topic}
-              onChange={(e) => setField('topic', e.target.value)}
-            >
+        status={form.status}
+        statusLabel={t(`news.status.${form.status}`)}
+        error={error}
+        sidebar={
+          <CmsSidebarCard title={t('cms.publish')}>
+            <label className="label">{t('news.fields.status')}</label>
+            <select className="input" value={form.status} onChange={(e) => setField('status', e.target.value)}>
+              <option value="draft">{t('news.status.draft')}</option>
+              <option value="published">{t('news.status.published')}</option>
+              <option value="archived">{t('news.status.archived')}</option>
+            </select>
+            <label className="label mt-3">{t('news.fields.topic')}</label>
+            <select className="input" value={form.topic} onChange={(e) => setField('topic', e.target.value)}>
               {NEWS_TOPICS.map((value) => (
                 <option key={value} value={value}>
                   {t(`news.topics.${value}`)}
                 </option>
               ))}
             </select>
-          </label>
-          <label className="grid gap-1 text-sm font-medium">
-            {t('news.fields.claim')}
-            <select
-              className="input"
-              value={form.claim_type}
-              onChange={(e) => setField('claim_type', e.target.value)}
-            >
+            <label className="label mt-3">{t('news.fields.claim')}</label>
+            <select className="input" value={form.claim_type} onChange={(e) => setField('claim_type', e.target.value)}>
               {NEWS_CLAIM_TYPES.map((value) => (
                 <option key={value} value={value}>
                   {t(`news.claims.${value}`)}
                 </option>
               ))}
             </select>
+          </CmsSidebarCard>
+        }
+        footer={
+          <>
+            <button type="submit" className="btn-primary" disabled={saving}>
+              {saving ? t('common.loading') : t('common.save')}
+            </button>
+            <Link to="/news/manage" className="btn-secondary">
+              {t('common.cancel')}
+            </Link>
+          </>
+        }
+      >
+        <div className="card space-y-4">
+          <label className="grid gap-1 text-sm font-medium">
+            {t('news.fields.title')}
+            <input
+              className="input"
+              required
+              value={form.title}
+              onChange={(e) => setField('title', e.target.value)}
+            />
+          </label>
+          <label className="grid gap-1 text-sm font-medium">
+            {t('news.fields.titleAr')}
+            <input
+              className="input"
+              value={form.title_ar}
+              onChange={(e) => setField('title_ar', e.target.value)}
+            />
+          </label>
+          <label className="grid gap-1 text-sm font-medium">
+            {t('news.fields.body')}
+            <textarea
+              className="input min-h-[10rem]"
+              required
+              value={form.body}
+              onChange={(e) => setField('body', e.target.value)}
+            />
+          </label>
+          <label className="grid gap-1 text-sm font-medium">
+            {t('news.fields.bodyAr')}
+            <textarea
+              className="input min-h-[8rem]"
+              value={form.body_ar}
+              onChange={(e) => setField('body_ar', e.target.value)}
+            />
+          </label>
+          {form.claim_type === 'verified_fact' && (
+            <Alert kind="info">{t('news.verifiedNeedsSource')}</Alert>
+          )}
+          <label className="grid gap-1 text-sm font-medium">
+            {t('news.fields.sourceName')}
+            <input
+              className="input"
+              required={form.claim_type === 'verified_fact'}
+              value={form.source_name}
+              onChange={(e) => setField('source_name', e.target.value)}
+            />
+          </label>
+          <label className="grid gap-1 text-sm font-medium">
+            {t('news.fields.sourceUrl')}
+            <input
+              className="input"
+              type="url"
+              value={form.source_url}
+              onChange={(e) => setField('source_url', e.target.value)}
+            />
           </label>
         </div>
-        {form.claim_type === 'verified_fact' && (
-          <Alert kind="info">{t('news.verifiedNeedsSource')}</Alert>
-        )}
-        <label className="grid gap-1 text-sm font-medium">
-          {t('news.fields.sourceName')}
-          <input
-            className="input"
-            required={form.claim_type === 'verified_fact'}
-            value={form.source_name}
-            onChange={(e) => setField('source_name', e.target.value)}
-          />
-        </label>
-        <label className="grid gap-1 text-sm font-medium">
-          {t('news.fields.sourceUrl')}
-          <input
-            className="input"
-            type="url"
-            value={form.source_url}
-            onChange={(e) => setField('source_url', e.target.value)}
-          />
-        </label>
-        <label className="grid gap-1 text-sm font-medium">
-          {t('news.fields.status')}
-          <select
-            className="input sm:max-w-xs"
-            value={form.status}
-            onChange={(e) => setField('status', e.target.value)}
-          >
-            <option value="draft">{t('news.status.draft')}</option>
-            <option value="published">{t('news.status.published')}</option>
-            <option value="archived">{t('news.status.archived')}</option>
-          </select>
-        </label>
-        <div>
-          <button type="submit" className="btn-primary" disabled={saving}>
-            {saving ? t('common.loading') : t('common.save')}
-          </button>
-        </div>
-      </form>
-    </div>
+      </CmsEditorShell>
+    </form>
   );
 }

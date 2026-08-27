@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';

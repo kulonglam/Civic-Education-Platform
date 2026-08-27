@@ -163,6 +163,9 @@ api.interceptors.response.use(
       const detail = extractError(error);
       window.dispatchEvent(new CustomEvent('cep:quota-exceeded', { detail }));
     }
+    if (!error.response || status === 502 || status === 504) {
+      window.dispatchEvent(new Event('cep:api-waking'));
+    }
     return Promise.reject(error);
   },
 );

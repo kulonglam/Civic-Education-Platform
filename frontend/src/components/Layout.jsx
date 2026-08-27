@@ -11,6 +11,7 @@ import { LanguageSwitcher } from './LanguageSwitcher';
 import { OrgSwitcher } from './OrgSwitcher';
 import { QuotaBanner } from './QuotaBanner';
 import { OfflineBanner } from './OfflineBanner';
+import { ApiWakeBanner } from './ApiWakeBanner';
 import { EmailVerifyBanner } from './EmailVerifyBanner';
 import { InstallPrompt } from './InstallPrompt';
 import { PushNotificationPrompt } from './PushNotificationPrompt';
@@ -384,6 +385,7 @@ export function Layout() {
       {/* Route loading bar */}
       {routeLoading && <div className="route-loading-bar" aria-hidden="true" />}
 
+      <ApiWakeBanner />
       <OfflineBanner />
       <EmailVerifyBanner />
       <InstallPrompt />

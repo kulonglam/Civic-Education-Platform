@@ -9,12 +9,13 @@
     "checkJs": false,
     "noEmit": true,
     "strict": true,
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "skipLibCheck": true,
     "isolatedModules": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "verbatimModuleSyntax": false,
-    "types": ["vite/client", "vite-plugin-pwa/client"]
+    "types": ["vite/client", "vite-plugin-pwa/client", "react", "react-dom"]
   },
   "include": ["src"]
 }

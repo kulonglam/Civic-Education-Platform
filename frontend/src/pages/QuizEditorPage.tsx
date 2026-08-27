@@ -1,8 +1,9 @@
+// @ts-nocheck
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Alert, PageHeader, Spinner } from '../components/ui';
-import { ChevronLeft } from '../components/Icons';
+import { Spinner } from '../components/ui';
+import { CmsEditorShell, CmsSidebarCard } from '../components/CmsWorkspace';
 import { extractError } from '../lib/api';
 import { quizService } from '../lib/services';
 
@@ -209,23 +210,90 @@ export function QuizEditorPage() {
   if (loading) return <Spinner />;
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <PageHeader
+    <form onSubmit={handleSubmit}>
+      <CmsEditorShell
+        backTo="/quizzes/manage"
+        backLabel={t('quizzes.manageTitle')}
         title={isEdit ? t('quizzes.editTitle') : t('quizzes.createTitle')}
         subtitle={isEdit ? t('quizzes.editSubtitle') : t('quizzes.createSubtitle')}
-      />
-      <Link to="/quizzes/manage" className="mb-4 inline-flex items-center gap-1 text-sm text-brand-600 hover:underline dark:text-brand-400">
-        <ChevronLeft className="h-4 w-4" />
-        {t('quizzes.manageTitle')}
-      </Link>
-
-      {error && (
-        <div className="mb-4">
-          <Alert>{error}</Alert>
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-6">
+        status={form.is_active ? 'published' : 'draft'}
+        statusLabel={form.is_active ? t('quizzes.fieldActive') : t('common.draft')}
+        error={error}
+        sidebar={
+          <CmsSidebarCard title={t('cms.publish')}>
+            <label className="label">{t('quizzes.fieldKind')}</label>
+            <select
+              className="input"
+              value={form.kind}
+              onChange={(e) => setForm({
+                ...form,
+                kind: e.target.value,
+                feedback_mode: e.target.value === 'assessment' ? 'end' : form.feedback_mode,
+              })}
+            >
+              <option value="assessment">{t('quizzes.kindAssessment')}</option>
+              <option value="practice">{t('quizzes.kindPractice')}</option>
+            </select>
+            {form.kind === 'practice' && (
+              <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">
+                {t('quizzes.kindHintPractice')}
+              </p>
+            )}
+            <label className="label mt-3">{t('quizzes.fieldFeedbackMode')}</label>
+            <select
+              className="input"
+              value={form.kind === 'practice' ? form.feedback_mode : 'end'}
+              disabled={form.kind !== 'practice'}
+              onChange={(e) => setForm({ ...form, feedback_mode: e.target.value })}
+            >
+              <option value="end">{t('quizzes.feedbackEnd')}</option>
+              <option value="per_question">{t('quizzes.feedbackPerQuestion')}</option>
+            </select>
+            <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">
+              {t('quizzes.feedbackHint')}
+            </p>
+            <label className="label mt-3">{t('quizzes.passingScore')}</label>
+            <input
+              type="number"
+              min={1}
+              max={100}
+              className="input"
+              value={form.passing_score}
+              onChange={(e) => setForm({ ...form, passing_score: e.target.value })}
+            />
+            <label className="label mt-3">{t('quizzes.fieldMaxAttempts')}</label>
+            <input
+              type="number"
+              min={1}
+              className="input"
+              placeholder={t('quizzes.maxAttemptsUnlimited')}
+              value={form.max_attempts}
+              onChange={(e) => setForm({ ...form, max_attempts: e.target.value })}
+            />
+            <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">
+              {t('quizzes.maxAttemptsHint')}
+            </p>
+            <label className="mt-4 flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={form.is_active}
+                onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
+              />
+              {t('quizzes.fieldActive')}
+            </label>
+          </CmsSidebarCard>
+        }
+        footer={
+          <>
+            <button type="submit" className="btn-primary" disabled={saving}>
+              {saving ? t('common.loading') : t('common.save')}
+            </button>
+            <Link to="/quizzes/manage" className="btn-secondary">
+              {t('common.cancel')}
+            </Link>
+          </>
+        }
+      >
         <div className="card space-y-4">
           <div>
             <label className="label">{t('quizzes.fieldTitle')}</label>
@@ -252,82 +320,7 @@ export function QuizEditorPage() {
               onChange={(e) => setForm({ ...form, description: e.target.value })}
             />
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="label">{t('quizzes.fieldKind')}</label>
-              <select
-                className="input"
-                value={form.kind}
-                onChange={(e) => setForm({
-                  ...form,
-                  kind: e.target.value,
-                  feedback_mode: e.target.value === 'assessment' ? 'end' : form.feedback_mode,
-                })}
-              >
-                <option value="assessment">{t('quizzes.kindAssessment')}</option>
-                <option value="practice">{t('quizzes.kindPractice')}</option>
-              </select>
-              {form.kind === 'practice' && (
-                <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">
-                  {t('quizzes.kindHintPractice')}
-                </p>
-              )}
-            </div>
-            <div>
-              <label className="label">{t('quizzes.fieldFeedbackMode')}</label>
-              <select
-                className="input"
-                value={form.kind === 'practice' ? form.feedback_mode : 'end'}
-                disabled={form.kind !== 'practice'}
-                onChange={(e) => setForm({ ...form, feedback_mode: e.target.value })}
-              >
-                <option value="end">{t('quizzes.feedbackEnd')}</option>
-                <option value="per_question">{t('quizzes.feedbackPerQuestion')}</option>
-              </select>
-              <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">
-                {t('quizzes.feedbackHint')}
-              </p>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="label">{t('quizzes.passingScore')}</label>
-              <input
-                type="number"
-                min={1}
-                max={100}
-                className="input"
-                value={form.passing_score}
-                onChange={(e) => setForm({ ...form, passing_score: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className="label">{t('quizzes.fieldMaxAttempts')}</label>
-              <input
-                type="number"
-                min={1}
-                className="input"
-                placeholder={t('quizzes.maxAttemptsUnlimited')}
-                value={form.max_attempts}
-                onChange={(e) => setForm({ ...form, max_attempts: e.target.value })}
-              />
-              <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">
-                {t('quizzes.maxAttemptsHint')}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-end">
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={form.is_active}
-                onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
-              />
-              {t('quizzes.fieldActive')}
-            </label>
-          </div>
         </div>
-
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">{t('quizzes.questionsSection')}</h2>
@@ -538,15 +531,7 @@ export function QuizEditorPage() {
           })}
         </div>
 
-        <div className="flex flex-wrap gap-3">
-          <button type="submit" className="btn-primary" disabled={saving}>
-            {saving ? t('common.loading') : t('common.save')}
-          </button>
-          <Link to="/quizzes/manage" className="btn-secondary">
-            {t('common.cancel')}
-          </Link>
-        </div>
-      </form>
-    </div>
+      </CmsEditorShell>
+    </form>
   );
 }

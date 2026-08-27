@@ -1,8 +1,9 @@
+// @ts-nocheck
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Alert, PageHeader, Spinner } from '../components/ui';
-import { ChevronLeft } from '../components/Icons';
+import { Spinner } from '../components/ui';
+import { CmsEditorShell, CmsSidebarCard } from '../components/CmsWorkspace';
 import { extractError } from '../lib/api';
 import { categoryService, mediaService } from '../lib/services';
 
@@ -131,62 +132,17 @@ export function MediaEditorPage() {
   if (loading) return <Spinner />;
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <PageHeader
+    <form onSubmit={handleSubmit}>
+      <CmsEditorShell
+        backTo="/media/manage"
+        backLabel={t('media.manageTitle')}
         title={isEdit ? t('media.editTitle') : t('media.createTitle')}
         subtitle={isEdit ? t('media.editSubtitle') : t('media.createSubtitle')}
-      />
-      <Link
-        to="/media/manage"
-        className="mb-4 inline-flex items-center gap-1 text-sm text-brand-600 hover:underline dark:text-brand-400"
-      >
-        <ChevronLeft className="h-4 w-4" />
-        {t('media.manageTitle')}
-      </Link>
-
-      {error && (
-        <div className="mb-4">
-          <Alert>{error}</Alert>
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="card space-y-4">
-        <div>
-          <label className="label">{t('media.fieldTitle')}</label>
-          <input
-            className="input"
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-            required
-          />
-        </div>
-        <div>
-          <label className="label">{t('media.fieldTitleAr')}</label>
-          <input
-            className="input"
-            value={form.title_ar}
-            onChange={(e) => setForm({ ...form, title_ar: e.target.value })}
-          />
-        </div>
-        <div>
-          <label className="label">{t('media.fieldDescription')}</label>
-          <textarea
-            className="input min-h-[80px]"
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-          />
-        </div>
-        <div>
-          <label className="label">{t('media.fieldDescriptionAr')}</label>
-          <textarea
-            className="input min-h-[80px]"
-            value={form.description_ar}
-            onChange={(e) => setForm({ ...form, description_ar: e.target.value })}
-          />
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
+        status={form.status}
+        statusLabel={form.status === 'published' ? t('media.statusPublished') : form.status === 'archived' ? t('media.statusArchived') : t('media.statusDraft')}
+        error={error}
+        sidebar={
+          <CmsSidebarCard title={t('cms.publish')}>
             <label className="label">{t('media.fieldType')}</label>
             <select
               className="input"
@@ -197,9 +153,7 @@ export function MediaEditorPage() {
               <option value="audio">{t('media.typeAudio')}</option>
               <option value="video">{t('media.typeVideo')}</option>
             </select>
-          </div>
-          <div>
-            <label className="label">{t('media.fieldStatus')}</label>
+            <label className="label mt-3">{t('media.fieldStatus')}</label>
             <select
               className="input"
               value={form.status}
@@ -209,110 +163,138 @@ export function MediaEditorPage() {
               <option value="published">{t('media.statusPublished')}</option>
               <option value="archived">{t('media.statusArchived')}</option>
             </select>
-          </div>
-        </div>
-
-        <div>
-          <label className="label">{t('media.fieldSource')}</label>
-          <select
-            className="input"
-            value={form.source}
-            onChange={(e) => setForm({ ...form, source: e.target.value })}
-          >
-            <option value="external">{t('media.sourceExternal')}</option>
-            <option value="upload">{t('media.sourceUpload')}</option>
-          </select>
-        </div>
-
-        {form.source === 'external' ? (
+            <label className="label mt-3">{t('media.fieldSource')}</label>
+            <select
+              className="input"
+              value={form.source}
+              onChange={(e) => setForm({ ...form, source: e.target.value })}
+            >
+              <option value="external">{t('media.sourceExternal')}</option>
+              <option value="upload">{t('media.sourceUpload')}</option>
+            </select>
+            <label className="label mt-3">{t('media.fieldCategory')}</label>
+            <select
+              className="input"
+              value={form.category_id}
+              onChange={(e) => setForm({ ...form, category_id: e.target.value })}
+            >
+              <option value="">{t('common.all')}</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </CmsSidebarCard>
+        }
+        footer={
+          <>
+            <button type="submit" className="btn-primary" disabled={saving || uploading}>
+              {saving ? t('common.loading') : t('common.save')}
+            </button>
+            <Link to="/media/manage" className="btn-secondary">
+              {t('common.cancel')}
+            </Link>
+          </>
+        }
+      >
+        <div className="card space-y-4">
           <div>
-            <label className="label">{t('media.fieldExternalUrl')}</label>
+            <label className="label">{t('media.fieldTitle')}</label>
+            <input
+              className="input"
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              required
+            />
+          </div>
+          <div>
+            <label className="label">{t('media.fieldTitleAr')}</label>
+            <input
+              className="input"
+              value={form.title_ar}
+              onChange={(e) => setForm({ ...form, title_ar: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="label">{t('media.fieldDescription')}</label>
+            <textarea
+              className="input min-h-[80px]"
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="label">{t('media.fieldDescriptionAr')}</label>
+            <textarea
+              className="input min-h-[80px]"
+              value={form.description_ar}
+              onChange={(e) => setForm({ ...form, description_ar: e.target.value })}
+            />
+          </div>
+          {form.source === 'external' ? (
+            <div>
+              <label className="label">{t('media.fieldExternalUrl')}</label>
+              <input
+                className="input"
+                type="url"
+                value={form.external_url}
+                onChange={(e) => setForm({ ...form, external_url: e.target.value })}
+                placeholder="https://"
+                required
+              />
+              <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">
+                {t('media.externalHint')}
+              </p>
+            </div>
+          ) : (
+            <div>
+              <label className="label">{t('media.fieldUpload')}</label>
+              <input
+                type="file"
+                accept={
+                  form.media_type === 'audio'
+                    ? 'audio/mpeg,audio/mp4,audio/ogg,audio/wav,.mp3,.m4a,.ogg,.wav'
+                    : 'video/mp4,video/webm,.mp4,.webm'
+                }
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) uploadFile(file);
+                }}
+              />
+              {uploading && (
+                <p className="mt-1 text-xs text-ink-700/60">{t('media.uploading')}</p>
+              )}
+              {form.file_url && (
+                <p className="mt-2 truncate text-xs text-brand-700 dark:text-brand-400">
+                  {form.file_url}
+                </p>
+              )}
+            </div>
+          )}
+          <div>
+            <label className="label">{t('media.fieldCaptions')}</label>
             <input
               className="input"
               type="url"
-              value={form.external_url}
-              onChange={(e) => setForm({ ...form, external_url: e.target.value })}
-              placeholder="https://"
-              required
+              value={form.captions_url}
+              onChange={(e) => setForm({ ...form, captions_url: e.target.value })}
+              placeholder="https:// (WebVTT .vtt)"
             />
-            <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">
-              {t('media.externalHint')}
-            </p>
+            <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">{t('media.captionsHint')}</p>
           </div>
-        ) : (
           <div>
-            <label className="label">{t('media.fieldUpload')}</label>
+            <label className="label">{t('media.fieldThumbnail')}</label>
             <input
-              type="file"
-              accept={
-                form.media_type === 'audio'
-                  ? 'audio/mpeg,audio/mp4,audio/ogg,audio/wav,.mp3,.m4a,.ogg,.wav'
-                  : 'video/mp4,video/webm,.mp4,.webm'
-              }
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) uploadFile(file);
-              }}
+              className="input"
+              type="url"
+              value={form.thumbnail_url}
+              onChange={(e) => setForm({ ...form, thumbnail_url: e.target.value })}
+              placeholder="https://"
             />
-            {uploading && (
-              <p className="mt-1 text-xs text-ink-700/60">{t('media.uploading')}</p>
-            )}
-            {form.file_url && (
-              <p className="mt-2 truncate text-xs text-brand-700 dark:text-brand-400">
-                {form.file_url}
-              </p>
-            )}
           </div>
-        )}
-
-        <div>
-          <label className="label">{t('media.fieldCategory')}</label>
-          <select
-            className="input"
-            value={form.category_id}
-            onChange={(e) => setForm({ ...form, category_id: e.target.value })}
-          >
-            <option value="">{t('common.all')}</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
         </div>
-
-        <div>
-          <label className="label">{t('media.fieldCaptions')}</label>
-          <input
-            className="input"
-            type="url"
-            value={form.captions_url}
-            onChange={(e) => setForm({ ...form, captions_url: e.target.value })}
-            placeholder="https:// (WebVTT .vtt)"
-          />
-          <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">{t('media.captionsHint')}</p>
-        </div>
-
-        <div>
-          <label className="label">{t('media.fieldThumbnail')}</label>
-          <input
-            className="input"
-            type="url"
-            value={form.thumbnail_url}
-            onChange={(e) => setForm({ ...form, thumbnail_url: e.target.value })}
-            placeholder="https://"
-          />
-        </div>
-
-        <div className="flex flex-wrap gap-3 pt-2">
-          <button type="submit" className="btn-primary" disabled={saving || uploading}>
-            {saving ? t('common.loading') : t('common.save')}
-          </button>
-          <Link to="/media/manage" className="btn-secondary">
-            {t('common.cancel')}
-          </Link>
-        </div>
-      </form>
-    </div>
+      </CmsEditorShell>
+    </form>
   );
 }

@@ -285,6 +285,12 @@
   .tutor-reply strong {
     @apply font-semibold;
   }
+  .cms-editor-sidebar .card {
+    @apply shadow-soft;
+  }
+  .cms-editor-footer {
+    @apply sticky bottom-0 z-10 -mx-4 bg-white/95 px-4 py-3 backdrop-blur-sm dark:bg-slate-900/95 sm:-mx-0 sm:px-0;
+  }
 }
 
 html[data-contrast='high'] body {
