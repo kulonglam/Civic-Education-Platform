@@ -1391,7 +1391,8 @@
     "learners": "{{count}} learners",
     "learnersHidden": "Learner count hidden for privacy",
     "noEvents": "No mapped events in this state yet.",
-    "privacy": "Region learner totals are hidden when fewer than three people share that state."
+    "privacy": "Region learner totals are hidden when fewer than three people share that state.",
+    "attribution": "State outlines: geoBoundaries / OCHA South Sudan (CC BY 3.0 IGO)."
   },
   "leaderboard": {
     "title": "XP leaderboard",

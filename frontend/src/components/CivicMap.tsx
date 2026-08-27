@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { MAP_SIZE, projectLonLat, ringToPath, SOUTH_SUDAN_STATES } from '../lib/southSudanMap';
+import { MAP_SIZE, projectLonLat, ringsToPath, SOUTH_SUDAN_STATES } from '../lib/southSudanMap';
 import type { CivicEvent, MapRegion } from '../types/api';
 
 function fillForCount(count = 0, max = 0) {
@@ -43,8 +43,9 @@ export function CivicMap({
           return (
             <path
               key={state.key}
-              d={ringToPath(state.ring)}
+              d={ringsToPath(state.rings)}
               fill={fillForCount(count, maxEvents)}
+              fillRule="evenodd"
               stroke={active ? '#0f172a' : '#64748b'}
               strokeWidth={active ? 2.4 : 1}
               className="cursor-pointer"

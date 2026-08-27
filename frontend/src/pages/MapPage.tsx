@@ -24,7 +24,9 @@ export function MapPage() {
       {data && (
         <>
           <CivicMap regions={data.regions} events={data.events} />
-          <p className="mt-6 text-xs text-ink-700/55 dark:text-slate-500">{t('map.privacy')}</p>
+          <p className="mt-6 text-xs text-ink-700/55 dark:text-slate-500">
+            {t('map.privacy')} {t('map.attribution')}
+          </p>
         </>
       )}
     </div>

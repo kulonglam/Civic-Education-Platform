@@ -2820,9 +2820,9 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/LoginPage.tsx": {
-    "mtime": 1787816991.0180018,
-    "seen": 1787817063.9022105,
-    "ast_hash": "84fd99e17c2790771e09f584210c9abe",
+    "mtime": 1787822184.2189465,
+    "seen": 1787822267.864591,
+    "ast_hash": "d033923fa6606faf76c98f73f2eb8cc0",
     "semantic_hash": ""
   },
   "frontend/src/pages/MapPage.tsx": {
@@ -2928,9 +2928,9 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/RegisterPage.tsx": {
-    "mtime": 1787819121.5864873,
-    "seen": 1787820077.9871826,
-    "ast_hash": "c03d785c8ca819b02da902d0045d95dd",
+    "mtime": 1787822187.1201823,
+    "seen": 1787822267.864629,
+    "ast_hash": "5a9bd8f8d56f3f745da52cc40255f6c4",
     "semantic_hash": ""
   },
   "frontend/src/pages/ResetPasswordPage.tsx": {
@@ -3012,9 +3012,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/AuthShell.tsx": {
-    "mtime": 1787816495.6719744,
-    "seen": 1787817063.9019544,
-    "ast_hash": "556f6348c38a1e5ece4d601529293271",
+    "mtime": 1787822175.2381663,
+    "seen": 1787822267.8643577,
+    "ast_hash": "00529923ddd6be92ba804152b4ee7b87",
     "semantic_hash": ""
   },
   "frontend/src/components/BookmarkButton.tsx": {
@@ -3090,9 +3090,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Layout.tsx": {
-    "mtime": 1787821023.3609135,
-    "seen": 1787821224.2896981,
-    "ast_hash": "642371e76c4e4e0eaf92c944eff1e6e0",
+    "mtime": 1787822648.3105283,
+    "seen": 1787822698.2431524,
+    "ast_hash": "1ed9cd6eba9e6957e185f3961a38ff62",
     "semantic_hash": ""
   },
   "frontend/src/components/MediaPlayer.tsx": {
@@ -3624,9 +3624,9 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/LoginPage.test.tsx": {
-    "mtime": 1782321502.8528414,
-    "seen": 1787815671.693952,
-    "ast_hash": "a0e7c14fb5a8ef486bebc385123dd042",
+    "mtime": 1787822197.7987351,
+    "seen": 1787822267.8645892,
+    "ast_hash": "3892b718a6344c21e26b084a59cadbb0",
     "semantic_hash": ""
   },
   "frontend/src/pages/ManagePages.test.tsx": {
@@ -3654,9 +3654,9 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/RegisterPage.test.tsx": {
-    "mtime": 1787815046.191969,
-    "seen": 1787815671.6940086,
-    "ast_hash": "e6adc0452c41f11b977e688768811a69",
+    "mtime": 1787822197.8700209,
+    "seen": 1787822267.8646276,
+    "ast_hash": "fca5e6e89001ca89a4a7cd3538f852b2",
     "semantic_hash": ""
   },
   "frontend/src/pages/SavedPage.test.tsx": {
@@ -3684,9 +3684,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Layout.test.tsx": {
-    "mtime": 1787821109.5071883,
-    "seen": 1787821224.289692,
-    "ast_hash": "6164e95838d4d5b4dd227c28ef54ffa8",
+    "mtime": 1787822647.8563602,
+    "seen": 1787822698.2431495,
+    "ast_hash": "ff2d0dee7eb4f688d1e25e1e35ae9167",
     "semantic_hash": ""
   }
 }

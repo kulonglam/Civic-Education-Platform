@@ -21,18 +21,18 @@ MAP_STATE_KEYS = (
 
 REGION_LABELS = {value: label for value, label in REGION_CHOICES}
 
-# Approximate geographic centres (longitude, latitude) for map pins.
+# Geographic centres (longitude, latitude) from geoBoundaries SSD ADM1 2020.
 REGION_CENTROIDS = {
-    'central_equatoria': (31.58, 4.85),
-    'eastern_equatoria': (33.40, 4.55),
-    'western_equatoria': (28.40, 5.35),
-    'jonglei': (32.10, 7.20),
-    'unity': (29.80, 9.10),
-    'upper_nile': (32.90, 10.20),
-    'lakes': (29.70, 6.80),
-    'warrap': (28.15, 8.05),
-    'northern_bahr_el_ghazal': (26.70, 8.95),
-    'western_bahr_el_ghazal': (25.90, 7.70),
+    'central_equatoria': (31.19, 4.77),
+    'eastern_equatoria': (33.60, 4.90),
+    'western_equatoria': (28.68, 5.55),
+    'jonglei': (32.33, 7.39),
+    'unity': (29.89, 8.93),
+    'upper_nile': (32.80, 9.90),
+    'lakes': (29.94, 6.64),
+    'warrap': (28.73, 8.14),
+    'northern_bahr_el_ghazal': (27.04, 8.88),
+    'western_bahr_el_ghazal': (26.22, 8.23),
 }
 
 EVENT_REGION_CHOICES = [
