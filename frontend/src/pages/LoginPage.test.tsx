@@ -38,6 +38,7 @@ describe('LoginPage', () => {
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /log in/i })).toBeInTheDocument();
+    expect(screen.queryByText('Civic Education RSS')).not.toBeInTheDocument();
   });
 
   it('shows error when login fails', async () => {

@@ -6,7 +6,6 @@ import type { RegisterPayload } from '../types/api';
 import { extractError } from '../lib/api';
 import { Alert, PasswordInput, PasswordStrengthBar } from '../components/ui';
 import { AuthShell } from '../components/AuthShell';
-import { PlatformLogo } from '../components/PlatformLogo';
 
 export function RegisterPage() {
   const { t } = useTranslation();
@@ -89,11 +88,7 @@ export function RegisterPage() {
   if (success) {
     const copy = successMessage || t('auth.registerSuccess');
     return (
-      <AuthShell title={t('auth.registerSuccessTitle')} subtitle={copy}>
-        <div className="mb-6 flex items-center gap-3 lg:hidden">
-          <PlatformLogo className="h-10 w-10" />
-          <p className="font-display text-lg font-semibold text-ink-900 dark:text-slate-100">{t('app.name')}</p>
-        </div>
+      <AuthShell title={t('auth.registerSuccessTitle')} subtitle={copy} showBrand={false}>
         <Alert kind={successMessage ? 'warning' : 'success'}>{copy}</Alert>
         <Link to="/login" className="btn-primary mt-6 w-full">
           {t('nav.login')}
@@ -112,15 +107,8 @@ export function RegisterPage() {
             ? t('auth.accountTypeOrganizationHint')
             : t('auth.accountTypeCitizenHint')
       }
+      showBrand={false}
     >
-      <div className="mb-6 flex items-center gap-3 lg:hidden">
-        <PlatformLogo className="h-10 w-10" />
-        <div>
-          <p className="font-display text-lg font-semibold text-ink-900 dark:text-slate-100">{t('app.name')}</p>
-          <p className="text-xs text-ink-700/60 dark:text-slate-400">{t('app.tagline')}</p>
-        </div>
-      </div>
-
       <p className="eyebrow">{t('auth.getStarted')}</p>
       <h2 className="mt-2 font-display text-2xl font-semibold text-ink-900 dark:text-slate-50">
         {panelTitle}

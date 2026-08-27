@@ -84,21 +84,15 @@ function renderLayout(route: string) {
 }
 
 describe('Layout header brand', () => {
-  it.each(['/login', '/register', '/forgot-password'])(
-    'keeps a home link but hides the wordmark on %s',
+  it.each(['/', '/login', '/register', '/forgot-password'])(
+    'shows the navbar logo and name on %s',
     (route) => {
       renderLayout(route);
       const header = screen.getByRole('banner');
+      expect(within(header).getByText('Civic Education RSS')).toBeInTheDocument();
       expect(
         within(header).getByRole('link', { name: 'Civic Education RSS' }),
       ).toHaveAttribute('href', '/');
-      expect(within(header).queryByText('Civic Education RSS')).not.toBeInTheDocument();
     },
   );
-
-  it('shows the wordmark on other pages', () => {
-    renderLayout('/');
-    const header = screen.getByRole('banner');
-    expect(within(header).getByText('Civic Education RSS')).toBeInTheDocument();
-  });
 });

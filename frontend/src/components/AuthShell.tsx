@@ -16,16 +16,18 @@ export function AuthShell({
   children,
   title,
   subtitle,
+  showBrand = true,
 }: {
   children: ReactNode;
   title: string;
   subtitle?: string;
+  showBrand?: boolean;
 }) {
   const { t } = useTranslation();
 
   return (
     <div className="auth-shell">
-      <aside className="auth-brand-panel px-10 py-12 xl:px-14" aria-label={t('app.name')}>
+      <aside className="auth-brand-panel px-10 py-12 xl:px-14" aria-label={showBrand ? t('app.name') : undefined}>
         <div className="auth-brand-photo" aria-hidden="true" />
         <div
           className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-950/80 via-transparent to-brand-950/40"
@@ -33,14 +35,18 @@ export function AuthShell({
         />
         <div className="relative flex h-full flex-col justify-between">
           <div>
-            <div className="flex items-center gap-3">
-              <PlatformLogo className="h-12 w-12 ring-1 ring-white/20" />
-              <div>
-                <p className="font-display text-xl font-semibold">{t('app.name')}</p>
-                <p className="mt-0.5 text-sm font-normal text-brand-100/90">{t('app.tagline')}</p>
+            {showBrand && (
+              <div className="flex items-center gap-3">
+                <PlatformLogo className="h-12 w-12 ring-1 ring-white/20" />
+                <div>
+                  <p className="font-display text-xl font-semibold">{t('app.name')}</p>
+                  <p className="mt-0.5 text-sm font-normal text-brand-100/90">{t('app.tagline')}</p>
+                </div>
               </div>
-            </div>
-            <p className="eyebrow mt-14 text-brand-200">{t('auth.enterpriseEyebrow')}</p>
+            )}
+            <p className={`eyebrow text-brand-200 ${showBrand ? 'mt-14' : ''}`}>
+              {t('auth.enterpriseEyebrow')}
+            </p>
             <h1 className="mt-3 max-w-md font-display text-hero text-white">
               {title}
             </h1>

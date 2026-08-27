@@ -445,27 +445,22 @@ export function Layout() {
             {organization?.logo_url ? (
               <img
                 src={organization.logo_url}
-                alt={isAuthSurface ? '' : organization.name}
+                alt={organization.name}
                 className="h-9 w-9 shrink-0 rounded-xl object-cover ring-1 ring-ink-100 dark:ring-slate-700"
               />
             ) : (
-              <PlatformLogo
-                className="h-9 w-9"
-                alt={isAuthSurface ? '' : (organization?.name ?? t('app.name'))}
-              />
+              <PlatformLogo className="h-9 w-9" alt={organization?.name ?? t('app.name')} />
             )}
-            {!isAuthSurface && (
-              <span className="min-w-0">
-                <span className="block truncate font-display text-sm font-semibold text-ink-900 dark:text-slate-100 sm:text-base lg:text-lg">
-                  {organization?.name ?? t('app.name')}
-                </span>
-                {organization?.name && (
-                  <span className="hidden truncate text-[11px] font-medium uppercase tracking-wide text-ink-700/70 dark:text-slate-500 xl:block">
-                    {t('app.tagline')}
-                  </span>
-                )}
+            <span className="min-w-0">
+              <span className="block truncate font-display text-sm font-semibold text-ink-900 dark:text-slate-100 sm:text-base lg:text-lg">
+                {organization?.name ?? t('app.name')}
               </span>
-            )}
+              {organization?.name && !isAuthSurface && (
+                <span className="hidden truncate text-[11px] font-medium uppercase tracking-wide text-ink-700/70 dark:text-slate-500 xl:block">
+                  {t('app.tagline')}
+                </span>
+              )}
+            </span>
           </Link>
 
           {!isAuthSurface && (

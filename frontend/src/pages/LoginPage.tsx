@@ -7,7 +7,6 @@ import { authService } from '../lib/services';
 import { extractError } from '../lib/api';
 import { Alert, PasswordInput } from '../components/ui';
 import { AuthShell } from '../components/AuthShell';
-import { PlatformLogo } from '../components/PlatformLogo';
 
 const API_ORIGIN = (import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api').replace(/\/api\/?$/, '');
 
@@ -78,15 +77,8 @@ function LoginPage() {
     <AuthShell
       title={mfaStep ? t('auth.mfaTitle') : t('auth.loginPanelTitle')}
       subtitle={mfaStep ? t('auth.mfaSubtitle') : t('auth.loginPanelSubtitle')}
+      showBrand={false}
     >
-      <div className="mb-6 flex items-center gap-3 lg:hidden">
-        <PlatformLogo className="h-10 w-10" />
-        <div>
-          <p className="font-display text-lg font-semibold text-ink-900 dark:text-slate-100">{t('app.name')}</p>
-          <p className="text-xs text-ink-700/60 dark:text-slate-400">{t('app.tagline')}</p>
-        </div>
-      </div>
-
       <p className="eyebrow">{t('auth.secureAccess')}</p>
       <h2 className="mt-2 font-display text-2xl font-semibold text-ink-900 dark:text-slate-50">
         {mfaStep ? t('auth.mfaTitle') : t('auth.loginTitle')}
