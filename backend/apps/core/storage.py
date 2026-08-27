@@ -1,8 +1,11 @@
 from io import BytesIO
 from pathlib import Path
+import logging
 
 from django.conf import settings
 from supabase import Client, create_client
+
+logger = logging.getLogger(__name__)
 
 
 def get_supabase_client() -> Client | None:
@@ -38,12 +41,16 @@ def upload_file(
     client = get_supabase_client()
     if client:
         bucket = settings.SUPABASE_STORAGE_BUCKET
-        client.storage.from_(bucket).upload(
-            path,
-            data,
-            file_options={'content-type': content_type, 'upsert': 'true'},
-        )
-        return client.storage.from_(bucket).get_public_url(path)
+        try:
+            client.storage.from_(bucket).upload(
+                path,
+                data,
+                file_options={'content-type': content_type, 'upsert': 'true'},
+            )
+            return client.storage.from_(bucket).get_public_url(path)
+        except Exception:
+            logger.exception('Supabase storage upload failed for %s', path)
+            return None
 
     if _save_local_file(path, data):
         return _local_media_url(path, request)

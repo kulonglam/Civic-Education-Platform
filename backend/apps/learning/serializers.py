@@ -294,6 +294,9 @@ class ArticleSerializer(serializers.ModelSerializer):
     def validate_attachment_url(self, value):
         return validate_http_url(value, field_name='Attachment URL')
 
+    def validate_featured_image_url(self, value):
+        return validate_http_url(value, field_name='Featured image URL')
+
     def _normalize_publish_status(self, validated_data):
         request = self.context.get('request')
         if validated_data.get('status') == 'published' and not _can_publish_directly(request):

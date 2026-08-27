@@ -1330,7 +1330,7 @@ class Command(BaseCommand):
             image_url = self._upload_seed_bytes(
                 org, f'infographic-{slug}.svg', svg_bytes, 'image/svg+xml',
             )
-            if image_url and len(image_url) <= 200 and article.featured_image_url != image_url:
+            if image_url and article.featured_image_url != image_url:
                 article.featured_image_url = image_url
                 article.save(update_fields=['featured_image_url'])
 

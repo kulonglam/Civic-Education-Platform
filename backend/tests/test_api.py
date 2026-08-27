@@ -177,6 +177,26 @@ class TestArticles:
         assert response.data['url']
         assert response.data['name'] == 'hero.png'
 
+    def test_save_article_with_long_featured_image_url(self, api_client, editor_user, category, org):
+        bind_client_to_org(api_client, editor_user, org)
+        long_url = (
+            'https://abcdefghijklmnop.supabase.co/storage/v1/object/public/'
+            'civic-education-platform-media/articles/'
+            '550e8400-e29b-41d4-a716-446655440000/images/'
+            'abcdef1234567890abcdef1234567890abcdef1234567890.jpeg'
+            '?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.long-public-object-path'
+        )
+        assert len(long_url) > 200
+        response = api_client.post('/api/articles/', {
+            'title': 'Lesson with photo',
+            'content': 'Body text',
+            'category_id': str(category.id),
+            'status': 'draft',
+            'featured_image_url': long_url,
+        }, format='json')
+        assert response.status_code == status.HTTP_201_CREATED, response.data
+        assert response.data['featured_image_url'] == long_url
+
     def test_content_bundle(self, api_client, citizen_user, org, category):
         bind_client_to_org(api_client, citizen_user, org)
         Article.objects.create(

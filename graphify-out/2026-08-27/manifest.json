@@ -1566,15 +1566,15 @@
     "semantic_hash": ""
   },
   "frontend/src/i18n/ar.json": {
-    "mtime": 1787811612.0310943,
-    "seen": 1787811767.0732875,
-    "ast_hash": "d77c7ab3337acaf12124d3e2c4f2a394",
+    "mtime": 1787824031.5184233,
+    "seen": 1787824274.8978145,
+    "ast_hash": "a15a5aa45916220791811cdefe4e95bb",
     "semantic_hash": ""
   },
   "frontend/src/i18n/en.json": {
-    "mtime": 1787811612.0300927,
-    "seen": 1787811767.0732925,
-    "ast_hash": "d76d3829f3be64df62142efb11320313",
+    "mtime": 1787824028.9665396,
+    "seen": 1787824274.8978212,
+    "ast_hash": "3a6fa4869d3300ca89f0b721202928c3",
     "semantic_hash": ""
   },
   "frontend/src/test/utils.jsx": {
@@ -2442,9 +2442,9 @@
     "semantic_hash": ""
   },
   "backend/apps/engagement/maps.py": {
-    "mtime": 1787591665.9865654,
-    "seen": 1787591821.1499171,
-    "ast_hash": "a3612251182bfef8f9907b3d79f8d5ff",
+    "mtime": 1787824020.498181,
+    "seen": 1787824274.8832207,
+    "ast_hash": "770acada5567c01ad0b8907dff8110a1",
     "semantic_hash": ""
   },
   "backend/apps/engagement/migrations/0007_civicevent_region_coords.py": {
@@ -2826,9 +2826,9 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/MapPage.tsx": {
-    "mtime": 1787814592.363623,
-    "seen": 1787815671.6939597,
-    "ast_hash": "6e2b3b6af8e65b7df3d0c333981cea89",
+    "mtime": 1787824031.520455,
+    "seen": 1787824274.9020638,
+    "ast_hash": "030229540550702b95061ca10378ac3a",
     "semantic_hash": ""
   },
   "frontend/src/pages/MediaDetailPage.tsx": {
@@ -3030,9 +3030,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/CivicMap.tsx": {
-    "mtime": 1787818846.5973904,
-    "seen": 1787820077.9863925,
-    "ast_hash": "df8859f2d94533db02c503c30fc06fea",
+    "mtime": 1787824025.7228875,
+    "seen": 1787824274.8970392,
+    "ast_hash": "582a18934f1637291b28263190e855eb",
     "semantic_hash": ""
   },
   "frontend/src/components/ClaimBadge.tsx": {
@@ -3372,9 +3372,9 @@
     "semantic_hash": ""
   },
   "frontend/src/lib/southSudanMap.ts": {
-    "mtime": 1787813328.0725582,
-    "seen": 1787813758.526761,
-    "ast_hash": "0ea2e5fdd5580358d0fb131828acc0a7",
+    "mtime": 1787823983.3872278,
+    "seen": 1787824274.8983061,
+    "ast_hash": "391795c5e1b362043bbea4d8f4256015",
     "semantic_hash": ""
   },
   "frontend/src/lib/tutorStream.ts": {
@@ -3534,9 +3534,9 @@
     "semantic_hash": ""
   },
   "frontend/src/lib/southSudanMap.test.ts": {
-    "mtime": 1787591031.0493727,
-    "seen": 1787815671.6938336,
-    "ast_hash": "95f64ed7e53673b6817c7617225f83e7",
+    "mtime": 1787824033.9303753,
+    "seen": 1787824274.8983,
+    "ast_hash": "5c85891b660aeeffadaf4fd22ac3a80e",
     "semantic_hash": ""
   },
   "frontend/src/lib/speech.test.ts": {

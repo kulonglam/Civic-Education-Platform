@@ -115,9 +115,7 @@ export const userService = {
   uploadAvatar: (file: File) => {
     const formData = new FormData();
     formData.append('avatar', file);
-    return api.patch<User>('/users/profile/avatar/', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    return api.patch<User>('/users/profile/avatar/', formData);
   },
   list: () => api.get<Paginated<User>>('/users/'),
   suspend: (userId: Id) => api.post(`/users/${userId}/suspend/`),
@@ -143,16 +141,12 @@ export const articleService = {
   uploadAttachment: (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
-    return api.post<UploadResult>('/articles/attachments/upload/', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    return api.post<UploadResult>('/articles/attachments/upload/', formData);
   },
   uploadImage: (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
-    return api.post<UploadResult>('/articles/images/upload/', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    return api.post<UploadResult>('/articles/images/upload/', formData);
   },
   recordProgress: (id: Id | undefined, payload: Record<string, unknown>) =>
     api.post(`/articles/${id}/progress/`, payload),
@@ -168,16 +162,12 @@ export const mediaService = {
   uploadAudio: (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
-    return api.post<UploadResult>('/media/audio/upload/', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    return api.post<UploadResult>('/media/audio/upload/', formData);
   },
   uploadVideo: (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
-    return api.post<UploadResult>('/media/video/upload/', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    return api.post<UploadResult>('/media/video/upload/', formData);
   },
   recordProgress: (id: Id | undefined, payload: Record<string, unknown>) =>
     api.post(`/media/${id}/progress/`, payload),

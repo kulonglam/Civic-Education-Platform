@@ -128,7 +128,7 @@ class Article(TenantModel):
         related_name='articles',
     )
     tags = models.JSONField(default=list, blank=True)
-    featured_image_url = models.URLField(blank=True)
+    featured_image_url = models.CharField(max_length=2048, blank=True, default='')
     attachment_url = models.CharField(max_length=2048, blank=True, default='')
     attachment_name = models.CharField(max_length=255, blank=True, default='')
     attachment_version = models.CharField(max_length=50, blank=True, default='')
