@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { tenantStore } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import { organizationService } from '../lib/services';
+import { unwrapList } from '../types/api';
 import { useOrganization } from '../context/OrganizationContext';
 
 export function OrgSwitcher() {
@@ -14,12 +15,12 @@ export function OrgSwitcher() {
     queryKey: queryKeys.myOrganizations,
     queryFn: async () => {
       const { data } = await organizationService.mine();
-      return data;
+      return unwrapList(data);
     },
   });
 
   const switchOrg = useMutation({
-    mutationFn: async (slug) => {
+    mutationFn: async (slug: string) => {
       tenantStore.set(slug);
       await refresh();
     },
@@ -43,8 +44,8 @@ export function OrgSwitcher() {
         aria-label={t('saas.switchOrg')}
       >
         {memberships.map((m) => (
-          <option key={m.id} value={m.organization.slug}>
-            {m.organization.name}
+          <option key={m.id} value={m.organization?.slug ?? ''}>
+            {m.organization?.name ?? m.id}
           </option>
         ))}
       </select>

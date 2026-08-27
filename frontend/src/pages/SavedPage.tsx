@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -28,7 +27,7 @@ export function SavedPage() {
   });
 
   const remove = useMutation({
-    mutationFn: (id) => bookmarkService.remove(id),
+    mutationFn: (id: string) => bookmarkService.remove(id),
     onSuccess: () => {
       toast.success(t('saved.removed'));
       queryClient.invalidateQueries({ queryKey: queryKeys.bookmarks() });

@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import toast, { Toaster } from 'react-hot-toast';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation, useNavigate, type NavLinkRenderProps } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useOrganization } from '../context/OrganizationContext';
 import { useDarkMode } from '../hooks/useDarkMode';
@@ -25,7 +25,7 @@ import { documentTitle } from '../lib/pageTitle';
 import { useNotificationSocket } from '../hooks/useNotificationSocket';
 import { ErrorBoundary } from './ErrorBoundary';
 
-function navLinkClass({ isActive }) {
+function navLinkClass({ isActive }: NavLinkRenderProps) {
   return `nav-link ${isActive ? 'nav-link-active' : 'nav-link-idle'}`;
 }
 
@@ -75,28 +75,44 @@ function HeaderSearchLink() {
   );
 }
 
-function NavDropdown({ label, avatar, badge, items, align = 'left', active = false, compactOnMobile = false }) {
+function NavDropdown({
+  label,
+  avatar = null,
+  badge = null,
+  items,
+  align = 'left',
+  active = false,
+  compactOnMobile = false,
+}: {
+  label: string;
+  avatar?: ReactNode;
+  badge?: number | null;
+  items: any[];
+  align?: 'left' | 'right';
+  active?: boolean;
+  compactOnMobile?: boolean;
+}) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return undefined;
-    const close = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    const close = (e: MouseEvent) => {
+      if (ref.current && e.target instanceof Node && !ref.current.contains(e.target)) setOpen(false);
     };
     document.addEventListener('mousedown', close);
     return () => document.removeEventListener('mousedown', close);
   }, [open]);
 
-  const focusItem = (index) => {
-    const nodes = ref.current?.querySelectorAll('[role="menuitem"]');
+  const focusItem = (index: number) => {
+    const nodes = ref.current?.querySelectorAll<HTMLElement>('[role="menuitem"]');
     if (!nodes?.length) return;
     const next = (index + nodes.length) % nodes.length;
     nodes[next].focus();
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Escape') {
       setOpen(false);
       e.currentTarget.querySelector('button')?.focus();
@@ -113,27 +129,27 @@ function NavDropdown({ label, avatar, badge, items, align = 'left', active = fal
     if (!open) return;
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      const nodes = [...(ref.current?.querySelectorAll('[role="menuitem"]') ?? [])];
-      const index = nodes.indexOf(document.activeElement);
+      const nodes = [...(ref.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? [])];
+      const index = nodes.indexOf(document.activeElement as HTMLElement);
       focusItem(index + 1);
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      const nodes = [...(ref.current?.querySelectorAll('[role="menuitem"]') ?? [])];
-      const index = nodes.indexOf(document.activeElement);
+      const nodes = [...(ref.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? [])];
+      const index = nodes.indexOf(document.activeElement as HTMLElement);
       focusItem(index <= 0 ? nodes.length - 1 : index - 1);
     } else if (e.key === 'Home') {
       e.preventDefault();
       focusItem(0);
     } else if (e.key === 'End') {
       e.preventDefault();
-      const nodes = ref.current?.querySelectorAll('[role="menuitem"]');
+      const nodes = ref.current?.querySelectorAll<HTMLElement>('[role="menuitem"]');
       if (nodes?.length) focusItem(nodes.length - 1);
     }
   };
 
   if (items.length === 0) return null;
 
-  const triggerLabel = badge > 0 ? `${label}, ${t('a11y.unreadCount', { count: badge })}` : label;
+  const triggerLabel = (badge ?? 0) > 0 ? `${label}, ${t('a11y.unreadCount', { count: badge })}` : label;
 
   return (
     <div ref={ref} className="relative" onKeyDown={handleKeyDown}>
@@ -159,9 +175,9 @@ function NavDropdown({ label, avatar, badge, items, align = 'left', active = fal
             {label}
           </span>
         )}
-        {badge > 0 && (
+        {(badge ?? 0) > 0 && (
           <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
-            {badge > 9 ? '9+' : badge}
+            {(badge ?? 0) > 9 ? '9+' : badge}
           </span>
         )}
         <svg className="hidden sm:block" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -222,7 +238,7 @@ function NavDropdown({ label, avatar, badge, items, align = 'left', active = fal
   );
 }
 
-function MobileSection({ title, children }) {
+function MobileSection({ title, children }: { title?: string; children?: ReactNode }) {
   if (!children) return null;
   return (
     <div className="pt-2">
@@ -274,7 +290,7 @@ export function Layout() {
 
   useEffect(() => {
     if (!menuOpen) return undefined;
-    const onKey = (event) => {
+    const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setMenuOpen(false);
     };
     document.addEventListener('keydown', onKey);
@@ -287,7 +303,7 @@ export function Layout() {
   };
 
   // Unread notifications count (only when logged in, refreshed every 3 min)
-  const onLiveNotification = useCallback((payload) => {
+  const onLiveNotification = useCallback((payload: { title?: string; message?: string }) => {
     toast(payload.title || payload.message || t('notifications.title'));
     queryClient.invalidateQueries({ queryKey: queryKeys.notificationsUnread });
     queryClient.invalidateQueries({ queryKey: ['notifications'] });
@@ -295,7 +311,7 @@ export function Layout() {
 
   const liveNotifications = useNotificationSocket({
     enabled: Boolean(user),
-    token: tokenStore.access,
+    token: tokenStore.access ?? undefined,
     onNotification: onLiveNotification,
   });
 
@@ -333,7 +349,7 @@ export function Layout() {
     ({ to }) => location.pathname === to || location.pathname.startsWith(`${to}/`),
   );
 
-  const manageItems = [];
+  const manageItems: { to: string; label: string }[] = [];
   if (hasRole('admin', 'editor') || isOrgContentManager) {
     manageItems.push({ to: '/articles/manage', label: t('nav.manageArticles') });
     manageItems.push({ to: '/news/manage', label: t('nav.manageNews') });
@@ -478,7 +494,7 @@ export function Layout() {
 
             {user ? (
               <NavDropdown
-                label={user.first_name}
+                label={user.first_name || ''}
                 avatar={user.first_name?.charAt(0).toUpperCase()}
                 badge={unreadCount}
                 items={accountItems}
@@ -568,12 +584,12 @@ export function Layout() {
                       );
                     }
                     return (
-                      <NavLink key={item.to} to={item.to} className={navLinkClass}>
+                      <NavLink key={item.to} to={item.to || '/'} className={navLinkClass}>
                         <span className="flex items-center justify-between">
                           {item.label}
-                          {item.badge > 0 && (
+                          {(item.badge ?? 0) > 0 && (
                             <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white">
-                              {item.badge > 99 ? '99+' : item.badge}
+                              {(item.badge ?? 0) > 99 ? '99+' : item.badge}
                             </span>
                           )}
                         </span>

@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
@@ -16,7 +15,7 @@ import { downloadContentBundle, getContentBundleMeta } from '../lib/offline/cont
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY || '';
 
-function urlBase64ToUint8Array(base64String) {
+function urlBase64ToUint8Array(base64String: string) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
   const raw = window.atob(base64);
@@ -50,13 +49,13 @@ export function ProfilePage() {
   const [pushBusy, setPushBusy] = useState(false);
   const [pwForm, setPwForm] = useState({ current_password: '', new_password: '', confirm: '' });
   const [pwLoading, setPwLoading] = useState(false);
-  const [mfaSetup, setMfaSetup] = useState(null);
+  const [mfaSetup, setMfaSetup] = useState<any>(null);
   const [mfaCode, setMfaCode] = useState('');
   const [mfaBusy, setMfaBusy] = useState('');
   const [dataBusy, setDataBusy] = useState('');
   const [deactivateOpen, setDeactivateOpen] = useState(false);
   const [bundleBusy, setBundleBusy] = useState(false);
-  const [bundleMeta, setBundleMeta] = useState(null);
+  const [bundleMeta, setBundleMeta] = useState<any>(null);
   const [bundleError, setBundleError] = useState('');
 
   useEffect(() => {
@@ -74,8 +73,8 @@ export function ProfilePage() {
   useEffect(() => {
     if (user) {
       setForm({
-        first_name: user.first_name,
-        last_name: user.last_name,
+        first_name: user.first_name ?? '',
+        last_name: user.last_name ?? '',
         phone: user.phone ?? '',
         bio: user.profile?.bio ?? '',
         avatar_url: user.profile?.avatar_url ?? '',
@@ -111,7 +110,7 @@ export function ProfilePage() {
     }
   };
 
-  const submit = async (e) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
@@ -142,7 +141,7 @@ export function ProfilePage() {
     }
   };
 
-  const confirmPhoneCode = async (e) => {
+  const confirmPhoneCode = async (e: FormEvent) => {
     e.preventDefault();
     setVerifyBusy('confirm');
     setVerifyError('');
@@ -208,7 +207,7 @@ export function ProfilePage() {
     }
   };
 
-  const changePassword = async (e) => {
+  const changePassword = async (e: FormEvent) => {
     e.preventDefault();
     if (pwForm.new_password !== pwForm.confirm) {
       toast.error(t('auth.passwordMismatch'));
@@ -239,7 +238,7 @@ export function ProfilePage() {
     }
   };
 
-  const confirmMfaSetup = async (e) => {
+  const confirmMfaSetup = async (e: FormEvent) => {
     e.preventDefault();
     setMfaBusy('confirm');
     try {
@@ -287,13 +286,13 @@ export function ProfilePage() {
     }
   };
 
-  const uploadAvatar = async (e) => {
+  const uploadAvatar = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setAvatarUploading(true);
     try {
       const { data } = await userService.uploadAvatar(file);
-      setForm((f) => ({ ...f, avatar_url: data.avatar_url ?? f.avatar_url }));
+      setForm((f) => ({ ...f, avatar_url: data.profile?.avatar_url ?? data.avatar_url ?? f.avatar_url }));
       await refreshUser();
       toast.success(t('profile.saved'));
     } catch (err) {
@@ -314,7 +313,7 @@ export function ProfilePage() {
           {form.avatar_url ? (
             <img src={form.avatar_url} alt="" className="h-16 w-16 rounded-full object-cover" />
           ) : (
-            user.first_name.charAt(0)
+            user.first_name?.charAt(0)
           )}
         </div>
         <div>
@@ -322,7 +321,7 @@ export function ProfilePage() {
             <h2 className="text-lg font-semibold">
               {user.first_name} {user.last_name}
             </h2>
-            <RoleBadge role={user.role.name} />
+            <RoleBadge role={user.role?.name} />
             {membership && <OrgRoleBadge role={membership.role} />}
           </div>
           <p className="text-sm text-ink-700/60">{user.email}</p>

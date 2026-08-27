@@ -1,11 +1,11 @@
-// @ts-nocheck
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from '../components/ui';
 import { CmsEditorShell, CmsSidebarCard } from '../components/CmsWorkspace';
 import { extractError } from '../lib/api';
 import { quizService } from '../lib/services';
+import type { Question, QuizFormState, QuizQuestionForm, QuizWritePayload } from '../types/api';
 
 function emptyQuestion(order = 0) {
   return {
@@ -24,14 +24,14 @@ function emptyQuestion(order = 0) {
   };
 }
 
-function optionsFromText(text) {
+function optionsFromText(text: string) {
   return text
     .split(',')
-    .map((s) => s.trim())
+    .map((s: string) => s.trim())
     .filter(Boolean);
 }
 
-function questionFromApi(q, index) {
+function questionFromApi(q: Question, index: number): QuizQuestionForm {
   const options = Array.isArray(q.options) ? q.options : [];
   const optionsAr = Array.isArray(q.options_ar) ? q.options_ar : [];
   return {
@@ -44,17 +44,21 @@ function questionFromApi(q, index) {
     explanation: q.explanation ?? '',
     explanation_ar: q.explanation_ar ?? '',
     optionFeedback: Array.isArray(q.option_feedback)
-      ? q.option_feedback.map((entry) => (typeof entry === 'string' ? entry : entry?.en ?? ''))
+      ? q.option_feedback.map((entry: string | { en?: string; ar?: string }) =>
+          typeof entry === 'string' ? entry : entry?.en ?? '',
+        )
       : [],
     optionFeedbackAr: Array.isArray(q.option_feedback)
-      ? q.option_feedback.map((entry) => (typeof entry === 'string' ? '' : entry?.ar ?? ''))
+      ? q.option_feedback.map((entry: string | { en?: string; ar?: string }) =>
+          typeof entry === 'string' ? '' : entry?.ar ?? '',
+        )
       : [],
     points: q.points ?? 1,
     order: q.order ?? index,
   };
 }
 
-function buildPayload(form) {
+function buildPayload(form: QuizFormState): QuizWritePayload {
   return {
     title: form.title,
     title_ar: form.title_ar,
@@ -67,7 +71,7 @@ function buildPayload(form) {
       ? null
       : Number(form.max_attempts),
     is_active: form.is_active,
-    questions: form.questions.map((q, index) => {
+    questions: form.questions.map((q: QuizQuestionForm, index: number) => {
       const options =
         q.question_type === 'true_false' ? ['True', 'False'] : optionsFromText(q.optionsText);
       const options_ar =
@@ -79,7 +83,7 @@ function buildPayload(form) {
       const option_feedback =
         q.question_type === 'true_false'
           ? []
-          : options.map((_, i) => ({
+          : options.map((_: string, i: number) => ({
               en: (q.optionFeedback ?? [])[i] || '',
               ar: (q.optionFeedbackAr ?? [])[i] || '',
             }));
@@ -100,7 +104,7 @@ function buildPayload(form) {
   };
 }
 
-function optionsArMismatch(q) {
+function optionsArMismatch(q: QuizQuestionForm) {
   if (q.question_type === 'true_false') return false;
   const en = optionsFromText(q.optionsText);
   const ar = optionsFromText(q.optionsTextAr);
@@ -146,11 +150,11 @@ export function QuizEditorPage() {
           passing_score: quiz.passing_score ?? 70,
           kind: quiz.kind ?? 'assessment',
           feedback_mode: quiz.feedback_mode ?? 'end',
-          max_attempts: quiz.max_attempts ?? '',
+          max_attempts: quiz.max_attempts == null ? '' : String(quiz.max_attempts),
           is_active: quiz.is_active ?? true,
           questions:
-            quiz.questions?.length > 0
-              ? quiz.questions.map(questionFromApi)
+            (quiz.questions?.length ?? 0) > 0
+              ? quiz.questions!.map(questionFromApi)
               : [emptyQuestion()],
         });
       } catch (err) {
@@ -161,10 +165,15 @@ export function QuizEditorPage() {
     })();
   }, [id]);
 
-  const updateQuestion = (index, patch) => {
+  const updateQuestion = (
+    index: number,
+    patch: Partial<Omit<QuizQuestionForm, 'points'>> & { points?: number | string },
+  ) => {
     setForm((prev) => ({
       ...prev,
-      questions: prev.questions.map((q, i) => (i === index ? { ...q, ...patch } : q)),
+      questions: prev.questions.map((q, i) =>
+        i === index ? ({ ...q, ...patch } as typeof q) : q,
+      ),
     }));
   };
 
@@ -175,14 +184,14 @@ export function QuizEditorPage() {
     }));
   };
 
-  const removeQuestion = (index) => {
+  const removeQuestion = (index: number) => {
     setForm((prev) => ({
       ...prev,
       questions: prev.questions.filter((_, i) => i !== index),
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setError('');
@@ -259,7 +268,7 @@ export function QuizEditorPage() {
               max={100}
               className="input"
               value={form.passing_score}
-              onChange={(e) => setForm({ ...form, passing_score: e.target.value })}
+              onChange={(e) => setForm({ ...form, passing_score: Number(e.target.value) || 0 })}
             />
             <label className="label mt-3">{t('quizzes.fieldMaxAttempts')}</label>
             <input
@@ -465,7 +474,7 @@ export function QuizEditorPage() {
                       required
                     >
                       <option value="">{t('quizzes.selectAnswer')}</option>
-                      {options.map((opt) => (
+                      {options.map((opt: string) => (
                         <option key={opt} value={opt}>
                           {opt}
                         </option>
@@ -478,7 +487,7 @@ export function QuizEditorPage() {
                     <p className="text-sm font-medium text-ink-800 dark:text-slate-200">
                       {t('quizzes.optionFeedbackHint')}
                     </p>
-                    {options.map((opt, optIndex) => (
+                    {options.map((opt: string, optIndex: number) => (
                       <div key={`${opt}-${optIndex}`} className="space-y-2 rounded-xl border border-ink-100 p-3 dark:border-slate-700">
                         <p className="text-xs font-semibold text-ink-700/70 dark:text-slate-400">{opt || t('quizzes.optionN', { n: optIndex + 1 })}</p>
                         <textarea

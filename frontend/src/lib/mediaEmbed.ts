@@ -2,7 +2,7 @@
  * Detect YouTube / Vimeo URLs and return an embeddable iframe src.
  * Returns null for direct file URLs (use native <video>).
  */
-export function getEmbedInfo(url, { lang = 'en' } = {}) {
+export function getEmbedInfo(url?: string | null, { lang = 'en' }: { lang?: string } = {}) {
   if (!url || typeof url !== 'string') return null;
   const trimmed = url.trim();
   const captionsLang = lang === 'ar' ? 'ar' : 'en';

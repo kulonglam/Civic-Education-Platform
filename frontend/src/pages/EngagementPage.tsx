@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,9 +8,19 @@ import { useOrganization } from '../context/OrganizationContext';
 import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import { engagementService } from '../lib/services';
+import { unwrapList } from '../types/api';
+import type { Campaign, Id, Petition, Poll, PollOption } from '../types/api';
 import { WhatsAppShareButton } from '../components/WhatsAppShareButton';
 
-function PollCard({ poll, onVote, votingId }) {
+function PollCard({
+  poll,
+  onVote,
+  votingId,
+}: {
+  poll: Poll;
+  onVote: (pollId: Id, optionId: Id) => void;
+  votingId: Id | null;
+}) {
   const { t } = useTranslation();
   const total = poll.total_votes || 0;
   const showResults = Boolean(poll.results_visible);
@@ -31,8 +40,8 @@ function PollCard({ poll, onVote, votingId }) {
         <p className="mt-2 text-sm text-ink-700/70 dark:text-slate-400">{poll.description}</p>
       )}
       <ul className="mt-4 space-y-2">
-        {poll.options.map((opt) => {
-          const pct = showResults && total > 0 ? Math.round((opt.vote_count / total) * 100) : 0;
+        {poll.options!.map((opt: PollOption) => {
+          const pct = showResults && total > 0 ? Math.round((opt.vote_count as number / total) * 100) : 0;
           const selected = poll.user_vote_option_id === opt.id;
           return (
             <li key={opt.id}>
@@ -44,7 +53,7 @@ function PollCard({ poll, onVote, votingId }) {
                     : 'border-ink-100 hover:border-brand-200 dark:border-slate-700'
                 }`}
                 disabled={!poll.is_open || Boolean(poll.user_vote_option_id) || votingId === poll.id}
-                onClick={() => onVote(poll.id, opt.id)}
+                onClick={() => onVote(poll.id, opt.id as Id)}
               >
                 <span className="flex items-center justify-between gap-2">
                   <span>{opt.label}</span>
@@ -69,9 +78,17 @@ function PollCard({ poll, onVote, votingId }) {
   );
 }
 
-function PetitionCard({ petition, onSign, signingId }) {
+function PetitionCard({
+  petition,
+  onSign,
+  signingId,
+}: {
+  petition: Petition;
+  onSign: (id: Id) => void;
+  signingId: Id | null;
+}) {
   const { t } = useTranslation();
-  const pct = Math.min(100, Math.round((petition.signature_count / petition.goal_signatures) * 100));
+  const pct = Math.min(100, Math.round(((petition.signature_count as number) / (petition.goal_signatures as number)) * 100));
 
   return (
     <article className="surface p-5">
@@ -103,7 +120,15 @@ function PetitionCard({ petition, onSign, signingId }) {
   );
 }
 
-function CampaignCard({ campaign, onJoin, joiningId }) {
+function CampaignCard({
+  campaign,
+  onJoin,
+  joiningId,
+}: {
+  campaign: Campaign;
+  onJoin: (id: Id) => void;
+  joiningId: Id | null;
+}) {
   const { t } = useTranslation();
 
   return (
@@ -151,7 +176,7 @@ export function EngagementPage() {
     queryFn: async () => {
       const params = kind ? { kind } : undefined;
       const { data } = await engagementService.polls(params);
-      return data;
+      return unwrapList(data);
     },
   });
 
@@ -159,7 +184,7 @@ export function EngagementPage() {
     queryKey: queryKeys.engagementPetitions,
     queryFn: async () => {
       const { data } = await engagementService.petitions();
-      return data;
+      return unwrapList(data);
     },
   });
 
@@ -167,12 +192,13 @@ export function EngagementPage() {
     queryKey: queryKeys.engagementCampaigns,
     queryFn: async () => {
       const { data } = await engagementService.campaigns();
-      return data;
+      return unwrapList(data);
     },
   });
 
   const vote = useMutation({
-    mutationFn: ({ pollId, optionId }) => engagementService.votePoll(pollId, optionId),
+    mutationFn: ({ pollId, optionId }: { pollId: string; optionId: string }) =>
+      engagementService.votePoll(pollId, optionId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['engagement', 'polls'] });
       queryClient.invalidateQueries({ queryKey: queryKeys.gamificationMe });
@@ -180,7 +206,7 @@ export function EngagementPage() {
   });
 
   const sign = useMutation({
-    mutationFn: (petitionId) => engagementService.signPetition(petitionId),
+    mutationFn: (petitionId: string) => engagementService.signPetition(petitionId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.engagementPetitions });
       queryClient.invalidateQueries({ queryKey: queryKeys.gamificationMe });
@@ -188,7 +214,7 @@ export function EngagementPage() {
   });
 
   const join = useMutation({
-    mutationFn: (campaignId) => engagementService.joinCampaign(campaignId),
+    mutationFn: (campaignId: string) => engagementService.joinCampaign(campaignId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.engagementCampaigns });
       queryClient.invalidateQueries({ queryKey: queryKeys.gamificationMe });
@@ -250,8 +276,8 @@ export function EngagementPage() {
               <PollCard
                 key={poll.id}
                 poll={poll}
-                votingId={vote.variables?.pollId}
-                onVote={(pollId, optionId) => vote.mutate({ pollId, optionId })}
+                votingId={vote.variables?.pollId ?? null}
+                onVote={(pollId: Id, optionId: Id) => vote.mutate({ pollId, optionId })}
               />
             ))}
           </div>
@@ -270,8 +296,8 @@ export function EngagementPage() {
               <PetitionCard
                 key={petition.id}
                 petition={petition}
-                signingId={sign.variables}
-                onSign={(id) => sign.mutate(id)}
+                signingId={sign.variables ?? null}
+                onSign={(id: Id) => sign.mutate(id)}
               />
             ))}
           </div>
@@ -290,8 +316,8 @@ export function EngagementPage() {
               <CampaignCard
                 key={campaign.id}
                 campaign={campaign}
-                joiningId={join.variables}
-                onJoin={(id) => join.mutate(id)}
+                joiningId={join.variables ?? null}
+                onJoin={(id: Id) => join.mutate(id)}
               />
             ))}
           </div>

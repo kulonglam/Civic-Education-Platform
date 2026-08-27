@@ -1,8 +1,8 @@
-// @ts-nocheck
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
 import { authService } from '../lib/services';
+import type { RegisterPayload } from '../types/api';
 import { extractError } from '../lib/api';
 import { Alert, PasswordInput, PasswordStrengthBar } from '../components/ui';
 import { AuthShell } from '../components/AuthShell';
@@ -48,26 +48,26 @@ export function RegisterPage() {
     }
   }, [initialAccountType, inviteToken]);
 
-  const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+  const update = (key: string) => (e: ChangeEvent<HTMLInputElement>) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
-  const selectAccountType = (type) => {
+  const selectAccountType = (type: string) => {
     setAccountType(type);
     setForm((f) => ({ ...f, account_type: type }));
   };
 
-  const submit = async (e) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      const payload = { ...form, account_type: accountType };
+      const payload: Record<string, any> = { ...form, account_type: accountType };
       if (payload.invite_token) {
         delete payload.organization_name;
         delete payload.account_type;
       } else if (accountType === 'citizen') {
         delete payload.organization_name;
       }
-      const { data } = await authService.register(payload);
+      const { data } = await authService.register(payload as RegisterPayload);
       setSuccessMessage(data?.email_sent === false ? (data.message || '') : '');
       setSuccess(true);
     } catch (err) {

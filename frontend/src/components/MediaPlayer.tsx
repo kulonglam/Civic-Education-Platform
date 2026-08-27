@@ -14,6 +14,13 @@ export function MediaPlayer({
   title = '',
   className = '',
   onEnded,
+}: {
+  mediaType?: string;
+  url?: string;
+  captionsUrl?: string;
+  title?: string;
+  className?: string;
+  onEnded?: () => void;
 }) {
   const { t, i18n } = useTranslation();
   const playback = resolveMediaUrl(url || '');

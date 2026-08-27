@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -36,14 +35,14 @@ function LoginPage() {
       .catch(() => setSsoAvailable(false));
   }, []);
 
-  const submit = async (e) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
       const result = await login(email, password);
       if (result?.mfaRequired) {
-        setMfaToken(result.mfaToken);
+        setMfaToken(result.mfaToken ?? '');
         setMfaStep(true);
         return;
       }
@@ -55,7 +54,7 @@ function LoginPage() {
     }
   };
 
-  const submitMfa = async (e) => {
+  const submitMfa = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);

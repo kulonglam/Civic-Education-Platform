@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +8,7 @@ import { Trophy } from '../components/Icons';
 import { queryKeys } from '../lib/queryKeys';
 import { quizService } from '../lib/services';
 import { formatDate } from '../lib/format';
+import type { Certificate } from '../types/api';
 
 const PAGE_SIZE = 20;
 
@@ -29,7 +29,7 @@ function CertCardSkeleton() {
 export function CertificatesPage() {
   const { t } = useTranslation();
   const [page, setPage] = useState(1);
-  const [downloading, setDownloading] = useState(null);
+  const [downloading, setDownloading] = useState<any>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: queryKeys.certificates({ page }),
@@ -42,11 +42,11 @@ export function CertificatesPage() {
   const certificates = data?.results ?? [];
   const totalCount = data?.count ?? 0;
 
-  const download = async (cert) => {
+  const download = async (cert: Certificate) => {
     setDownloading(cert.id);
     try {
       const { data: res } = await quizService.downloadCertificate(cert.id);
-      window.open(res.download_url, '_blank');
+      if (res.download_url) window.open(res.download_url, '_blank');
     } catch {
       if (cert.pdf_url) window.open(cert.pdf_url, '_blank');
     } finally {

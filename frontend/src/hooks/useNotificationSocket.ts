@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export function notificationSocketUrl(token) {
+export function notificationSocketUrl(token?: string) {
   const apiBase = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000/api/v1';
   const origin = String(apiBase).replace(/\/api(?:\/v1)?\/?$/, '');
   const proto = origin.startsWith('https') ? 'wss' : 'ws';
@@ -9,7 +9,15 @@ export function notificationSocketUrl(token) {
   return `${proto}://${host}/ws/notifications/${query}`;
 }
 
-export function useNotificationSocket({ enabled, token, onNotification } = {}) {
+export function useNotificationSocket({
+  enabled,
+  token,
+  onNotification,
+}: {
+  enabled?: boolean;
+  token?: string;
+  onNotification?: (payload: any) => void;
+} = {}) {
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
@@ -17,8 +25,8 @@ export function useNotificationSocket({ enabled, token, onNotification } = {}) {
       setConnected(false);
       return undefined;
     }
-    let socket;
-    let pingId;
+    let socket: WebSocket | undefined;
+    let pingId: number | undefined;
     try {
       socket = new WebSocket(notificationSocketUrl(token));
     } catch {

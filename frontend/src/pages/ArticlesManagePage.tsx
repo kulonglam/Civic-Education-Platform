@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +10,7 @@ import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import { articleService } from '../lib/services';
 import { formatDate } from '../lib/format';
+import type { Id } from '../types/api';
 
 export function ArticlesManagePage() {
   const { t } = useTranslation();
@@ -19,11 +19,11 @@ export function ArticlesManagePage() {
   const canDelete = hasRole('admin') || isOrgAdmin;
   const canApprove =
     hasRole('admin') || membership?.role === 'owner' || membership?.role === 'admin';
-  const [pendingDelete, setPendingDelete] = useState(null);
+  const [pendingDelete, setPendingDelete] = useState<any>(null);
   const [deleteError, setDeleteError] = useState('');
   const [reviewError, setReviewError] = useState('');
   const [deleting, setDeleting] = useState(false);
-  const [reviewBusyId, setReviewBusyId] = useState(null);
+  const [reviewBusyId, setReviewBusyId] = useState<any>(null);
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: queryKeys.articlesManage,
@@ -48,7 +48,7 @@ export function ArticlesManagePage() {
     }
   };
 
-  const approveArticle = async (id) => {
+  const approveArticle = async (id: Id) => {
     setReviewBusyId(id);
     setReviewError('');
     try {
@@ -61,7 +61,7 @@ export function ArticlesManagePage() {
     }
   };
 
-  const rejectArticle = async (id) => {
+  const rejectArticle = async (id: Id) => {
     setReviewBusyId(id);
     setReviewError('');
     try {

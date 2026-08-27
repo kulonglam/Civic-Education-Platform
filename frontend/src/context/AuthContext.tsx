@@ -1,16 +1,17 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { tokenStore, tenantStore } from '../lib/api';
 import { authService, organizationService, userService } from '../lib/services';
 import i18n from '../i18n';
 import { normalizeLanguage } from '../i18n/languages';
 import { isPlatformAdminRole, isSuperAdminRole, platformRoleAllowed } from '../lib/roles';
+import type { AuthContextValue, Impersonation, PlatformUser } from '../types/cep';
 
-const AuthContext = createContext(undefined);
+const AuthContext = createContext<AuthContextValue | null>(null);
 
-function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<PlatformUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const [impersonation, setImpersonation] = useState(null);
+  const [impersonation, setImpersonation] = useState<Impersonation>(null);
 
   useEffect(() => {
     if (tokenStore.access) {
@@ -92,11 +93,11 @@ function AuthProvider({ children }) {
   useEffect(() => {
     if (!user || impersonation) return;
     const privileged =
-      ['admin', 'editor', 'moderator'].includes(user.role?.name) || Boolean(user.mfa_required);
+      ['admin', 'editor', 'moderator'].includes(user.role?.name || '') || Boolean(user.mfa_required);
     if (!privileged) return;
 
     const IDLE_MS = 30 * 60 * 1000;
-    let timer = null;
+    let timer: number | null = null;
     const bump = () => {
       if (timer) window.clearTimeout(timer);
       timer = window.setTimeout(() => {
@@ -113,7 +114,7 @@ function AuthProvider({ children }) {
   }, [user, impersonation]);
 
   const login = useCallback(
-    async (email, password) => {
+    async (email: string, password: string) => {
       const { data } = await authService.login(email, password);
       if (data.mfa_required) {
         return {
@@ -121,6 +122,7 @@ function AuthProvider({ children }) {
           mfaToken: data.mfa_token,
         };
       }
+      if (!data.access) throw new Error('Login failed');
       tokenStore.set(data.access, data.refresh);
       await refreshUser();
       return {
@@ -131,8 +133,9 @@ function AuthProvider({ children }) {
   );
 
   const verifyMfaLogin = useCallback(
-    async (mfaToken, code) => {
+    async (mfaToken: string, code: string) => {
       const { data } = await authService.verifyMfaLogin(mfaToken, code);
+      if (!data.access) throw new Error('MFA verification failed');
       tokenStore.set(data.access, data.refresh);
       await refreshUser();
     },
@@ -152,8 +155,9 @@ function AuthProvider({ children }) {
   }, []);
 
   const startImpersonation = useCallback(
-    async (orgId, userId) => {
-      const { data } = await organizationService.impersonate(orgId, userId);
+    async (orgId: string | number, userId: string | number) => {
+      const { data } = await organizationService.impersonate(String(orgId), String(userId));
+      if (!data.access) throw new Error('Impersonation failed');
       tokenStore.set(data.access, data.refresh);
       setImpersonation({
         actorEmail: data.actor?.email,
@@ -168,6 +172,7 @@ function AuthProvider({ children }) {
 
   const exitImpersonation = useCallback(async () => {
     const { data } = await organizationService.exitImpersonation();
+    if (!data.access) throw new Error('Exit impersonation failed');
     tokenStore.set(data.access, data.refresh);
     setImpersonation(null);
     await refreshUser();
@@ -175,7 +180,7 @@ function AuthProvider({ children }) {
   }, [refreshUser]);
 
   const hasRole = useCallback(
-    (...roles) => (user ? platformRoleAllowed(user.role.name, roles) : false),
+    (...roles: string[]) => (user ? platformRoleAllowed(user.role?.name, roles) : false),
     [user],
   );
   const isPlatformAdmin = useCallback(() => isPlatformAdminRole(user?.role?.name), [user]);
@@ -215,7 +220,7 @@ function AuthProvider({ children }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-function useAuth() {
+function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;

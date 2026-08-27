@@ -2,7 +2,11 @@ import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from './Icons';
 
-export function Breadcrumb({ items }) {
+export function Breadcrumb({
+  items,
+}: {
+  items: Array<{ label: string; to?: string }>;
+}) {
   return (
     <nav
       aria-label="Breadcrumb"

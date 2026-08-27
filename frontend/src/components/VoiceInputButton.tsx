@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createSpeechRecognizer, isRecognitionSupported } from '../lib/speech';
 
-export function VoiceInputButton({ onTranscript, className = '', disabled = false }) {
+export function VoiceInputButton({ onTranscript, className = '', disabled = false }: { onTranscript?: (text: string) => void; className?: string; disabled?: boolean }) {
   const { t, i18n } = useTranslation();
   const [listening, setListening] = useState(false);
-  const recognitionRef = useRef(null);
+  const recognitionRef = useRef<any>(null);
   const supported = isRecognitionSupported();
 
   useEffect(() => () => {

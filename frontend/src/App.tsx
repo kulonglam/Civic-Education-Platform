@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, type ReactNode } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -170,11 +170,11 @@ const LeaderboardPage = lazy(() =>
   import('./pages/LeaderboardPage').then((m) => ({ default: m.LeaderboardPage })),
 );
 
-function Lazy({ children }) {
+function Lazy({ children }: { children: ReactNode }) {
   return <Suspense fallback={<Spinner className="min-h-[45vh]" />}>{children}</Suspense>;
 }
 
-function guard(element, props = {}) {
+function guard(element: ReactNode, props: { roles?: string[]; orgRoles?: string[] } = {}) {
   return (
     <ProtectedRoute {...props}>
       <Lazy>{element}</Lazy>

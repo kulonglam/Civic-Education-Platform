@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { documentTitle, titleKeyForPath } from './pageTitle';
 
-const t = (key) =>
+const t = (key: string) =>
   ({
     'app.name': 'Civic Education RSS',
     'app.tagline': 'Building informed citizens',

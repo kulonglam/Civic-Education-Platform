@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,8 +20,8 @@ const TYPE_ICON_MAP = {
   event_registration: Calendar,
 };
 
-function NotificationIcon({ type }) {
-  const Icon = TYPE_ICON_MAP[type] ?? Bell;
+function NotificationIcon({ type }: { type?: keyof typeof TYPE_ICON_MAP | string }) {
+  const Icon = TYPE_ICON_MAP[type as keyof typeof TYPE_ICON_MAP] ?? Bell;
   return (
     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink-100 text-ink-700/80 dark:bg-slate-700 dark:text-slate-300">
       <Icon className="h-4 w-4" />
@@ -53,7 +52,7 @@ export function NotificationsPage() {
   });
 
   const markOne = useMutation({
-    mutationFn: (id) => notificationService.markRead(id),
+    mutationFn: (id: string) => notificationService.markRead(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications'] }),
   });
 

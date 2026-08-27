@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -16,25 +15,25 @@ import { eventsService } from '../lib/services';
 
 const PAGE_SIZE = 20;
 
-function monthBounds(year, month) {
+function monthBounds(year: number, month: number) {
   const start = new Date(year, month, 1);
   const end = new Date(year, month + 1, 1);
   return { start: start.toISOString(), end: end.toISOString() };
 }
 
-function buildMonthCells(year, month) {
+function buildMonthCells(year: number, month: number) {
   const first = new Date(year, month, 1);
   const startOffset = first.getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const cells = [];
+  const cells: Array<Date | null> = [];
   for (let i = 0; i < startOffset; i += 1) cells.push(null);
   for (let day = 1; day <= daysInMonth; day += 1) cells.push(new Date(year, month, day));
   while (cells.length % 7 !== 0) cells.push(null);
   return cells;
 }
 
-function isSameDay(iso, date) {
-  const value = new Date(iso);
+function isSameDay(iso: string | undefined, date: Date) {
+  const value = new Date(iso as string);
   return (
     value.getFullYear() === date.getFullYear() &&
     value.getMonth() === date.getMonth() &&
@@ -60,7 +59,7 @@ export function EventsPage() {
   });
 
   const calendarParams = useMemo(() => {
-    const params = {
+    const params: Record<string, string> = {
       page_size: '100',
       starts_after: bounds.start,
       starts_before: bounds.end,
@@ -70,7 +69,7 @@ export function EventsPage() {
   }, [bounds.start, bounds.end, kind]);
 
   const upcomingParams = useMemo(() => {
-    const params = {
+    const params: Record<string, string> = {
       page: String(page),
       starts_after: new Date().toISOString(),
     };
@@ -103,7 +102,7 @@ export function EventsPage() {
     { month: 'long', year: 'numeric' },
   );
 
-  const setFilter = (value) => {
+  const setFilter = (value: string) => {
     const next = new URLSearchParams(searchParams);
     if (value) next.set('kind', value);
     else next.delete('kind');
@@ -111,7 +110,7 @@ export function EventsPage() {
     setPage(1);
   };
 
-  const shiftMonth = (delta) => {
+  const shiftMonth = (delta: number) => {
     setCursor((prev) => {
       const next = new Date(prev.year, prev.month + delta, 1);
       return { year: next.getFullYear(), month: next.getMonth() };

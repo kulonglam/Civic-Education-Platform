@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +12,7 @@ function AcceptInvitePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [invite, setInvite] = useState(null);
+  const [invite, setInvite] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [accepting, setAccepting] = useState(false);
   const [error, setError] = useState('');
@@ -69,14 +68,14 @@ function AcceptInvitePage() {
   }
 
   const emailMatches = Boolean(user?.email?.toLowerCase() === invite.email.toLowerCase());
-  const registerUrl = `/register?invite=${encodeURIComponent(token)}&email=${encodeURIComponent(invite.email)}`;
-  const loginUrl = `/login?next=${encodeURIComponent(`/invite/${token}`)}`;
+  const registerUrl = `/register?invite=${encodeURIComponent(token ?? '')}&email=${encodeURIComponent(invite.email ?? '')}`;
+  const loginUrl = `/login?next=${encodeURIComponent(`/invite/${token ?? ''}`)}`;
 
   return (
     <div className="mx-auto max-w-lg">
       <PageHeader
         title={t('saas.inviteTitle')}
-        subtitle={t('saas.inviteSubtitle', { org: invite.organization.name })}
+        subtitle={t('saas.inviteSubtitle', { org: invite.organization.name ?? '' })}
       />
       {error && (
         <div className="mb-4">

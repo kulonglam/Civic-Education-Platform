@@ -1,7 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import { whatsappShareUrl } from '../lib/whatsapp';
 
-export function WhatsAppShareButton({ title, path = '', className = '' }) {
+export function WhatsAppShareButton({
+  title,
+  path = '',
+  className = '',
+}: {
+  title: string;
+  path?: string;
+  className?: string;
+}) {
   const { t } = useTranslation();
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
   const url = path ? `${origin}${path}` : origin;

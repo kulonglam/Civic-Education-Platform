@@ -11,10 +11,13 @@ vi.mock('../lib/services', () => ({
 }));
 
 import { authService } from '../lib/services';
+import type { Mock } from 'vitest';
+
+const registerMock = authService.register as Mock;
 
 describe('RegisterPage', () => {
   beforeEach(() => {
-    authService.register.mockReset();
+    registerMock.mockReset();
   });
 
   it('renders citizen registration by default', () => {
@@ -32,7 +35,7 @@ describe('RegisterPage', () => {
   });
 
   it('shows success message after citizen registration', async () => {
-    authService.register.mockResolvedValueOnce({ data: { message: 'ok' } });
+    registerMock.mockResolvedValueOnce({ data: { message: 'ok' } });
     renderWithProviders(<RegisterPage />);
 
     await userEvent.type(screen.getByLabelText(/first name/i), 'Jane');

@@ -21,7 +21,7 @@ export function initSentry() {
   });
 }
 
-export function captureUiError(error, info) {
+export function captureUiError(error: unknown, info?: { componentStack?: string | null }) {
   if (!import.meta.env.VITE_SENTRY_DSN) {
     console.error('UI error:', error, info?.componentStack);
     return;

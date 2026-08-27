@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -11,8 +10,30 @@ import { extractError } from '../lib/api';
 import { Alert, PageHeader, Spinner } from '../components/ui';
 import { formatDate } from '../lib/format';
 import { AdminTabBar } from './admin/AdminTabBar';
+import type {
+  AnalyticsForumStats,
+  AnalyticsLearningInsights,
+  AnalyticsOverview,
+  AnalyticsPollOpinion,
+  AnalyticsQuizStat,
+  AuditLog,
+  AwarenessReport,
+  ForumComment,
+  ForumReport,
+  ForumTopic,
+  Id,
+  Plan,
+  PlatformOrgSnapshot,
+  PlatformUsageSummary,
+  PushStats,
+  SecurityEvent,
+  SloMetrics,
+  SupportCase,
+  User,
+} from '../types/api';
+import { unwrapList } from '../types/api';
 
-function StatCard({ label, value }) {
+function StatCard({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="card dark:border-slate-700 dark:bg-slate-800">
       <p className="text-sm text-ink-700/60 dark:text-slate-400">{label}</p>
@@ -32,7 +53,7 @@ const CONTENT_LINKS = [
   { to: '/engage/manage', titleKey: 'admin.manageEngage', hintKey: 'admin.manageEngageHint' },
 ];
 
-function pct(value) {
+function pct(value: number | string | null | undefined) {
   if (value === null || value === undefined || value === '') return '—';
   return `${value}%`;
 }
@@ -50,56 +71,56 @@ function AdminPage() {
   const ASSIGNABLE_ROLES = superAdmin
     ? [CITIZEN, EDITOR, MODERATOR, ADMIN, SUPER_ADMIN]
     : [CITIZEN, EDITOR, MODERATOR];
-  const [overview, setOverview] = useState(null);
-  const [quizStats, setQuizStats] = useState([]);
-  const [forumStats, setForumStats] = useState(null);
-  const [pollOpinion, setPollOpinion] = useState(null);
-  const [learningStats, setLearningStats] = useState(null);
-  const [users, setUsers] = useState([]);
+  const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
+  const [quizStats, setQuizStats] = useState<AnalyticsQuizStat[]>([]);
+  const [forumStats, setForumStats] = useState<AnalyticsForumStats | null>(null);
+  const [pollOpinion, setPollOpinion] = useState<AnalyticsPollOpinion | null>(null);
+  const [learningStats, setLearningStats] = useState<AnalyticsLearningInsights | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
   const [userActionError, setUserActionError] = useState('');
-  const [pendingTopics, setPendingTopics] = useState([]);
-  const [pendingComments, setPendingComments] = useState([]);
-  const [forumReports, setForumReports] = useState([]);
-  const [misinfoReports, setMisinfoReports] = useState([]);
+  const [pendingTopics, setPendingTopics] = useState<ForumTopic[]>([]);
+  const [pendingComments, setPendingComments] = useState<ForumComment[]>([]);
+  const [forumReports, setForumReports] = useState<ForumReport[]>([]);
+  const [misinfoReports, setMisinfoReports] = useState<AwarenessReport[]>([]);
   const [platformMessage, setPlatformMessage] = useState('');
   const [platformSmsBusy, setPlatformSmsBusy] = useState(false);
   const [platformWhatsApp, setPlatformWhatsApp] = useState('');
   const [platformWhatsAppBusy, setPlatformWhatsAppBusy] = useState(false);
-  const [auditLogs, setAuditLogs] = useState([]);
-  const [pushStats, setPushStats] = useState(null);
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
+  const [pushStats, setPushStats] = useState<PushStats | null>(null);
   const [pushCleanupBusy, setPushCleanupBusy] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [platformOrgs, setPlatformOrgs] = useState([]);
+  const [platformOrgs, setPlatformOrgs] = useState<PlatformOrgSnapshot[]>([]);
   const [orgSearch, setOrgSearch] = useState('');
-  const [orgBusyId, setOrgBusyId] = useState(null);
-  const [usageSummary, setUsageSummary] = useState(null);
-  const [securityEvents, setSecurityEvents] = useState([]);
-  const [supportOrg, setSupportOrg] = useState(null);
-  const [impersonateBusy, setImpersonateBusy] = useState(null);
+  const [orgBusyId, setOrgBusyId] = useState<Id | null>(null);
+  const [usageSummary, setUsageSummary] = useState<PlatformUsageSummary | null>(null);
+  const [securityEvents, setSecurityEvents] = useState<SecurityEvent[]>([]);
+  const [supportOrg, setSupportOrg] = useState<PlatformOrgSnapshot | null>(null);
+  const [impersonateBusy, setImpersonateBusy] = useState<string | null>(null);
   const [supportBusy, setSupportBusy] = useState(false);
-  const [sloMetrics, setSloMetrics] = useState(null);
-  const [platformCases, setPlatformCases] = useState([]);
-  const [platformPlans, setPlatformPlans] = useState([]);
-  const [planBusyId, setPlanBusyId] = useState(null);
+  const [sloMetrics, setSloMetrics] = useState<SloMetrics | null>(null);
+  const [platformCases, setPlatformCases] = useState<SupportCase[]>([]);
+  const [platformPlans, setPlatformPlans] = useState<Plan[]>([]);
+  const [planBusyId, setPlanBusyId] = useState<Id | null>(null);
 
   const loadModeration = () =>
     Promise.all([
       forumService
         .pending()
         .then((r) => {
-          setPendingTopics(r.data.topics);
-          setPendingComments(r.data.comments);
+          setPendingTopics(r.data.topics ?? []);
+          setPendingComments(r.data.comments ?? []);
           setForumReports(r.data.reports ?? []);
         })
         .catch(() => {}),
       awarenessService
         .listReports({ status: 'pending' })
-        .then((r) => setMisinfoReports(r.data.results ?? r.data ?? []))
+        .then((r) => setMisinfoReports(unwrapList(r.data)))
         .catch(() => setMisinfoReports([])),
     ]);
 
   useEffect(() => {
-    const tasks = [];
+    const tasks: Promise<unknown>[] = [];
     if (canModerate) {
       tasks.push(loadModeration());
     }
@@ -115,24 +136,24 @@ function AdminPage() {
     }
     if (superAdmin) {
       tasks.push(
-        organizationService.platformOrgs().then((r) => setPlatformOrgs(r.data.results ?? r.data)),
+        organizationService.platformOrgs().then((r) => setPlatformOrgs(unwrapList(r.data))),
         organizationService.platformUsage().then((r) => setUsageSummary(r.data)),
-        securityService.events({ page_size: 40 }).then((r) => setSecurityEvents(r.data.results ?? [])),
+        securityService.events({ page_size: 40 }).then((r) => setSecurityEvents(unwrapList(r.data))),
         organizationService.platformSlo().then((r) => setSloMetrics(r.data)),
-        organizationService.platformSupportCases().then((r) => setPlatformCases(r.data.results ?? r.data)),
-        billingService.plans().then((r) => setPlatformPlans(r.data.results ?? r.data ?? [])),
+        organizationService.platformSupportCases().then((r) => setPlatformCases(unwrapList(r.data))),
+        billingService.plans().then((r) => setPlatformPlans(unwrapList(r.data))),
       );
     }
     if (canManagePlatformUsers) {
-      tasks.push(userService.list().then((r) => setUsers(r.data.results ?? r.data)));
+      tasks.push(userService.list().then((r) => setUsers(unwrapList(r.data))));
       tasks.push(
-        auditService.logs({ page_size: 50 }).then((r) => setAuditLogs(r.data.results ?? r.data)),
+        auditService.logs({ page_size: 50 }).then((r) => setAuditLogs(unwrapList(r.data))),
       );
     }
     Promise.allSettled(tasks).finally(() => setLoading(false));
   }, [isAdmin, superAdmin, canModerate, canManagePlatformUsers]);
 
-  const viewOrgSupport = async (orgId) => {
+  const viewOrgSupport = async (orgId: Id) => {
     setSupportBusy(true);
     try {
       const { data } = await organizationService.platformOrgDetail(orgId);
@@ -144,7 +165,7 @@ function AdminPage() {
     }
   };
 
-  const impersonateMember = async (orgId, userId) => {
+  const impersonateMember = async (orgId: Id, userId: Id) => {
     setImpersonateBusy(userId);
     try {
       await startImpersonation(orgId, userId);
@@ -156,17 +177,17 @@ function AdminPage() {
     }
   };
 
-  const moderateTopic = async (id, approve) => {
+  const moderateTopic = async (id: Id, approve: boolean) => {
     await forumService.moderateTopic(id, approve);
     loadModeration();
   };
 
-  const moderateComment = async (id, approve) => {
+  const moderateComment = async (id: Id, approve: boolean) => {
     await forumService.moderateComment(id, approve);
     loadModeration();
   };
 
-  const reviewForumReport = async (id, status) => {
+  const reviewForumReport = async (id: Id, status: string) => {
     try {
       await forumService.reviewReport(id, { status });
       await loadModeration();
@@ -175,7 +196,7 @@ function AdminPage() {
     }
   };
 
-  const reviewMisinfoReport = async (id, status) => {
+  const reviewMisinfoReport = async (id: Id, status: string) => {
     try {
       await awarenessService.reviewReport(id, { status });
       await loadModeration();
@@ -184,29 +205,29 @@ function AdminPage() {
     }
   };
 
-  const suspendUser = async (userId) => {
+  const suspendUser = async (userId: Id) => {
     setUserActionError('');
     try {
       await userService.suspend(userId);
       const { data } = await userService.list();
-      setUsers(data.results ?? data);
+      setUsers(unwrapList(data));
     } catch (err) {
       setUserActionError(extractError(err));
     }
   };
 
-  const unsuspendUser = async (userId) => {
+  const unsuspendUser = async (userId: Id) => {
     setUserActionError('');
     try {
       await userService.unsuspend(userId);
       const { data } = await userService.list();
-      setUsers(data.results ?? data);
+      setUsers(unwrapList(data));
     } catch (err) {
       setUserActionError(extractError(err));
     }
   };
 
-  const updateUserRole = async (userId, role) => {
+  const updateUserRole = async (userId: Id, role: string) => {
     setUserActionError('');
     try {
       const { data } = await userService.updateRole(userId, role);
@@ -216,7 +237,7 @@ function AdminPage() {
     }
   };
 
-  const sendPlatformAlert = async (e) => {
+  const sendPlatformAlert = async (e: FormEvent) => {
     e.preventDefault();
     setPlatformSmsBusy(true);
     try {
@@ -230,7 +251,7 @@ function AdminPage() {
     }
   };
 
-  const sendPlatformWhatsApp = async (e) => {
+  const sendPlatformWhatsApp = async (e: FormEvent) => {
     e.preventDefault();
     setPlatformWhatsAppBusy(true);
     try {
@@ -248,7 +269,7 @@ function AdminPage() {
     setPushCleanupBusy(true);
     try {
       const { data } = await notificationService.pushCleanup();
-      toast.success(data.message);
+      toast.success(data.message || t('common.saved'));
       const stats = await notificationService.pushStats();
       setPushStats(stats.data);
     } catch (err) {
@@ -261,13 +282,13 @@ function AdminPage() {
   const searchPlatformOrgs = async (search = orgSearch) => {
     try {
       const { data } = await organizationService.platformOrgs({ search: search || undefined });
-      setPlatformOrgs(data.results ?? data);
+      setPlatformOrgs(unwrapList(data));
     } catch (err) {
       toast.error(extractError(err));
     }
   };
 
-  const toggleOrgActive = async (org) => {
+  const toggleOrgActive = async (org: PlatformOrgSnapshot) => {
     setOrgBusyId(org.id);
     try {
       const { data } = await organizationService.setOrgActive(org.id, !org.is_active);
@@ -279,7 +300,7 @@ function AdminPage() {
     }
   };
 
-  const assignOrgPlan = async (org, planCode) => {
+  const assignOrgPlan = async (org: PlatformOrgSnapshot, planCode: string) => {
     if (!planCode || planCode === org.plan_code) return;
     setPlanBusyId(org.id);
     try {
@@ -300,7 +321,7 @@ function AdminPage() {
     canManagePlatformUsers && { id: 'people', label: t('admin.tabPeople') },
     (canModerate || superAdmin) && { id: 'trust', label: t('admin.tabTrust') },
     superAdmin && { id: 'broadcast', label: t('admin.tabBroadcast') },
-  ].filter(Boolean);
+  ].filter((tab): tab is { id: string; label: string } => Boolean(tab));
   const [tab, setTab] = useState(
     isAdmin ? 'overview' : canManageContent ? 'content' : 'trust',
   );
@@ -530,7 +551,7 @@ function AdminPage() {
             <StatCard label={t('saas.departments')} value={supportOrg.department_count} />
             <StatCard label={t('admin.controlledDocs')} value={supportOrg.controlled_documents} />
           </div>
-          {supportOrg.members?.length > 0 && (
+          {(supportOrg.members?.length ?? 0) > 0 && (
             <div className="mt-6 overflow-x-auto rounded-xl border border-ink-100 dark:border-slate-700">
               <table className="min-w-full text-sm">
                 <thead className="bg-ink-50 text-left text-ink-700/60 dark:bg-slate-700/50 dark:text-slate-400">
@@ -540,7 +561,7 @@ function AdminPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-ink-100 dark:divide-slate-700">
-                  {supportOrg.members.map((member) => (
+                  {(supportOrg.members ?? []).map((member) => (
                     <tr key={member.user_id}>
                       <td className="px-4 py-3">
                         <p className="font-medium text-ink-900 dark:text-slate-100">{member.full_name}</p>
@@ -939,7 +960,7 @@ function AdminPage() {
                     <td className="px-4 py-3 dark:text-slate-300">
                       {isAdmin &&
                       u.id !== currentUser?.id &&
-                      (superAdmin || !['admin', 'super_admin'].includes(u.role?.name)) ? (
+                      (superAdmin || !['admin', 'super_admin'].includes(u.role?.name ?? '')) ? (
                         <select
                           className="input w-auto text-sm capitalize"
                           value={u.role?.name ?? 'citizen'}
@@ -1024,7 +1045,7 @@ function AdminPage() {
                         <p className="font-medium text-ink-900 dark:text-slate-100">{log.user_name || '—'}</p>
                         <p className="text-xs text-ink-700/60 dark:text-slate-400">{log.user_email}</p>
                       </td>
-                      <td className="px-4 py-3 capitalize dark:text-slate-300">{log.activity_type.replace(/_/g, ' ')}</td>
+                      <td className="px-4 py-3 capitalize dark:text-slate-300">{(log.activity_type ?? log.action ?? '').replace(/_/g, ' ')}</td>
                       <td className="px-4 py-3 text-xs text-ink-700/80 dark:text-slate-400">
                         {log.metadata && Object.keys(log.metadata).length > 0
                           ? JSON.stringify(log.metadata)

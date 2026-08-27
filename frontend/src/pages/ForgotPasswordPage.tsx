@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { authService } from '../lib/services';
@@ -17,7 +16,7 @@ export function ForgotPasswordPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const submitEmail = async (e) => {
+  const submitEmail = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -31,7 +30,7 @@ export function ForgotPasswordPage() {
     }
   };
 
-  const submitPhone = async (e) => {
+  const submitPhone = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);

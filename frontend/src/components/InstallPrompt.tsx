@@ -4,13 +4,13 @@ import { Alert } from './ui';
 
 export function InstallPrompt() {
   const { t } = useTranslation();
-  const [prompt, setPrompt] = useState(null);
+  const [prompt, setPrompt] = useState<any>(null);
   const [dismissed, setDismissed] = useState(
     () => sessionStorage.getItem('cep:pwa-dismissed') === '1',
   );
 
   useEffect(() => {
-    const handler = (e) => {
+    const handler = (e: Event) => {
       e.preventDefault();
       setPrompt(e);
     };

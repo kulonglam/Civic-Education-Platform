@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,16 +6,18 @@ import { useOrganization } from '../context/OrganizationContext';
 import { GamificationSummary } from '../components/GamificationSummary';
 import { RecommendationsSection } from '../components/RecommendationsSection';
 import { Alert, PageHeader, StatCardSkeleton, StatTile, TableRowSkeleton } from '../components/ui';
-import { extractError } from '../lib/api';
+import { extractError, isApiStatus } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import { analyticsService, organizationService } from '../lib/services';
+import type { Id, LearningActivity } from '../types/api';
+import { unwrapList } from '../types/api';
 
-function formatDate(value) {
+function formatDate(value?: string | null) {
   if (!value) return '—';
   return new Date(value).toLocaleDateString();
 }
 
-function activityLink(item) {
+function activityLink(item: LearningActivity) {
   if (item.type === 'article') return `/articles/${item.id}`;
   if (item.type === 'media') return `/media/${item.id}`;
   if (item.type === 'quiz') return `/quizzes/${item.id}`;
@@ -46,6 +47,8 @@ function LearnerDashboard() {
   if (error) {
     return <Alert>{extractError(error)}</Alert>;
   }
+
+  if (!data) return null;
 
   const articlePct =
     data.articles_total > 0
@@ -164,7 +167,7 @@ export function DashboardPage() {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [departmentId, setDepartmentId] = useState('');
-  const [departments, setDepartments] = useState([]);
+  const [departments, setDepartments] = useState<{ id: Id; name: string; slug?: string }[]>([]);
   const [exportError, setExportError] = useState('');
 
   const filters = {
@@ -177,7 +180,7 @@ export function DashboardPage() {
     if (!isOrgAdmin) return;
     organizationService
       .departments()
-      .then(({ data }) => setDepartments(Array.isArray(data) ? data : data.results ?? []))
+      .then(({ data }) => setDepartments(unwrapList(data)))
       .catch(() => setDepartments([]));
   }, [isOrgAdmin]);
 
@@ -192,7 +195,7 @@ export function DashboardPage() {
       return data;
     },
     enabled: isOrgAdmin,
-    retry: (_, error) => error?.response?.status !== 402,
+    retry: (_, error) => !isApiStatus(error, 402),
   });
 
   const {
@@ -206,7 +209,7 @@ export function DashboardPage() {
       return data.members;
     },
     enabled: isOrgAdmin && !!dashboard,
-    retry: (_, error) => error?.response?.status !== 402,
+    retry: (_, error) => !isApiStatus(error, 402),
   });
 
   const exportCsv = useMutation({
@@ -271,7 +274,7 @@ export function DashboardPage() {
   }
 
   const needsUpgrade =
-    dashboardError?.response?.status === 402 || progressError?.response?.status === 402;
+    isApiStatus(dashboardError, 402) || isApiStatus(progressError, 402);
 
   if (needsUpgrade) {
     return (
@@ -295,6 +298,8 @@ export function DashboardPage() {
       </div>
     );
   }
+
+  if (!dashboard) return null;
 
   return (
     <div className="page-shell">

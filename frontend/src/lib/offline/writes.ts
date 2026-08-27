@@ -13,7 +13,7 @@
 import { api } from '../api';
 import { getDb } from './db';
 
-export async function queueWrite(type, payload) {
+export async function queueWrite(type: string, payload: any) {
   const db = await getDb();
   const id = await db.add('write_queue', {
     type,
@@ -24,7 +24,7 @@ export async function queueWrite(type, payload) {
   // Register a Background Sync tag so the SW can replay when online
   if ('serviceWorker' in navigator && 'SyncManager' in window) {
     const reg = await navigator.serviceWorker.ready;
-    await reg.sync.register('cep-write-queue').catch(() => {});
+    await (reg as any).sync.register('cep-write-queue').catch(() => {});
   }
   return id;
 }
@@ -60,7 +60,7 @@ export async function flushWriteQueue() {
   return { synced, pending };
 }
 
-async function _replay(item) {
+async function _replay(item: any) {
   switch (item.type) {
     case 'forum_post':
       return api.post(`/forum/topics/${item.payload.topicId}/posts/`, { body: item.payload.body });

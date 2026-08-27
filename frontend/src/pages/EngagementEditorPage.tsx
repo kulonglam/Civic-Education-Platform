@@ -1,11 +1,11 @@
-// @ts-nocheck
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from '../components/ui';
 import { CmsEditorShell, CmsSidebarCard } from '../components/CmsWorkspace';
 import { extractError } from '../lib/api';
 import { engagementService } from '../lib/services';
+import type { PollOption } from '../types/api';
 
 const emptyPoll = {
   question: '',
@@ -43,7 +43,7 @@ export function EngagementEditorPage() {
   const { kind, id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
-  const [form, setForm] = useState(
+  const [form, setForm] = useState<any>(
     kind === 'polls' ? emptyPoll : kind === 'petitions' ? emptyPetition : emptyCampaign,
   );
   const [loading, setLoading] = useState(isEdit);
@@ -59,15 +59,9 @@ export function EngagementEditorPage() {
     (async () => {
       setLoading(true);
       try {
-        const loader =
-          kind === 'polls'
-            ? engagementService.getPoll
-            : kind === 'petitions'
-              ? engagementService.getPetition
-              : engagementService.getCampaign;
-        const { data } = await loader(id);
-        if (cancelled) return;
         if (kind === 'polls') {
+          const { data } = await engagementService.getPoll(id);
+          if (cancelled) return;
           setForm({
             question: data.question ?? '',
             question_ar: data.question_ar ?? '',
@@ -82,6 +76,8 @@ export function EngagementEditorPage() {
             })),
           });
         } else if (kind === 'petitions') {
+          const { data } = await engagementService.getPetition(id);
+          if (cancelled) return;
           setForm({
             title: data.title ?? '',
             title_ar: data.title_ar ?? '',
@@ -91,6 +87,8 @@ export function EngagementEditorPage() {
             status: data.status ?? 'draft',
           });
         } else {
+          const { data } = await engagementService.getCampaign(id);
+          if (cancelled) return;
           setForm({
             title: data.title ?? '',
             title_ar: data.title_ar ?? '',
@@ -111,15 +109,16 @@ export function EngagementEditorPage() {
     };
   }, [id, isEdit, kind]);
 
-  const setField = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
+  const setField = (key: string, value: unknown) =>
+    setForm((prev: Record<string, unknown>) => ({ ...prev, [key]: value }));
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setError('');
     try {
       if (kind === 'polls') {
-        const payload = { ...form, options: form.options.filter((opt) => opt.label.trim()) };
+        const payload = { ...form, options: form.options.filter((opt: PollOption) => opt.label.trim()) };
         if (isEdit) await engagementService.updatePoll(id, payload);
         else await engagementService.createPoll(payload);
       } else if (kind === 'petitions') {
@@ -204,7 +203,7 @@ export function EngagementEditorPage() {
             </div>
             <fieldset className="grid gap-3">
               <legend className="text-sm font-medium">{t('engage.fields.options')}</legend>
-              {form.options.map((opt, index) => (
+              {form.options.map((opt: PollOption, index: number) => (
                 <div key={opt.id || index} className="grid gap-2 sm:grid-cols-2">
                   <input
                     className="input"

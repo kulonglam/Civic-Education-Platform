@@ -1,20 +1,32 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ChangeEventHandler, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { Eye, EyeOff } from "./Icons";
+
+type SpinnerProps = {
+  label?: ReactNode;
+  className?: string;
+};
+
 function Spinner({
   label,
   className = "",
-}) {
+}: SpinnerProps) {
   const {
     t
   } = useTranslation();
   return <div className={`flex items-center justify-center gap-3 py-12 text-ink-700/60 dark:text-slate-400 ${className}`.trim()} role="status"><span className="h-5 w-5 animate-spin rounded-full border-2 border-brand-600 border-t-transparent" aria-hidden="true" /><span className="text-sm font-medium">{label ?? t("common.loading")}</span></div>;
 }
+type AlertProps = {
+  kind?: "error" | "success" | "info" | "warning";
+  children?: ReactNode;
+  id?: string;
+};
+
 function Alert({
   kind = "error",
   children,
-  id
-}) {
+  id,
+}: AlertProps) {
   const styles = {
     error: "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-300 dark:border-red-900",
     success: "bg-green-50 text-green-700 border-green-200 dark:bg-green-950/40 dark:text-green-300 dark:border-green-900",
@@ -23,7 +35,14 @@ function Alert({
   }[kind];
   return <div id={id} role={kind === "error" ? "alert" : "status"} className={`rounded-xl border px-4 py-3.5 text-sm leading-relaxed shadow-soft ${styles}`}>{children}</div>;
 }
-function EmptyState({ children, icon, title, action }) {
+type EmptyStateProps = {
+  children?: ReactNode;
+  icon?: ReactNode;
+  title?: ReactNode;
+  action?: ReactNode;
+};
+
+function EmptyState({ children, icon, title, action }: EmptyStateProps) {
   return (
     <div className="empty-state">
       <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 dark:bg-brand-950/50 dark:text-brand-300">
@@ -54,7 +73,14 @@ function EmptyState({ children, icon, title, action }) {
     </div>
   );
 }
-function PageHeader({ title, subtitle, action, eyebrow }) {
+type PageHeaderProps = {
+  title: ReactNode;
+  subtitle?: ReactNode;
+  action?: ReactNode;
+  eyebrow?: ReactNode;
+};
+
+function PageHeader({ title, subtitle, action, eyebrow }: PageHeaderProps) {
   return (
     <div className="page-header">
       <div className="relative min-w-0">
@@ -73,7 +99,7 @@ function PageHeader({ title, subtitle, action, eyebrow }) {
   );
 }
 
-function StatTile({ label, value }) {
+function StatTile({ label, value }: { label: ReactNode; value: ReactNode }) {
   return (
     <div className="stat-tile">
       <p className="stat-tile-label">{label}</p>
@@ -81,14 +107,14 @@ function StatTile({ label, value }) {
     </div>
   );
 }
-const ROLE_STYLES = {
+const ROLE_STYLES: Record<string, string> = {
   admin: 'bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-200',
   super_admin: 'bg-ink-900 text-white dark:bg-slate-100 dark:text-ink-900',
   editor: 'bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300',
   moderator: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200',
   citizen: 'bg-ink-100 text-ink-700 dark:bg-slate-700 dark:text-slate-200',
 };
-const ORG_ROLE_STYLES = {
+const ORG_ROLE_STYLES: Record<string, string> = {
   owner: 'bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-200',
   admin: 'bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-200',
   content_manager: 'bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300',
@@ -96,22 +122,26 @@ const ORG_ROLE_STYLES = {
   member: 'bg-ink-100 text-ink-600 dark:bg-slate-700 dark:text-slate-300',
 };
 function RoleBadge({
-  role
+  role,
+}: {
+  role?: string;
 }) {
   const {
     t
   } = useTranslation();
   const label = t(`admin.roles.${role}`, { defaultValue: role });
-  return <span className={`badge ${ROLE_STYLES[role] ?? ROLE_STYLES.citizen}`} title={t("roles.platformRoleHint")}>{label}</span>;
+  return <span className={`badge ${ROLE_STYLES[role || 'citizen'] ?? ROLE_STYLES.citizen}`} title={t("roles.platformRoleHint")}>{label}</span>;
 }
 function OrgRoleBadge({
-  role
+  role,
+}: {
+  role?: string;
 }) {
   const {
     t
   } = useTranslation();
   const label = t(`roles.org.${role}`, { defaultValue: role });
-  return <span className={`badge ${ORG_ROLE_STYLES[role] ?? ORG_ROLE_STYLES.member}`} title={t("roles.orgRoleHint")}>{label}</span>;
+  return <span className={`badge ${ORG_ROLE_STYLES[role || 'member'] ?? ORG_ROLE_STYLES.member}`} title={t("roles.orgRoleHint")}>{label}</span>;
 }
 function CardSkeleton() {
   return (
@@ -137,7 +167,7 @@ function StatCardSkeleton() {
   );
 }
 
-function TableRowSkeleton({ cols = 5, rows = 1 }) {
+function TableRowSkeleton({ cols = 5, rows = 1 }: { cols?: number; rows?: number }) {
   return (
     <>
       {Array.from({ length: rows }).map((_, r) => (
@@ -153,7 +183,20 @@ function TableRowSkeleton({ cols = 5, rows = 1 }) {
   );
 }
 
-function PasswordInput({ id, value, onChange, autoComplete, className = '', required, minLength, placeholder, 'aria-invalid': ariaInvalid, 'aria-describedby': ariaDescribedBy }) {
+type PasswordInputProps = {
+  id?: string;
+  value?: string;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
+  autoComplete?: string;
+  className?: string;
+  required?: boolean;
+  minLength?: number;
+  placeholder?: string;
+  'aria-invalid'?: boolean | 'true' | 'false';
+  'aria-describedby'?: string;
+};
+
+function PasswordInput({ id, value, onChange, autoComplete, className = '', required, minLength, placeholder, 'aria-invalid': ariaInvalid, 'aria-describedby': ariaDescribedBy }: PasswordInputProps) {
   const [show, setShow] = useState(false);
   return (
     <div className="relative">
@@ -183,7 +226,7 @@ function PasswordInput({ id, value, onChange, autoComplete, className = '', requ
   );
 }
 
-function passwordStrength(pw) {
+function passwordStrength(pw: string) {
   if (!pw) return 0;
   let score = 0;
   if (pw.length >= 8) score++;
@@ -197,8 +240,8 @@ function passwordStrength(pw) {
 const STRENGTH_LABELS = ['', 'Weak', 'Fair', 'Good', 'Strong', 'Very strong'];
 const STRENGTH_COLORS = ['', 'bg-red-400', 'bg-amber-400', 'bg-yellow-400', 'bg-emerald-400', 'bg-emerald-500'];
 
-function PasswordStrengthBar({ password }) {
-  const strength = passwordStrength(password);
+function PasswordStrengthBar({ password }: { password?: string }) {
+  const strength = passwordStrength(password || '');
   if (!password) return null;
   return (
     <div className="mt-2">
@@ -217,6 +260,18 @@ function PasswordStrengthBar({ password }) {
   );
 }
 
+type ConfirmDialogProps = {
+  open: boolean;
+  title: ReactNode;
+  message?: ReactNode;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+  busy?: boolean;
+  kind?: 'danger' | 'primary';
+};
+
 function ConfirmDialog({
   open,
   title,
@@ -227,25 +282,25 @@ function ConfirmDialog({
   onCancel,
   busy = false,
   kind = 'danger',
-}) {
+}: ConfirmDialogProps) {
   const { t } = useTranslation();
-  const dialogRef = useRef(null);
-  const cancelRef = useRef(null);
-  const previousFocus = useRef(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
+  const previousFocus = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!open) return undefined;
-    previousFocus.current = document.activeElement;
+    previousFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const focusTimer = window.setTimeout(() => cancelRef.current?.focus(), 0);
 
-    const onKeyDown = (e) => {
+    const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !busy) {
         e.preventDefault();
         onCancel();
         return;
       }
       if (e.key !== 'Tab' || !dialogRef.current) return;
-      const focusable = dialogRef.current.querySelectorAll(
+      const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
         'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
       );
       if (focusable.length === 0) return;

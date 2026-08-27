@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useOrganization } from '../context/OrganizationContext';
@@ -11,6 +10,7 @@ import {
   notifyService,
 } from '../lib/services';
 import { extractError } from '../lib/api';
+import { unwrapList, type Id } from '../types/api';
 import { DEFAULT_PRIMARY_COLOR, normalizePrimaryColor } from '../lib/theme';
 import { Alert, ConfirmDialog, PageHeader, Spinner } from '../components/ui';
 import { TabList, TabPanel } from '../components/SettingsChrome';
@@ -23,9 +23,9 @@ function OrganizationPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { organization, membership, isOrgAdmin, refresh } = useOrganization();
-  const [members, setMembers] = useState([]);
-  const [pendingInvites, setPendingInvites] = useState([]);
-  const [departments, setDepartments] = useState([]);
+  const [members, setMembers] = useState<any[]>([]);
+  const [pendingInvites, setPendingInvites] = useState<any[]>([]);
+  const [departments, setDepartments] = useState<any[]>([]);
   const [form, setForm] = useState({
     name: '',
     tagline: '',
@@ -40,7 +40,7 @@ function OrganizationPage() {
   const [inviteDepartmentId, setInviteDepartmentId] = useState('');
   const [deptName, setDeptName] = useState('');
   const [bulkCsv, setBulkCsv] = useState('');
-  const [bulkResult, setBulkResult] = useState(null);
+  const [bulkResult, setBulkResult] = useState<any>(null);
   const [ssoForm, setSsoForm] = useState({
     enabled: false,
     issuer: '',
@@ -49,10 +49,10 @@ function OrganizationPage() {
     scopes: 'openid profile email',
     has_client_secret: false,
   });
-  const [scimTokens, setScimTokens] = useState([]);
+  const [scimTokens, setScimTokens] = useState<any[]>([]);
   const [scimTokenName, setScimTokenName] = useState('IdP provisioning');
   const [scimNewToken, setScimNewToken] = useState('');
-  const [supportCases, setSupportCases] = useState([]);
+  const [supportCases, setSupportCases] = useState<any[]>([]);
   const [supportSubject, setSupportSubject] = useState('');
   const [supportBody, setSupportBody] = useState('');
   const [smsMessage, setSmsMessage] = useState('');
@@ -61,11 +61,11 @@ function OrganizationPage() {
   const [announceBusy, setAnnounceBusy] = useState(false);
   const [targetedMessage, setTargetedMessage] = useState('');
   const [extraPhone, setExtraPhone] = useState('');
-  const [selectedMemberIds, setSelectedMemberIds] = useState([]);
-  const [smsHistory, setSmsHistory] = useState([]);
+  const [selectedMemberIds, setSelectedMemberIds] = useState<any[]>([]);
+  const [smsHistory, setSmsHistory] = useState<any[]>([]);
   const [whatsappMessage, setWhatsappMessage] = useState('');
-  const [whatsappHistory, setWhatsappHistory] = useState([]);
-  const [subscription, setSubscription] = useState(null);
+  const [whatsappHistory, setWhatsappHistory] = useState<any[]>([]);
+  const [subscription, setSubscription] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -74,10 +74,10 @@ function OrganizationPage() {
   const [leaving, setLeaving] = useState(false);
   const [orgTab, setOrgTab] = useState(() => {
     const tab = searchParams.get('tab');
-    return ORG_TABS.includes(tab) ? tab : 'general';
+    return tab && ORG_TABS.includes(tab) ? tab : 'general';
   });
 
-  const changeOrgTab = (tab) => {
+  const changeOrgTab = (tab: string) => {
     setOrgTab(tab);
     const next = new URLSearchParams(searchParams);
     if (tab === 'general') next.delete('tab');
@@ -91,7 +91,7 @@ function OrganizationPage() {
     setOrgTab((prev) => (prev === next ? prev : next));
   }, [searchParams]);
 
-  const roleLabel = (role) => {
+  const roleLabel = (role: string) => {
     const map = {
       member: t('saas.roleMember'),
       admin: t('saas.roleAdmin'),
@@ -99,15 +99,15 @@ function OrganizationPage() {
       moderator: t('saas.roleModerator'),
       owner: 'Owner',
     };
-    return map[role] || role;
+    return map[role as keyof typeof map] || role;
   };
 
   useEffect(() => {
     if (organization) {
       setForm({
-        name: organization.name,
-        tagline: organization.tagline,
-        logo_url: organization.logo_url,
+        name: organization.name ?? '',
+        tagline: organization.tagline ?? '',
+        logo_url: organization.logo_url ?? '',
         primary_color: normalizePrimaryColor(organization.primary_color) || DEFAULT_PRIMARY_COLOR,
         force_mfa_for_admins: Boolean(organization.force_mfa_for_admins),
         audit_retention_days: organization.audit_retention_days ?? 365,
@@ -159,13 +159,13 @@ function OrganizationPage() {
     if (!isOrgAdmin) return;
     try {
       const { data } = await notifyService.history();
-      setSmsHistory(data.results ?? []);
+      setSmsHistory(unwrapList(data));
     } catch {
       setSmsHistory([]);
     }
     try {
       const { data } = await notifyService.whatsappHistory();
-      setWhatsappHistory(data.results ?? []);
+      setWhatsappHistory(unwrapList(data));
     } catch {
       setWhatsappHistory([]);
     }
@@ -219,7 +219,7 @@ function OrganizationPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOrgAdmin]);
 
-  const saveBranding = async (e) => {
+  const saveBranding = async (e: FormEvent) => {
     e.preventDefault();
     if (!isOrgAdmin) return;
     setSaving(true);
@@ -248,12 +248,12 @@ function OrganizationPage() {
     }
   };
 
-  const saveSso = async (e) => {
+  const saveSso = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
     try {
-      const payload = {
+      const payload: Record<string, any> = {
         enabled: ssoForm.enabled,
         issuer: ssoForm.issuer,
         client_id: ssoForm.client_id,
@@ -278,7 +278,7 @@ function OrganizationPage() {
     }
   };
 
-  const addDepartment = async (e) => {
+  const addDepartment = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     try {
@@ -290,7 +290,7 @@ function OrganizationPage() {
     }
   };
 
-  const removeDepartment = async (id) => {
+  const removeDepartment = async (id: Id) => {
     setError('');
     try {
       await organizationService.deleteDepartment(id);
@@ -300,7 +300,7 @@ function OrganizationPage() {
     }
   };
 
-  const runBulkImport = async (dryRun) => {
+  const runBulkImport = async (dryRun: boolean) => {
     setError('');
     setSuccess('');
     setBulkResult(null);
@@ -371,7 +371,7 @@ function OrganizationPage() {
     }
   };
 
-  const createScimToken = async (e) => {
+  const createScimToken = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     try {
@@ -384,7 +384,7 @@ function OrganizationPage() {
     }
   };
 
-  const revokeScimToken = async (id) => {
+  const revokeScimToken = async (id: Id) => {
     try {
       await organizationService.revokeScimToken(id);
       await loadScimAndSupport();
@@ -393,7 +393,7 @@ function OrganizationPage() {
     }
   };
 
-  const openSupportCase = async (e) => {
+  const openSupportCase = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     try {
@@ -411,7 +411,7 @@ function OrganizationPage() {
     }
   };
 
-  const invite = async (e) => {
+  const invite = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -436,7 +436,7 @@ function OrganizationPage() {
     }
   };
 
-  const revokeInvite = async (id) => {
+  const revokeInvite = async (id: Id) => {
     try {
       await organizationService.revokeInvite(id);
       setPendingInvites((list) => list.filter((i) => i.id !== id));
@@ -445,7 +445,7 @@ function OrganizationPage() {
     }
   };
 
-  const removeMember = async (id) => {
+  const removeMember = async (id: Id) => {
     try {
       await organizationService.removeMember(id);
       setMembers((m) => m.filter((x) => x.id !== id));
@@ -454,7 +454,7 @@ function OrganizationPage() {
     }
   };
 
-  const updateMemberRole = async (membershipId, role, departmentId) => {
+  const updateMemberRole = async (membershipId: Id, role: string, departmentId: Id | null | undefined) => {
     setError('');
     try {
       const { data } = await organizationService.updateMemberRole(
@@ -487,7 +487,7 @@ function OrganizationPage() {
     }
   };
 
-  const sendInAppAnnouncement = async (e) => {
+  const sendInAppAnnouncement = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -508,7 +508,7 @@ function OrganizationPage() {
     }
   };
 
-  const sendBroadcast = async (e) => {
+  const sendBroadcast = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -517,7 +517,7 @@ function OrganizationPage() {
       setSmsMessage('');
       setSuccess(t('sms.broadcastQueued'));
       await loadSmsHistory();
-    } catch (err) {
+    } catch (err: any) {
       if (err?.response?.status === 402) {
         setError(t('sms.upgradeRequired'));
       } else {
@@ -526,7 +526,7 @@ function OrganizationPage() {
     }
   };
 
-  const sendWhatsAppBroadcast = async (e) => {
+  const sendWhatsAppBroadcast = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -535,7 +535,7 @@ function OrganizationPage() {
       setWhatsappMessage('');
       setSuccess(t('whatsapp.broadcastQueued'));
       await loadSmsHistory();
-    } catch (err) {
+    } catch (err: any) {
       if (err?.response?.status === 402) {
         setError(t('sms.upgradeRequired'));
       } else {
@@ -546,13 +546,13 @@ function OrganizationPage() {
 
   const hasSmsPlan = Boolean(subscription?.plan?.features?.sms_alerts);
 
-  const toggleMember = (userId) => {
+  const toggleMember = (userId: Id) => {
     setSelectedMemberIds((ids) =>
       ids.includes(userId) ? ids.filter((id) => id !== userId) : [...ids, userId],
     );
   };
 
-  const sendTargeted = async (e) => {
+  const sendTargeted = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -572,7 +572,7 @@ function OrganizationPage() {
       setSelectedMemberIds([]);
       setSuccess(t('sms.targetedQueued'));
       await loadSmsHistory();
-    } catch (err) {
+    } catch (err: any) {
       if (err?.response?.status === 402) {
         setError(t('sms.upgradeRequired'));
       } else {

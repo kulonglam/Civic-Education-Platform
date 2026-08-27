@@ -73,14 +73,14 @@ export const SOUTH_SUDAN_STATES = [
 const WIDTH = 640;
 const HEIGHT = 520;
 
-export function projectLonLat(lon, lat, width = WIDTH, height = HEIGHT) {
+export function projectLonLat(lon: number, lat: number, width = WIDTH, height = HEIGHT) {
   const { minLon, maxLon, minLat, maxLat } = MAP_BOUNDS;
   const x = ((lon - minLon) / (maxLon - minLon)) * width;
   const y = (1 - (lat - minLat) / (maxLat - minLat)) * height;
   return [x, y];
 }
 
-export function ringToPath(ring, width = WIDTH, height = HEIGHT) {
+export function ringToPath(ring: number[][], width = WIDTH, height = HEIGHT) {
   return ring
     .map((point, index) => {
       const [x, y] = projectLonLat(point[0], point[1], width, height);

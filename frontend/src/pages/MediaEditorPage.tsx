@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from '../components/ui';
@@ -29,7 +28,7 @@ export function MediaEditorPage() {
   const isEdit = Boolean(id);
   const navigate = useNavigate();
   const [form, setForm] = useState(emptyForm);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -75,7 +74,7 @@ export function MediaEditorPage() {
     };
   }, [id, isEdit]);
 
-  const uploadFile = async (file) => {
+  const uploadFile = async (file: File) => {
     setUploading(true);
     setError('');
     try {
@@ -97,7 +96,7 @@ export function MediaEditorPage() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setError('');

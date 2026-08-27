@@ -7,6 +7,7 @@ import {
   localizedQuiz,
   trueFalseOptions,
 } from './localizedContent';
+import type { Article, Question, Quiz } from '../types/api';
 
 describe('localizedContent', () => {
   const article = {
@@ -32,31 +33,33 @@ describe('localizedContent', () => {
   });
 
   it('localizes nested article and quiz objects', () => {
-    const localized = localizedArticle(article, 'ar');
+    const localized = localizedArticle({ ...article, id: '1' } as Article, 'ar');
     expect(localized.title).toBe('الدستور');
-    expect(localized.category.name).toBe('الحكم');
+    expect(localized.category?.name).toBe('الحكم');
 
     const quiz = localizedQuiz(
       {
+        id: 'q1',
         title: 'Quiz',
         title_ar: 'اختبار',
         description: 'Desc',
         description_ar: 'وصف',
         questions: [{ question_text: 'Q1', question_text_ar: 'س1' }],
-      },
+      } as Quiz,
       'ar',
     );
     expect(quiz.title).toBe('اختبار');
-    expect(quiz.questions[0].question_text).toBe('س1');
+    expect(quiz.questions?.[0].question_text).toBe('س1');
   });
 
   it('localizes MCQ option labels in Arabic', () => {
     const opts = localizedQuestionOptions(
       {
+        question_text: 'Q',
         question_type: 'mcq',
         options: ['Alpha', 'Beta'],
         options_ar: ['ألفا', 'بيتا'],
-      },
+      } as Question,
       'ar',
     );
     expect(opts).toEqual([
@@ -68,10 +71,11 @@ describe('localizedContent', () => {
   it('uses stored Arabic true/false labels when provided', () => {
     const opts = localizedQuestionOptions(
       {
+        question_text: 'Q',
         question_type: 'true_false',
         options: ['True', 'False'],
         options_ar: ['نعم', 'لا'],
-      },
+      } as Question,
       'ar',
     );
     expect(opts).toEqual([

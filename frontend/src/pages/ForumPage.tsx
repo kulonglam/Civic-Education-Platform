@@ -1,6 +1,5 @@
-// @ts-nocheck
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Pagination } from '../components/Pagination';
@@ -9,6 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import { engagementService, forumService } from '../lib/services';
+import type { ForumTopicWrite } from '../types/api';
 import { formatDate } from '../lib/format';
 
 const PAGE_SIZE = 20;
@@ -39,7 +39,7 @@ export function ForumPage() {
   const { data, isLoading } = useQuery({
     queryKey: queryKeys.forumTopics({ page, search, ordering, kind, board }),
     queryFn: async () => {
-      const params = { page: String(page), ordering };
+      const params: Record<string, string> = { page: String(page), ordering };
       if (search) params.search = search;
       if (kind) params.kind = kind;
       if (board) params.board = board;
@@ -61,7 +61,7 @@ export function ForumPage() {
   const totalCount = data?.count ?? 0;
 
   const createTopic = useMutation({
-    mutationFn: (payload) => forumService.createTopic(payload),
+    mutationFn: (payload: ForumTopicWrite) => forumService.createTopic(payload),
     onSuccess: () => {
       setForm({ title: '', content: '', kind: 'discussion', board: 'general' });
       setShowForm(false);
@@ -71,18 +71,18 @@ export function ForumPage() {
     onError: (err) => setError(extractError(err)),
   });
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: FormEvent) => {
     e.preventDefault();
     setPage(1);
     setSearch(searchInput);
   };
 
-  const handleSort = (val) => {
+  const handleSort = (val: string) => {
     setOrdering(val);
     setPage(1);
   };
 
-  const submit = (e) => {
+  const submit = (e: FormEvent) => {
     e.preventDefault();
     createTopic.mutate(form);
   };

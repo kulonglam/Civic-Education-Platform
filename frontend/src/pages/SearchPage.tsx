@@ -1,6 +1,5 @@
-// @ts-nocheck
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Alert, EmptyState, PageHeader, Spinner } from '../components/ui';
@@ -11,7 +10,7 @@ import { formatDate } from '../lib/format';
 import { searchService } from '../lib/services';
 import { VoiceInputButton } from '../components/VoiceInputButton';
 
-function ResultSection({ title, children, emptyLabel }) {
+function ResultSection({ title, children, emptyLabel }: { title: string; children: ReactNode; emptyLabel: string }) {
   return (
     <section className="mb-8">
       <h2 className="mb-3 font-display text-lg font-semibold text-ink-900 dark:text-slate-100">{title}</h2>
@@ -111,7 +110,7 @@ export function SearchPage() {
                     >
                       <p className="font-medium text-ink-900 dark:text-slate-100">{item.title}</p>
                       <p className="mt-1 text-xs text-ink-700/60 dark:text-slate-400">
-                        {item.category || t('articles.title')}
+                        {typeof item.category === 'string' ? item.category : item.category?.name || t('articles.title')}
                         {item.published_at ? ` · ${formatDate(item.published_at)}` : ''}
                       </p>
                     </Link>

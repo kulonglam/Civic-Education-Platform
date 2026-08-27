@@ -1,19 +1,17 @@
-// @ts-nocheck
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { useOrganization } from '../context/OrganizationContext';
-import { tenantStore } from '../lib/api';
+import { extractError, isApiStatus, tenantStore } from '../lib/api';
 import { Alert, PageHeader, Spinner } from '../components/ui';
 import { UsageBar } from '../components/UsageBar';
-import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import { authService, billingService } from '../lib/services';
 
 const API_ORIGIN = (import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api').replace(/\/api\/?$/, '');
 
-function formatPrice(cents, currency) {
+function formatPrice(cents: number, currency?: string) {
   if (cents === 0) return 'Free';
   return new Intl.NumberFormat(undefined, { style: 'currency', currency }).format(cents / 100);
 }
@@ -51,14 +49,13 @@ export function BillingPage() {
       return data;
     },
     retry: (failureCount, error) => {
-      const status = error?.response?.status;
-      if (status === 503) return failureCount < 1;
+      if (isApiStatus(error, 503)) return failureCount < 1;
       return failureCount < 2;
     },
   });
 
   const checkout = useMutation({
-    mutationFn: (planCode) => billingService.checkout(planCode),
+    mutationFn: (planCode: string) => billingService.checkout(planCode),
     onSuccess: ({ data }) => window.location.assign(data.checkout_url),
     onError: (err) => setError(extractError(err)),
     onSettled: () => setBusy(''),
@@ -100,26 +97,26 @@ export function BillingPage() {
             {t('saas.currentPlan')}
           </h2>
           <p className="mt-2 font-display text-3xl font-semibold text-brand-700 dark:text-brand-400">
-            {billing.subscription.plan.name}
+            {billing.subscription?.plan?.name}
           </p>
           <p className="mt-1 text-sm capitalize text-ink-700/60 dark:text-slate-400">
-            {billing.subscription.status}
+            {billing.subscription?.status}
           </p>
           <div className="mt-6 space-y-4">
             <UsageBar
               label={t('saas.members')}
-              used={billing.usage.members.used}
-              limit={billing.usage.members.limit}
+              used={billing.usage?.members.used ?? 0}
+              limit={billing.usage?.members.limit ?? null}
             />
             <UsageBar
               label={t('saas.articles')}
-              used={billing.usage.articles.used}
-              limit={billing.usage.articles.limit}
+              used={billing.usage?.articles.used ?? 0}
+              limit={billing.usage?.articles.limit ?? null}
             />
             <UsageBar
               label={t('saas.quizzes')}
-              used={billing.usage.quizzes.used}
-              limit={billing.usage.quizzes.limit}
+              used={billing.usage?.quizzes.used ?? 0}
+              limit={billing.usage?.quizzes.limit ?? null}
             />
           </div>
           {isOrgAdmin && selfServe && (
@@ -144,7 +141,7 @@ export function BillingPage() {
         </h2>
         <div className="grid gap-4 md:grid-cols-3">
           {plans.map((plan, idx) => {
-            const isCurrent = billing?.subscription.plan.code === plan.code;
+            const isCurrent = billing?.subscription?.plan?.code === plan.code;
             const isPopular = idx === 1 && plans.length >= 2;
             return (
               <div
@@ -169,8 +166,8 @@ export function BillingPage() {
                 )}
                 <h3 className="font-display text-xl font-semibold dark:text-slate-100">{plan.name}</h3>
                 <p className="mt-2 font-display text-3xl font-semibold dark:text-slate-100">
-                  {formatPrice(plan.price_cents, plan.currency)}
-                  {plan.price_cents > 0 && (
+                  {formatPrice(plan.price_cents ?? 0, plan.currency)}
+                  {(plan.price_cents ?? 0) > 0 && (
                     <span className="text-sm font-normal text-ink-700/55 dark:text-slate-400">
                       /{plan.interval}
                     </span>

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,10 +14,11 @@ import { localizedEvent } from '../lib/localizedContent';
 import { renderMarkdown } from '../lib/markdown';
 import { queryKeys } from '../lib/queryKeys';
 import { eventsService } from '../lib/services';
+import type { Id } from '../types/api';
 import { ReadAloudButton } from '../components/ReadAloudButton';
 import { WhatsAppShareButton } from '../components/WhatsAppShareButton';
 
-async function downloadIcs(id, title) {
+async function downloadIcs(id: Id, title: string) {
   const { data } = await eventsService.calendar(id);
   const blob = data instanceof Blob ? data : new Blob([data], { type: 'text/calendar' });
   const url = URL.createObjectURL(blob);
@@ -51,7 +51,7 @@ export function EventsDetailPage() {
   });
 
   const register = useMutation({
-    mutationFn: (registered) => eventsService.register(id, registered),
+    mutationFn: (registered: boolean) => eventsService.register(id, registered),
     onSuccess: (res) => {
       queryClient.setQueryData(queryKeys.eventItem(id), res.data);
       queryClient.invalidateQueries({ queryKey: ['events'] });
@@ -60,7 +60,7 @@ export function EventsDetailPage() {
   });
 
   const reminder = useMutation({
-    mutationFn: (enabled) => eventsService.reminder(id, enabled),
+    mutationFn: (enabled: boolean) => eventsService.reminder(id, enabled),
     onSuccess: (res) => {
       queryClient.setQueryData(queryKeys.eventItem(id), res.data);
       queryClient.invalidateQueries({ queryKey: ['events'] });

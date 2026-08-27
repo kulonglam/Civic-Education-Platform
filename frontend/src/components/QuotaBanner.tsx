@@ -8,8 +8,8 @@ function QuotaBanner() {
   } = useTranslation();
   const [message, setMessage] = useState("");
   useEffect(() => {
-    const handler = event => {
-      const detail = event.detail;
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<string>).detail;
       setMessage(detail || t("saas.quotaExceeded"));
     };
     window.addEventListener("cep:quota-exceeded", handler);

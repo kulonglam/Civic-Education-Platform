@@ -1,20 +1,25 @@
-import { useEffect } from 'react';
+import { useEffect, type RefObject } from 'react';
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-export function useFocusTrap(active, ref) {
+export function useFocusTrap(active: boolean, ref: RefObject<HTMLElement | null>) {
   useEffect(() => {
     if (!active) return undefined;
     const root = ref.current;
     if (!root) return undefined;
 
-    const previous = document.activeElement;
-    const items = () => [...root.querySelectorAll(FOCUSABLE)];
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const items = () => [...root.querySelectorAll<HTMLElement>(FOCUSABLE)];
 
-    const focusTimer = window.setTimeout(() => items()[0]?.focus(), 0);
+    if (!root.hasAttribute('tabindex')) {
+      root.tabIndex = -1;
+    }
+    const focusTimer = window.setTimeout(() => {
+      root.focus({ preventScroll: true });
+    }, 0);
 
-    const onKey = (event) => {
+    const onKey = (event: KeyboardEvent) => {
       if (event.key !== 'Tab') return;
       const nodes = items();
       if (!nodes.length) return;

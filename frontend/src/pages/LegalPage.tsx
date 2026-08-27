@@ -1,10 +1,9 @@
-// @ts-nocheck
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { platformService } from '../lib/services';
 
-function LegalPage({ type }) {
+function LegalPage({ type }: { type: string }) {
   const { t } = useTranslation();
   const baseKey = `legal.${type}`;
   const sections = t(`${baseKey}.sections`, { returnObjects: true });

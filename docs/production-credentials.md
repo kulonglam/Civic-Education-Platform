@@ -126,7 +126,7 @@ If the Docker collectstatic fails on `FRONTEND_URL`, you need a dummy in the ima
 ### Free / starter limits
 
 - Web services **sleep** after idle; the first request can take a minute.
-- `.github/workflows/keep-awake.yml` pings `/api/ready/` every 10 minutes on GitHub’s schedule (Actions must stay enabled on `main`). That is the keep-alive; the in-app banner only covers a visitor who still hits a cold start.
+- `.github/workflows/keep-awake.yml` pings `/api/ready/` every 5 minutes on GitHub’s schedule (Actions must stay enabled on `main`). That is the keep-alive; the in-app banner only covers a visitor who still hits a cold start.
 - Optional repo variables: `KEEP_AWAKE_API_URL`, `KEEP_AWAKE_WEB_URL`.
 - `render.yaml` Postgres, Redis, and the worker use **starter** plans. Confirm in the Render dashboard whether those are billed; a sleeping API plus no worker means email/SMS/certificates will queue and never send.
 - Keep the worker running if you want bulk SMS, certificate PDFs, and queued jobs. Verification email and phone OTP no longer wait on Celery.

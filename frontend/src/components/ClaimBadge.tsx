@@ -31,16 +31,18 @@ const CLAIM_ALERT = {
   educational: 'info',
   opinion: 'warning',
   unverified: 'error',
-};
+} as const;
 
-export function claimAlertKind(claimType) {
-  return CLAIM_ALERT[claimType] || 'info';
+type ClaimType = keyof typeof CLAIM_STYLES;
+
+export function claimAlertKind(claimType?: string): 'error' | 'success' | 'info' | 'warning' {
+  return CLAIM_ALERT[(claimType as ClaimType) || 'educational'] || 'info';
 }
 
-export function ClaimBadge({ claimType, className = '' }) {
+export function ClaimBadge({ claimType, className = '' }: { claimType?: string; className?: string }) {
   const { t } = useTranslation();
   if (!claimType) return null;
-  const styles = CLAIM_STYLES[claimType] || CLAIM_STYLES.educational;
+  const styles = CLAIM_STYLES[(claimType as ClaimType) || 'educational'] || CLAIM_STYLES.educational;
   return (
     <span
       className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${styles} ${className}`}
@@ -50,7 +52,7 @@ export function ClaimBadge({ claimType, className = '' }) {
   );
 }
 
-export function TopicBadge({ topic, className = '' }) {
+export function TopicBadge({ topic, className = '' }: { topic?: string; className?: string }) {
   const { t } = useTranslation();
   if (!topic) return null;
   return (

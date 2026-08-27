@@ -18,12 +18,14 @@ const KIND_CLASS = {
   public_hearing: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950/60 dark:text-indigo-200',
 };
 
-export function EventKindBadge({ kind, className = '' }) {
+type EventKind = keyof typeof KIND_CLASS;
+
+export function EventKindBadge({ kind, className = '' }: { kind?: string; className?: string }) {
   const { t } = useTranslation();
   if (!kind) return null;
   return (
     <span
-      className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${KIND_CLASS[kind] || 'bg-ink-100 text-ink-700'} ${className}`}
+      className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${KIND_CLASS[kind as EventKind] || 'bg-ink-100 text-ink-700'} ${className}`}
     >
       {t(`events.kinds.${kind}`)}
     </span>

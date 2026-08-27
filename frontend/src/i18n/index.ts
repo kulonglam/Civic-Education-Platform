@@ -30,9 +30,9 @@ i18n.use(LanguageDetector).use(initReactI18next).init({
   interpolation: { escapeValue: false },
 });
 
-function applyDirection(lng) {
+function applyDirection(lng?: string | null) {
   const lang = normalizeLanguage(lng);
-  const dir = RTL_LANGUAGES.includes(lang) ? "rtl" : "ltr";
+  const dir = (RTL_LANGUAGES as readonly string[]).includes(lang) ? "rtl" : "ltr";
   document.documentElement.dir = dir;
   document.documentElement.lang = lang;
 }

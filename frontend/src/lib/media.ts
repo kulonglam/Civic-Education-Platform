@@ -3,7 +3,7 @@ const API_ORIGIN = (
 ).replace(/\/api(\/v1)?\/?$/, '');
 
 /** Turn relative /media/... paths into absolute API URLs for downloads and images. */
-export function resolveMediaUrl(url) {
+export function resolveMediaUrl(url?: string | null) {
   if (!url) return '';
   if (url.startsWith('http://') || url.startsWith('https://')) return url;
   if (url.startsWith('/')) return `${API_ORIGIN}${url}`;

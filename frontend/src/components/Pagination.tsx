@@ -1,6 +1,16 @@
 import { useTranslation } from 'react-i18next';
 
-export function Pagination({ page, totalCount, pageSize = 20, onPageChange }) {
+export function Pagination({
+  page,
+  totalCount,
+  pageSize = 20,
+  onPageChange,
+}: {
+  page: number;
+  totalCount: number;
+  pageSize?: number;
+  onPageChange: (page: number) => void;
+}) {
   const { t } = useTranslation();
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
 

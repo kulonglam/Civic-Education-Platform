@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -10,6 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import { awarenessService } from '../lib/services';
+import type { AwarenessReportPayload } from '../types/api';
 
 const REPORT_CHANNELS = ['whatsapp', 'facebook', 'website', 'radio', 'other'];
 
@@ -44,7 +44,7 @@ export function AwarenessPage() {
   });
 
   const reportMutation = useMutation({
-    mutationFn: (payload) => awarenessService.report(payload),
+    mutationFn: (payload: AwarenessReportPayload) => awarenessService.report(payload),
     onSuccess: () => {
       setFormSuccess(true);
       setFormError('');
@@ -74,7 +74,7 @@ export function AwarenessPage() {
     { key: 'report', href: '#report' },
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setFormSuccess(false);
     reportMutation.mutate({
@@ -98,7 +98,7 @@ export function AwarenessPage() {
 
       <div className="mt-2 grid gap-4 sm:grid-cols-2">
         {cards.map((card) => {
-          const Icon = CARD_ICONS[card.key];
+          const Icon = CARD_ICONS[card.key as keyof typeof CARD_ICONS];
           const inner = (
             <>
               <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-100 text-brand-700 dark:bg-brand-900/50 dark:text-brand-300">
@@ -121,7 +121,7 @@ export function AwarenessPage() {
             );
           }
           return (
-            <Link key={card.key} to={card.to} className={className}>
+            <Link key={card.key} to={card.to ?? '/'} className={className}>
               {inner}
             </Link>
           );

@@ -28,7 +28,7 @@ export function GamificationSummary({ className = '' }) {
         <StatTile label={t('gamification.xp')} value={gamification.xp_points} />
         <StatTile label={t('gamification.nextLevel')} value={gamification.xp_to_next_level} />
       </div>
-      {gamification.badges_earned?.length > 0 && (
+      {gamification.badges_earned && gamification.badges_earned.length > 0 && (
         <ul className="mt-4 flex flex-wrap gap-2">
           {gamification.badges_earned.map((badge) => (
             <li

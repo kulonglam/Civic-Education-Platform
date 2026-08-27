@@ -1,7 +1,7 @@
 import { quizService } from '../services';
 import { getDb, getEntry, scopeKey, setEntry } from './db';
 
-export async function loadQuiz(id) {
+export async function loadQuiz(id: any) {
   const cacheKey = scopeKey(id);
   try {
     const { data } = await quizService.get(id);
@@ -16,7 +16,7 @@ export async function loadQuiz(id) {
   }
 }
 
-export async function queueQuizAttempt(quizId, answers) {
+export async function queueQuizAttempt(quizId: any, answers: any) {
   const db = await getDb();
   const id = await db.add('quiz_queue', {
     quizId,

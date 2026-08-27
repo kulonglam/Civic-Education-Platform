@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +12,7 @@ export function MediaPage() {
   const [mediaType, setMediaType] = useState('');
 
   const params = useMemo(() => {
-    const p = { page_size: '50' };
+    const p: Record<string, string> = { page_size: '50' };
     if (mediaType) p.media_type = mediaType;
     return p;
   }, [mediaType]);

@@ -20,7 +20,7 @@ describe('MfaSetupCard', () => {
         busy=""
         onStart={() => {}}
         onCodeChange={() => {}}
-        onConfirm={(e) => e.preventDefault()}
+        onConfirm={(e: { preventDefault: () => void }) => e.preventDefault()}
       />,
     );
     expect(screen.getByText(/scan this QR code/i)).toBeInTheDocument();
@@ -41,7 +41,7 @@ describe('MfaSetupCard', () => {
         busy=""
         onStart={onStart}
         onCodeChange={() => {}}
-        onConfirm={(e) => e.preventDefault()}
+        onConfirm={(e: { preventDefault: () => void }) => e.preventDefault()}
       />,
     );
     await userEvent.click(screen.getByRole('button', { name: /set up authenticator/i }));

@@ -1,14 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
-import { createContext, useCallback, useContext, useMemo } from 'react';
+import { createContext, useCallback, useContext, useMemo, type ReactNode } from 'react';
 import { tokenStore, tenantStore } from '../lib/api';
 import { normalizePrimaryColor } from '../lib/theme';
 import { queryKeys } from '../lib/queryKeys';
 import { organizationService } from '../lib/services';
 import { useAuth } from './AuthContext';
+import type { OrganizationContextValue } from '../types/cep';
+import type { Membership } from '../types/api';
+import { unwrapList } from '../types/api';
 
-const OrganizationContext = createContext(undefined);
+const OrganizationContext = createContext<OrganizationContextValue | null>(null);
 
-function OrganizationProvider({ children }) {
+function OrganizationProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
 
   const {
@@ -26,8 +29,8 @@ function OrganizationProvider({ children }) {
         organizationService.current(),
         organizationService.members(),
       ]);
-      const mine =
-        membersRes.data.results.find((m) => m.user_email === user?.email) ?? null;
+      const mine: Membership | null =
+        unwrapList(membersRes.data).find((m) => m.user_email === user?.email) ?? null;
       return { organization: orgRes.data, membership: mine };
     },
   });
@@ -73,7 +76,7 @@ function OrganizationProvider({ children }) {
   );
 }
 
-function useOrganization() {
+function useOrganization(): OrganizationContextValue {
   const ctx = useContext(OrganizationContext);
   if (!ctx) throw new Error('useOrganization must be used within OrganizationProvider');
   return ctx;

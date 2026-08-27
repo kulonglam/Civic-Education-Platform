@@ -25,20 +25,20 @@ export const tenantStore = {
   get slug() {
     return localStorage.getItem(ORG_SLUG_KEY);
   },
-  set(slug) {
+  set(slug: string) {
     localStorage.setItem(ORG_SLUG_KEY, slug);
   },
   clear() {
     localStorage.removeItem(ORG_SLUG_KEY);
   },
-  syncFromToken(access) {
+  syncFromToken(access: string) {
     const slug = getOrgSlugFromToken(access);
     if (slug) tenantStore.set(slug);
   },
 };
 
-let memoryAccess = null;
-let memoryRefresh = null;
+let memoryAccess: string | null = null;
+let memoryRefresh: string | null = null;
 
 /**
  * In-memory JWT store. Access/refresh are not persisted to localStorage.
@@ -54,7 +54,7 @@ export const tokenStore = {
   get hasSession() {
     return Boolean(memoryAccess || sessionStorage.getItem(SESSION_FLAG));
   },
-  set(access, refresh) {
+  set(access: string, refresh?: string | null) {
     memoryAccess = access;
     if (refresh) memoryRefresh = refresh;
     sessionStorage.setItem(SESSION_FLAG, '1');
@@ -93,9 +93,9 @@ api.interceptors.request.use((config) => {
 });
 
 let isRefreshing = false;
-let pendingQueue = [];
+let pendingQueue: { resolve: (token: string | null) => void; reject: (error?: any) => void }[] = [];
 
-function flushQueue(error, token) {
+function flushQueue(error: any, token: string | null) {
   pendingQueue.forEach((p) => {
     if (token) p.resolve(token);
     else p.reject(error);
@@ -170,13 +170,17 @@ api.interceptors.response.use(
   },
 );
 
-export function extractError(err) {
+export function isApiStatus(error: unknown, status: number): boolean {
+  return axios.isAxiosError(error) && error.response?.status === status;
+}
+
+export function extractError(err: unknown): string {
   if (axios.isAxiosError(err)) {
     const data = err.response?.data;
     if (typeof data === 'string') {
       const trimmed = data.trim();
       if (/^<!doctype html/i.test(trimmed) || /^<html[\s>]/i.test(trimmed)) {
-        return err.response?.status >= 500
+        return (err.response?.status ?? 0) >= 500
           ? 'The server hit an internal error. Save a Uganda number (+256 or 07…) and try again.'
           : 'The server returned an error. Try again.';
       }

@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+
+type MfaSetup = { secret?: string; provisioning_uri?: string; otpauth_url?: string };
 
 export function MfaSetupCard({
   enabled,
@@ -10,6 +12,15 @@ export function MfaSetupCard({
   onStart,
   onCodeChange,
   onConfirm,
+}: {
+  enabled?: boolean;
+  required?: boolean;
+  setup?: MfaSetup | null;
+  code: string;
+  busy?: boolean | string;
+  onStart: () => void;
+  onCodeChange: (value: string) => void;
+  onConfirm: (e: FormEvent) => void;
 }) {
   const { t } = useTranslation();
   const [qrUrl, setQrUrl] = useState('');

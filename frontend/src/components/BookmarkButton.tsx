@@ -8,7 +8,15 @@ import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import { bookmarkService } from '../lib/services';
 
-export function BookmarkButton({ kind, id, bookmarked = false }) {
+export function BookmarkButton({
+  kind,
+  id,
+  bookmarked = false,
+}: {
+  kind: string;
+  id: string;
+  bookmarked?: boolean;
+}) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const queryClient = useQueryClient();

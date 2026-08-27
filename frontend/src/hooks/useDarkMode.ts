@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 const LIGHT_THEME = '#047857';
 const DARK_THEME = '#0f120e';
 
-function syncThemeColor(dark) {
+function syncThemeColor(dark: boolean) {
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content', dark ? DARK_THEME : LIGHT_THEME);
   document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
@@ -28,5 +28,5 @@ export function useDarkMode() {
     syncThemeColor(dark);
   }, [dark]);
 
-  return [dark, setDark];
+  return [dark, setDark] as const;
 }

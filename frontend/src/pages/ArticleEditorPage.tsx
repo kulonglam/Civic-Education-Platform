@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from '../components/ui';
@@ -9,6 +8,7 @@ import { extractError } from '../lib/api';
 import { renderMarkdown } from '../lib/markdown';
 import { resolveMediaUrl } from '../lib/media';
 import { articleService, categoryService, mediaService } from '../lib/services';
+import type { Article } from '../types/api';
 
 const EMPTY_FORM = {
   title: '',
@@ -28,18 +28,23 @@ const EMPTY_FORM = {
   status: 'draft',
 };
 
-function tagsToString(tags) {
+function tagsToString(tags: Article['tags']) {
   return Array.isArray(tags) ? tags.join(', ') : '';
 }
 
-function tagsFromString(value) {
+function tagsFromString(value: string) {
   return value
     .split(',')
-    .map((tag) => tag.trim())
+    .map((tag: string) => tag.trim())
     .filter(Boolean);
 }
 
-function insertAroundSelection(textarea, before, after = '', placeholder = '') {
+function insertAroundSelection(
+  textarea: HTMLTextAreaElement | null,
+  before: string,
+  after = '',
+  placeholder = '',
+) {
   if (!textarea) return null;
   const start = textarea.selectionStart ?? 0;
   const end = textarea.selectionEnd ?? 0;
@@ -50,9 +55,17 @@ function insertAroundSelection(textarea, before, after = '', placeholder = '') {
   return { next, cursorStart: start + before.length, cursorEnd: cursor };
 }
 
-function MarkdownToolbar({ onInsert, onUploadImage, uploading }) {
+function MarkdownToolbar({
+  onInsert,
+  onUploadImage,
+  uploading,
+}: {
+  onInsert: (before: string, after: string, placeholder: string) => void;
+  onUploadImage: (file: File) => void;
+  uploading: boolean;
+}) {
   const { t } = useTranslation();
-  const imageInputRef = useRef(null);
+  const imageInputRef = useRef<any>(null);
 
   return (
     <div className="mb-2 flex flex-wrap items-center gap-1">
@@ -102,16 +115,16 @@ export function ArticleEditorPage() {
   const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
-  const fileInputRef = useRef(null);
-  const featuredInputRef = useRef(null);
-  const contentRef = useRef(null);
-  const contentArRef = useRef(null);
+  const fileInputRef = useRef<any>(null);
+  const featuredInputRef = useRef<any>(null);
+  const contentRef = useRef<any>(null);
+  const contentArRef = useRef<any>(null);
   const activeFieldRef = useRef('content');
   const isEdit = Boolean(id);
   const [form, setForm] = useState(EMPTY_FORM);
-  const [categories, setCategories] = useState([]);
-  const [audioOptions, setAudioOptions] = useState([]);
-  const [videoOptions, setVideoOptions] = useState([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [audioOptions, setAudioOptions] = useState<any[]>([]);
+  const [videoOptions, setVideoOptions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -143,7 +156,7 @@ export function ArticleEditorPage() {
             title_ar: article.title_ar ?? '',
             content: article.content ?? '',
             content_ar: article.content_ar ?? '',
-            category_id: article.category?.id ?? '',
+            category_id: String(article.category?.id ?? ''),
             tags: tagsToString(article.tags),
             featured_image_url: article.featured_image_url ?? '',
             attachment_url: article.attachment_url ?? '',
@@ -151,12 +164,12 @@ export function ArticleEditorPage() {
             attachment_version: article.attachment_version ?? '',
             document_label: article.document_label ?? '',
             is_controlled_document: Boolean(article.is_controlled_document),
-            audio_media_id: article.audio_media?.id ?? '',
-            video_media_id: article.video_media?.id ?? '',
+            audio_media_id: String(article.audio_media?.id ?? ''),
+            video_media_id: String(article.video_media?.id ?? ''),
             status: article.status ?? 'draft',
           });
         } else if (list.length > 0) {
-          setForm((prev) => ({ ...prev, category_id: list[0].id }));
+          setForm((prev) => ({ ...prev, category_id: String(list[0].id) }));
         }
       } catch (err) {
         setError(extractError(err));
@@ -166,7 +179,12 @@ export function ArticleEditorPage() {
     })();
   }, [id]);
 
-  const applyInsert = (field, before, after, placeholder) => {
+  const applyInsert = (
+    field: 'content' | 'content_ar',
+    before: string,
+    after: string,
+    placeholder: string,
+  ) => {
     const ref = field === 'content_ar' ? contentArRef : contentRef;
     const result = insertAroundSelection(ref.current, before, after, placeholder);
     if (!result) {
@@ -185,7 +203,7 @@ export function ArticleEditorPage() {
     });
   };
 
-  const uploadInlineImage = async (file) => {
+  const uploadInlineImage = async (file: File) => {
     const field = activeFieldRef.current === 'content_ar' ? 'content_ar' : 'content';
     setImageUploading(true);
     setError('');
@@ -200,7 +218,7 @@ export function ArticleEditorPage() {
     }
   };
 
-  const uploadFeaturedImage = async (file) => {
+  const uploadFeaturedImage = async (file: File) => {
     setImageUploading(true);
     setError('');
     try {
@@ -214,15 +232,15 @@ export function ArticleEditorPage() {
     }
   };
 
-  const uploadAttachment = async (file) => {
+  const uploadAttachment = async (file: File) => {
     setUploading(true);
     setError('');
     try {
       const { data } = await articleService.uploadAttachment(file);
       setForm((prev) => ({
         ...prev,
-        attachment_url: data.attachment_url,
-        attachment_name: data.attachment_name,
+        attachment_url: data.attachment_url ?? data.url ?? '',
+        attachment_name: data.attachment_name ?? data.name ?? '',
       }));
     } catch (err) {
       setError(extractError(err));
@@ -234,7 +252,7 @@ export function ArticleEditorPage() {
     }
   };
 
-  const handleAttachmentChange = (e) => {
+  const handleAttachmentChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) uploadAttachment(file);
   };
@@ -243,7 +261,7 @@ export function ArticleEditorPage() {
     setForm((prev) => ({ ...prev, attachment_url: '', attachment_name: '' }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setError('');
@@ -511,11 +529,11 @@ export function ArticleEditorPage() {
               <>
                 <MarkdownToolbar
                   uploading={imageUploading}
-                  onInsert={(before, after, placeholder) => {
+                  onInsert={(before: string, after: string, placeholder: string) => {
                     activeFieldRef.current = 'content';
                     applyInsert('content', before, after, placeholder);
                   }}
-                  onUploadImage={(file) => {
+                  onUploadImage={(file: File) => {
                     activeFieldRef.current = 'content';
                     uploadInlineImage(file);
                   }}
@@ -543,11 +561,11 @@ export function ArticleEditorPage() {
             {!showPreview && (
               <MarkdownToolbar
                 uploading={imageUploading}
-                onInsert={(before, after, placeholder) => {
+                onInsert={(before: string, after: string, placeholder: string) => {
                   activeFieldRef.current = 'content_ar';
                   applyInsert('content_ar', before, after, placeholder);
                 }}
-                onUploadImage={(file) => {
+                onUploadImage={(file: File) => {
                   activeFieldRef.current = 'content_ar';
                   uploadInlineImage(file);
                 }}

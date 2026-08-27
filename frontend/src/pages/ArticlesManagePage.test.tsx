@@ -10,7 +10,7 @@ const approve = vi.fn();
 const reject = vi.fn();
 
 vi.mock('../context/AuthContext', () => ({
-  useAuth: () => ({ hasRole: (...roles) => mockHasRole(...roles) }),
+  useAuth: () => ({ hasRole: (...roles: string[]) => mockHasRole(...roles) }),
 }));
 
 vi.mock('../context/OrganizationContext', () => ({
@@ -19,10 +19,10 @@ vi.mock('../context/OrganizationContext', () => ({
 
 vi.mock('../lib/services', () => ({
   articleService: {
-    list: (...args) => list(...args),
-    remove: (...args) => remove(...args),
-    approve: (...args) => approve(...args),
-    reject: (...args) => reject(...args),
+    list: (...args: unknown[]) => list(...args),
+    remove: (...args: unknown[]) => remove(...args),
+    approve: (...args: unknown[]) => approve(...args),
+    reject: (...args: unknown[]) => reject(...args),
   },
 }));
 

@@ -1,7 +1,19 @@
 /**
  * Horizontal tab list for dense admin / org pages.
  */
-export function TabList({ tabs, active, onChange }) {
+import type { ReactNode } from 'react';
+
+type SettingsTab = { id: string; label: string };
+
+export function TabList({
+  tabs,
+  active,
+  onChange,
+}: {
+  tabs: SettingsTab[];
+  active: string;
+  onChange: (id: string) => void;
+}) {
   return (
     <div
       role="tablist"
@@ -32,7 +44,15 @@ export function TabList({ tabs, active, onChange }) {
   );
 }
 
-export function TabPanel({ id, active, children }) {
+export function TabPanel({
+  id,
+  active,
+  children,
+}: {
+  id: string;
+  active: string;
+  children: ReactNode;
+}) {
   if (id !== active) return null;
   return (
     <div role="tabpanel" aria-labelledby={`tab-${id}`} className="animate-fade-in">

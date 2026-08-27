@@ -8,8 +8,8 @@ function ApiWakeBanner() {
 
   useEffect(() => {
     let cancelled = false;
-    let slowTimer;
-    let retryTimer;
+    let slowTimer: number | undefined;
+    let retryTimer: number | undefined;
 
     const markReady = () => {
       if (cancelled) return;

@@ -4,9 +4,9 @@ import { tenantStore } from '../api';
 const DB_NAME = 'cep-offline';
 const DB_VERSION = 3;
 
-let dbPromise;
+let dbPromise: Promise<any> | undefined;
 
-function scopeKey(suffix) {
+function scopeKey(suffix: string | number) {
   return `${tenantStore.slug || 'default'}:${suffix}`;
 }
 
@@ -38,13 +38,13 @@ async function getDb() {
   return dbPromise;
 }
 
-async function getEntry(storeName, key) {
+async function getEntry(storeName: any, key: any) {
   const db = await getDb();
   const row = await db.get(storeName, key);
   return row?.data ?? null;
 }
 
-async function setEntry(storeName, key, data) {
+async function setEntry(storeName: any, key: any, data: any) {
   const db = await getDb();
   await db.put(storeName, { key, data, cachedAt: Date.now() });
 }

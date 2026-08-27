@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { EVENT_KINDS } from '../components/EventKindBadge';
@@ -28,30 +27,30 @@ const emptyForm = {
   region: '',
 };
 
-function pad(value) {
+function pad(value: number) {
   return String(value).padStart(2, '0');
 }
 
-function toDateTimeLocal(iso) {
+function toDateTimeLocal(iso: string | null | undefined) {
   if (!iso) return '';
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return '';
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
-function toDateInput(iso) {
+function toDateInput(iso: string | null | undefined) {
   if (!iso) return '';
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return '';
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
-function fromDateTimeLocal(value) {
+function fromDateTimeLocal(value: string) {
   if (!value) return null;
   return new Date(value).toISOString();
 }
 
-function fromDateInput(value, endOfDay = false) {
+function fromDateInput(value: string, endOfDay = false) {
   if (!value) return null;
   return new Date(`${value}${endOfDay ? 'T23:59:00' : 'T00:00:00'}`).toISOString();
 }
@@ -86,7 +85,7 @@ export function EventsEditorPage() {
           ends_at: data.is_all_day ? toDateInput(data.ends_at) : toDateTimeLocal(data.ends_at),
           is_all_day: Boolean(data.is_all_day),
           allows_registration: data.kind === 'national_holiday' ? false : Boolean(data.allows_registration),
-          capacity: data.capacity ?? '',
+          capacity: data.capacity == null ? '' : String(data.capacity),
           source_name: data.source_name ?? '',
           source_url: data.source_url ?? '',
           status: data.status ?? 'draft',
@@ -103,7 +102,7 @@ export function EventsEditorPage() {
     };
   }, [id, isEdit]);
 
-  const setField = (key, value) => {
+  const setField = (key: keyof typeof emptyForm, value: string | boolean) => {
     setForm((prev) => {
       const next = { ...prev, [key]: value };
       if (key === 'kind' && value === 'national_holiday') {
@@ -116,7 +115,7 @@ export function EventsEditorPage() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setError('');

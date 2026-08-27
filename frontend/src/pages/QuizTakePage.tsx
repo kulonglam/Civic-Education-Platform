@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,8 +11,11 @@ import { queryKeys } from '../lib/queryKeys';
 import { loadQuiz, queueQuizAttempt } from '../lib/offline/quizzes';
 import { localizedQuiz } from '../lib/localizedContent';
 import { quizService } from '../lib/services';
+import type { Question, QuizAttemptResult } from '../types/api';
 
-function ScoreRing({ score, passed }) {
+type TakeQuestion = Question & { id: string };
+
+function ScoreRing({ score, passed }: { score: number; passed: boolean }) {
   const radius = 48;
   const stroke = 8;
   const normalizedRadius = radius - stroke / 2;
@@ -53,7 +55,15 @@ function ScoreRing({ score, passed }) {
   );
 }
 
-function QuizProgress({ current, total, answeredCount }) {
+function QuizProgress({
+  current,
+  total,
+  answeredCount,
+}: {
+  current: number;
+  total: number;
+  answeredCount: number;
+}) {
   const pct = total > 0 ? Math.round((answeredCount / total) * 100) : 0;
   return (
     <div className="mb-6">
@@ -68,7 +78,11 @@ function QuizProgress({ current, total, answeredCount }) {
   );
 }
 
-function formatAnswerLabel(value, questionType, t) {
+function formatAnswerLabel(
+  value: string | undefined,
+  questionType: string | undefined,
+  t: (key: string) => string,
+) {
   if (!value) return t('quizzes.blankAnswer');
   if (questionType === 'true_false') {
     if (value === 'True') return t('quizzes.trueLabel');
@@ -77,14 +91,20 @@ function formatAnswerLabel(value, questionType, t) {
   return value;
 }
 
-function ReviewList({ items, t }) {
+function ReviewList({
+  items,
+  t,
+}: {
+  items?: QuizAttemptResult['review'];
+  t: (key: string) => string;
+}) {
   if (!items?.length) return null;
   return (
     <div className="mt-8 space-y-3 text-left">
       <h2 className="font-display text-lg font-semibold dark:text-slate-100">
         {t('quizzes.reviewTitle')}
       </h2>
-      {items.map((item, idx) => (
+      {items.map((item: NonNullable<QuizAttemptResult['review']>[number], idx: number) => (
         <div
           key={item.question_id}
           className={`rounded-xl border p-4 text-sm ${
@@ -120,12 +140,12 @@ export function QuizTakePage() {
   const { t, i18n } = useTranslation();
   const online = useOnlineStatus();
   const { id } = useParams();
-  const [answers, setAnswers] = useState({});
-  const [result, setResult] = useState(null);
+  const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [result, setResult] = useState<any>(null);
   const [queued, setQueued] = useState(false);
   const [error, setError] = useState('');
   const [currentQIdx, setCurrentQIdx] = useState(0);
-  const [checks, setChecks] = useState({});
+  const [checks, setChecks] = useState<Record<string, any>>({});
 
   const { data: quizResult, isLoading } = useQuery({
     queryKey: queryKeys.quiz(id),
@@ -133,7 +153,7 @@ export function QuizTakePage() {
     queryFn: async () => loadQuiz(id),
   });
 
-  const quiz = localizedQuiz(quizResult?.data, i18n.language);
+  const quiz = quizResult?.data ? localizedQuiz(quizResult.data, i18n.language) : undefined;
   const fromCache = quizResult?.source === 'cache';
 
   const submitAttempt = useMutation({
@@ -159,7 +179,7 @@ export function QuizTakePage() {
   });
 
   const checkAnswer = useMutation({
-    mutationFn: async ({ questionId, answer }) => {
+    mutationFn: async ({ questionId, answer }: { questionId: string; answer: string }) => {
       const { data } = await quizService.checkAnswer(id, questionId, answer);
       return { questionId, data };
     },
@@ -169,7 +189,7 @@ export function QuizTakePage() {
     onError: (err) => setError(extractError(err)),
   });
 
-  const setAnswer = (questionId, value) =>
+  const setAnswer = (questionId: string, value: string) =>
     setAnswers((a) => ({ ...a, [questionId]: value }));
 
   if (isLoading) return <Spinner />;
@@ -253,7 +273,7 @@ export function QuizTakePage() {
 
   const total = quiz.questions.length;
   const answeredCount = Object.keys(answers).length;
-  const allAnswered = quiz.questions.every((q) => answers[q.id]);
+  const allAnswered = quiz.questions.every((q: TakeQuestion) => answers[q.id]);
   const perQuestion = quiz.feedback_mode === 'per_question';
 
   return (
@@ -293,7 +313,7 @@ export function QuizTakePage() {
       <div className="mt-8">
         <QuizProgress current={currentQIdx} total={total} answeredCount={answeredCount} />
         <div className="space-y-4">
-          {quiz.questions.map((q, idx) => (
+          {quiz.questions.map((q: TakeQuestion, idx: number) => (
             <div
               key={q.id}
               className="quiz-stage"
@@ -309,7 +329,7 @@ export function QuizTakePage() {
                 <ReadAloudButton text={q.question_text} />
               </div>
               <div className="mt-4 space-y-2">
-                {(q.displayOptions ?? []).map((opt) => (
+                {(q.displayOptions ?? []).map((opt: { value: string; label: string }) => (
                   <label
                     key={opt.value}
                     className={`flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-sm transition-colors ${

@@ -1,6 +1,5 @@
-// @ts-nocheck
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useOrganization } from '../context/OrganizationContext';
@@ -10,8 +9,9 @@ import { ChevronLeft } from '../components/Icons';
 import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import { categoryService } from '../lib/services';
+import type { Category } from '../types/api';
 
-function slugify(value) {
+function slugify(value: string) {
   return value
     .toLowerCase()
     .trim()
@@ -32,11 +32,11 @@ export function CategoriesManagePage() {
   const { t } = useTranslation();
   const { isOrgAdmin } = useOrganization();
   const [form, setForm] = useState(EMPTY_FORM);
-  const [editId, setEditId] = useState(null);
+  const [editId, setEditId] = useState<any>(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [saving, setSaving] = useState(false);
-  const [pendingDelete, setPendingDelete] = useState(null);
+  const [pendingDelete, setPendingDelete] = useState<any>(null);
   const [deleting, setDeleting] = useState(false);
 
   const { data, isLoading, error: loadError, refetch } = useQuery({
@@ -53,7 +53,7 @@ export function CategoriesManagePage() {
     setEditId(null);
   };
 
-  const startEdit = (cat) => {
+  const startEdit = (cat: Category) => {
     setEditId(cat.id);
     setForm({
       name: cat.name ?? '',
@@ -65,7 +65,7 @@ export function CategoriesManagePage() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setError('');

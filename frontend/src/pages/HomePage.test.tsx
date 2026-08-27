@@ -13,10 +13,14 @@ vi.mock('../context/OrganizationContext', () => ({
 
 import { useAuth } from '../context/AuthContext';
 import { useOrganization } from '../context/OrganizationContext';
+import type { AuthContextValue, OrganizationContextValue } from '../types/cep';
+
+const mockedUseAuth = vi.mocked(useAuth);
+const mockedUseOrganization = vi.mocked(useOrganization);
 
 describe('HomePage', () => {
   it('renders hero and how-it-works sections for visitors', () => {
-    useAuth.mockReturnValue({ user: null });
+    mockedUseAuth.mockReturnValue({ user: null } as AuthContextValue);
     renderWithProviders(<HomePage />);
 
     expect(screen.getByRole('heading', { level: 1, name: /learn\. engage\. build democracy/i })).toBeInTheDocument();
@@ -40,10 +44,10 @@ describe('HomePage', () => {
   });
 
   it('shows personalized CTAs when logged in', () => {
-    useAuth.mockReturnValue({
+    mockedUseAuth.mockReturnValue({
       user: { first_name: 'Amina', role: { name: 'citizen' } },
-    });
-    useOrganization.mockReturnValue({ isOrgAdmin: true });
+    } as AuthContextValue);
+    mockedUseOrganization.mockReturnValue({ isOrgAdmin: true } as OrganizationContextValue);
     renderWithProviders(<HomePage />);
 
     expect(screen.getByText(/welcome back, amina/i)).toBeInTheDocument();

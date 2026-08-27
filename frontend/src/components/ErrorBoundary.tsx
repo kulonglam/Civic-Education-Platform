@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { captureUiError } from '../lib/sentry';
 
@@ -35,18 +35,18 @@ function ErrorFallback() {
   );
 }
 
-class ErrorBoundary extends Component {
+class ErrorBoundary extends Component<{ children?: ReactNode; resetKey?: string }, { hasError: boolean }> {
   state = { hasError: false };
 
   static getDerivedStateFromError() {
     return { hasError: true };
   }
 
-  componentDidCatch(error, info) {
+  componentDidCatch(error: Error, info: ErrorInfo) {
     captureUiError(error, info);
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: { children?: ReactNode; resetKey?: string }) {
     if (this.state.hasError && prevProps.resetKey !== this.props.resetKey) {
       this.setState({ hasError: false });
     }

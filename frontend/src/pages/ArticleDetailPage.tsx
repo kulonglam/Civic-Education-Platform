@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -136,7 +135,7 @@ export function ArticleDetailPage() {
       </div>
       {article.tags?.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-2">
-          {article.tags.map((tag) => (
+          {article.tags.map((tag: string) => (
             <span key={tag} className="badge bg-ink-100 text-ink-700 dark:bg-slate-700 dark:text-slate-300">
               #{tag}
             </span>

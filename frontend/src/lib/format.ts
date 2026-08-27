@@ -1,6 +1,6 @@
 import i18n from '../i18n';
 
-function formatDate(iso) {
+function formatDate(iso?: string | null) {
   if (!iso) return '';
   return new Date(iso).toLocaleDateString(i18n.language === 'ar' ? 'ar-EG' : 'en-US', {
     year: 'numeric',
@@ -9,7 +9,7 @@ function formatDate(iso) {
   });
 }
 
-function formatDateTime(iso) {
+function formatDateTime(iso?: string | null) {
   if (!iso) return '';
   return new Date(iso).toLocaleString(i18n.language === 'ar' ? 'ar-EG' : 'en-US', {
     year: 'numeric',
@@ -20,7 +20,7 @@ function formatDateTime(iso) {
   });
 }
 
-function readingTime(content) {
+function readingTime(content?: string | null) {
   if (!content) return 1;
   const text = content.replace(/<[^>]+>/g, ' ');
   const words = text.trim().split(/\s+/).filter(Boolean).length;

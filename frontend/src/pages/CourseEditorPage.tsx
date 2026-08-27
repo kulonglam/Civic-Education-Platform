@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -7,6 +6,7 @@ import { Spinner } from '../components/ui';
 import { CmsEditorShell, CmsSidebarCard } from '../components/CmsWorkspace';
 import { extractError } from '../lib/api';
 import { articleService, courseService } from '../lib/services';
+import type { CourseFormState, Id } from '../types/api';
 
 const emptyForm = {
   title: '',
@@ -15,7 +15,7 @@ const emptyForm = {
   description: '',
   description_ar: '',
   status: 'draft',
-  lesson_ids: [],
+  lesson_ids: [] as any[],
 };
 
 export function CourseEditorPage() {
@@ -64,9 +64,10 @@ export function CourseEditorPage() {
     };
   }, [id, isEdit]);
 
-  const setField = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
+  const setField = (key: keyof CourseFormState, value: CourseFormState[keyof CourseFormState]) =>
+    setForm((prev) => ({ ...prev, [key]: value }));
 
-  const toggleLesson = (articleId) => {
+  const toggleLesson = (articleId: Id) => {
     setForm((prev) => {
       const exists = prev.lesson_ids.includes(articleId);
       return {
@@ -78,7 +79,7 @@ export function CourseEditorPage() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setError('');

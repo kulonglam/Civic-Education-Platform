@@ -2,9 +2,10 @@ import { describe, expect, it, vi } from 'vitest';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QuizTakePage } from './QuizTakePage';
+import type { Quiz } from '../types/api';
 import { renderWithProviders } from '../test/utils';
 
-const mockQuiz = {
+const mockQuiz: Quiz = {
   id: 'quiz-1',
   title: 'Civic Basics',
   description: 'Test your knowledge',

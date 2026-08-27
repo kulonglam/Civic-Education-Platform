@@ -11,7 +11,7 @@ vi.mock('@tanstack/react-query', async () => {
   const actual = await vi.importActual('@tanstack/react-query');
   return {
     ...actual,
-    useQuery: ({ queryKey }) => {
+    useQuery: ({ queryKey }: { queryKey: unknown[] }) => {
       if (queryKey[0] === 'plans') {
         return {
           data: [

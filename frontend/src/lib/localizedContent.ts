@@ -1,27 +1,29 @@
 import i18n from '../i18n';
 import { normalizeLanguage } from '../i18n/languages';
+import type { Article, Category, CivicEvent, CivicNews, Question, Quiz } from '../types/api';
 
-export function contentLanguage(lang = i18n.language) {
+export function contentLanguage(lang: string | null | undefined = i18n.language) {
   return normalizeLanguage(lang);
 }
 
 /** Pick ``field`` or ``field_ar`` based on UI language, falling back to English. */
-export function localizedField(item, field, lang = i18n.language) {
+export function localizedField(item: object | null | undefined, field: string, lang: string | null | undefined = i18n.language) {
   if (!item) return '';
+  const record = item as Record<string, unknown>;
   const arField = `${field}_ar`;
-  if (contentLanguage(lang) === 'ar' && item[arField]) {
-    return item[arField];
+  if (contentLanguage(lang) === 'ar' && record[arField]) {
+    return String(record[arField] ?? '');
   }
-  return item[field] ?? '';
+  return record[field] == null ? '' : String(record[field]);
 }
 
-export function localizedCategory(category, lang = i18n.language) {
+export function localizedCategory(category: Category | null | undefined, lang: string | null | undefined = i18n.language) {
   if (!category) return '';
   return localizedField(category, 'name', lang);
 }
 
 /** MCQ option labels localized; values stay English for API grading. */
-export function localizedQuestionOptions(question, lang = i18n.language) {
+export function localizedQuestionOptions(question: Question | null | undefined, lang: string | null | undefined = i18n.language) {
   if (!question) return [];
   if (question.question_type === 'true_false') {
     const options = question.options ?? [];
@@ -45,8 +47,7 @@ export function localizedQuestionOptions(question, lang = i18n.language) {
   return options.map((opt) => ({ value: opt, label: opt }));
 }
 
-export function localizedQuestion(question, lang = i18n.language) {
-  if (!question) return question;
+export function localizedQuestion<T extends Question>(question: T, lang: string | null | undefined = i18n.language) {
   return {
     ...question,
     question_text: localizedField(question, 'question_text', lang),
@@ -54,8 +55,7 @@ export function localizedQuestion(question, lang = i18n.language) {
   };
 }
 
-export function localizedQuiz(quiz, lang = i18n.language) {
-  if (!quiz) return quiz;
+export function localizedQuiz<T extends Quiz>(quiz: T, lang: string | null | undefined = i18n.language) {
   return {
     ...quiz,
     title: localizedField(quiz, 'title', lang),
@@ -64,8 +64,7 @@ export function localizedQuiz(quiz, lang = i18n.language) {
   };
 }
 
-export function localizedArticle(article, lang = i18n.language) {
-  if (!article) return article;
+export function localizedArticle<T extends Article>(article: T, lang: string | null | undefined = i18n.language) {
   return {
     ...article,
     title: localizedField(article, 'title', lang),
@@ -76,8 +75,7 @@ export function localizedArticle(article, lang = i18n.language) {
   };
 }
 
-export function localizedNews(item, lang = i18n.language) {
-  if (!item) return item;
+export function localizedNews<T extends CivicNews>(item: T, lang: string | null | undefined = i18n.language) {
   return {
     ...item,
     title: localizedField(item, 'title', lang),
@@ -85,8 +83,7 @@ export function localizedNews(item, lang = i18n.language) {
   };
 }
 
-export function localizedEvent(item, lang = i18n.language) {
-  if (!item) return item;
+export function localizedEvent<T extends CivicEvent>(item: T, lang: string | null | undefined = i18n.language) {
   return {
     ...item,
     title: localizedField(item, 'title', lang),
@@ -96,7 +93,7 @@ export function localizedEvent(item, lang = i18n.language) {
 }
 
 /** True/false answers stay English for API grading; labels are localized. */
-export function trueFalseOptions(lang = i18n.language) {
+export function trueFalseOptions(lang: string | null | undefined = i18n.language) {
   if (contentLanguage(lang) === 'ar') {
     return [
       { value: 'True', label: 'صحيح' },

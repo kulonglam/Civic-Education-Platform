@@ -15,7 +15,8 @@ describe('ReadAloudButton', () => {
     vi.stubGlobal(
       'SpeechSynthesisUtterance',
       class {
-        constructor(text) {
+        text: string;
+        constructor(text: string) {
           this.text = text;
         }
       },

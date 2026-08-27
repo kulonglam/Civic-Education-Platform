@@ -14,13 +14,13 @@ export function notifyApiReady() {
   window.dispatchEvent(new Event(API_READY_EVENT));
 }
 
-export function isWakeFailure(error) {
+export function isWakeFailure(error: any) {
   const status = error?.response?.status;
   if (!error?.response) return true;
   return status === 502 || status === 504;
 }
 
-export async function pingApiReady({ timeout = 20000 } = {}) {
+export async function pingApiReady({ timeout = 20000 }: { timeout?: number } = {}) {
   const { status } = await api.get('/ready/', { timeout, validateStatus: () => true });
   if (status >= 200 && status < 500) return true;
   throw new Error(`ready ${status}`);

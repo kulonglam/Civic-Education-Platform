@@ -5,7 +5,7 @@ import { renderWithProviders } from '../test/utils';
 
 vi.spyOn(console, 'error').mockImplementation(() => {});
 
-function Boom() {
+function Boom(): null {
   throw new Error('boom');
 }
 

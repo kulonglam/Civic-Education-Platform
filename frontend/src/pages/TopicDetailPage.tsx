@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -11,6 +10,7 @@ import { useOrganization } from '../context/OrganizationContext';
 import { extractError } from '../lib/api';
 import { formatDate } from '../lib/format';
 import { forumService } from '../lib/services';
+import type { ForumComment, Id } from '../types/api';
 
 const REPORT_REASONS = [
   'hate_speech',
@@ -20,12 +20,18 @@ const REPORT_REASONS = [
   'other',
 ];
 
-function ReportForm({ onSubmit, submitting }) {
+function ReportForm({
+  onSubmit,
+  submitting,
+}: {
+  onSubmit: (payload: { reason: string; details: string }) => void;
+  submitting: boolean;
+}) {
   const { t } = useTranslation();
   const [reason, setReason] = useState('misinformation');
   const [details, setDetails] = useState('');
 
-  const submit = (e) => {
+  const submit = (e: FormEvent) => {
     e.preventDefault();
     onSubmit({ reason, details });
   };
@@ -58,7 +64,7 @@ function TopicDetailPage() {
   const { id } = useParams();
   const { user, hasRole } = useAuth();
   const { isOrgModerator } = useOrganization();
-  const [topic, setTopic] = useState(null);
+  const [topic, setTopic] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [comment, setComment] = useState('');
   const [error, setError] = useState('');
@@ -80,7 +86,7 @@ function TopicDetailPage() {
 
   useEffect(load, [id, t]);
 
-  const submit = async (e) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
     if (!id) return;
     setSubmitting(true);
@@ -96,7 +102,7 @@ function TopicDetailPage() {
     }
   };
 
-  const acceptAnswer = async (commentId) => {
+  const acceptAnswer = async (commentId: Id) => {
     if (!id) return;
     try {
       const { data } = await forumService.acceptAnswer(id, commentId);
@@ -111,13 +117,17 @@ function TopicDetailPage() {
     if (!id || !topic) return;
     try {
       const { data } = await forumService.lockTopic(id, !topic.is_locked);
-      setTopic((current) => ({ ...current, ...data, comments: current?.comments ?? [] }));
+      setTopic((current: { comments?: ForumComment[] } | null) => ({
+        ...current,
+        ...data,
+        comments: current?.comments ?? [],
+      }));
     } catch (err) {
       setError(extractError(err));
     }
   };
 
-  const reportTopic = async (payload) => {
+  const reportTopic = async (payload: { reason: string; details: string }) => {
     if (!id) return;
     setReporting('topic');
     setError('');
@@ -131,7 +141,7 @@ function TopicDetailPage() {
     }
   };
 
-  const reportComment = async (commentId, payload) => {
+  const reportComment = async (commentId: Id, payload: { reason: string; details: string }) => {
     setReporting(commentId);
     setError('');
     try {
@@ -147,8 +157,9 @@ function TopicDetailPage() {
   if (loading) return <Spinner />;
   if (!topic) return <Alert>{error || t('common.noResults')}</Alert>;
 
-  const visibleComments = (topic.comments ?? []).filter((c) => c.is_approved || canModerate);
-  const sortedComments = [...visibleComments].sort((a, b) => {
+  const visibleComments = (topic.comments ?? []).filter((c: ForumComment) => c.is_approved || canModerate);
+  const sortedComments = [...visibleComments].sort(
+    (a: ForumComment & { is_expert?: boolean }, b: ForumComment & { is_expert?: boolean }) => {
     const aAccepted = topic.accepted_answer_id === a.id ? 0 : 1;
     const bAccepted = topic.accepted_answer_id === b.id ? 0 : 1;
     if (aAccepted !== bAccepted) return aAccepted - bAccepted;
@@ -156,7 +167,7 @@ function TopicDetailPage() {
     const bExpert = b.is_expert ? 0 : 1;
     return aExpert - bExpert;
   });
-  const approvedCount = (topic.comments ?? []).filter((c) => c.is_approved).length;
+  const approvedCount = (topic.comments ?? []).filter((c: ForumComment) => c.is_approved).length;
   const canReply = Boolean(user) && !topic.is_locked;
 
   return (
@@ -221,7 +232,7 @@ function TopicDetailPage() {
       </h2>
 
       <div className="space-y-3">
-        {sortedComments.map((c) => {
+        {sortedComments.map((c: ForumComment & { is_expert?: boolean }) => {
           const accepted = topic.accepted_answer_id === c.id;
           return (
             <div
@@ -262,7 +273,10 @@ function TopicDetailPage() {
                 </button>
               )}
               {user && (
-                <ReportForm onSubmit={(payload) => reportComment(c.id, payload)} submitting={reporting === c.id} />
+                <ReportForm
+                  onSubmit={(payload: { reason: string; details: string }) => reportComment(c.id, payload)}
+                  submitting={reporting === c.id}
+                />
               )}
             </div>
           );

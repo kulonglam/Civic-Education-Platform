@@ -10,7 +10,7 @@ const mockHasRole = vi.fn();
 vi.mock('../context/AuthContext', () => ({
   useAuth: () => ({
     user: { id: '1', role: { name: 'moderator' }, first_name: 'Mod' },
-    hasRole: (...roles) => mockHasRole(...roles),
+    hasRole: (...roles: string[]) => mockHasRole(...roles),
     isPlatformAdmin: () => mockIsPlatformAdmin(),
     isSuperAdmin: () => false,
   }),

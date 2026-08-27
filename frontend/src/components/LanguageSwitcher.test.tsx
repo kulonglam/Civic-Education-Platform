@@ -17,7 +17,7 @@ vi.mock('../context/AuthContext', () => ({
 
 vi.mock('../lib/services', () => ({
   userService: {
-    updateProfile: (...args) => mockUpdateProfile(...args),
+    updateProfile: (...args: unknown[]) => mockUpdateProfile(...args),
   },
 }));
 

@@ -5,8 +5,8 @@ import { getEntry, scopeKey, setEntry } from './db';
  * Download a full offline study pack from GET /content-bundle/ and cache
  * articles, quizzes, media metadata, and categories in IndexedDB for offline reading.
  */
-export async function downloadContentBundle({ categoryId } = {}) {
-  const params = {};
+export async function downloadContentBundle({ categoryId }: { categoryId?: string | number } = {}) {
+  const params: Record<string, any> = {};
   if (categoryId) params.category_id = categoryId;
 
   const { data } = await api.get('/content-bundle/', { params });

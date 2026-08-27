@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +11,7 @@ import { loadArticlesList, loadCategories } from '../lib/offline/articles';
 import { formatDate, readingTime } from '../lib/format';
 import { localizedArticle, localizedCategory } from '../lib/localizedContent';
 import { plainTextExcerpt } from '../lib/markdown';
+import type { Article, Category } from '../types/api';
 
 const PAGE_SIZE = 20;
 
@@ -36,7 +36,7 @@ export function ArticlesPage() {
   useEffect(() => {
     const raw = searchParams.get('category');
     if (!raw || !categories.length) return;
-    const match = categories.find((c) => c.id === raw || c.slug === raw);
+    const match = categories.find((c: Category) => c.id === raw || c.slug === raw);
     if (!match) return;
     setCategory((prev) => {
       if (prev === match.id) return prev;
@@ -46,7 +46,7 @@ export function ArticlesPage() {
   }, [searchParams, categories]);
 
   const listParams = useMemo(() => {
-    const params = { page: String(page) };
+    const params: Record<string, string> = { page: String(page) };
     if (debouncedSearch) params.search = debouncedSearch;
     if (category) params.category = category;
     return params;
@@ -67,30 +67,30 @@ export function ArticlesPage() {
   const categoryOptions = useMemo(
     () => [
       { id: '', name: t('common.all') },
-      ...categories.map((cat) => ({ ...cat, name: localizedCategory(cat, i18n.language) })),
+      ...categories.map((cat: Category) => ({ ...cat, name: localizedCategory(cat, i18n.language) })),
     ],
     [categories, t, i18n.language],
   );
 
   const activeCategory = useMemo(
-    () => categories.find((c) => c.id === category),
+    () => categories.find((c: Category) => c.id === category),
     [categories, category],
   );
   const activeCategoryName = activeCategory
     ? localizedCategory(activeCategory, i18n.language)
     : '';
 
-  const handleSearchChange = (value) => {
+  const handleSearchChange = (value: string) => {
     setSearch(value);
     setPage(1);
   };
 
-  const handleCategoryChange = (value) => {
+  const handleCategoryChange = (value: string) => {
     setCategory(value);
     setPage(1);
     const next = new URLSearchParams(searchParams);
     if (value) {
-      const cat = categories.find((c) => c.id === value);
+      const cat = categories.find((c: Category) => c.id === value);
       next.set('category', cat?.slug || value);
     } else {
       next.delete('category');
@@ -158,7 +158,7 @@ export function ArticlesPage() {
             <p className="text-sm text-ink-700/55 dark:text-slate-400">{t('common.loading')}</p>
           )}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {articles.map((raw) => {
+            {articles.map((raw: Article) => {
               const article = localizedArticle(raw, i18n.language);
               return (
                 <Link

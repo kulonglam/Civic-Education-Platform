@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,10 +10,12 @@ import { formatDate } from '../lib/format';
 import { localizedArticle } from '../lib/localizedContent';
 import { streamTutorChat } from '../lib/tutorStream';
 import { articleService, tutorService } from '../lib/services';
+import { unwrapList } from '../types/api';
+import type { TutorChatResponse, TutorUsage } from '../types/api';
 import { renderMarkdown } from '../lib/markdown';
 import { VoiceInputButton } from '../components/VoiceInputButton';
 
-function TutorBubble({ role, content }) {
+function TutorBubble({ role, content }: { role: string; content: string }) {
   const isUser = role === 'user';
   const className = `max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
     isUser
@@ -27,7 +28,7 @@ function TutorBubble({ role, content }) {
   return <div className={className} dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }} />;
 }
 
-function UsageMeter({ usage }) {
+function UsageMeter({ usage }: { usage: TutorUsage | undefined }) {
   const { t } = useTranslation();
   if (!usage) return null;
 
@@ -36,7 +37,7 @@ function UsageMeter({ usage }) {
   const pct =
     unlimited || !daily_limit
       ? 0
-      : Math.min(100, Math.round((messages_used_today / daily_limit) * 100));
+      : Math.min(100, Math.round(((messages_used_today as number) / daily_limit) * 100));
 
   return (
     <div className="mb-4">
@@ -67,7 +68,11 @@ function UsageMeter({ usage }) {
   );
 }
 
-function TutorSources({ sources }) {
+function TutorSources({
+  sources,
+}: {
+  sources?: Array<{ title?: string; url?: string; article_id?: string; source?: string; category?: string; excerpt?: string }>;
+}) {
   const { t } = useTranslation();
   if (!sources?.length) return null;
 
@@ -78,7 +83,7 @@ function TutorSources({ sources }) {
         {t('tutor.sources')}
       </p>
       <ul className="space-y-2">
-        {sources.map((source) => (
+        {sources.map((source: { title?: string; url?: string; article_id?: string; source?: string; category?: string; excerpt?: string }) => (
           <li key={`${source.article_id}-${source.source}`}>
             {source.article_id ? (
               <Link
@@ -112,14 +117,14 @@ export function TutorPage() {
   const [searchParams] = useSearchParams();
   const articleId = searchParams.get('article') || undefined;
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<any[]>([]);
   const [streamText, setStreamText] = useState('');
-  const streamAbortRef = useRef(null);
+  const streamAbortRef = useRef<any>(null);
   const [viewingHistory, setViewingHistory] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [error, setError] = useState('');
-  const bottomRef = useRef(null);
-  const inputRef = useRef(null);
+  const bottomRef = useRef<any>(null);
+  const inputRef = useRef<any>(null);
   const restoredRef = useRef(false);
 
   const { data: usage, isLoading: usageLoading } = useQuery({
@@ -147,7 +152,7 @@ export function TutorPage() {
     queryKey: queryKeys.tutorHistory,
     queryFn: async () => {
       const { data } = await tutorService.history();
-      return data;
+      return unwrapList(data);
     },
   });
 
@@ -166,7 +171,7 @@ export function TutorPage() {
   }, []);
 
   const loadHistorySession = useMutation({
-    mutationFn: (sessionId) => tutorService.historyDetail(sessionId),
+    mutationFn: (sessionId: string) => tutorService.historyDetail(sessionId),
     onSuccess: ({ data }) => {
       setMessages(data.messages ?? []);
       setViewingHistory(true);
@@ -177,13 +182,18 @@ export function TutorPage() {
   });
 
   const sendMessage = useMutation({
-    mutationFn: async (message) => {
+    mutationFn: async (message: string) => {
       setStreamText('');
       streamAbortRef.current?.abort();
       const controller = new AbortController();
       streamAbortRef.current = controller;
 
-      return new Promise((resolve, reject) => {
+      return new Promise<{
+        message: string;
+        data: TutorChatResponse;
+        streamed: boolean;
+        reply?: string;
+      }>((resolve, reject) => {
         let accumulated = '';
         streamTutorChat(message, {
           articleId,
@@ -225,7 +235,7 @@ export function TutorPage() {
       ]);
       setError('');
       queryClient.invalidateQueries({ queryKey: queryKeys.tutorHistory });
-      queryClient.setQueryData(queryKeys.tutorUsage, (old) =>
+      queryClient.setQueryData(queryKeys.tutorUsage, (old: any) =>
         old
           ? {
               ...old,
@@ -311,12 +321,12 @@ export function TutorPage() {
           </p>
           <ul className="space-y-2">
             {history.map((session) => (
-              <li key={session.session_id}>
+              <li key={session.session_id ?? session.id}>
                 <button
                   type="button"
                   className="w-full rounded-lg border border-ink-100 px-3 py-2 text-left text-sm transition-colors hover:border-brand-200 hover:bg-brand-50/50 dark:border-slate-700 dark:hover:bg-slate-800"
                   disabled={loadHistorySession.isPending}
-                  onClick={() => loadHistorySession.mutate(session.session_id)}
+                  onClick={() => loadHistorySession.mutate(session.session_id ?? session.id)}
                 >
                   <span className="line-clamp-2 font-medium text-ink-900 dark:text-slate-100">
                     {session.preview || t('tutor.untitledChat')}

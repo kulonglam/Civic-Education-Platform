@@ -10,17 +10,17 @@ export function AccessibilityMenu() {
   const { fontScale, highContrast, setFontScale, setHighContrast } = useAccessibility();
   const [open, setOpen] = useState(false);
   const [speaking, setSpeaking] = useState(false);
-  const ref = useRef(null);
-  const panelRef = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const supported = isSpeechSupported();
   useFocusTrap(open, panelRef);
 
   useEffect(() => {
     if (!open) return undefined;
-    const close = (event) => {
-      if (ref.current && !ref.current.contains(event.target)) setOpen(false);
+    const close = (event: MouseEvent) => {
+      if (ref.current && event.target instanceof Node && !ref.current.contains(event.target)) setOpen(false);
     };
-    const onKey = (event) => {
+    const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false);
     };
     document.addEventListener('mousedown', close);

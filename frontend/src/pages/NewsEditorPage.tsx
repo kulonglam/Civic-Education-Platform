@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { NEWS_CLAIM_TYPES, NEWS_TOPICS } from '../components/ClaimBadge';
@@ -7,6 +6,7 @@ import { Alert, Spinner } from '../components/ui';
 import { CmsEditorShell, CmsSidebarCard } from '../components/CmsWorkspace';
 import { extractError } from '../lib/api';
 import { newsService } from '../lib/services';
+import type { NewsWritePayload } from '../types/api';
 
 const emptyForm = {
   title: '',
@@ -60,11 +60,11 @@ export function NewsEditorPage() {
     };
   }, [id, isEdit]);
 
-  const setField = (key, value) => {
+  const setField = (key: keyof NewsWritePayload, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setError('');

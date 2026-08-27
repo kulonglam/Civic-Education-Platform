@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +18,7 @@ export function EngagementManagePage() {
   const { isOrgAdmin } = useOrganization();
   const canDelete = hasRole('admin') || isOrgAdmin;
   const [tab, setTab] = useState('polls');
-  const [pendingDelete, setPendingDelete] = useState(null);
+  const [pendingDelete, setPendingDelete] = useState<any>(null);
   const [deleteError, setDeleteError] = useState('');
   const [deleting, setDeleting] = useState(false);
 
@@ -60,7 +59,7 @@ export function EngagementManagePage() {
   if (isLoading) return <Spinner />;
 
   const items = data ?? [];
-  const titleOf = (item) => item.question || item.title;
+  const titleOf = (item: { question?: string; title?: string }) => item.question || item.title;
 
   return (
     <div>

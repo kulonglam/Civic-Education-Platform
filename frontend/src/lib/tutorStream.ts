@@ -6,8 +6,23 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000/api
 /**
  * Stream tutor chat tokens via SSE. Calls onToken, onDone, onError.
  */
-export async function streamTutorChat(message, { articleId, onToken, onDone, onError, signal } = {}) {
-  const headers = {
+export async function streamTutorChat(
+  message: string,
+  {
+    articleId,
+    onToken,
+    onDone,
+    onError,
+    signal,
+  }: {
+    articleId?: string | number;
+    onToken?: (token: string) => void;
+    onDone?: (payload?: any) => void;
+    onError?: (error: any) => void;
+    signal?: AbortSignal;
+  } = {},
+) {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     Accept: 'text/event-stream',
     'Accept-Language': normalizeLanguage(localStorage.getItem('cep_lang')),
@@ -17,7 +32,7 @@ export async function streamTutorChat(message, { articleId, onToken, onDone, onE
   const tenantSlug = tenantStore.slug;
   if (tenantSlug) headers['X-Tenant-Slug'] = tenantSlug;
 
-  let response;
+  let response: Response | undefined;
   try {
     response = await fetch(`${BASE_URL}/tutor/chat/stream/`, {
       method: 'POST',

@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import type { ReactNode } from 'react';
 import { BookOpen, AcademicCap, ShieldCheck } from './Icons';
 import { PlatformLogo } from './PlatformLogo';
 
@@ -11,7 +12,15 @@ const FEATURES = [
 /**
  * Institutional split-panel shell for auth surfaces (login / register).
  */
-export function AuthShell({ children, title, subtitle }) {
+export function AuthShell({
+  children,
+  title,
+  subtitle,
+}: {
+  children: ReactNode;
+  title: string;
+  subtitle?: string;
+}) {
   const { t } = useTranslation();
 
   return (

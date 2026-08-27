@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +27,7 @@ export function NewsPage() {
   const claimType = searchParams.get('claim_type') || '';
 
   const listParams = useMemo(() => {
-    const params = { page: String(page), status: 'published' };
+    const params: Record<string, string> = { page: String(page), status: 'published' };
     if (topic) params.topic = topic;
     if (claimType) params.claim_type = claimType;
     return params;
@@ -45,7 +44,7 @@ export function NewsPage() {
   const items = (data?.results ?? []).map((item) => localizedNews(item, i18n.language));
   const totalCount = data?.count ?? 0;
 
-  const setFilter = (key, value) => {
+  const setFilter = (key: string, value: string) => {
     const next = new URLSearchParams(searchParams);
     if (value) next.set(key, value);
     else next.delete(key);

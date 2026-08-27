@@ -1,10 +1,10 @@
-// @ts-nocheck
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import type { ReactNode } from 'react';
 import { Alert, PageHeader } from './ui';
 import { ChevronLeft } from './Icons';
 
-const STATUS_TONES = {
+const STATUS_TONES: Record<string, string> = {
   draft: 'bg-ink-100 text-ink-800 dark:bg-slate-700 dark:text-slate-100',
   published: 'bg-green-100 text-green-800 dark:bg-green-950/50 dark:text-green-300',
   pending_review: 'bg-amber-100 text-amber-900 dark:bg-amber-950/50 dark:text-amber-200',
@@ -15,8 +15,8 @@ const STATUS_TONES = {
   active: 'bg-green-100 text-green-800 dark:bg-green-950/50 dark:text-green-300',
 };
 
-export function StatusBadge({ status, label }) {
-  const tone = STATUS_TONES[status] || STATUS_TONES.draft;
+export function StatusBadge({ status, label }: { status?: string; label?: ReactNode }) {
+  const tone = STATUS_TONES[status || 'draft'] || STATUS_TONES.draft;
   return (
     <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${tone}`}>
       {label || String(status || '').replace(/_/g, ' ')}
@@ -24,7 +24,19 @@ export function StatusBadge({ status, label }) {
   );
 }
 
-export function CmsManageHeader({ title, subtitle, primaryTo, primaryLabel, secondary }) {
+export function CmsManageHeader({
+  title,
+  subtitle,
+  primaryTo,
+  primaryLabel,
+  secondary,
+}: {
+  title: ReactNode;
+  subtitle?: ReactNode;
+  primaryTo?: string;
+  primaryLabel?: ReactNode;
+  secondary?: ReactNode;
+}) {
   const { t } = useTranslation();
   return (
     <PageHeader
@@ -56,6 +68,17 @@ export function CmsEditorShell({
   sidebar,
   footer,
   children,
+}: {
+  backTo?: string;
+  backLabel?: ReactNode;
+  title: ReactNode;
+  subtitle?: ReactNode;
+  status?: string;
+  statusLabel?: ReactNode;
+  error?: ReactNode;
+  sidebar?: ReactNode;
+  footer?: ReactNode;
+  children?: ReactNode;
 }) {
   const { t } = useTranslation();
   return (
@@ -100,7 +123,7 @@ export function CmsEditorShell({
   );
 }
 
-export function CmsSidebarCard({ title, children }) {
+export function CmsSidebarCard({ title, children }: { title?: ReactNode; children?: ReactNode }) {
   return (
     <div className="card space-y-3">
       {title && <h2 className="text-sm font-semibold text-ink-900 dark:text-slate-100">{title}</h2>}
