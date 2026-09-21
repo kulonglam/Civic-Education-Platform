@@ -32,6 +32,7 @@ import type {
   User,
 } from '../types/api';
 import { unwrapList } from '../types/api';
+import { displayOrganizationName } from '../lib/branding';
 
 function StatCard({ label, value }: { label: string; value: ReactNode }) {
   return (
@@ -472,7 +473,9 @@ function AdminPage() {
                 {platformOrgs.map((org) => (
                   <tr key={org.id} className="dark:hover:bg-slate-700/30">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-ink-900 dark:text-slate-100">{org.name}</p>
+                      <p className="font-medium text-ink-900 dark:text-slate-100">
+                        {displayOrganizationName(org.name, t('app.name'))}
+                      </p>
                       <p className="text-xs text-ink-700/60 dark:text-slate-400">{org.slug}</p>
                     </td>
                     <td className="px-4 py-3 dark:text-slate-300">{org.plan_code || '—'}</td>

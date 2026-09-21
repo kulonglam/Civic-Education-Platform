@@ -30,7 +30,7 @@ export function AuthShell({
       <aside className="auth-brand-panel px-10 py-12 xl:px-14" aria-label={showBrand ? t('app.name') : undefined}>
         <div className="auth-brand-photo" aria-hidden="true" />
         <div
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-950/80 via-transparent to-brand-950/40"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-black/25"
           aria-hidden="true"
         />
         <div className="relative flex h-full flex-col justify-between">

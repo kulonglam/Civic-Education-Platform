@@ -9,6 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import { awarenessService } from '../lib/services';
+import { PAGE_COVERS } from '../lib/civicPhotos';
 import type { AwarenessReportPayload } from '../types/api';
 
 const REPORT_CHANNELS = ['whatsapp', 'facebook', 'website', 'radio', 'other'];
@@ -91,6 +92,8 @@ export function AwarenessPage() {
         eyebrow={t('nav.learn')}
         title={t('awareness.title')}
         subtitle={t('awareness.subtitle')}
+        coverSrc={PAGE_COVERS.awareness}
+        coverAlt={t('photos.communityWork')}
       />
 
       {isError && <Alert>{t('common.noResults')}</Alert>}

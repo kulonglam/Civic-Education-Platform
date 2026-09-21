@@ -32,8 +32,8 @@ export default defineConfig(({ mode }) => {
         registerType: 'autoUpdate',
         includeAssets: ['civic-education-logo.png', 'icon-192.png', 'icon-512.png'],
         manifest: {
-          name: 'Civic Education RSS',
-          short_name: 'Civic RSS',
+          name: 'CivicHub',
+          short_name: 'CivicHub',
           description: 'Civic education for citizens of South Sudan',
           theme_color: '#047857',
           background_color: '#ffffff',

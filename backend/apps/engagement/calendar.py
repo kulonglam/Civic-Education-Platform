@@ -62,7 +62,7 @@ def build_ics(event) -> str:
     lines = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
-        'PRODID:-//Civic Education RSS//Civic Events//EN',
+        'PRODID:-//CivicHub//Civic Events//EN',
         'CALSCALE:GREGORIAN',
         'METHOD:PUBLISH',
         'BEGIN:VEVENT',

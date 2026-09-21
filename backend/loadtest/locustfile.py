@@ -1,4 +1,4 @@
-"""Locust load test for the Civic Education RSS API.
+"""Locust load test for the CivicHub API.
 
 Simulates the read-heavy traffic the SRS targets (50k registered users,
 10k concurrent). Each simulated user registers once, logs in, then loops

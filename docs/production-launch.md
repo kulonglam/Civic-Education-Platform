@@ -1,6 +1,6 @@
 # Production launch guide
 
-Step-by-step checklist to take the Civic Education RSS from local development to a live production deployment.
+Step-by-step checklist to take CivicHub from local development to a live production deployment.
 
 ## Architecture
 

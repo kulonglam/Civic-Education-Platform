@@ -66,7 +66,7 @@ def build_topic_svg(title: str, subtitle: str) -> bytes:
   <rect width="1200" height="630" fill="#064e3b"/>
   <rect x="48" y="48" width="1104" height="534" rx="28" fill="#ecfdf5"/>
   <rect x="48" y="48" width="16" height="534" rx="8" fill="#059669"/>
-  <text x="100" y="160" font-family="Georgia, serif" font-size="28" fill="#047857">Civic Education RSS</text>
+  <text x="100" y="160" font-family="Georgia, serif" font-size="28" fill="#047857">CivicHub</text>
   <text x="100" y="280" font-family="Georgia, serif" font-size="48" font-weight="700" fill="#022c22">{safe_title}</text>
   <text x="100" y="360" font-family="Georgia, serif" font-size="28" fill="#134e4a">{safe_sub}</text>
   <text x="100" y="500" font-family="Georgia, serif" font-size="22" fill="#047857">Lesson pack · text · audio · video · handout</text>
@@ -90,7 +90,7 @@ def build_handout_pdf(title: str, facts: list[str]) -> bytes:
     page.rect(0, height - 88, width, 88, fill=1, stroke=0)
     page.setFillColorRGB(1, 1, 1)
     page.setFont('Times-Bold', 16)
-    page.drawString(48, height - 52, 'Civic Education RSS · Learner handout')
+    page.drawString(48, height - 52, 'CivicHub · Learner handout')
     page.setFillColorRGB(0.02, 0.17, 0.13)
     page.setFont('Times-Bold', 18)
     y = height - 130
@@ -727,7 +727,7 @@ DEMO_NEWS = [
         'title_ar': 'لوحة الأخبار المدنية مفتوحة للمعلومات العامة المصنّفة',
         'topic': 'announcement',
         'claim_type': 'verified_fact',
-        'source_name': 'Civic Education RSS',
+        'source_name': 'CivicHub',
         'source_url': '',
         'body': (
             'This board publishes public civic information with a visible claim label on every item. '
@@ -802,7 +802,7 @@ DEMO_NEWS = [
         'title_ar': 'الرسوم غير الرسمية تُضعف الثقة — رأي مربٍ مدني',
         'topic': 'awareness',
         'claim_type': 'opinion',
-        'source_name': 'Civic Education RSS editorial',
+        'source_name': 'CivicHub editorial',
         'source_url': '',
         'body': (
             'In our view, asking citizens to pay unofficial fees for public services weakens trust and '
@@ -825,14 +825,14 @@ DEMO_NEWS = [
         'source_url': '',
         'body': (
             'A forwarded message circulating in some groups claims that polling stations will close early. '
-            'Civic Education RSS has not confirmed this from the electoral commission or any named official '
+            'CivicHub has not confirmed this from the electoral commission or any named official '
             'source. Do not change your voting plans based on this rumour. If an official body publishes a '
             'notice, it will appear here as a verified fact with the source named. Until then, treat this as '
             'unverified information.'
         ),
         'body_ar': (
             'تداولت بعض المجموعات رسالة مُعادة تدّعي أن مراكز الاقتراع ستُغلق مبكراً. '
-            'لم تؤكد منصة التعليم المدني RSS ذلك من المفوضية الانتخابية أو من أي مصدر رسمي مسمّى. '
+            'لم تؤكد منصة CivicHub ذلك من المفوضية الانتخابية أو من أي مصدر رسمي مسمّى. '
             'لا تغيّر خطط تصويتك بناءً على هذه الشائعة. إذا نشرت جهة رسمية إشعاراً، سيظهر هنا كحقيقة موثّقة '
             'مع ذكر المصدر. وحتى ذلك الحين، تعامل مع هذا كمعلومات غير موثّقة.'
         ),
@@ -859,7 +859,7 @@ DEMO_EVENTS = [
         'is_all_day': False,
         'allows_registration': True,
         'capacity': 80,
-        'source_name': 'Civic Education RSS',
+        'source_name': 'CivicHub',
         'source_url': '',
         'description': (
             'A public briefing on how to register, what to bring on polling day, and how to report '
@@ -882,7 +882,7 @@ DEMO_EVENTS = [
         'is_all_day': False,
         'allows_registration': True,
         'capacity': 60,
-        'source_name': 'Civic Education RSS',
+        'source_name': 'CivicHub',
         'source_url': '',
         'description': (
             'Citizens can comment on draft rules for public meetings and written submissions. Bring notes; '
@@ -905,7 +905,7 @@ DEMO_EVENTS = [
         'is_all_day': False,
         'allows_registration': True,
         'capacity': 40,
-        'source_name': 'Civic Education RSS',
+        'source_name': 'CivicHub',
         'source_url': '',
         'description': (
             'Neighbours meet chiefs and county officers to ask about water, schools, and how complaints '
@@ -928,7 +928,7 @@ DEMO_EVENTS = [
         'is_all_day': False,
         'allows_registration': True,
         'capacity': 50,
-        'source_name': 'Civic Education RSS',
+        'source_name': 'CivicHub',
         'source_url': '',
         'description': (
             'A civic education workshop on rights, duties, and how the constitution limits public power. '
@@ -974,7 +974,7 @@ DEMO_EVENTS = [
         'is_all_day': False,
         'allows_registration': True,
         'capacity': 100,
-        'source_name': 'Civic Education RSS',
+        'source_name': 'CivicHub',
         'source_url': '',
         'description': (
             'A public hearing on the draft county budget. Residents may ask how funds for schools, health, '
@@ -997,7 +997,7 @@ DEMO_EVENTS = [
         'is_all_day': False,
         'allows_registration': True,
         'capacity': 70,
-        'source_name': 'Civic Education RSS',
+        'source_name': 'CivicHub',
         'source_url': '',
         'description': (
             'Bring identification to check your name on the register and ask how to correct errors before polling day. '
@@ -1020,7 +1020,7 @@ DEMO_EVENTS = [
         'is_all_day': False,
         'allows_registration': True,
         'capacity': 55,
-        'source_name': 'Civic Education RSS',
+        'source_name': 'CivicHub',
         'source_url': '',
         'description': (
             'Residents meet county officers about river transport, flood notices, and how to file a written complaint.'
@@ -1041,7 +1041,7 @@ DEMO_EVENTS = [
         'is_all_day': False,
         'allows_registration': True,
         'capacity': 45,
-        'source_name': 'Civic Education RSS',
+        'source_name': 'CivicHub',
         'source_url': '',
         'description': (
             'A civic education workshop on rights, duties, and how public power is limited by the Transitional Constitution.'

@@ -26,7 +26,7 @@ describe('RegisterPage', () => {
     expect(screen.getByText(/individual learner/i)).toBeInTheDocument();
     expect(screen.queryByLabelText(/organization name/i)).not.toBeInTheDocument();
     expect(screen.getByLabelText(/^email$/i)).toBeInTheDocument();
-    expect(screen.queryByText('Civic Education RSS')).not.toBeInTheDocument();
+    expect(screen.queryByText('CivicHub')).not.toBeInTheDocument();
   });
 
   it('shows organization name when organization mode is selected', async () => {

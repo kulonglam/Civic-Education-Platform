@@ -21,6 +21,7 @@ import { queryKeys } from '../lib/queryKeys';
 import { extractError, tokenStore } from '../lib/api';
 import { stopSpeaking } from '../lib/speech';
 import { PlatformLogo } from './PlatformLogo';
+import { displayOrganizationName } from '../lib/branding';
 import { documentTitle } from '../lib/pageTitle';
 import { useNotificationSocket } from '../hooks/useNotificationSocket';
 import { ErrorBoundary } from './ErrorBoundary';
@@ -263,6 +264,7 @@ export function Layout() {
   const { t } = useTranslation();
   const { user, logout, hasRole, isPlatformAdmin, impersonation, exitImpersonation } = useAuth();
   const { organization, isOrgAdmin, isOrgContentManager, isOrgModerator } = useOrganization();
+  const brandName = displayOrganizationName(organization?.name, t('app.name'));
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -445,15 +447,15 @@ export function Layout() {
             {organization?.logo_url ? (
               <img
                 src={organization.logo_url}
-                alt={organization.name}
+                alt={brandName}
                 className="h-9 w-9 shrink-0 rounded-xl object-cover ring-1 ring-ink-100 dark:ring-slate-700"
               />
             ) : (
-              <PlatformLogo className="h-9 w-9" alt={organization?.name ?? t('app.name')} />
+              <PlatformLogo className="h-9 w-9" alt={brandName} />
             )}
             <span className="min-w-0">
               <span className="block truncate font-display text-sm font-semibold text-ink-900 dark:text-slate-100 sm:text-base lg:text-lg">
-                {organization?.name ?? t('app.name')}
+                {brandName}
               </span>
               <span className="block truncate text-[11px] font-medium text-ink-700/70 dark:text-slate-500 sm:text-xs">
                 {t('app.tagline')}

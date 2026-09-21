@@ -11,6 +11,7 @@ import { engagementService } from '../lib/services';
 import { unwrapList } from '../types/api';
 import type { Campaign, Id, Petition, Poll, PollOption } from '../types/api';
 import { WhatsAppShareButton } from '../components/WhatsAppShareButton';
+import { PAGE_COVERS } from '../lib/civicPhotos';
 
 function PollCard({
   poll,
@@ -228,7 +229,12 @@ export function EngagementPage() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <PageHeader title={t('engage.title')} subtitle={t('engage.subtitle')} />
+      <PageHeader
+        title={t('engage.title')}
+        subtitle={t('engage.subtitle')}
+        coverSrc={PAGE_COVERS.engage}
+        coverAlt={t('photos.flagBearer')}
+      />
       {canManage && (
         <div className="mb-6 flex justify-end">
           <Link to="/engage/manage" className="btn-secondary text-sm">

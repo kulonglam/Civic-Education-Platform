@@ -11,6 +11,7 @@ import { loadArticlesList, loadCategories } from '../lib/offline/articles';
 import { formatDate, readingTime } from '../lib/format';
 import { localizedArticle, localizedCategory } from '../lib/localizedContent';
 import { plainTextExcerpt } from '../lib/markdown';
+import { PAGE_COVERS, photoForTopic } from '../lib/civicPhotos';
 import type { Article, Category } from '../types/api';
 
 const PAGE_SIZE = 20;
@@ -104,6 +105,8 @@ export function ArticlesPage() {
         eyebrow={t('nav.learn')}
         title={t('articles.title')}
         subtitle={t('articles.subtitle')}
+        coverSrc={activeCategory ? photoForTopic(activeCategory.slug) : PAGE_COVERS.articles}
+        coverAlt={activeCategory ? activeCategoryName : t('photos.independence')}
       />
 
       {!online && <Alert kind="warning">{t('offline.readingCached')}</Alert>}

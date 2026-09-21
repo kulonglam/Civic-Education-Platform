@@ -1,4 +1,4 @@
-"""WSGI config for Civic Education RSS."""
+"""WSGI config for CivicHub."""
 
 import os
 

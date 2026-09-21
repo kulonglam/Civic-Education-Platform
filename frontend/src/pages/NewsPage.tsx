@@ -12,6 +12,7 @@ import { localizedNews } from '../lib/localizedContent';
 import { plainTextExcerpt } from '../lib/markdown';
 import { queryKeys } from '../lib/queryKeys';
 import { newsService } from '../lib/services';
+import { PAGE_COVERS } from '../lib/civicPhotos';
 
 const PAGE_SIZE = 20;
 
@@ -58,6 +59,8 @@ export function NewsPage() {
         eyebrow={t('nav.learn')}
         title={t('news.title')}
         subtitle={t('news.subtitle')}
+        coverSrc={PAGE_COVERS.news}
+        coverAlt={t('photos.crowdFlags')}
       />
 
       {canManage && (

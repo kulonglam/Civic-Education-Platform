@@ -12,6 +12,7 @@ import { formatDate, formatDateTime } from '../lib/format';
 import { localizedEvent } from '../lib/localizedContent';
 import { queryKeys } from '../lib/queryKeys';
 import { eventsService } from '../lib/services';
+import { PAGE_COVERS } from '../lib/civicPhotos';
 
 const PAGE_SIZE = 20;
 
@@ -123,6 +124,8 @@ export function EventsPage() {
         eyebrow={t('nav.learn')}
         title={t('events.title')}
         subtitle={t('events.subtitle')}
+        coverSrc={PAGE_COVERS.events}
+        coverAlt={t('photos.flagRun')}
       />
 
       {canManage && (

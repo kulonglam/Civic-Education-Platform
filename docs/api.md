@@ -1,4 +1,4 @@
-# Civic Education RSS API Reference
+# CivicHub API Reference
 
 Base URL: `/api/`
 

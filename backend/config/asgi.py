@@ -1,4 +1,4 @@
-"""ASGI config for Civic Education RSS.
+"""ASGI config for CivicHub.
 
 Handles both HTTP and WebSocket connections via Django Channels / Daphne.
 """

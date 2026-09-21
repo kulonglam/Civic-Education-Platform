@@ -89,10 +89,10 @@ describe('Layout header brand', () => {
     (route) => {
       renderLayout(route);
       const header = screen.getByRole('banner');
-      expect(within(header).getByText('Civic Education RSS')).toBeInTheDocument();
+      expect(within(header).getByText('CivicHub')).toBeInTheDocument();
       expect(within(header).getByText('Building informed citizens')).toBeInTheDocument();
       expect(
-        within(header).getByRole('link', { name: 'Civic Education RSS' }),
+        within(header).getByRole('link', { name: 'CivicHub' }),
       ).toHaveAttribute('href', '/');
     },
   );

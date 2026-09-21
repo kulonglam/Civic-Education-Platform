@@ -5,6 +5,7 @@ import { queryKeys } from '../lib/queryKeys';
 import { organizationService } from '../lib/services';
 import { unwrapList } from '../types/api';
 import { useOrganization } from '../context/OrganizationContext';
+import { displayOrganizationName } from '../lib/branding';
 
 export function OrgSwitcher() {
   const { t } = useTranslation();
@@ -45,7 +46,7 @@ export function OrgSwitcher() {
       >
         {memberships.map((m) => (
           <option key={m.id} value={m.organization?.slug ?? ''}>
-            {m.organization?.name ?? m.id}
+            {displayOrganizationName(m.organization?.name, t('app.name')) || m.id}
           </option>
         ))}
       </select>

@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Civic Education RSS",
+    "name": "CivicHub",
     "tagline": "Building informed citizens"
   },
   "footer": {
@@ -28,7 +28,7 @@
     "privacy": {
       "title": "Privacy Policy",
       "lastUpdated": "Last updated: June 2026",
-      "intro": "The Civic Education RSS respects your privacy. This policy explains what we collect, why we collect it, and how we protect your information.",
+      "intro": "CivicHub respects your privacy. This policy explains what we collect, why we collect it, and how we protect your information.",
       "sections": [
         {
           "title": "Information we collect",
@@ -59,7 +59,7 @@
     "terms": {
       "title": "Terms of Service",
       "lastUpdated": "Last updated: June 2026",
-      "intro": "By using the Civic Education RSS, you agree to these terms. Please read them carefully.",
+      "intro": "By using CivicHub, you agree to these terms. Please read them carefully.",
       "sections": [
         {
           "title": "Acceptable use",
@@ -215,7 +215,7 @@
     "loginTitle": "Welcome back",
     "loginPanelTitle": "Secure access for civic learning",
     "loginPanelSubtitle": "Sign in to your organization workspace, continue courses offline, and manage institutional programs.",
-    "registerPanelTitle": "Join the Civic Education RSS",
+    "registerPanelTitle": "Join CivicHub",
     "registerSuccessTitle": "Check your email",
     "secureAccess": "Secure access",
     "getStarted": "Get started",
@@ -342,6 +342,19 @@
     "builtForText": "Read articles offline when connectivity is limited. Switch between English and Arabic anytime from your profile or the language menu.",
     "finalCtaTitle": "Ready to start learning?",
     "finalCtaText": "Join citizens across South Sudan building knowledge for stronger democracy."
+  },
+  "photos": {
+    "independence": "Women celebrating Independence Day under the South Sudan flag",
+    "silhouettes": "People holding the South Sudan flag against the sky",
+    "ceremony": "Citizens lined for a civic ceremony with the national flag",
+    "flagRun": "A person carrying South Sudan flags at a public gathering",
+    "tradition": "A community elder in traditional dress at a civic gathering",
+    "flagBearer": "A citizen wrapped in the South Sudan flag holding two flags",
+    "communityWork": "Women carrying loads along a riverside path",
+    "womenFlags": "Women wearing South Sudan flag hats at a civic event",
+    "crowdFlags": "A crowd waving small South Sudan flags",
+    "officials": "South Sudan officials at a public ceremony",
+    "children": "Children walking together holding hands"
   },
   "news": {
     "title": "News & Civic Information",

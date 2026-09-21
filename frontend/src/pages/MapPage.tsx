@@ -5,6 +5,7 @@ import { CivicMap } from '../components/CivicMap';
 import { extractError } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import { mapService } from '../lib/services';
+import { PAGE_COVERS } from '../lib/civicPhotos';
 
 export function MapPage() {
   const { t } = useTranslation();
@@ -18,7 +19,12 @@ export function MapPage() {
 
   return (
     <div className="page-shell">
-      <PageHeader title={t('map.title')} subtitle={t('map.subtitle')} />
+      <PageHeader
+        title={t('map.title')}
+        subtitle={t('map.subtitle')}
+        coverSrc={PAGE_COVERS.map}
+        coverAlt={t('photos.ceremony')}
+      />
       {isLoading && <Spinner />}
       {error && <Alert>{extractError(error)}</Alert>}
       {data && (

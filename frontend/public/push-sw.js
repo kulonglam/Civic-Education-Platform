@@ -10,14 +10,14 @@ self.addEventListener('sync', (event) => {
 });
 
 self.addEventListener('push', (event) => {
-  let data = { title: 'Civic Education RSS', body: '' };
+  let data = { title: 'CivicHub', body: '' };
   try {
     data = event.data ? event.data.json() : data;
   } catch {
     data.body = event.data ? event.data.text() : '';
   }
   event.waitUntil(
-    self.registration.showNotification(data.title || 'Civic Education RSS', {
+    self.registration.showNotification(data.title || 'CivicHub', {
       body: data.body || '',
       icon: '/icon-192.png',
     }),

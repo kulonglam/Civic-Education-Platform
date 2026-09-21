@@ -13,6 +13,7 @@ import {
   ShieldCheck,
 } from '../components/Icons';
 import { RecommendationsSection } from '../components/RecommendationsSection';
+import { CIVIC_PHOTOS, HERO_PHOTO, photoForTopic } from '../lib/civicPhotos';
 
 function HomePage() {
   const { t } = useTranslation();
@@ -85,21 +86,21 @@ function HomePage() {
   ];
 
   const topics = [
-    { label: t('home.topicConstitution'), to: '/articles?category=constitution' },
-    { label: t('home.topicHumanRights'), to: '/articles?category=human-rights' },
-    { label: t('home.topicCitizenResponsibilities'), to: '/articles?category=citizen-responsibilities' },
-    { label: t('home.topicGovernmentStructure'), to: '/articles?category=government-structure' },
-    { label: t('home.topicGovernance'), to: '/articles?category=governance' },
-    { label: t('home.topicElections'), to: '/articles?category=elections' },
-    { label: t('home.topicRuleOfLaw'), to: '/articles?category=rule-of-law' },
-    { label: t('home.topicPeacebuilding'), to: '/articles?category=peacebuilding' },
-    { label: t('home.topicGenderEquality'), to: '/articles?category=gender-equality' },
-    { label: t('home.topicAntiCorruption'), to: '/articles?category=anti-corruption' },
-    { label: t('home.topicPublicParticipation'), to: '/articles?category=public-participation' },
-    { label: t('home.topicMediaMisinformation'), to: '/articles?category=media-misinformation' },
-    { label: t('home.topicDigitalCitizenship'), to: '/articles?category=digital-citizenship' },
-    { label: t('home.topicCommunityLeadership'), to: '/articles?category=community-leadership' },
-    { label: t('home.topicConflictResolution'), to: '/articles?category=conflict-resolution' },
+    { label: t('home.topicConstitution'), to: '/articles?category=constitution', slug: 'constitution' },
+    { label: t('home.topicHumanRights'), to: '/articles?category=human-rights', slug: 'human-rights' },
+    { label: t('home.topicCitizenResponsibilities'), to: '/articles?category=citizen-responsibilities', slug: 'citizen-responsibilities' },
+    { label: t('home.topicGovernmentStructure'), to: '/articles?category=government-structure', slug: 'government-structure' },
+    { label: t('home.topicGovernance'), to: '/articles?category=governance', slug: 'governance' },
+    { label: t('home.topicElections'), to: '/articles?category=elections', slug: 'elections' },
+    { label: t('home.topicRuleOfLaw'), to: '/articles?category=rule-of-law', slug: 'rule-of-law' },
+    { label: t('home.topicPeacebuilding'), to: '/articles?category=peacebuilding', slug: 'peacebuilding' },
+    { label: t('home.topicGenderEquality'), to: '/articles?category=gender-equality', slug: 'gender-equality' },
+    { label: t('home.topicAntiCorruption'), to: '/articles?category=anti-corruption', slug: 'anti-corruption' },
+    { label: t('home.topicPublicParticipation'), to: '/articles?category=public-participation', slug: 'public-participation' },
+    { label: t('home.topicMediaMisinformation'), to: '/articles?category=media-misinformation', slug: 'media-misinformation' },
+    { label: t('home.topicDigitalCitizenship'), to: '/articles?category=digital-citizenship', slug: 'digital-citizenship' },
+    { label: t('home.topicCommunityLeadership'), to: '/articles?category=community-leadership', slug: 'community-leadership' },
+    { label: t('home.topicConflictResolution'), to: '/articles?category=conflict-resolution', slug: 'conflict-resolution' },
   ];
 
   return (
@@ -110,39 +111,35 @@ function HomePage() {
         className="relative isolate min-h-[min(68vh,34rem)] overflow-hidden bg-brand-950 text-white sm:min-h-[min(88vh,48rem)]"
       >
         <img
-          src="/hero-civic.jpg"
+          src={HERO_PHOTO}
           alt={t('home.heroImageAlt')}
           width={1920}
           height={1080}
           sizes="100vw"
           decoding="sync"
-          className="absolute inset-0 h-full w-full object-cover object-[center_28%]"
+          className="absolute inset-0 h-full w-full object-cover object-[center_42%]"
           fetchPriority="high"
         />
         <div
-          className="absolute inset-0 bg-[linear-gradient(115deg,rgba(2,44,34,0.92)_0%,rgba(6,78,59,0.78)_48%,rgba(4,120,87,0.55)_100%)]"
-          aria-hidden="true"
-        />
-        <div
-          className="pointer-events-none absolute -right-24 top-10 hidden h-[28rem] w-[28rem] rounded-full bg-brand-400/15 blur-3xl animate-soft-pulse sm:block"
+          className="absolute inset-0 bg-[linear-gradient(105deg,rgba(0,0,0,0.52)_0%,rgba(0,0,0,0.22)_48%,rgba(0,0,0,0.08)_100%)]"
           aria-hidden="true"
         />
 
         <div className="relative prose-panel flex min-h-[min(68vh,34rem)] flex-col justify-center py-12 sm:min-h-[min(88vh,48rem)] sm:py-20">
           <div className="max-w-3xl">
             {user && (
-              <p className="animate-fade-up text-sm font-medium text-brand-200">
+              <p className="animate-fade-up text-sm font-medium text-white/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
                 {t('home.welcomeBack', { name: user.first_name })}
               </p>
             )}
 
             <h1
               id="home-hero-title"
-              className={`animate-fade-up-delay font-display text-hero text-white ${user ? 'mt-5' : ''}`}
+              className={`animate-fade-up-delay font-display text-hero text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.55)] ${user ? 'mt-5' : ''}`}
             >
               {t('home.heroTitle')}
             </h1>
-            <p className="animate-fade-up-late mt-5 max-w-xl text-hero-sub text-brand-100/95">
+            <p className="animate-fade-up-late mt-5 max-w-xl text-hero-sub text-white/95 drop-shadow-[0_1px_10px_rgba(0,0,0,0.5)]">
               {t('home.heroSubtitle')}
             </p>
 
@@ -233,14 +230,27 @@ function HomePage() {
               <li key={item}>{item}</li>
             ))}
           </ul>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-baseline sm:gap-6">
+          <div className="mt-8">
             <p className="text-sm font-semibold text-ink-800 dark:text-slate-200">
               {t('home.topicsLabel')}
             </p>
-            <ul className="topic-links">
+            <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
               {topics.map((topic) => (
-                <li key={topic.label}>
-                  <Link to={topic.to}>{topic.label}</Link>
+                <li key={topic.slug}>
+                  <Link
+                    to={topic.to}
+                    className="group relative block overflow-hidden rounded-2xl shadow-soft ring-1 ring-ink-100 dark:ring-slate-700"
+                  >
+                    <img
+                      src={photoForTopic(topic.slug)}
+                      alt=""
+                      className="h-28 w-full object-cover transition duration-300 group-hover:scale-[1.04] sm:h-32"
+                    />
+                    <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    <span className="absolute inset-x-0 bottom-0 p-2.5 text-sm font-semibold leading-snug text-white">
+                      {topic.label}
+                    </span>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -302,6 +312,11 @@ function HomePage() {
           className="grid gap-12 lg:grid-cols-2 lg:gap-16"
         >
           <div>
+            <img
+              src={CIVIC_PHOTOS.womenFlags}
+              alt={t('photos.womenFlags')}
+              className="mb-5 h-48 w-full rounded-2xl object-cover shadow-soft sm:h-56"
+            />
             <p className="text-sm font-semibold tracking-wide text-brand-700 dark:text-brand-400">
               {t('home.audienceCitizenLabel')}
             </p>
@@ -321,6 +336,11 @@ function HomePage() {
             )}
           </div>
           <div>
+            <img
+              src={CIVIC_PHOTOS.ceremony}
+              alt={t('photos.ceremony')}
+              className="mb-5 h-48 w-full rounded-2xl object-cover shadow-soft sm:h-56"
+            />
             <p className="text-sm font-semibold tracking-wide text-brand-700 dark:text-brand-400">
               {t('home.audienceOrgLabel')}
             </p>
@@ -340,28 +360,38 @@ function HomePage() {
 
         <section
           aria-labelledby="home-built-title"
-          className="flex flex-col gap-6 border-y border-ink-100 py-12 dark:border-slate-800 sm:flex-row sm:items-center"
+          className="overflow-hidden rounded-3xl border border-ink-100 dark:border-slate-800 sm:grid sm:grid-cols-[minmax(0,18rem)_1fr]"
         >
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-brand-700 text-white">
-            <CloudArrowDown className="h-7 w-7" />
-          </div>
-          <div>
+          <img
+            src={CIVIC_PHOTOS.crowdFlags}
+            alt={t('photos.crowdFlags')}
+            className="h-44 w-full object-cover sm:h-full"
+          />
+          <div className="flex flex-col justify-center gap-3 p-6 sm:p-8">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-brand-700 text-white">
+              <CloudArrowDown className="h-7 w-7" />
+            </div>
             <h2
               id="home-built-title"
               className="font-display text-2xl font-semibold text-ink-900 dark:text-slate-100"
             >
               {t('home.builtForTitle')}
             </h2>
-            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-700/80 dark:text-slate-400">
+            <p className="max-w-3xl text-sm leading-relaxed text-ink-700/80 dark:text-slate-400">
               {t('home.builtForText')}
             </p>
           </div>
         </section>
 
         {!user && (
-          <section className="relative overflow-hidden rounded-3xl bg-brand-900 px-5 py-10 text-center text-white sm:rounded-[2rem] sm:px-12 sm:py-14">
+          <section className="relative overflow-hidden rounded-3xl bg-ink-950 px-5 py-10 text-center text-white sm:rounded-[2rem] sm:px-12 sm:py-14">
+            <img
+              src={CIVIC_PHOTOS.independence}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+            />
             <div
-              className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(52,211,153,0.25),transparent_55%)]"
+              className="absolute inset-0 bg-black/40"
               aria-hidden="true"
             />
             <div className="relative">

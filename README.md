@@ -1,4 +1,4 @@
-# Civic Education RSS
+# CivicHub
 
 Full-stack civic education platform for South Sudan: Django REST API + React (Vite + Tailwind) PWA with multi-tenant orgs, Stripe billing, and bilingual EN/AR UI.
 

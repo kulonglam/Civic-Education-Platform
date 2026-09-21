@@ -78,23 +78,34 @@ type PageHeaderProps = {
   subtitle?: ReactNode;
   action?: ReactNode;
   eyebrow?: ReactNode;
+  coverSrc?: string;
+  coverAlt?: string;
 };
 
-function PageHeader({ title, subtitle, action, eyebrow }: PageHeaderProps) {
+function PageHeader({ title, subtitle, action, eyebrow, coverSrc, coverAlt = '' }: PageHeaderProps) {
   return (
-    <div className="page-header">
-      <div className="relative min-w-0">
-        {eyebrow && <p className="eyebrow mb-2.5">{eyebrow}</p>}
-        <h1 className="font-display text-page-title text-ink-900 dark:text-slate-50">
-          {title}
-        </h1>
-        {subtitle && (
-          <p className="mt-2.5 max-w-2xl text-hero-sub text-ink-700/70 dark:text-slate-400">
-            {subtitle}
-          </p>
-        )}
+    <div>
+      {coverSrc && (
+        <img
+          src={coverSrc}
+          alt={coverAlt}
+          className="mb-6 h-40 w-full rounded-2xl object-cover shadow-soft sm:h-52"
+        />
+      )}
+      <div className="page-header">
+        <div className="relative min-w-0">
+          {eyebrow && <p className="eyebrow mb-2.5">{eyebrow}</p>}
+          <h1 className="font-display text-page-title text-ink-900 dark:text-slate-50">
+            {title}
+          </h1>
+          {subtitle && (
+            <p className="mt-2.5 max-w-2xl text-hero-sub text-ink-700/70 dark:text-slate-400">
+              {subtitle}
+            </p>
+          )}
+        </div>
+        {action && <div className="relative flex shrink-0 flex-wrap items-center gap-2">{action}</div>}
       </div>
-      {action && <div className="relative flex shrink-0 flex-wrap items-center gap-2">{action}</div>}
     </div>
   );
 }
